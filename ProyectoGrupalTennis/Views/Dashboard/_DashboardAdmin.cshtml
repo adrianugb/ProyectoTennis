@@ -1,31 +1,47 @@
-﻿<div class="page-header">
-    <h1>Administrador</h1>
-    <p>Vista general del panel administrativo de la academia.</p>
-</div>
+﻿<div class="dashboard-block">
+    <h1 class="page-title">Administrador</h1>
+    <p class="page-subtitle">Vista general del panel administrativo de la academia.</p>
 
-<div class="card-grid">
-    <div class="stat-card">
-        <h3>128</h3>
-        <p>Alumnos activos</p>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-users"></i>
+                <h3>128</h3>
+                <p>Alumnos activos</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-calendar"></i>
+                <h3>36</h3>
+                <p>Clases programadas</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-user"></i>
+                <h3>12</h3>
+                <p>Profesores registrados</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-money"></i>
+                <h3>₡2.4M</h3>
+                <p>Ingresos del periodo</p>
+            </div>
+        </div>
     </div>
 
-    <div class="stat-card">
-        <h3>36</h3>
-        <p>Clases programadas</p>
+    <div class="action-buttons">
+        <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-admin-dashboard')">
+            Ver Dashboard
+        </button>
+        <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-admin-reportes')">
+            Ir a Reportes
+        </button>
     </div>
-
-    <div class="stat-card">
-        <h3>12</h3>
-        <p>Profesores registrados</p>
-    </div>
-
-    <div class="stat-card">
-        <h3>₡2.4M</h3>
-        <p>Ingresos del periodo</p>
-    </div>
-</div>
-
-<div class="action-row">
-    <button class="btn-custom" onclick="mostrarVista('dashboard-admin-dashboard')">Ver Dashboard</button>
-    <button class="btn-custom" onclick="mostrarVista('dashboard-admin-reportes')">Ir a Reportes</button>
 </div>

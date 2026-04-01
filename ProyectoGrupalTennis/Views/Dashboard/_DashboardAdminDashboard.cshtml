@@ -1,38 +1,118 @@
-﻿<div class="page-header">
-    <h1>Dashboard Administrativo</h1>
-    <p>Visualización de estadísticas generales y filtro por periodo.</p>
-</div>
+﻿<div class="dashboard-block">
+    <h1 class="page-title">Dashboard Administrativo</h1>
+    <p class="page-subtitle">
+        Visualización de estadísticas generales y filtro por periodo.
+    </p>
 
-<div class="filters">
-    <input type="date" />
-    <input type="date" />
-    <select>
-        <option>Todos los periodos</option>
-        <option>Últimos 7 días</option>
-        <option>Último mes</option>
-        <option>Último trimestre</option>
-    </select>
-    <button class="btn-custom">Aplicar filtro</button>
-</div>
+    <!-- Filtros -->
+    <div class="row" style="margin-bottom: 30px;">
+        <div class="col-md-3">
+            <input type="date" class="form-control">
+        </div>
 
-<div class="card-grid">
-    <div class="panel-card">
-        <h3>Participación estudiantil</h3>
-        <p>Resumen visual del nivel de participación de alumnos en la plataforma.</p>
+        <div class="col-md-3">
+            <input type="date" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-control">
+                <option>Todos los periodos</option>
+                <option>Últimos 7 días</option>
+                <option>Último mes</option>
+                <option>Último trimestre</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <button class="dashboard-mini-btn" style="width: 100%;">
+                Aplicar filtro
+            </button>
+        </div>
     </div>
 
-    <div class="panel-card">
-        <h3>Carga operativa</h3>
-        <p>Distribución de clases programadas en el periodo seleccionado.</p>
+    <!-- Gráficas -->
+    <div class="row">
+        <!-- Gráfico 1 -->
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <h3 style="margin-bottom: 20px;">Sesiones por horario</h3>
+                <canvas id="graficoSesiones"></canvas>
+            </div>
+        </div>
+
+        <!-- Gráfico 2 -->
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <h3 style="margin-bottom: 20px;">Seguimiento semanal</h3>
+                <canvas id="graficoSeguimiento"></canvas>
+            </div>
+        </div>
     </div>
 
-    <div class="panel-card">
-        <h3>Actividad semanal</h3>
-        <p>Comparativo del comportamiento general de la academia por semana.</p>
+    <!-- Acciones -->
+    <div class="action-buttons">
+        <button class="dashboard-mini-btn"
+                onclick="mostrarVista('dashboard-admin')">
+            Volver
+        </button>
+
+        <button class="dashboard-mini-btn"
+                onclick="mostrarVista('dashboard-admin-reportes')">
+            Ver reportes
+        </button>
     </div>
 </div>
+<script>
+    window.addEventListener('load', function () {
+        const ctxSesiones = document.getElementById('graficoSesiones');
+        const ctxSeguimiento = document.getElementById('graficoSeguimiento');
 
-<div class="action-row">
-    <button class="btn-custom" onclick="mostrarVista('dashboard-admin')">Volver</button>
-    <button class="btn-custom" onclick="mostrarVista('dashboard-admin-reportes')">Ver reportes</button>
-</div>
+        if (ctxSesiones && typeof Chart !== 'undefined') {
+            new Chart(ctxSesiones, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Mañana', 'Tarde', 'Noche'],
+                    datasets: [{
+                        data: [8, 12, 5],
+                        backgroundColor: ['#a5c422', '#c7db6d', '#e4efb2'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        if (ctxSeguimiento && typeof Chart !== 'undefined') {
+            new Chart(ctxSeguimiento, {
+                type: 'line',
+                data: {
+                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+                    datasets: [{
+                        data: [72, 78, 81, 88],
+                        borderColor: '#a5c422',
+                        backgroundColor: 'rgba(165,196,34,0.15)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+    });
+</script>

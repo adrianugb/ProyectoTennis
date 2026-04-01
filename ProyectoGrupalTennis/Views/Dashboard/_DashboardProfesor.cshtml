@@ -1,39 +1,69 @@
-﻿<div class="page-header">
-    <h1>Reportes Administrativos</h1>
-    <p>Consulta de reportes disponibles para análisis de la academia.</p>
-</div>
+﻿<div class="dashboard-block">
+    <h1 class="page-title">Reportes Administrativos</h1>
+    <p class="page-subtitle">
+        Consulta de reportes disponibles para análisis de la academia.
+    </p>
 
-<table class="custom-table">
-    <thead>
-        <tr>
-            <th>Reporte</th>
-            <th>Periodo</th>
-            <th>Estado</th>
-            <th>Acción</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Alumnos activos</td>
-            <td>Marzo 2026</td>
-            <td><span class="badge-soft">Disponible</span></td>
-            <td><button class="btn-custom">Ver reporte</button></td>
-        </tr>
-        <tr>
-            <td>Clases programadas</td>
-            <td>Marzo 2026</td>
-            <td><span class="badge-soft">Disponible</span></td>
-            <td><button class="btn-custom">Exportar</button></td>
-        </tr>
-        <tr>
-            <td>Ingresos por periodo</td>
-            <td>Q1 2026</td>
-            <td><span class="badge-soft">Disponible</span></td>
-            <td><button class="btn-custom">Descargar</button></td>
-        </tr>
-    </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="table report-table">
+            <thead>
+                <tr>
+                    <th>Reporte</th>
+                    <th>Periodo</th>
+                    <th>Estado</th>
+                    <th style="text-align:center;">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="report-info">
+                            <i class="fa fa-users"></i>
+                            <span>Alumnos activos</span>
+                        </div>
+                    </td>
+                    <td>Marzo 2026</td>
+                    <td><span class="badge-soft-success">Disponible</span></td>
+                    <td style="text-align:center;">
+                        <button class="dashboard-mini-btn">Ver reporte</button>
+                    </td>
+                </tr>
 
-<div class="action-row">
-    <button class="btn-custom" onclick="mostrarVista('dashboard-admin')">Volver</button>
+                <tr>
+                    <td>
+                        <div class="report-info">
+                            <i class="fa fa-calendar"></i>
+                            <span>Clases programadas</span>
+                        </div>
+                    </td>
+                    <td>Marzo 2026</td>
+                    <td><span class="badge-soft-success">Disponible</span></td>
+                    <td style="text-align:center;">
+                        <button class="dashboard-mini-btn">Exportar</button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="report-info">
+                            <i class="fa fa-money"></i>
+                            <span>Ingresos por periodo</span>
+                        </div>
+                    </td>
+                    <td>Q1 2026</td>
+                    <td><span class="badge-soft-success">Disponible</span></td>
+                    <td style="text-align:center;">
+                        <button class="dashboard-mini-btn">Descargar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="action-buttons">
+        <button class="dashboard-mini-btn"
+                onclick="mostrarVista('dashboard-admin')">
+            Volver
+        </button>
+    </div>
 </div>

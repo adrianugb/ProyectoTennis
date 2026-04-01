@@ -1,41 +1,71 @@
-﻿<div class="page-header">
-    <h1>Dashboard del Profesor</h1>
-    <p>Resumen visual de clases, asistencia y desempeño general.</p>
-</div>
+﻿<div class="dashboard-block">
+    <h1 class="page-title">Dashboard del Profesor</h1>
+    <p class="page-subtitle">
+        Resumen visual de clases, asistencia y desempeño general.
+    </p>
 
-<div class="card-grid">
-    <div class="stat-card">
-        <h3>4</h3>
-        <p>Clases completadas</p>
+    <!-- Estadísticas -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-check-circle"></i>
+                <h3>4</h3>
+                <p>Clases completadas</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-clock-o"></i>
+                <h3>2</h3>
+                <p>Clases pendientes</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-pencil-square-o"></i>
+                <h3>15</h3>
+                <p>Evaluaciones registradas</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-line-chart"></i>
+                <h3>95%</h3>
+                <p>Puntualidad del día</p>
+            </div>
+        </div>
     </div>
 
-    <div class="stat-card">
-        <h3>2</h3>
-        <p>Clases pendientes</p>
+    <!-- Paneles -->
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <i class="fa fa-calendar"></i>
+                <h3>Sesiones por horario</h3>
+                <p>
+                    Distribución de clases según mañana, tarde y noche.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <i class="fa fa-bar-chart"></i>
+                <h3>Seguimiento semanal</h3>
+                <p>
+                    Comparativo visual del rendimiento del grupo durante la semana.
+                </p>
+            </div>
+        </div>
     </div>
 
-    <div class="stat-card">
-        <h3>15</h3>
-        <p>Evaluaciones registradas</p>
+    <!-- Acción -->
+    <div class="action-buttons">
+        <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-profesor')">
+            Volver
+        </button>
     </div>
-
-    <div class="stat-card">
-        <h3>95%</h3>
-        <p>Puntualidad del día</p>
-    </div>
-</div>
-
-<div class="card-grid" style="margin-top: 20px;">
-    <div class="panel-card">
-        <h3>Sesiones por horario</h3>
-        <p>Distribución de clases según mañana, tarde y noche.</p>
-    </div>
-    <div class="panel-card">
-        <h3>Seguimiento semanal</h3>
-        <p>Comparativo visual del rendimiento del grupo durante la semana.</p>
-    </div>
-</div>
-
-<div class="action-row">
-    <button class="btn-custom" onclick="mostrarVista('dashboard-profesor')">Volver</button>
 </div>
