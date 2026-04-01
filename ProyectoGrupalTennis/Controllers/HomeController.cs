@@ -21,5 +21,24 @@ namespace ProyectoGrupalTennis.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        public IActionResult Dashboard()
+        {
+            return View("~/Views/Dashboard/Index.cshtml");
+        }
+
+        public IActionResult Notificaciones()
+        {
+            return View("~/Views/Notificaciones/Index.cshtml");
+        }
+
+        public IActionResult Feedback()
+        {
+            return View("~/Views/Feedback/Index.cshtml");
+        }
+
+        public IActionResult Progreso()
+        {
+            return View("~/Views/Progreso/Index.cshtml");
+        }
     }
 }

@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section id="dashboard-view" style="padding-top: 100px; padding-bottom: 100px; background: #f7f9fc;">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section-title text-center">
+                    <h2>Dashboard y Reportes</h2>
+                    <p>Panel general del módulo 8</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 40px;">
+            <div class="col-md-12 text-center">
+                <a href="/Home/Index" class="section-btn btn btn-default">
+                    Volver al inicio
+                </a>
+            </div>
+        </div>
+
+        <div class="dashboard-block">
+            @await Html.PartialAsync("~/Views/Dashboard/_DashboardAdmin.cshtml")
+        </div>
+
+        <div class="dashboard-block">
+            @await Html.PartialAsync("~/Views/Dashboard/_DashboardAdminDashboard.cshtml")
+        </div>
+
+        <div class="dashboard-block">
+            @await Html.PartialAsync("~/Views/Dashboard/_DashboardAdminReportes.cshtml")
+        </div>
+
+        <div class="dashboard-block">
+            @await Html.PartialAsync("~/Views/Dashboard/_DashboardProfesor.cshtml")
+        </div>
+
+        <div class="dashboard-block">
+            @await Html.PartialAsync("~/Views/Dashboard/_DashboardProfesorDashboard.cshtml")
+        </div>
+
+        <div class="dashboard-block">
+            @await Html.PartialAsync("~/Views/Dashboard/_DashboardUsuarioDashboard.cshtml")
+        </div>
+
+    </div>
+</section>

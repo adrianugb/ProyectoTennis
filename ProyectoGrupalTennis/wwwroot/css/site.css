@@ -29,3 +29,130 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+.vista {
+    display: none;
+}
+
+.vista.active {
+   display: block;
+ }
+
+/* DASHBOARD */
+
+.dashboard-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-8px);
+    }
+
+    .dashboard-card i {
+        font-size: 40px;
+        color: #a5c422; /* color del template */
+        margin-bottom: 15px;
+    }
+
+    .dashboard-card h3 {
+        margin-bottom: 10px;
+    }
+
+    .dashboard-card p {
+        color: #757575;
+    }
+.dashboard-block {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 35px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+    .dashboard-block h1,
+    .dashboard-block h2,
+    .dashboard-block h3,
+    .dashboard-block h4 {
+        color: #252525;
+    }
+
+    .dashboard-block p {
+        color: #757575;
+    }
+
+.dashboard-stat-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+    transition: 0.3s;
+}
+
+    .dashboard-stat-card:hover {
+        transform: translateY(-6px);
+    }
+
+    .dashboard-stat-card i {
+        font-size: 38px;
+        color: #a5c422;
+        margin-bottom: 15px;
+    }
+
+    .dashboard-stat-card h3 {
+        margin-bottom: 10px;
+    }
+
+.dashboard-mini-btn {
+    background: #a5c422;
+    border: 0;
+    border-radius: 3px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 18px;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+    .dashboard-mini-btn:hover {
+        background: #8eab1d;
+        color: #ffffff;
+    }
+
+.dashboard-stat-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+    .dashboard-stat-card:hover {
+        transform: translateY(-6px);
+    }
+
+    .dashboard-stat-card i {
+        font-size: 38px;
+        color: #a5c422;
+        margin-bottom: 15px;
+    }
+
+    .dashboard-stat-card h3 {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        color: #252525;
+    }
+
+    .dashboard-stat-card p {
+        margin-bottom: 0;
+        color: #757575;
+    }

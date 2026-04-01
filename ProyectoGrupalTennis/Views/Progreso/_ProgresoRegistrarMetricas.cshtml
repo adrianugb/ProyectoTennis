@@ -1,0 +1,28 @@
+﻿<div class="page-header">
+    <h1>Registrar Métricas</h1>
+    <p>Formulario visual para registrar el desempeño técnico del alumno.</p>
+</div>
+
+<div class="form-box">
+    <div class="filters">
+        <input type="text" placeholder="Nombre del alumno" />
+        <select>
+            <option>Clase más reciente</option>
+            <option>Sesión especial</option>
+        </select>
+    </div>
+
+    <div class="filters">
+        <input type="number" placeholder="Forehand (%)" />
+        <input type="number" placeholder="Backhand (%)" />
+        <input type="number" placeholder="Saque (%)" />
+        <input type="number" placeholder="Desplazamiento (%)" />
+    </div>
+
+    <textarea rows="5" placeholder="Observaciones del profesor"></textarea>
+
+    <div class="action-row">
+        <button class="btn-custom">Guardar métricas</button>
+        <button class="btn-custom" onclick="mostrarVista('progreso-profesor')">Volver</button>
+    </div>
+</div>

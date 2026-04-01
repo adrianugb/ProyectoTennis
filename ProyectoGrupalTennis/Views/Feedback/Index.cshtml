@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Feedback";
+}
+
+<link rel="stylesheet" href="~/css/adrian-modulos.css" />
+
+<div class="container" style="padding: 40px 0;">
+    <div class="page-header">
+        <h1>Feedback y Encuestas</h1>
+        <p>Panel general del módulo 14.</p>
+    </div>
+
+    <div class="action-row" style="margin-bottom: 30px;">
+        <a href="/Home/Index" class="btn-custom">Volver al inicio</a>
+    </div>
+
+    @await Html.PartialAsync("~/Views/Feedback/_FeedbackAdmin.cshtml")
+
+    <div style="margin-top: 30px;">
+        @await Html.PartialAsync("~/Views/Feedback/_FeedbackEncuestas.cshtml")
+    </div>
+
+    <div style="margin-top: 30px;">
+        @await Html.PartialAsync("~/Views/Feedback/_FeedbackProfesor.cshtml")
+    </div>
+
+    <div style="margin-top: 30px;">
+        @await Html.PartialAsync("~/Views/Feedback/_FeedbackUsuario.cshtml")
+    </div>
+</div>

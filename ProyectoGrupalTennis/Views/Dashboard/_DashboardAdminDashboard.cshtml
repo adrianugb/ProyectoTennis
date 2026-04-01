@@ -1,0 +1,38 @@
+﻿<div class="page-header">
+    <h1>Dashboard Administrativo</h1>
+    <p>Visualización de estadísticas generales y filtro por periodo.</p>
+</div>
+
+<div class="filters">
+    <input type="date" />
+    <input type="date" />
+    <select>
+        <option>Todos los periodos</option>
+        <option>Últimos 7 días</option>
+        <option>Último mes</option>
+        <option>Último trimestre</option>
+    </select>
+    <button class="btn-custom">Aplicar filtro</button>
+</div>
+
+<div class="card-grid">
+    <div class="panel-card">
+        <h3>Participación estudiantil</h3>
+        <p>Resumen visual del nivel de participación de alumnos en la plataforma.</p>
+    </div>
+
+    <div class="panel-card">
+        <h3>Carga operativa</h3>
+        <p>Distribución de clases programadas en el periodo seleccionado.</p>
+    </div>
+
+    <div class="panel-card">
+        <h3>Actividad semanal</h3>
+        <p>Comparativo del comportamiento general de la academia por semana.</p>
+    </div>
+</div>
+
+<div class="action-row">
+    <button class="btn-custom" onclick="mostrarVista('dashboard-admin')">Volver</button>
+    <button class="btn-custom" onclick="mostrarVista('dashboard-admin-reportes')">Ver reportes</button>
+</div>
