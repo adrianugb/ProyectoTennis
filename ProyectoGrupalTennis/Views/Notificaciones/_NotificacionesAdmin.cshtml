@@ -1,42 +1,68 @@
-﻿<div class="page-header">
-    <h1>Notificaciones - Administrador</h1>
-    <p>Configuración de eventos automáticos y comunicación general.</p>
-</div>
+﻿<div class="module-block">
+    <h1 class="module-title">Notificaciones - Administrador</h1>
+    <p class="module-subtitle">
+        Configuración de eventos automáticos y comunicación general.
+    </p>
 
-<div class="form-box">
-    <div class="filters">
-        <select>
-            <option>Confirmación de clase</option>
-            <option>Cancelación de clase</option>
-            <option>Reprogramación</option>
-            <option>Pago registrado</option>
-            <option>Inscripción a campeonato</option>
-        </select>
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-3">
+            <select class="form-control">
+                <option>Confirmación de clase</option>
+                <option>Cancelación de clase</option>
+                <option>Reprogramación</option>
+                <option>Pago registrado</option>
+                <option>Inscripción a campeonato</option>
+            </select>
+        </div>
 
-        <select>
-            <option>Todos los alumnos</option>
-            <option>Todos los profesores</option>
-            <option>Grupo específico</option>
-        </select>
+        <div class="col-md-3">
+            <select class="form-control">
+                <option>Todos los alumnos</option>
+                <option>Todos los profesores</option>
+                <option>Grupo específico</option>
+                <option>Alumno específico</option>
+            </select>
+        </div>
 
-        <input type="text" placeholder="Asunto de la notificación" />
+        <div class="col-md-3">
+            <select class="form-control">
+                <option>Seleccionar alumno</option>
+                <option>Juan Pérez</option>
+                <option>María López</option>
+                <option>Carlos Rodríguez</option>
+                <option>Ana Fernández</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <input type="text" class="form-control" placeholder="Asunto de la notificación" />
+        </div>
     </div>
 
-    <textarea rows="5" placeholder="Escriba aquí el mensaje de la notificación"></textarea>
-
-    <div class="action-row">
-        <button class="btn-custom">Enviar notificación</button>
-        <button class="btn-custom">Ver historial</button>
+    <div style="margin-bottom: 20px;">
+        <textarea class="form-control" rows="5" placeholder="Escriba aquí el mensaje de la notificación"></textarea>
     </div>
-</div>
 
-<div class="card-grid" style="margin-top: 20px;">
-    <div class="panel-card">
-        <h3>Eventos automáticos</h3>
-        <p>Definición visual de qué acciones generan avisos automáticos en el sistema.</p>
+    <div class="module-actions">
+        <button class="module-btn">Enviar notificación</button>
+        <button class="module-btn">Ver historial</button>
     </div>
-    <div class="panel-card">
-        <h3>Historial de envíos</h3>
-        <p>Consulta rápida de notificaciones enviadas a usuarios y profesores.</p>
+
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-md-6">
+            <div class="module-card">
+                <i class="fa fa-bell"></i>
+                <h3>Eventos automáticos</h3>
+                <p>Definición visual de qué acciones generan avisos automáticos en el sistema.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="module-card">
+                <i class="fa fa-history"></i>
+                <h3>Historial de envíos</h3>
+                <p>Consulta rápida de notificaciones enviadas a usuarios y profesores.</p>
+            </div>
+        </div>
     </div>
 </div>

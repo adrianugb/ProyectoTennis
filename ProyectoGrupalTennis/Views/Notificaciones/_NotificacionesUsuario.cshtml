@@ -1,34 +1,58 @@
-﻿<div class="page-header">
-    <h1>Notificaciones - Alumno</h1>
-    <p>Centro de notificaciones y preferencias de comunicación.</p>
-</div>
+﻿<div class="module-block">
+    <h1 class="module-title">Notificaciones - Alumno</h1>
+    <p class="module-subtitle">
+        Centro de notificaciones y preferencias de comunicación.
+    </p>
 
-<div class="card-grid">
-    <div class="panel-card">
-        <h3>Preferencias</h3>
-        <p>Canal principal: Correo electrónico</p>
-        <p>Estado: Notificaciones activas</p>
+    <!-- Cards -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="module-card">
+                <i class="fa fa-sliders"></i>
+                <h3>Preferencias</h3>
+                <p>Canal principal: Correo electrónico</p>
+                <p>Estado: Notificaciones activas</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="module-card">
+                <i class="fa fa-envelope"></i>
+                <h3>Tipos de aviso</h3>
+                <p>Clases, pagos, campeonatos y avance técnico.</p>
+            </div>
+        </div>
     </div>
 
-    <div class="panel-card">
-        <h3>Tipos de aviso</h3>
-        <p>Clases, pagos, campeonatos y avance técnico.</p>
-    </div>
-</div>
+    <!-- Tabla -->
+    <div class="table-responsive" style="margin-top: 25px;">
+        <table class="table report-table">
+            <thead>
+                <tr>
+                    <th>Notificación</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Clase confirmada</td>
+                    <td>Tu reserva para el miércoles a las 5:00 p.m. fue confirmada correctamente.</td>
+                    <td><span class="badge-soft-success">Recibida</span></td>
+                </tr>
 
-<div class="list-box" style="margin-top: 20px;">
-    <div class="list-item">
-        <h4>Clase confirmada</h4>
-        <p>Tu reserva para el miércoles a las 5:00 p.m. fue confirmada correctamente.</p>
-    </div>
+                <tr>
+                    <td>Pago registrado</td>
+                    <td>Tu pago mensual fue procesado exitosamente.</td>
+                    <td><span class="badge-soft-success">Recibida</span></td>
+                </tr>
 
-    <div class="list-item">
-        <h4>Pago registrado</h4>
-        <p>Tu pago mensual fue procesado exitosamente.</p>
-    </div>
-
-    <div class="list-item">
-        <h4>Avance de nivel</h4>
-        <p>Has alcanzado el nivel Intermedio 2. ¡Sigue así!</p>
+                <tr>
+                    <td>Avance de nivel</td>
+                    <td>Has alcanzado el nivel Intermedio 2. ¡Sigue así!</td>
+                    <td><span class="badge-soft-warning">Nueva</span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
