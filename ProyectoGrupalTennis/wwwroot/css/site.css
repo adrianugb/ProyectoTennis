@@ -400,3 +400,31 @@ textarea.form-control {
     flex-direction: column;
     justify-content: center;
 }
+
+.btn-register {
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    background-color: transparent;
+}
+
+    .btn-register:hover {
+        background-color: #ffffff;
+        color: #7cb518;
+    }
+
+.slider-txt h1 {
+    color: #ffffff !important;
+}
+
+.slider-txt p {
+    color: #ffffff !important;
+}
+.caption {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+    .caption p {
+        color: #ffffff !important;
+    }
