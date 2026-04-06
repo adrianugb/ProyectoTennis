@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = "Módulo 4 — Matrícula, Agenda y Reservas";
+}
+
+<section id="matricula-view" style="padding-top: 80px; padding-bottom: 80px; background: #f7f9fc;">
+    <div class="container">
+
+        <div class="row" style="margin-bottom: 30px;">
+            <div class="col-md-12 text-center">
+                <a href="/Home/Index" class="section-btn btn btn-default">Volver al inicio</a>
+            </div>
+        </div>
+
+        <div class="vista active" id="matricula-admin">
+            @await Html.PartialAsync("~/Views/Matricula/_AdminMatricula.cshtml")
+        </div>
+
+        <div class="vista" id="matricula-admin-matriculas">
+            @await Html.PartialAsync("~/Views/Matricula/_AdminMatriculas.cshtml")
+        </div>
+
+        <div class="vista" id="matricula-admin-reservas">
+            @await Html.PartialAsync("~/Views/Matricula/_AdminReservas.cshtml")
+        </div>
+
+        <div class="vista" id="matricula-admin-canchas">
+            @await Html.PartialAsync("~/Views/Matricula/_AdminCanchas.cshtml")
+        </div>
+
+        <div class="vista" id="matricula-admin-asignacion">
+            @await Html.PartialAsync("~/Views/Matricula/_AdminAsignacion.cshtml")
+        </div>
+
+        <div class="vista" id="matricula-prof">
+            @await Html.PartialAsync("~/Views/Matricula/_ProfesorMatricula.cshtml")
+        </div>
+
+        <div class="vista" id="matricula-prof-agenda">
+            @await Html.PartialAsync("~/Views/Matricula/_ProfesorAgenda.cshtml")
+        </div>
+
+        <div class="vista" id="matricula-usuario-cursos">
+            @await Html.PartialAsync("~/Views/Matricula/_UsuarioCursos.cshtml")
+        </div>
+
+        <div class="vista" id="matricula-usuario-matricula">
+            @await Html.PartialAsync("~/Views/Matricula/_UsuarioMatricula.cshtml")
+        </div>
+
+        <div class="vista" id="matricula-usuario-reservas">
+            @await Html.PartialAsync("~/Views/Matricula/_UsuarioReservas.cshtml")
+        </div>
+
+        <div class="vista" id="matricula-usuario-agenda">
+            @await Html.PartialAsync("~/Views/Matricula/_UsuarioAgenda.cshtml")
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        function mostrarVista(id) {
+            document.querySelectorAll('#matricula-view .vista').forEach(function (v) {
+                v.classList.remove('active');
+            });
+            var target = document.getElementById(id);
+            if (target) target.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
+}

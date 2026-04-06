@@ -1,0 +1,170 @@
+<div class="dashboard-block">
+    <h1 class="page-title">Gestión de Matrículas</h1>
+    <p class="page-subtitle">Visualiza y administra todas las inscripciones a cursos de la academia.</p>
+
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-4">
+            <input type="text" class="form-control" placeholder="Buscar alumno o curso..." />
+        </div>
+        <div class="col-md-3">
+            <select class="form-select form-control">
+                <option>Todos los cursos</option>
+                <option>Tenis Principiante</option>
+                <option>Tenis Intermedio</option>
+                <option>Tenis Avanzado</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select form-control">
+                <option>Estado: Todos</option>
+                <option>Activa</option>
+                <option>Pendiente</option>
+                <option>Cancelada</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="dashboard-mini-btn w-100">
+                <i class="fa fa-search"></i> Buscar
+            </button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Alumno</th>
+                    <th>Curso</th>
+                    <th>Fecha Inicio</th>
+                    <th>Horario</th>
+                    <th>Profesor</th>
+                    <th>Pago</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>001</td>
+                    <td><strong>María García</strong></td>
+                    <td>Tenis Principiante</td>
+                    <td>01/04/2026</td>
+                    <td>Lun-Mié 8:00 AM</td>
+                    <td>Prof. López</td>
+                    <td><span class="badge-soft-success">Pagado</span></td>
+                    <td><span class="badge-soft-success">Activa</span></td>
+                    <td>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px; background: #e74c3c;">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>002</td>
+                    <td><strong>Carlos Vega</strong></td>
+                    <td>Tenis Intermedio</td>
+                    <td>03/04/2026</td>
+                    <td>Mar-Jue 10:00 AM</td>
+                    <td>Prof. Ramírez</td>
+                    <td><span class="badge-soft-warning">Pendiente</span></td>
+                    <td><span class="badge-soft-warning">Pendiente</span></td>
+                    <td>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px; background: #e74c3c;">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>003</td>
+                    <td><strong>Laura Jiménez</strong></td>
+                    <td>Tenis Avanzado</td>
+                    <td>01/04/2026</td>
+                    <td>Lun-Vie 7:00 AM</td>
+                    <td>Prof. Torres</td>
+                    <td><span class="badge-soft-success">Pagado</span></td>
+                    <td><span class="badge-soft-success">Activa</span></td>
+                    <td>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px; background: #e74c3c;">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>004</td>
+                    <td><strong>Andrés Mora</strong></td>
+                    <td>Tenis Principiante</td>
+                    <td>05/04/2026</td>
+                    <td>Sáb 9:00 AM</td>
+                    <td>Prof. López</td>
+                    <td><span class="badge-soft-danger">Vencido</span></td>
+                    <td><span class="badge-soft-danger">Cancelada</span></td>
+                    <td>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fa fa-refresh"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <hr style="margin: 30px 0;" />
+
+    <h4 class="page-title" style="font-size: 20px;">Registrar nueva matrícula</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Alumno</label>
+                <select class="form-control">
+                    <option>Seleccione alumno...</option>
+                    <option>María García</option>
+                    <option>Carlos Vega</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Curso</label>
+                <select class="form-control">
+                    <option>Seleccione curso...</option>
+                    <option>Tenis Principiante</option>
+                    <option>Tenis Intermedio</option>
+                    <option>Tenis Avanzado</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Horario</label>
+                <select class="form-control">
+                    <option>Seleccione horario...</option>
+                    <option>Lun-Mié 8:00 AM</option>
+                    <option>Mar-Jue 10:00 AM</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Fecha de inicio</label>
+                <input type="date" class="form-control" value="2026-04-07" />
+            </div>
+        </div>
+    </div>
+    <div class="action-buttons">
+        <button class="dashboard-mini-btn"><i class="fa fa-check"></i> Registrar matrícula</button>
+        <button class="dashboard-mini-btn" style="background: #757575;">Cancelar</button>
+    </div>
+</div>

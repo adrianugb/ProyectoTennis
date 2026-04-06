@@ -70,5 +70,32 @@ namespace ProyectoGrupalTennis.Controllers
         }
 
         #endregion
+
+        #region Gamificacion
+
+        public IActionResult Gamificacion()
+        {
+            return View("~/Views/Gamificacion/Index.cshtml");
+        }
+
+        #endregion
+
+        #region Geolocalizacion
+
+        public IActionResult Geolocalizacion()
+        {
+            return View("~/Views/Geolocalizacion/Index.cshtml");
+        }
+
+        #endregion
+
+        #region Matricula
+
+        public IActionResult Matricula()
+        {
+            return View("~/Views/Matricula/Index.cshtml");
+        }
+
+        #endregion
     }
 }

@@ -1,0 +1,120 @@
+<div class="dashboard-block">
+    <h1 class="page-title">Gestión de Reservas</h1>
+    <p class="page-subtitle">Supervisar, reprogramar y cancelar reservas. Se detectaron conflictos de horario.</p>
+
+    <div class="row" style="margin-bottom: 15px;">
+        <div class="col-md-12">
+            <div style="background: #fff4db; border: 1px solid #ffd966; border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 12px;">
+                <i class="fa fa-exclamation-triangle" style="color: #b78103; font-size: 18px;"></i>
+                <div style="flex: 1;">
+                    <strong style="color: #856404;">2 conflictos de horario detectados</strong>
+                    <p style="margin: 0; font-size: 13px; color: #997a00;">
+                        Cancha 3 — Martes 10:00 AM tiene doble reserva &nbsp;·&nbsp; Cancha 1 — Jueves 2:00 PM solapamiento.
+                    </p>
+                </div>
+                <button class="dashboard-mini-btn" style="padding: 8px 14px; font-size: 13px; white-space: nowrap;">
+                    Ver conflictos
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-3">
+            <input type="date" class="form-control" value="2026-04-05" />
+        </div>
+        <div class="col-md-3">
+            <select class="form-control">
+                <option>Todas las canchas</option>
+                <option>Cancha 1</option>
+                <option>Cancha 2</option>
+                <option>Cancha 3</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-control">
+                <option>Todos los estados</option>
+                <option>Confirmada</option>
+                <option>Pendiente</option>
+                <option>Cancelada</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <div class="action-buttons" style="margin-top: 0;">
+                <button class="dashboard-mini-btn"><i class="fa fa-filter"></i> Filtrar</button>
+                <button class="dashboard-mini-btn"><i class="fa fa-plus"></i> Nueva</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Alumno</th>
+                    <th>Cancha</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Tipo</th>
+                    <th>Profesor</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#R-101</td>
+                    <td><strong>María García</strong></td>
+                    <td>Cancha 2</td>
+                    <td>07/04/2026</td>
+                    <td>8:00–9:00 AM</td>
+                    <td><span class="badge-soft-success">Grupal</span></td>
+                    <td>Prof. López</td>
+                    <td><span class="badge-soft-success">Confirmada</span></td>
+                    <td>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px;" title="Reprogramar">
+                            <i class="fa fa-clock-o"></i>
+                        </button>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px; background: #e74c3c;" title="Cancelar">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>#R-102</td>
+                    <td><strong>Carlos Vega</strong></td>
+                    <td>Cancha 3</td>
+                    <td>08/04/2026</td>
+                    <td>10:00–11:00 AM</td>
+                    <td><span class="badge-soft-warning">Individual</span></td>
+                    <td>Prof. Ramírez</td>
+                    <td><span class="badge-soft-warning">Conflicto</span></td>
+                    <td>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fa fa-clock-o"></i> Resolver
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>#R-103</td>
+                    <td><strong>Laura Jiménez</strong></td>
+                    <td>Cancha 1</td>
+                    <td>09/04/2026</td>
+                    <td>7:00–8:00 AM</td>
+                    <td><span class="badge-soft-success">Grupal</span></td>
+                    <td>Prof. Torres</td>
+                    <td><span class="badge-soft-success">Confirmada</span></td>
+                    <td>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px;" title="Reprogramar">
+                            <i class="fa fa-clock-o"></i>
+                        </button>
+                        <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px; background: #e74c3c;" title="Cancelar">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

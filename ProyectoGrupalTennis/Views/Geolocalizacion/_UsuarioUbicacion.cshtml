@@ -1,0 +1,141 @@
+<div class="dashboard-block">
+    <h1 class="page-title">Clase a Domicilio</h1>
+    <p class="page-subtitle">Indica tu ubicación y solicita que un profesor venga a ti.</p>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="dashboard-stat-card" style="min-height:auto; padding:20px; text-align:left; margin-bottom:0;">
+                <h4 style="font-size:15px; font-weight:700; margin-bottom:6px;">
+                    <i class="fa fa-map-marker" style="color:#a5c422;"></i> Selecciona tu ubicación
+                </h4>
+                <p style="font-size:13px; color:#757575; margin-bottom:14px;">
+                    Haz clic en el mapa para marcar exactamente dónde quieres recibir la clase, o escribe tu dirección.
+                </p>
+                <div class="row" style="margin-bottom:14px;">
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" value="Escazú, La Unión, calle La Colina #8" placeholder="Escribe tu dirección..." />
+                    </div>
+                    <div class="col-md-2">
+                        <button class="dashboard-mini-btn" style="width:100%; text-align:center; padding:9px 0;">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="background:linear-gradient(135deg,#c8e6c9 0%,#a5d6a7 50%,#81c784 100%); min-height:320px; border-radius:12px; position:relative; overflow:hidden; cursor:crosshair;">
+                    <div style="position:absolute;inset:0;background-image:linear-gradient(90deg,rgba(255,255,255,.28) 1px,transparent 1px),linear-gradient(0deg,rgba(255,255,255,.28) 1px,transparent 1px);background-size:55px 55px;"></div>
+                    <div style="position:absolute;background:rgba(255,255,255,.55);height:6px;border-radius:3px;width:100%;top:48%;"></div>
+                    <div style="position:absolute;background:rgba(255,255,255,.55);width:6px;border-radius:3px;height:100%;left:42%;"></div>
+                    <div style="position:absolute;background:rgba(255,255,255,.55);width:6px;border-radius:3px;height:100%;left:66%;"></div>
+
+                    <div style="position:absolute;left:37%;top:58%;transform:translate(-50%,-100%);text-align:center;z-index:10;">
+                        <div style="width:28px;height:28px;border-radius:50% 50% 50% 0;background:#a5c422;transform:rotate(-45deg);margin:0 auto;border:3px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.3);"></div>
+                        <div style="background:#fff;border-radius:7px;padding:3px 9px;font-size:11px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);margin-top:6px;display:inline-block;">
+                            <i class="fa fa-home"></i> Academia
+                        </div>
+                    </div>
+
+                    <div style="position:absolute;left:65%;top:38%;transform:translate(-50%,-100%);text-align:center;z-index:10;">
+                        <div style="width:28px;height:28px;border-radius:50% 50% 50% 0;background:#e74c3c;transform:rotate(-45deg);margin:0 auto;border:3px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.3);animation:pulse 2s infinite;"></div>
+                        <div style="background:#fff;border-radius:7px;padding:3px 9px;font-size:11px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);margin-top:6px;display:inline-block;">
+                            <i class="fa fa-user"></i> Tu ubicación
+                        </div>
+                    </div>
+
+                    <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;" viewBox="0 0 500 320" preserveAspectRatio="none">
+                        <path d="M 185 209 Q 265 158 325 133" stroke="rgba(165,196,34,.8)" stroke-width="3" fill="none" stroke-dasharray="8,4" />
+                    </svg>
+
+                    <div style="position:absolute;bottom:14px;left:14px;background:rgba(255,255,255,.96);border-radius:12px;padding:12px 16px;box-shadow:0 8px 22px rgba(0,0,0,.08);z-index:20;min-width:180px;font-size:12px;">
+                        <div style="font-weight:700;color:#252525;margin-bottom:4px;">
+                            <i class="fa fa-map-marker" style="color:#e74c3c;"></i> Tu ubicación
+                        </div>
+                        <div style="color:#757575;margin-bottom:6px;">La Unión, Escazú</div>
+                        <span style="background:#e3f2fd;color:#1565c0;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;">
+                            7.3 km desde la academia
+                        </span>
+                    </div>
+                    <div style="position:absolute;top:14px;right:14px;display:flex;flex-direction:column;gap:4px;z-index:20;">
+                        <button style="width:34px;height:34px;background:#fff;border:none;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer;font-size:14px;">+</button>
+                        <button style="width:34px;height:34px;background:#fff;border:none;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer;font-size:14px;">−</button>
+                    </div>
+                </div>
+
+                <div style="background:#eaf7df;border:1px solid #a5c422;border-radius:10px;padding:12px 14px;font-size:13px;margin-top:14px;">
+                    <i class="fa fa-check-circle" style="color:#5f7f16;"></i>
+                    Tu ubicación está dentro de la <strong>Zona B (5–10 km)</strong>. El servicio está disponible.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="dashboard-stat-card" style="min-height:auto; padding:20px; text-align:left;">
+                <h4 style="font-size:15px; font-weight:700; margin-bottom:14px;">
+                    <i class="fa fa-calendar-plus-o" style="color:#a5c422;"></i> Detalles de la solicitud
+                </h4>
+
+                <div class="form-group">
+                    <label>Tipo de clase</label>
+                    <select class="form-control">
+                        <option>Individual (1 persona)</option>
+                        <option>Grupal — familia (máx 4)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Fecha preferida</label>
+                    <input type="date" class="form-control" value="2026-04-07" />
+                </div>
+                <div class="form-group">
+                    <label>Hora preferida</label>
+                    <select class="form-control">
+                        <option>8:00 AM</option>
+                        <option>10:00 AM</option>
+                        <option>3:00 PM</option>
+                        <option>5:00 PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Referencia de acceso</label>
+                    <textarea class="form-control" rows="2" placeholder="Ej: casa color azul, portón negro..."></textarea>
+                </div>
+
+                <hr style="border-color:#f1f1f1; margin: 16px 0;" />
+
+                <h5 style="font-size:14px; font-weight:700; margin-bottom:12px;">
+                    <i class="fa fa-money" style="color:#a5c422;"></i> Cotización estimada
+                </h5>
+                <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                    <tr>
+                        <td style="padding:5px 0; color:#757575;">Clase individual (1h)</td>
+                        <td style="font-weight:700; text-align:right;">₡35,000</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:5px 0; color:#757575;">Desplazamiento (7.3 km × ₡1,200)</td>
+                        <td style="font-weight:700; text-align:right;">₡8,760</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><hr style="margin:8px 0; border-color:#f1f1f1;" /></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:700; font-size:14px;">Total</td>
+                        <td style="font-weight:800; font-size:18px; color:#a5c422; text-align:right;">₡43,760</td>
+                    </tr>
+                </table>
+
+                <div style="background:#e3f2fd;border:1px solid #90caf9;border-radius:10px;padding:10px 13px;font-size:12px;margin:14px 0;">
+                    <i class="fa fa-info-circle" style="color:#1976d2;"></i>
+                    Al confirmar, aceptas el precio de desplazamiento según la zona de cobertura.
+                </div>
+
+                <div class="action-buttons" style="flex-direction:column; gap:8px;">
+                    <button class="dashboard-mini-btn" style="width:100%; text-align:center; justify-content:center;">
+                        <i class="fa fa-map-marker"></i> Confirmar y solicitar
+                    </button>
+                    <button class="dashboard-mini-btn" style="width:100%; text-align:center; background:#757575;">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

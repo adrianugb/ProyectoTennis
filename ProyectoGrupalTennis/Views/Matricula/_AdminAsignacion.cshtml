@@ -1,0 +1,143 @@
+<div class="dashboard-block">
+    <h1 class="page-title">Asignación de Profesores a Clases</h1>
+    <p class="page-subtitle">Asigna instructores a reservas y consulta su disponibilidad semanal.</p>
+
+    <div class="row">
+        <div class="col-md-8">
+            <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 15px;">
+                <i class="fa fa-list" style="color: #a5c422;"></i> Clases sin profesor asignado
+            </h4>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Clase / Reserva</th>
+                            <th>Fecha</th>
+                            <th>Cancha</th>
+                            <th>Alumnos</th>
+                            <th>Asignar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Tenis Principiante — Grupal</strong></td>
+                            <td>09/04 · 9:00 AM</td>
+                            <td>Cancha 1</td>
+                            <td>8</td>
+                            <td>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <select class="form-control" style="max-width: 150px; font-size: 13px; padding: 6px 10px;">
+                                        <option>Seleccionar...</option>
+                                        <option>Prof. López</option>
+                                        <option>Prof. Ramírez</option>
+                                        <option>Prof. Torres</option>
+                                    </select>
+                                    <button class="dashboard-mini-btn" style="padding: 7px 13px; font-size: 12px; white-space: nowrap;">
+                                        <i class="fa fa-check"></i> Asignar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Clase individual — Carlos Vega</strong></td>
+                            <td>10/04 · 4:00 PM</td>
+                            <td>Cancha 3</td>
+                            <td>1</td>
+                            <td>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <select class="form-control" style="max-width: 150px; font-size: 13px; padding: 6px 10px;">
+                                        <option>Seleccionar...</option>
+                                        <option>Prof. López</option>
+                                        <option>Prof. Ramírez</option>
+                                    </select>
+                                    <button class="dashboard-mini-btn" style="padding: 7px 13px; font-size: 12px; white-space: nowrap;">
+                                        <i class="fa fa-check"></i> Asignar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4 style="font-size: 16px; font-weight: 700; margin: 25px 0 15px;">
+                <i class="fa fa-calendar-check-o" style="color: #a5c422;"></i> Asignaciones actuales
+            </h4>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Profesor</th>
+                            <th>Clase</th>
+                            <th>Fecha</th>
+                            <th>Cancha</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Prof. López</strong></td>
+                            <td>Tenis Principiante</td>
+                            <td>07/04 · 8:00 AM</td>
+                            <td>Cancha 2</td>
+                            <td>
+                                <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px; background: #e74c3c;">
+                                    <i class="fa fa-times"></i> Quitar
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Prof. Ramírez</strong></td>
+                            <td>Tenis Intermedio</td>
+                            <td>08/04 · 10:00 AM</td>
+                            <td>Cancha 3</td>
+                            <td>
+                                <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px; background: #e74c3c;">
+                                    <i class="fa fa-times"></i> Quitar
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Prof. Torres</strong></td>
+                            <td>Tenis Avanzado</td>
+                            <td>09/04 · 7:00 AM</td>
+                            <td>Cancha 1</td>
+                            <td>
+                                <button class="dashboard-mini-btn" style="padding: 6px 12px; font-size: 12px; background: #e74c3c;">
+                                    <i class="fa fa-times"></i> Quitar
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 15px;">
+                <i class="fa fa-users" style="color: #a5c422;"></i> Disponibilidad profesores
+            </h4>
+            <div class="dashboard-stat-card" style="min-height: auto; padding: 16px; margin-bottom: 15px; text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <strong>Prof. López</strong>
+                    <span class="badge-soft-success">Disponible</span>
+                </div>
+                <p style="margin: 0; font-size: 13px;">2 clases esta semana &nbsp;·&nbsp; 12 h libres</p>
+            </div>
+            <div class="dashboard-stat-card" style="min-height: auto; padding: 16px; margin-bottom: 15px; text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <strong>Prof. Ramírez</strong>
+                    <span class="badge-soft-warning">Ocupado hoy</span>
+                </div>
+                <p style="margin: 0; font-size: 13px;">4 clases esta semana &nbsp;·&nbsp; 6 h libres</p>
+            </div>
+            <div class="dashboard-stat-card" style="min-height: auto; padding: 16px; margin-bottom: 15px; text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <strong>Prof. Torres</strong>
+                    <span class="badge-soft-success">Disponible</span>
+                </div>
+                <p style="margin: 0; font-size: 13px;">3 clases esta semana &nbsp;·&nbsp; 9 h libres</p>
+            </div>
+        </div>
+    </div>
+</div>

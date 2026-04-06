@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Módulo 15 — Gamificación y Adaptabilidad";
+}
+
+<section id="gami-view" style="padding-top: 80px; padding-bottom: 80px; background: #f7f9fc;">
+    <div class="container">
+
+        <div class="row" style="margin-bottom: 30px;">
+            <div class="col-md-12 text-center">
+                <a href="/Home/Index" class="section-btn btn btn-default">Volver al inicio</a>
+            </div>
+        </div>
+
+        <div class="vista active" id="gami-admin">
+            @await Html.PartialAsync("~/Views/Gamificacion/_AdminGamificacion.cshtml")
+        </div>
+
+        <div class="vista" id="gami-usuario">
+            @await Html.PartialAsync("~/Views/Gamificacion/_UsuarioGamificacion.cshtml")
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        function mostrarVista(id) {
+            document.querySelectorAll('#gami-view .vista').forEach(function (v) {
+                v.classList.remove('active');
+            });
+            var target = document.getElementById(id);
+            if (target) target.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
+}

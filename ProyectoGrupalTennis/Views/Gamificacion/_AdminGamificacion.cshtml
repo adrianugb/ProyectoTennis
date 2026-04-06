@@ -1,0 +1,299 @@
+<div class="dashboard-block">
+    <h1 class="page-title">Módulo 15 — Gamificación y Adaptabilidad</h1>
+    <p class="page-subtitle">Configura el sistema de puntos, niveles, insignias y recompensas para motivar a los alumnos.</p>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-users"></i>
+                <h3>128</h3>
+                <p>Alumnos participando</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-star" style="color:#ffd700;"></i>
+                <h3>14,320</h3>
+                <p>Puntos XP otorgados</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-trophy" style="color:#ffd700;"></i>
+                <h3>47</h3>
+                <p>Insignias desbloqueadas</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-gift" style="color:#e74c3c;"></i>
+                <h3>8</h3>
+                <p>Recompensas canjeadas</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex; gap:0; border-bottom:2px solid #f1f1f1; margin: 20px 0 0; flex-wrap:wrap;" id="gami-tabs">
+        <button onclick="gamiTab('puntos')"   id="gtab-puntos"   style="padding:10px 18px;font-family:inherit;font-size:13px;font-weight:600;border:none;cursor:pointer;border-bottom:3px solid #a5c422;color:#8eab1d;background:none;margin-bottom:-2px;">Reglas de Puntuación</button>
+        <button onclick="gamiTab('niveles')"  id="gtab-niveles"  style="padding:10px 18px;font-family:inherit;font-size:13px;font-weight:600;border:none;cursor:pointer;border-bottom:3px solid transparent;color:#757575;background:none;margin-bottom:-2px;">Niveles y Categorías</button>
+        <button onclick="gamiTab('recomp')"   id="gtab-recomp"   style="padding:10px 18px;font-family:inherit;font-size:13px;font-weight:600;border:none;cursor:pointer;border-bottom:3px solid transparent;color:#757575;background:none;margin-bottom:-2px;">Catálogo de Recompensas</button>
+        <button onclick="gamiTab('ranking')"  id="gtab-ranking"  style="padding:10px 18px;font-family:inherit;font-size:13px;font-weight:600;border:none;cursor:pointer;border-bottom:3px solid transparent;color:#757575;background:none;margin-bottom:-2px;">Ranking Global</button>
+    </div>
+
+    <!-- TAB: PUNTOS -->
+    <div id="gpanel-puntos" style="margin-top:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+            <strong style="font-size:15px;font-weight:700;color:#252525;">
+                <i class="fa fa-star" style="color:#a5c422;"></i> Reglas de Puntuación (XP)
+            </strong>
+            <button class="dashboard-mini-btn" style="padding:8px 14px;font-size:13px;">
+                <i class="fa fa-plus"></i> Nueva regla
+            </button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;border:1px solid #f1f1f1;border-radius:11px;background:#fff;">
+                <div style="width:40px;height:40px;border-radius:10px;background:#eaf7df;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fa fa-calendar-check-o" style="color:#a5c422;font-size:17px;"></i>
+                </div>
+                <div style="flex:1;">
+                    <strong style="font-size:13px;display:block;margin-bottom:2px;">Asistencia a clase</strong>
+                    <span style="font-size:11px;color:#757575;">Por cada clase a la que asista el alumno</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <input type="number" class="form-control" value="50" style="width:65px;text-align:center;padding:6px;" />
+                    <span style="background:#fff9e6;color:#856404;border:1px solid #ffd700;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
+                        <i class="fa fa-star"></i> XP
+                    </span>
+                    <button class="dashboard-mini-btn" style="padding:6px 12px;font-size:12px;background:#757575;">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;border:1px solid #f1f1f1;border-radius:11px;background:#fff;">
+                <div style="width:40px;height:40px;border-radius:10px;background:#fff9e6;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fa fa-trophy" style="color:#ffd700;font-size:17px;"></i>
+                </div>
+                <div style="flex:1;">
+                    <strong style="font-size:13px;display:block;margin-bottom:2px;">Victoria en torneo</strong>
+                    <span style="font-size:11px;color:#757575;">Por ganar un partido en campeonato</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <input type="number" class="form-control" value="200" style="width:65px;text-align:center;padding:6px;" />
+                    <span style="background:#fff9e6;color:#856404;border:1px solid #ffd700;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
+                        <i class="fa fa-star"></i> XP
+                    </span>
+                    <button class="dashboard-mini-btn" style="padding:6px 12px;font-size:12px;background:#757575;">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;border:1px solid #f1f1f1;border-radius:11px;background:#fff;">
+                <div style="width:40px;height:40px;border-radius:10px;background:#e3f2fd;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fa fa-clock-o" style="color:#1976d2;font-size:17px;"></i>
+                </div>
+                <div style="flex:1;">
+                    <strong style="font-size:13px;display:block;margin-bottom:2px;">Puntualidad</strong>
+                    <span style="font-size:11px;color:#757575;">Por llegar antes del inicio de la clase</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <input type="number" class="form-control" value="15" style="width:65px;text-align:center;padding:6px;" />
+                    <span style="background:#fff9e6;color:#856404;border:1px solid #ffd700;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
+                        <i class="fa fa-star"></i> XP
+                    </span>
+                    <button class="dashboard-mini-btn" style="padding:6px 12px;font-size:12px;background:#757575;">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;border:1px solid #f1f1f1;border-radius:11px;background:#fff;">
+                <div style="width:40px;height:40px;border-radius:10px;background:#fff4db;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fa fa-fire" style="color:#f39c12;font-size:17px;"></i>
+                </div>
+                <div style="flex:1;">
+                    <strong style="font-size:13px;display:block;margin-bottom:2px;">Racha 7 días consecutivos</strong>
+                    <span style="font-size:11px;color:#757575;">Bonus por asistencia sin interrupciones</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <input type="number" class="form-control" value="100" style="width:65px;text-align:center;padding:6px;" />
+                    <span style="background:#fff9e6;color:#856404;border:1px solid #ffd700;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
+                        <i class="fa fa-star"></i> XP
+                    </span>
+                    <button class="dashboard-mini-btn" style="padding:6px 12px;font-size:12px;background:#757575;">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;border:1px solid #f1f1f1;border-radius:11px;background:#fff;">
+                <div style="width:40px;height:40px;border-radius:10px;background:#f3e5f5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fa fa-level-up" style="color:#9c27b0;font-size:17px;"></i>
+                </div>
+                <div style="flex:1;">
+                    <strong style="font-size:13px;display:block;margin-bottom:2px;">Avance de nivel técnico</strong>
+                    <span style="font-size:11px;color:#757575;">Registrado por el profesor tras evaluación</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <input type="number" class="form-control" value="150" style="width:65px;text-align:center;padding:6px;" />
+                    <span style="background:#fff9e6;color:#856404;border:1px solid #ffd700;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
+                        <i class="fa fa-star"></i> XP
+                    </span>
+                    <button class="dashboard-mini-btn" style="padding:6px 12px;font-size:12px;background:#757575;">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="action-buttons" style="margin-top:16px;">
+            <button class="dashboard-mini-btn"><i class="fa fa-save"></i> Guardar todas las reglas</button>
+        </div>
+    </div>
+
+    <!-- TAB: NIVELES -->
+    <div id="gpanel-niveles" style="display:none; margin-top:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+            <strong style="font-size:15px;font-weight:700;color:#252525;">
+                <i class="fa fa-bar-chart" style="color:#a5c422;"></i> Niveles y Umbrales de XP
+            </strong>
+            <button class="dashboard-mini-btn" style="padding:8px 14px;font-size:13px;">
+                <i class="fa fa-plus"></i> Agregar nivel
+            </button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;border:1px solid #f1f1f1;border-radius:11px;background:#fff;">
+                <div style="width:38px;height:38px;border-radius:50%;background:#f0f0f0;color:#888;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;">1</div>
+                <div style="flex:1;"><strong style="font-size:13px;">Iniciante</strong><div style="font-size:11px;color:#757575;">0 – 499 XP</div></div>
+                <div style="width:180px;"><div style="background:#f0f0f0;border-radius:20px;height:7px;overflow:hidden;"><div style="background:#aaa;height:100%;width:100%;border-radius:20px;"></div></div></div>
+                <button class="dashboard-mini-btn" style="padding:6px 12px;font-size:12px;background:#757575;"><i class="fa fa-edit"></i></button>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;border:1px solid #f1f1f1;border-radius:11px;background:#fff;">
+                <div style="width:38px;height:38px;border-radius:50%;background:#e8f5e9;color:#388e3c;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;">2</div>
+                <div style="flex:1;"><strong style="font-size:13px;">Aprendiz</strong><div style="font-size:11px;color:#757575;">500 – 1,499 XP</div></div>
+                <div style="width:180px;"><div style="background:#f0f0f0;border-radius:20px;height:7px;overflow:hidden;"><div style="background:#4caf50;height:100%;width:100%;border-radius:20px;"></div></div></div>
+                <button class="dashboard-mini-btn" style="padding:6px 12px;font-size:12px;background:#757575;"><i class="fa fa-edit"></i></button>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;border:2px solid #a5c422;border-radius:11px;background:#fff;">
+                <div style="width:38px;height:38px;border-radius:50%;background:#eaf7df;color:#5f7f16;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;">3</div>
+                <div style="flex:1;"><strong style="font-size:13px;">Competidor</strong><div style="font-size:11px;color:#757575;">1,500 – 3,499 XP · Nivel más común</div></div>
+                <div style="width:180px;"><div style="background:#f0f0f0;border-radius:20px;height:7px;overflow:hidden;"><div style="background:linear-gradient(90deg,#a5c422,#d4e85c);height:100%;width:100%;border-radius:20px;"></div></div></div>
+                <button class="dashboard-mini-btn" style="padding:6px 12px;font-size:12px;background:#757575;"><i class="fa fa-edit"></i></button>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;border:1px solid #f1f1f1;border-radius:11px;background:#fff;">
+                <div style="width:38px;height:38px;border-radius:50%;background:#e3f2fd;color:#1565c0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;">4</div>
+                <div style="flex:1;"><strong style="font-size:13px;">Experto</strong><div style="font-size:11px;color:#757575;">3,500 – 6,999 XP</div></div>
+                <div style="width:180px;"><div style="background:#f0f0f0;border-radius:20px;height:7px;overflow:hidden;"><div style="background:#1976d2;height:100%;width:100%;border-radius:20px;"></div></div></div>
+                <button class="dashboard-mini-btn" style="padding:6px 12px;font-size:12px;background:#757575;"><i class="fa fa-edit"></i></button>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;border:1px solid #f1f1f1;border-radius:11px;background:#fff;">
+                <div style="width:38px;height:38px;border-radius:50%;background:#fff9e6;color:#856404;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;">5</div>
+                <div style="flex:1;"><strong style="font-size:13px;">Élite</strong><div style="font-size:11px;color:#757575;">7,000+ XP</div></div>
+                <div style="width:180px;"><div style="background:#f0f0f0;border-radius:20px;height:7px;overflow:hidden;"><div style="background:linear-gradient(90deg,#ffd700,#ff8c00);height:100%;width:100%;border-radius:20px;"></div></div></div>
+                <button class="dashboard-mini-btn" style="padding:6px 12px;font-size:12px;background:#757575;"><i class="fa fa-edit"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: RECOMPENSAS -->
+    <div id="gpanel-recomp" style="display:none; margin-top:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+            <strong style="font-size:15px;font-weight:700;color:#252525;">
+                <i class="fa fa-gift" style="color:#a5c422;"></i> Catálogo de Recompensas
+            </strong>
+            <button class="dashboard-mini-btn" style="padding:8px 14px;font-size:13px;">
+                <i class="fa fa-plus"></i> Nueva recompensa
+            </button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:13px;padding:14px 16px;border:1px solid #f1f1f1;border-radius:12px;background:#fff;">
+                <span style="font-size:32px;flex-shrink:0;">🎾</span>
+                <div style="flex:1;">
+                    <strong style="font-size:14px;display:block;margin-bottom:2px;">Pelota de tenis gratis</strong>
+                    <span style="font-size:12px;color:#757575;">Canjea por 1 pelota de la tienda</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="background:#fff9e6;color:#856404;border:1px solid #ffd700;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
+                        <i class="fa fa-star"></i> 500 XP
+                    </span>
+                    <button class="dashboard-mini-btn" style="padding:6px 11px;font-size:12px;background:#757575;"><i class="fa fa-edit"></i></button>
+                    <button class="dashboard-mini-btn" style="padding:6px 11px;font-size:12px;background:#e74c3c;"><i class="fa fa-trash"></i></button>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:14px 16px;border:1px solid #f1f1f1;border-radius:12px;background:#fff;">
+                <span style="font-size:32px;flex-shrink:0;">🏆</span>
+                <div style="flex:1;">
+                    <strong style="font-size:14px;display:block;margin-bottom:2px;">Clase individual gratis</strong>
+                    <span style="font-size:12px;color:#757575;">1 clase a elección con cualquier profesor</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="background:#fff9e6;color:#856404;border:1px solid #ffd700;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
+                        <i class="fa fa-star"></i> 1,500 XP
+                    </span>
+                    <button class="dashboard-mini-btn" style="padding:6px 11px;font-size:12px;background:#757575;"><i class="fa fa-edit"></i></button>
+                    <button class="dashboard-mini-btn" style="padding:6px 11px;font-size:12px;background:#e74c3c;"><i class="fa fa-trash"></i></button>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:14px 16px;border:1px solid #f1f1f1;border-radius:12px;background:#fff;">
+                <span style="font-size:32px;flex-shrink:0;">👕</span>
+                <div style="flex:1;">
+                    <strong style="font-size:14px;display:block;margin-bottom:2px;">Camiseta Academia</strong>
+                    <span style="font-size:12px;color:#757575;">Camiseta oficial de la academia</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="background:#fff9e6;color:#856404;border:1px solid #ffd700;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
+                        <i class="fa fa-star"></i> 3,000 XP
+                    </span>
+                    <button class="dashboard-mini-btn" style="padding:6px 11px;font-size:12px;background:#757575;"><i class="fa fa-edit"></i></button>
+                    <button class="dashboard-mini-btn" style="padding:6px 11px;font-size:12px;background:#e74c3c;"><i class="fa fa-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: RANKING -->
+    <div id="gpanel-ranking" style="display:none; margin-top:20px;">
+        <strong style="font-size:15px;font-weight:700;color:#252525;display:block;margin-bottom:16px;">
+            <i class="fa fa-list-ol" style="color:#a5c422;"></i> Ranking Global — Top 5
+        </strong>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:13px;padding:12px 14px;border:1px solid #ffd700;border-radius:12px;background:linear-gradient(90deg,#fff9e6,#fff);">
+                <div style="font-size:18px;font-weight:800;width:28px;text-align:center;">🥇</div>
+                <div style="width:38px;height:38px;border-radius:50%;background:#eaf7df;display:flex;align-items:center;justify-content:center;color:#5f7f16;font-size:14px;font-weight:700;flex-shrink:0;">LA</div>
+                <div style="flex:1;"><strong style="font-size:13px;display:block;">Laura Alvarez</strong><span style="font-size:11px;color:#757575;">Nivel 5 — Élite · Racha: 14 días 🔥</span></div>
+                <strong style="font-size:14px;color:#8eab1d;">8,240 XP</strong>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:12px 14px;border:1px solid #c0c0c0;border-radius:12px;background:linear-gradient(90deg,#f8f8f8,#fff);">
+                <div style="font-size:18px;font-weight:800;width:28px;text-align:center;">🥈</div>
+                <div style="width:38px;height:38px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;color:#1565c0;font-size:14px;font-weight:700;flex-shrink:0;">MG</div>
+                <div style="flex:1;"><strong style="font-size:13px;display:block;">Miguel González</strong><span style="font-size:11px;color:#757575;">Nivel 5 — Élite</span></div>
+                <strong style="font-size:14px;color:#8eab1d;">7,910 XP</strong>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:12px 14px;border:1px solid #cd7f32;border-radius:12px;background:linear-gradient(90deg,#fff5ee,#fff);">
+                <div style="font-size:18px;font-weight:800;width:28px;text-align:center;">🥉</div>
+                <div style="width:38px;height:38px;border-radius:50%;background:#fff5ee;display:flex;align-items:center;justify-content:center;color:#e65100;font-size:14px;font-weight:700;flex-shrink:0;">SV</div>
+                <div style="flex:1;"><strong style="font-size:13px;display:block;">Sofía Vargas</strong><span style="font-size:11px;color:#757575;">Nivel 4 — Experto</span></div>
+                <strong style="font-size:14px;color:#8eab1d;">6,450 XP</strong>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:12px 14px;border:1px solid #f1f1f1;border-radius:12px;background:#fff;">
+                <div style="font-size:16px;font-weight:800;width:28px;text-align:center;color:#757575;">4</div>
+                <div style="width:38px;height:38px;border-radius:50%;background:#f3e5f5;display:flex;align-items:center;justify-content:center;color:#7b1fa2;font-size:14px;font-weight:700;flex-shrink:0;">CR</div>
+                <div style="flex:1;"><strong style="font-size:13px;display:block;">Carlos Rodríguez</strong><span style="font-size:11px;color:#757575;">Nivel 3 — Competidor</span></div>
+                <strong style="font-size:14px;color:#8eab1d;">3,820 XP</strong>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;padding:12px 14px;border:1px solid #f1f1f1;border-radius:12px;background:#fff;">
+                <div style="font-size:16px;font-weight:800;width:28px;text-align:center;color:#757575;">5</div>
+                <div style="width:38px;height:38px;border-radius:50%;background:#e8f5e9;display:flex;align-items:center;justify-content:center;color:#388e3c;font-size:14px;font-weight:700;flex-shrink:0;">AM</div>
+                <div style="flex:1;"><strong style="font-size:13px;display:block;">Ana Mora</strong><span style="font-size:11px;color:#757575;">Nivel 3 — Competidor</span></div>
+                <strong style="font-size:14px;color:#8eab1d;">3,210 XP</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function gamiTab(id) {
+        ['puntos', 'niveles', 'recomp', 'ranking'].forEach(function (t) {
+            document.getElementById('gpanel-' + t).style.display = t === id ? '' : 'none';
+            var btn = document.getElementById('gtab-' + t);
+            btn.style.borderBottomColor = t === id ? '#a5c422' : 'transparent';
+            btn.style.color = t === id ? '#8eab1d' : '#757575';
+        });
+    }
+</script>

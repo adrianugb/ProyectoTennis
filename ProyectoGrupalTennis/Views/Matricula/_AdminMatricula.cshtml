@@ -1,0 +1,86 @@
+<div class="dashboard-block">
+    <h1 class="page-title">Administrador — Módulo 4</h1>
+    <p class="page-subtitle">Gestión de matrículas, reservas, canchas y asignación de profesores.</p>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-graduation-cap"></i>
+                <h3>128</h3>
+                <p>Alumnos matriculados</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-calendar-check-o"></i>
+                <h3>36</h3>
+                <p>Reservas activas</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-th-large"></i>
+                <h3>6</h3>
+                <p>Canchas disponibles</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <i class="fa fa-exclamation-triangle" style="color:#f39c12;"></i>
+                <h3>2</h3>
+                <p>Conflictos de horario</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-md-3">
+            <div class="module-card">
+                <i class="fa fa-graduation-cap"></i>
+                <h3>Matrículas</h3>
+                <p>Gestionar inscripciones a cursos</p>
+                <div class="module-actions">
+                    <button class="module-btn" onclick="mostrarVista('matricula-admin-matriculas')">
+                        Gestionar <i class="fa fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="module-card">
+                <i class="fa fa-calendar"></i>
+                <h3>Reservas</h3>
+                <p>Ver y administrar todas las reservas</p>
+                <div class="module-actions">
+                    <button class="module-btn" onclick="mostrarVista('matricula-admin-reservas')">
+                        Gestionar <i class="fa fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="module-card">
+                <i class="fa fa-th-large"></i>
+                <h3>Canchas</h3>
+                <p>Disponibilidad y mantenimiento</p>
+                <div class="module-actions">
+                    <button class="module-btn" onclick="mostrarVista('matricula-admin-canchas')">
+                        Gestionar <i class="fa fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="module-card">
+                <i class="fa fa-user-plus"></i>
+                <h3>Asignación</h3>
+                <p>Asignar profesores a clases</p>
+                <div class="module-actions">
+                    <button class="module-btn" onclick="mostrarVista('matricula-admin-asignacion')">
+                        Gestionar <i class="fa fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

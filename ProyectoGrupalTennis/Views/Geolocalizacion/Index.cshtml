@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Módulo 10 — Geolocalización para Clases a Domicilio";
+}
+
+<section id="geo-view" style="padding-top: 80px; padding-bottom: 80px; background: #f7f9fc;">
+    <div class="container">
+
+        <div class="row" style="margin-bottom: 30px;">
+            <div class="col-md-12 text-center">
+                <a href="/Home/Index" class="section-btn btn btn-default">Volver al inicio</a>
+            </div>
+        </div>
+
+        <div class="vista active" id="geo-admin">
+            @await Html.PartialAsync("~/Views/Geolocalizacion/_AdminGeo.cshtml")
+        </div>
+
+        <div class="vista" id="geo-admin-config">
+            @await Html.PartialAsync("~/Views/Geolocalizacion/_AdminGeoConfig.cshtml")
+        </div>
+
+        <div class="vista" id="geo-prof">
+            @await Html.PartialAsync("~/Views/Geolocalizacion/_ProfesorGeo.cshtml")
+        </div>
+
+        <div class="vista" id="geo-prof-ubicaciones">
+            @await Html.PartialAsync("~/Views/Geolocalizacion/_ProfesorUbicaciones.cshtml")
+        </div>
+
+        <div class="vista" id="geo-usuario">
+            @await Html.PartialAsync("~/Views/Geolocalizacion/_UsuarioUbicacion.cshtml")
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        function mostrarVista(id) {
+            document.querySelectorAll('#geo-view .vista').forEach(function (v) {
+                v.classList.remove('active');
+            });
+            var target = document.getElementById(id);
+            if (target) target.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
+}
