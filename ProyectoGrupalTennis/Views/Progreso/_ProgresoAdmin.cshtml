@@ -1,25 +1,38 @@
-﻿<div class="page-header">
-    <h1>Progreso Técnico - Administrador</h1>
-    <p>Vista general del control de niveles, métricas y criterios técnicos.</p>
-</div>
+﻿<div class="module-block">
+    <h1 class="module-title">Progreso Técnico - Administrador</h1>
+    <p class="module-subtitle">
+        Vista general del control de niveles, métricas y criterios técnicos.
+    </p>
 
-<div class="card-grid">
-    <div class="stat-card">
-        <h3>6</h3>
-        <p>Niveles definidos</p>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="module-card">
+                <i class="fa fa-signal"></i>
+                <h3>6</h3>
+                <p>Niveles definidos</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="module-card">
+                <i class="fa fa-list-alt"></i>
+                <h3>14</h3>
+                <p>Criterios activos</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="module-card">
+                <i class="fa fa-bar-chart"></i>
+                <h3>180</h3>
+                <p>Evaluaciones registradas</p>
+            </div>
+        </div>
     </div>
 
-    <div class="stat-card">
-        <h3>14</h3>
-        <p>Criterios activos</p>
+    <div class="module-actions">
+        <button class="module-btn" onclick="mostrarVista('progreso-criterios')">
+            Ver criterios técnicos
+        </button>
     </div>
-
-    <div class="stat-card">
-        <h3>180</h3>
-        <p>Evaluaciones registradas</p>
-    </div>
-</div>
-
-<div class="action-row">
-    <button class="btn-custom" onclick="mostrarVista('progreso-criterios')">Ver criterios técnicos</button>
 </div>

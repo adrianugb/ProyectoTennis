@@ -1,28 +1,47 @@
-﻿<div class="page-header">
-    <h1>Feedback - Profesor</h1>
-    <p>Visualización de evaluaciones y comentarios realizados por los alumnos.</p>
-</div>
+﻿<div class="module-block">
+    <h1 class="module-title">Feedback - Profesor</h1>
+    <p class="module-subtitle">
+        Visualización de evaluaciones y comentarios realizados por los alumnos.
+    </p>
 
-<div class="card-grid">
-    <div class="stat-card">
-        <h3>4.8/5</h3>
-        <p>Promedio del profesor</p>
+    <!-- Stats -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="module-card">
+                <i class="fa fa-star"></i>
+                <h3>4.8/5</h3>
+                <p>Promedio del profesor</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="module-card">
+                <i class="fa fa-comments"></i>
+                <h3>38</h3>
+                <p>Comentarios recibidos</p>
+            </div>
+        </div>
     </div>
 
-    <div class="stat-card">
-        <h3>38</h3>
-        <p>Comentarios recibidos</p>
-    </div>
-</div>
-
-<div class="list-box" style="margin-top: 20px;">
-    <div class="list-item">
-        <h4>Comentario destacado</h4>
-        <p>“Muy buena explicación técnica y excelente trato durante la sesión.”</p>
-    </div>
-
-    <div class="list-item">
-        <h4>Oportunidad de mejora</h4>
-        <p>“Sería útil dedicar más tiempo al saque en las próximas clases.”</p>
+    <!-- Comentarios -->
+    <div class="table-responsive" style="margin-top: 25px;">
+        <table class="table report-table">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Comentario</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Comentario destacado</td>
+                    <td>“Muy buena explicación técnica y excelente trato durante la sesión.”</td>
+                </tr>
+                <tr>
+                    <td>Oportunidad de mejora</td>
+                    <td>“Sería útil dedicar más tiempo al saque en las próximas clases.”</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

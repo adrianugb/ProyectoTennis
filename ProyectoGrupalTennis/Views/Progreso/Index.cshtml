@@ -5,16 +5,18 @@
 <link rel="stylesheet" href="~/css/adrian-modulos.css" />
 
 <div class="container" style="padding: 40px 0;">
-    <div class="page-header">
-        <h1>Progreso Técnico del Alumno</h1>
-        <p>Panel general del módulo 16.</p>
+    <div class="module-block">
+        <h1 class="module-title">Progreso Técnico del Alumno</h1>
+        <p class="module-subtitle">Panel general del módulo 16.</p>
+
+        <div class="module-actions" style="margin-bottom: 10px;">
+            <a href="/Home/Index" class="module-btn">Volver al inicio</a>
+        </div>
     </div>
 
-    <div class="action-row" style="margin-bottom: 30px;">
-        <a href="/Home/Index" class="btn-custom">Volver al inicio</a>
+    <div style="margin-top: 30px;">
+        @await Html.PartialAsync("~/Views/Progreso/_ProgresoAdmin.cshtml")
     </div>
-
-    @await Html.PartialAsync("~/Views/Progreso/_ProgresoAdmin.cshtml")
 
     <div style="margin-top: 30px;">
         @await Html.PartialAsync("~/Views/Progreso/_ProgresoCriteriosTecnicos.cshtml")

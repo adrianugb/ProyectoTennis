@@ -1,26 +1,44 @@
-﻿<div class="page-header">
-    <h1>Feedback - Administrador</h1>
-    <p>Consulta general de resultados de satisfacción y evaluación del servicio.</p>
-</div>
+﻿<div class="module-block">
+    <h1 class="module-title">Feedback - Administrador</h1>
+    <p class="module-subtitle">
+        Consulta general de resultados de satisfacción y evaluación del servicio.
+    </p>
 
-<div class="card-grid">
-    <div class="stat-card">
-        <h3>4.7/5</h3>
-        <p>Promedio general</p>
+    <!-- Stats -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="module-card">
+                <i class="fa fa-star"></i>
+                <h3>4.7/5</h3>
+                <p>Promedio general</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="module-card">
+                <i class="fa fa-check-circle"></i>
+                <h3>92%</h3>
+                <p>Encuestas respondidas</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="module-card">
+                <i class="fa fa-comments"></i>
+                <h3>145</h3>
+                <p>Respuestas del mes</p>
+            </div>
+        </div>
     </div>
 
-    <div class="stat-card">
-        <h3>92%</h3>
-        <p>Encuestas respondidas</p>
-    </div>
+    <!-- Acciones -->
+    <div class="module-actions">
+        <button class="module-btn" onclick="mostrarVista('feedback-encuestas')">
+            Configurar encuestas
+        </button>
 
-    <div class="stat-card">
-        <h3>145</h3>
-        <p>Respuestas del mes</p>
+        <button class="module-btn" onclick="mostrarVista('feedback-profesor')">
+            Ver feedback del profesor
+        </button>
     </div>
-</div>
-
-<div class="action-row">
-    <button class="btn-custom" onclick="mostrarVista('feedback-encuestas')">Configurar encuestas</button>
-    <button class="btn-custom" onclick="mostrarVista('feedback-profesor')">Ver feedback del profesor</button>
 </div>

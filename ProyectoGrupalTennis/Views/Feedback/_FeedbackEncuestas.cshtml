@@ -1,24 +1,31 @@
-﻿<div class="page-header">
-    <h1>Configuración de Encuestas</h1>
-    <p>Definición visual de preguntas y criterios de evaluación.</p>
-</div>
+﻿<div class="module-block">
+    <h1 class="module-title">Configuración de Encuestas</h1>
+    <p class="module-subtitle">
+        Definición visual de preguntas y criterios de evaluación.
+    </p>
 
-<div class="form-box">
-    <div class="filters">
-        <input type="text" placeholder="Título de la encuesta" />
-        <select>
-            <option>Después de cada clase</option>
-            <option>Mensual</option>
-            <option>Por curso</option>
-        </select>
+    <div class="row" style="margin-bottom: 15px;">
+        <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Título de la encuesta" />
+        </div>
+
+        <div class="col-md-6">
+            <select class="form-control">
+                <option>Después de cada clase</option>
+                <option>Mensual</option>
+                <option>Por curso</option>
+            </select>
+        </div>
     </div>
 
-    <input type="text" placeholder="Pregunta 1: ¿Cómo califica la clase?" style="margin-bottom: 12px;" />
-    <input type="text" placeholder="Pregunta 2: ¿Cómo califica al profesor?" style="margin-bottom: 12px;" />
-    <input type="text" placeholder="Pregunta 3: Comentarios adicionales" style="margin-bottom: 12px;" />
+    <div style="margin-bottom: 20px;">
+        <input type="text" class="form-control" placeholder="Pregunta 1: ¿Cómo califica la clase?" style="margin-bottom: 10px;" />
+        <input type="text" class="form-control" placeholder="Pregunta 2: ¿Cómo califica al profesor?" style="margin-bottom: 10px;" />
+        <input type="text" class="form-control" placeholder="Pregunta 3: Comentarios adicionales" />
+    </div>
 
-    <div class="action-row">
-        <button class="btn-custom">Guardar configuración</button>
-        <button class="btn-custom" onclick="mostrarVista('feedback-admin')">Volver</button>
+    <div class="module-actions">
+        <button class="module-btn">Guardar configuración</button>
+        <button class="module-btn" onclick="mostrarVista('feedback-admin')">Volver</button>
     </div>
 </div>

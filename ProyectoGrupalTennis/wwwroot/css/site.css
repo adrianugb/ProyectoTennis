@@ -428,3 +428,34 @@ textarea.form-control {
     .caption p {
         color: #ffffff !important;
     }
+.dropdown-menu li a i {
+    margin-right: 10px;
+    width: 18px;
+    text-align: center;
+}
+.dropdown-menu li a i {
+    color: #96ca2d; 
+}
+select.form-control,
+select.form-select {
+    height: 48px;
+    line-height: 48px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+input.form-control {
+    height: 48px;
+}
+
+textarea.form-control {
+    min-height: 160px;
+    padding-top: 14px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #252525;
+}

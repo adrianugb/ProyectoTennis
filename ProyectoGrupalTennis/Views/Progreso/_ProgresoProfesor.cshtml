@@ -1,39 +1,59 @@
-﻿<div class="page-header">
-    <h1>Progreso - Profesor</h1>
-    <p>Seguimiento individual del avance técnico de los alumnos.</p>
-</div>
+﻿<div class="module-block">
+    <h1 class="module-title">Progreso - Profesor</h1>
+    <p class="module-subtitle">
+        Seguimiento individual del avance técnico de los alumnos.
+    </p>
 
-<div class="card-grid">
-    <div class="panel-card">
-        <h3>Alumno seleccionado</h3>
-        <p>Juan Pérez - Nivel Intermedio</p>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="module-card">
+                <i class="fa fa-user"></i>
+                <h3>Alumno seleccionado</h3>
+                <p>Juan Pérez - Nivel Intermedio</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="module-card">
+                <i class="fa fa-calendar"></i>
+                <h3>Última evaluación</h3>
+                <p>Registrada el 28 de marzo de 2026</p>
+            </div>
+        </div>
     </div>
 
-    <div class="panel-card">
-        <h3>Última evaluación</h3>
-        <p>Registrada el 28 de marzo de 2026</p>
+    <div class="table-responsive" style="margin-top: 25px;">
+        <table class="table report-table">
+            <thead>
+                <tr>
+                    <th>Habilidad</th>
+                    <th>Progreso</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Forehand</td>
+                    <td>78%</td>
+                </tr>
+                <tr>
+                    <td>Backhand</td>
+                    <td>70%</td>
+                </tr>
+                <tr>
+                    <td>Saque</td>
+                    <td>65%</td>
+                </tr>
+                <tr>
+                    <td>Desplazamiento</td>
+                    <td>82%</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-</div>
 
-<div class="list-box" style="margin-top: 20px;">
-    <div class="list-item">
-        <h4>Forehand</h4>
-        <div class="progress-line"><span style="width: 78%;"></span></div>
+    <div class="module-actions">
+        <button class="module-btn" onclick="mostrarVista('progreso-registrar')">
+            Registrar métricas
+        </button>
     </div>
-    <div class="list-item">
-        <h4>Backhand</h4>
-        <div class="progress-line"><span style="width: 70%;"></span></div>
-    </div>
-    <div class="list-item">
-        <h4>Saque</h4>
-        <div class="progress-line"><span style="width: 65%;"></span></div>
-    </div>
-    <div class="list-item">
-        <h4>Desplazamiento</h4>
-        <div class="progress-line"><span style="width: 82%;"></span></div>
-    </div>
-</div>
-
-<div class="action-row">
-    <button class="btn-custom" onclick="mostrarVista('progreso-registrar')">Registrar métricas</button>
 </div>

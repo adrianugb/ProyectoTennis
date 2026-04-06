@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="~/css/owl.theme.default.min.css" />
     <link rel="stylesheet" href="~/css/tooplate-style.css" />
     <link rel="stylesheet" href="~/css/site.css?v=2" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body id="top" data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
 
@@ -57,9 +58,19 @@
                     <li><a href="/#team" class="smoothScroll">Doctors</a></li>
                     <li><a href="/#news" class="smoothScroll">News</a></li>
                     <li><a href="/#google-map" class="smoothScroll">Contact</a></li>
-					<li><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Gamificacion">Gamificación</a></li>
-                    <li><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Geolocalizacion">Geolocalización</a></li>
-                    <li><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Matricula">Matrícula</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle nav-link text-dark" data-toggle="dropdown">
+                            <i class="fa fa-th-large"></i> Módulos <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a asp-controller="Home" asp-action="Gamificacion"><i class="fa fa-gamepad"></i> Gamificación</a></li>
+                            <li><a asp-controller="Home" asp-action="Geolocalizacion"><i class="fa fa-map-marker-alt"></i> Geolocalización</a></li>
+                            <li><a asp-controller="Home" asp-action="Matricula"><i class="fa fa-file-signature"></i> Matrícula</a></li>
+                            <li><a asp-controller="Home" asp-action="Dashboard"><i class="fa fa-chart-line"></i> Dashboard y Reportes</a></li>
+                            <li><a asp-controller="Home" asp-action="Notificaciones"><i class="fa fa-bell"></i> Notificaciones</a></li>
+                            <li><a asp-controller="Home" asp-action="Feedback"><i class="fa fa-comments"></i> Feedback y Encuestas</a></li>
+                            <li><a asp-controller="Home" asp-action="Progreso"><i class="fa fa-chart-bar"></i> Progreso Técnico</a></li>
+                        </ul>
+                    </li>
                     <li class="appointment-btn"><a href="/#appointment">Make an appointment</a></li>
 
                 </ul>
