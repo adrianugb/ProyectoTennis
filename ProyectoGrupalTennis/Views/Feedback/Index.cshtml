@@ -1,31 +1,77 @@
 ﻿@{
-    ViewData["Title"] = "Feedback";
+    ViewData["Title"] = "Feedback y Encuestas";
 }
 
-<link rel="stylesheet" href="~/css/adrian-modulos.css" />
+<section id="feedback-view" style="padding-top: 80px; padding-bottom: 80px; background: #f7f9fc;">
+    <div class="container">
 
-<div class="container" style="padding: 40px 0;">
-    <div class="module-block">
-        <h1 class="module-title">Feedback y Encuestas</h1>
+        <div class="module-block">
+            <h1 class="module-title" style="text-align:center;">Módulo 14 - Feedback y Encuestas</h1>
+            <p class="module-subtitle" style="max-width: 850px; margin: 10px auto 30px; text-align:center;">
+                Este módulo permite recopilar la opinión de los alumnos sobre las clases, evaluar el desempeño docente,
+                analizar la calidad de los cursos y visualizar resultados para apoyar la mejora continua de la academia.
+            </p>
 
-        <div class="module-actions" style="margin-bottom: 10px;">
-            <a href="/Home/Index" class="module-btn">Volver al inicio</a>
+            <div class="module-actions" style="justify-content:center; margin-bottom: 30px;">
+                <a href="/Home/Index" class="module-btn">Volver al inicio</a>
+            </div>
+
+            <div class="row" style="margin-bottom: 30px;">
+                <div class="col-md-3 col-sm-6">
+                    <div class="module-card">
+                        <h3>3</h3>
+                        <p>Encuestas activas</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="module-card">
+                        <h3>128</h3>
+                        <p>Respuestas registradas</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="module-card">
+                        <h3>4.7</h3>
+                        <p>Promedio general</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="module-card">
+                        <h3>92%</h3>
+                        <p>Satisfacción global</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module-actions" style="justify-content:center;">
+                <button class="module-btn" onclick="mostrarVista('feedback-admin')">Administrador</button>
+                <button class="module-btn" onclick="mostrarVista('feedback-encuestas')">Configuración</button>
+                <button class="module-btn" onclick="mostrarVista('feedback-profesor')">Profesor</button>
+                <button class="module-btn" onclick="mostrarVista('feedback-usuario')">Alumno</button>
+            </div>
         </div>
-    </div>
 
-    <div style="margin-top: 30px;">
-        @await Html.PartialAsync("~/Views/Feedback/_FeedbackAdmin.cshtml")
-    </div>
+        <div class="vista active" id="feedback-admin">
+            @await Html.PartialAsync("~/Views/Feedback/_FeedbackAdmin.cshtml")
+        </div>
 
-    <div style="margin-top: 30px;">
-        @await Html.PartialAsync("~/Views/Feedback/_FeedbackEncuestas.cshtml")
-    </div>
+        <div class="vista" id="feedback-encuestas">
+            @await Html.PartialAsync("~/Views/Feedback/_FeedbackEncuestas.cshtml")
+        </div>
 
-    <div style="margin-top: 30px;">
-        @await Html.PartialAsync("~/Views/Feedback/_FeedbackProfesor.cshtml")
-    </div>
+        <div class="vista" id="feedback-profesor">
+            @await Html.PartialAsync("~/Views/Feedback/_FeedbackProfesor.cshtml")
+        </div>
 
-    <div style="margin-top: 30px;">
-        @await Html.PartialAsync("~/Views/Feedback/_FeedbackUsuario.cshtml")
+        <div class="vista" id="feedback-usuario">
+            @await Html.PartialAsync("~/Views/Feedback/_FeedbackUsuario.cshtml")
+        </div>
+
     </div>
-</div>
+</section>
+@section Scripts {
+    <script src="~/js/feedback.js"></script>
+}

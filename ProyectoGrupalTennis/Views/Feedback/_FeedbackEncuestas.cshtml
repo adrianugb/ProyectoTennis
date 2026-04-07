@@ -1,31 +1,79 @@
 ﻿<div class="module-block">
-    <h1 class="module-title">Configuración de Encuestas</h1>
+    <h2 class="module-title">Configuración de Encuestas</h2>
     <p class="module-subtitle">
-        Definición visual de preguntas y criterios de evaluación.
+        Define la estructura de las encuestas, la frecuencia de aplicación y los criterios de evaluación que utilizará la academia de tenis para medir la experiencia de los alumnos.
     </p>
 
-    <div class="row" style="margin-bottom: 15px;">
+    <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-6">
-            <input type="text" class="form-control" placeholder="Título de la encuesta" />
+            <label>Título de la encuesta</label>
+            <input type="text" class="form-control" placeholder="Ejemplo: Encuesta de satisfacción del entrenamiento" />
         </div>
 
         <div class="col-md-6">
+            <label>Frecuencia de aplicación</label>
             <select class="form-control">
-                <option>Después de cada clase</option>
-                <option>Mensual</option>
-                <option>Por curso</option>
+                <option>Después de cada entrenamiento</option>
+                <option>Semanal</option>
+                <option>Por grupo</option>
             </select>
         </div>
     </div>
 
-    <div style="margin-bottom: 20px;">
-        <input type="text" class="form-control" placeholder="Pregunta 1: ¿Cómo califica la clase?" style="margin-bottom: 10px;" />
-        <input type="text" class="form-control" placeholder="Pregunta 2: ¿Cómo califica al profesor?" style="margin-bottom: 10px;" />
-        <input type="text" class="form-control" placeholder="Pregunta 3: Comentarios adicionales" />
+    <div class="module-block" style="padding: 25px; margin-bottom: 25px;">
+        <h4 style="margin-bottom: 18px; font-weight: 700; color: #252525;">Preguntas de evaluación</h4>
+
+        <div style="margin-bottom: 12px;">
+            <label>Pregunta 1</label>
+            <input type="text" class="form-control" placeholder="¿Cómo califica la calidad del entrenamiento recibido?" />
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <label>Pregunta 2</label>
+            <input type="text" class="form-control" placeholder="¿Cómo califica el desempeño del entrenador?" />
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <label>Pregunta 3</label>
+            <input type="text" class="form-control" placeholder="¿La sesión cumplió con sus expectativas de aprendizaje y práctica?" />
+        </div>
+
+        <div>
+            <label>Comentarios abiertos</label>
+            <textarea class="form-control" placeholder="Espacio para sugerencias, observaciones o situaciones específicas del entrenamiento"></textarea>
+        </div>
+    </div>
+
+    <div class="module-block" style="padding: 25px; margin-bottom: 25px;">
+        <h4 style="margin-bottom: 18px; font-weight: 700; color: #252525;">Criterios de evaluación</h4>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="module-card">
+                    <h3>Entrenador</h3>
+                    <p>Evalúa claridad en las instrucciones, atención brindada y manejo técnico durante la sesión.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="module-card">
+                    <h3>Entrenamiento</h3>
+                    <p>Mide si la sesión fue dinámica, útil y adecuada al nivel del alumno o grupo.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="module-card">
+                    <h3>Experiencia</h3>
+                    <p>Considera organización, ambiente de práctica y satisfacción general dentro de la academia.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="module-actions">
         <button class="module-btn">Guardar configuración</button>
+        <button class="module-btn">Vista previa</button>
         <button class="module-btn" onclick="mostrarVista('feedback-admin')">Volver</button>
     </div>
 </div>

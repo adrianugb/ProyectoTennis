@@ -1,21 +1,34 @@
 ﻿<div class="module-block">
-    <h1 class="module-title">Encuesta de Satisfacción - Alumno</h1>
+    <h2 class="module-title">Encuesta de Satisfacción - Alumno</h2>
     <p class="module-subtitle">
-        Formulario visual para evaluar la clase, al profesor y el curso.
+        Completa esta encuesta para evaluar tu entrenamiento, el desempeño del entrenador y tu experiencia general en la academia de tenis.
     </p>
 
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-6">
+            <label>Grupo o nivel</label>
+            <input type="text" class="form-control" value="Intermedio Juvenil" readonly />
+        </div>
+
+        <div class="col-md-6">
+            <label>Entrenador</label>
+            <input type="text" class="form-control" value="Carlos Ramírez" readonly />
+        </div>
+    </div>
+
     <div style="margin-bottom: 15px;">
-        <label>¿Cómo califica la clase recibida?</label>
+        <label>¿Cómo califica el entrenamiento recibido?</label>
         <select class="form-control">
             <option>Excelente</option>
-            <option>Muy buena</option>
-            <option>Buena</option>
+            <option>Muy bueno</option>
+            <option>Bueno</option>
             <option>Regular</option>
+            <option>Deficiente</option>
         </select>
     </div>
 
     <div style="margin-bottom: 15px;">
-        <label>¿Cómo califica al profesor?</label>
+        <label>¿Cómo califica el desempeño del entrenador?</label>
         <select class="form-control">
             <option>5 estrellas</option>
             <option>4 estrellas</option>
@@ -25,12 +38,24 @@
         </select>
     </div>
 
+    <div style="margin-bottom: 15px;">
+        <label>¿La sesión cumplió con sus expectativas?</label>
+        <select class="form-control">
+            <option>Totalmente</option>
+            <option>En gran parte</option>
+            <option>Parcialmente</option>
+            <option>Muy poco</option>
+            <option>No cumplió</option>
+        </select>
+    </div>
+
     <div style="margin-bottom: 20px;">
         <label>Comentarios adicionales</label>
-        <textarea class="form-control" rows="5" placeholder="Escriba aquí sus comentarios"></textarea>
+        <textarea class="form-control" rows="5" placeholder="Escriba aquí sus sugerencias, observaciones o comentarios sobre el entrenamiento"></textarea>
     </div>
 
     <div class="module-actions">
         <button class="module-btn">Enviar encuesta</button>
+        <button class="module-btn" onclick="mostrarVista('feedback-admin')">Volver al panel</button>
     </div>
 </div>

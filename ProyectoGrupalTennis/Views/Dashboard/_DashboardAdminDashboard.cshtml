@@ -1,118 +1,234 @@
 ﻿<div class="dashboard-block">
-    <h1 class="page-title">Dashboard Administrativo</h1>
-    <p class="page-subtitle">
-        Visualización de estadísticas generales y filtro por periodo.
-    </p>
+    <div class="dashboard-header">
+        <div>
+            <h1 class="page-title">Dashboard Administrativo</h1>
+            <p class="page-subtitle">
+                Visualización general del comportamiento de la academia con filtros por periodo,
+                métricas clave y seguimiento de actividad.
+            </p>
+        </div>
+
+        <div class="dashboard-status-badge">
+            <i class="fa fa-chart-line"></i> Vista analítica
+        </div>
+    </div>
+
+    <!-- Resumen rápido -->
+    <div class="dashboard-summary-strip">
+        <div class="summary-item">
+            <span class="summary-title">Periodo analizado</span>
+            <strong>Abril 2026</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-title">Total de sesiones</span>
+            <strong>25 sesiones</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-title">Seguimiento promedio</span>
+            <strong>79.7%</strong>
+        </div>
+    </div>
 
     <!-- Filtros -->
+    <div class="dashboard-filter-box">
+        <div class="row">
+            <div class="col-md-3">
+                <label class="filter-label">Fecha inicial</label>
+                <input type="date" class="form-control" value="2026-04-01">
+            </div>
+
+            <div class="col-md-3">
+                <label class="filter-label">Fecha final</label>
+                <input type="date" class="form-control" value="2026-04-30">
+            </div>
+
+            <div class="col-md-3">
+                <label class="filter-label">Periodo rápido</label>
+                <select class="form-control">
+                    <option>Todos los periodos</option>
+                    <option>Últimos 7 días</option>
+                    <option selected>Último mes</option>
+                    <option>Último trimestre</option>
+                </select>
+            </div>
+
+            <div class="col-md-3 d-flex align-items-end">
+                <button class="dashboard-mini-btn" style="width: 100%;">
+                    <i class="fa fa-filter"></i> Aplicar filtro
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicadores rápidos -->
     <div class="row" style="margin-bottom: 30px;">
         <div class="col-md-3">
-            <input type="date" class="form-control">
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-clock"></i>
+                    <span class="stat-badge positive">+8%</span>
+                </div>
+                <h3>25</h3>
+                <p>Sesiones totales</p>
+                <small>Registradas en el periodo actual</small>
+            </div>
         </div>
 
         <div class="col-md-3">
-            <input type="date" class="form-control">
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-user-check"></i>
+                    <span class="stat-badge positive">+6%</span>
+                </div>
+                <h3>128</h3>
+                <p>Participación activa</p>
+                <small>Alumnos con actividad reciente</small>
+            </div>
         </div>
 
         <div class="col-md-3">
-            <select class="form-control">
-                <option>Todos los periodos</option>
-                <option>Últimos 7 días</option>
-                <option>Último mes</option>
-                <option>Último trimestre</option>
-            </select>
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-calendar-check"></i>
+                    <span class="stat-badge neutral">36</span>
+                </div>
+                <h3>36</h3>
+                <p>Clases programadas</p>
+                <small>Distribuidas en el rango seleccionado</small>
+            </div>
         </div>
 
         <div class="col-md-3">
-            <button class="dashboard-mini-btn" style="width: 100%;">
-                Aplicar filtro
-            </button>
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-chart-pie"></i>
+                    <span class="stat-badge positive">Óptimo</span>
+                </div>
+                <h3>79%</h3>
+                <p>Seguimiento promedio</p>
+                <small>Desempeño semanal general</small>
+            </div>
         </div>
     </div>
 
     <!-- Gráficas -->
     <div class="row">
-        <!-- Gráfico 1 -->
         <div class="col-md-6">
-            <div class="dashboard-card">
-                <h3 style="margin-bottom: 20px;">Sesiones por horario</h3>
-                <canvas id="graficoSesiones"></canvas>
+            <div class="dashboard-card chart-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-sun"></i> Sesiones por horario</h3>
+                    <span class="mini-label">Distribución diaria</span>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="graficoSesiones"></canvas>
+                </div>
             </div>
         </div>
 
-        <!-- Gráfico 2 -->
         <div class="col-md-6">
-            <div class="dashboard-card">
-                <h3 style="margin-bottom: 20px;">Seguimiento semanal</h3>
-                <canvas id="graficoSeguimiento"></canvas>
+            <div class="dashboard-card chart-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-chart-line"></i> Seguimiento semanal</h3>
+                    <span class="mini-label">Últimas 4 semanas</span>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="graficoSeguimiento"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Acciones -->
-    <div class="action-buttons">
-        <button class="dashboard-mini-btn"
-                onclick="mostrarVista('dashboard-admin')">
-            Volver
-        </button>
+    <!-- Panel complementario -->
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-md-8">
+            <div class="dashboard-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-table"></i> Resumen operativo</h3>
+                    <span class="mini-label">Vista del periodo</span>
+                </div>
 
-        <button class="dashboard-mini-btn"
-                onclick="mostrarVista('dashboard-admin-reportes')">
-            Ver reportes
-        </button>
+                <div class="table-responsive">
+                    <table class="table custom-table">
+                        <thead>
+                            <tr>
+                                <th>Indicador</th>
+                                <th>Valor actual</th>
+                                <th>Comparativo</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Alumnos activos</td>
+                                <td>128</td>
+                                <td>+12 vs periodo anterior</td>
+                                <td><span class="badge-soft badge-soft-success">En aumento</span></td>
+                            </tr>
+                            <tr>
+                                <td>Clases programadas</td>
+                                <td>36</td>
+                                <td>+4 nuevas clases</td>
+                                <td><span class="badge-soft badge-soft-info">Estable</span></td>
+                            </tr>
+                            <tr>
+                                <td>Seguimiento semanal</td>
+                                <td>79.7%</td>
+                                <td>+5% promedio</td>
+                                <td><span class="badge-soft badge-soft-success">Favorable</span></td>
+                            </tr>
+                            <tr>
+                                <td>Sesiones nocturnas</td>
+                                <td>5</td>
+                                <td>-2 respecto al mes anterior</td>
+                                <td><span class="badge-soft badge-soft-warning">A revisar</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dashboard-card" style="margin-bottom: 20px;">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-lightbulb"></i> Hallazgos rápidos</h3>
+                </div>
+
+                <ul class="dashboard-alert-list">
+                    <li>
+                        <i class="fa fa-check-circle"></i>
+                        La mayor parte de sesiones se concentra en la tarde.
+                    </li>
+                    <li>
+                        <i class="fa fa-arrow-up"></i>
+                        El seguimiento semanal muestra tendencia positiva.
+                    </li>
+                    <li>
+                        <i class="fa fa-exclamation-circle"></i>
+                        El bloque nocturno tiene menor demanda que los demás horarios.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-bolt"></i> Acciones</h3>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="dashboard-mini-btn"
+                            onclick="mostrarVista('dashboard-admin')">
+                        <i class="fa fa-arrow-left"></i> Volver
+                    </button>
+
+                    <button class="dashboard-mini-btn"
+                            onclick="mostrarVista('dashboard-admin-reportes')">
+                        <i class="fa fa-file-alt"></i> Ver reportes
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<script>
-    window.addEventListener('load', function () {
-        const ctxSesiones = document.getElementById('graficoSesiones');
-        const ctxSeguimiento = document.getElementById('graficoSeguimiento');
-
-        if (ctxSesiones && typeof Chart !== 'undefined') {
-            new Chart(ctxSesiones, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Mañana', 'Tarde', 'Noche'],
-                    datasets: [{
-                        data: [8, 12, 5],
-                        backgroundColor: ['#a5c422', '#c7db6d', '#e4efb2'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    },
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-
-        if (ctxSeguimiento && typeof Chart !== 'undefined') {
-            new Chart(ctxSeguimiento, {
-                type: 'line',
-                data: {
-                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
-                    datasets: [{
-                        data: [72, 78, 81, 88],
-                        borderColor: '#a5c422',
-                        backgroundColor: 'rgba(165,196,34,0.15)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-    });
-</script>

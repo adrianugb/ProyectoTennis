@@ -1,47 +1,214 @@
 ﻿<div class="dashboard-block">
-    <h1 class="page-title">Administrador</h1>
-    <p class="page-subtitle">Vista general del panel administrativo de la academia.</p>
-
-    <div class="row">
-        <div class="col-md-3">
-            <div class="dashboard-stat-card">
-                <i class="fa fa-users"></i>
-                <h3>128</h3>
-                <p>Alumnos activos</p>
-            </div>
+    <div class="dashboard-header">
+        <div>
+            <h1 class="page-title">Administrador</h1>
+            <p class="page-subtitle">
+                Panel general con indicadores clave para supervisar el estado actual de la academia.
+            </p>
         </div>
 
-        <div class="col-md-3">
-            <div class="dashboard-stat-card">
-                <i class="fa fa-calendar"></i>
-                <h3>36</h3>
-                <p>Clases programadas</p>
-            </div>
+        <div class="dashboard-status-badge">
+            <i class="fa fa-circle"></i> Actualizado hoy
         </div>
+    </div>
 
-        <div class="col-md-3">
-            <div class="dashboard-stat-card">
-                <i class="fa fa-user"></i>
-                <h3>12</h3>
-                <p>Profesores registrados</p>
+    <!-- Filtros -->
+    <div class="dashboard-filter-box">
+        <div class="row">
+            <div class="col-md-3">
+                <label class="filter-label">Fecha inicial</label>
+                <input type="date" class="form-control" value="2026-04-01">
             </div>
-        </div>
 
-        <div class="col-md-3">
-            <div class="dashboard-stat-card">
-                <i class="fa fa-money"></i>
-                <h3>₡2.4M</h3>
-                <p>Ingresos del periodo</p>
+            <div class="col-md-3">
+                <label class="filter-label">Fecha final</label>
+                <input type="date" class="form-control" value="2026-04-30">
+            </div>
+
+            <div class="col-md-3">
+                <label class="filter-label">Periodo rápido</label>
+                <select class="form-control">
+                    <option selected>Este mes</option>
+                    <option>Últimos 7 días</option>
+                    <option>Último mes</option>
+                    <option>Último trimestre</option>
+                </select>
+            </div>
+
+            <div class="col-md-3 d-flex align-items-end">
+                <button class="dashboard-mini-btn" style="width: 100%;">
+                    <i class="fa fa-filter"></i> Aplicar filtro
+                </button>
             </div>
         </div>
     </div>
 
-    <div class="action-buttons">
-        <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-admin-dashboard')">
-            Ver Dashboard
-        </button>
-        <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-admin-reportes')">
-            Ir a Reportes
-        </button>
+    <!-- Resumen del periodo -->
+    <div class="dashboard-summary-strip">
+        <div class="summary-item">
+            <span class="summary-title">Periodo analizado</span>
+            <strong>01 abril 2026 - 30 abril 2026</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-title">Estado general</span>
+            <strong>Operación estable</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-title">Tendencia</span>
+            <strong>+8% participación</strong>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-users"></i>
+                    <span class="stat-badge positive">+12</span>
+                </div>
+                <h3>128</h3>
+                <p>Alumnos activos</p>
+                <small>Participación actual en la plataforma</small>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-calendar-alt"></i>
+                    <span class="stat-badge neutral">36</span>
+                </div>
+                <h3>36</h3>
+                <p>Clases programadas</p>
+                <small>Carga operativa del periodo seleccionado</small>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-chalkboard-teacher"></i>
+                    <span class="stat-badge positive">Activos</span>
+                </div>
+                <h3>12</h3>
+                <p>Profesores registrados</p>
+                <small>Docentes disponibles para impartir clases</small>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-money-bill-wave"></i>
+                    <span class="stat-badge positive">+5%</span>
+                </div>
+                <h3>₡2.4M</h3>
+                <p>Ingresos del periodo</p>
+                <small>Resumen económico general</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel secundario -->
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-md-8">
+            <div class="dashboard-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-list"></i> Clases programadas</h3>
+                    <span class="mini-label">Vista rápida del periodo</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table custom-table">
+                        <thead>
+                            <tr>
+                                <th>Clase</th>
+                                <th>Profesor</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Cupos</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Natación infantil</td>
+                                <td>Laura Gómez</td>
+                                <td>08/04/2026</td>
+                                <td>8:00 a.m.</td>
+                                <td>18 / 20</td>
+                                <td><span class="badge-soft badge-soft-success">Programada</span></td>
+                            </tr>
+                            <tr>
+                                <td>Fútbol juvenil</td>
+                                <td>Carlos Vega</td>
+                                <td>10/04/2026</td>
+                                <td>3:00 p.m.</td>
+                                <td>20 / 20</td>
+                                <td><span class="badge-soft badge-soft-warning">Llena</span></td>
+                            </tr>
+                            <tr>
+                                <td>Yoga funcional</td>
+                                <td>Andrea Solano</td>
+                                <td>12/04/2026</td>
+                                <td>5:30 p.m.</td>
+                                <td>12 / 20</td>
+                                <td><span class="badge-soft badge-soft-info">Disponible</span></td>
+                            </tr>
+                            <tr>
+                                <td>Defensa personal</td>
+                                <td>Marco Ramírez</td>
+                                <td>15/04/2026</td>
+                                <td>6:00 p.m.</td>
+                                <td>16 / 20</td>
+                                <td><span class="badge-soft badge-soft-success">Programada</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dashboard-card" style="margin-bottom: 20px;">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-bell"></i> Alertas rápidas</h3>
+                </div>
+
+                <ul class="dashboard-alert-list">
+                    <li>
+                        <i class="fa fa-exclamation-circle"></i>
+                        2 clases alcanzaron el límite de cupos.
+                    </li>
+                    <li>
+                        <i class="fa fa-user-clock"></i>
+                        5 alumnos nuevos se registraron esta semana.
+                    </li>
+                    <li>
+                        <i class="fa fa-chart-line"></i>
+                        La participación aumentó respecto al periodo anterior.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-bolt"></i> Accesos rápidos</h3>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-admin-dashboard')">
+                        Ver Dashboard
+                    </button>
+
+                    <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-admin-reportes')">
+                        Ir a Reportes
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

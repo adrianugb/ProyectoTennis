@@ -1,44 +1,92 @@
 ﻿<div class="module-block">
-    <h1 class="module-title">Feedback - Administrador</h1>
+    <h2 class="module-title">Feedback - Administrador</h2>
     <p class="module-subtitle">
-        Consulta general de resultados de satisfacción y evaluación del servicio.
+        Consulta los resultados consolidados de satisfacción de los alumnos, analiza el desempeño de los entrenadores
+        y supervisa la calidad de los entrenamientos ofrecidos por la academia de tenis.
     </p>
 
-    <!-- Stats -->
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3 col-sm-6">
             <div class="module-card">
-                <i class="fa fa-star"></i>
                 <h3>4.7/5</h3>
                 <p>Promedio general</p>
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3 col-sm-6">
             <div class="module-card">
-                <i class="fa fa-check-circle"></i>
                 <h3>92%</h3>
-                <p>Encuestas respondidas</p>
+                <p>Participación en encuestas</p>
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3 col-sm-6">
             <div class="module-card">
-                <i class="fa fa-comments"></i>
                 <h3>145</h3>
                 <p>Respuestas del mes</p>
             </div>
         </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="module-card">
+                <h3>8</h3>
+                <p>Grupos evaluados</p>
+            </div>
+        </div>
     </div>
 
-    <!-- Acciones -->
+    <div class="module-block" style="margin-top: 10px; padding: 25px;">
+        <h4 style="margin-bottom: 18px; font-weight: 700; color: #252525;">Resumen consolidado</h4>
+
+        <div class="table-responsive">
+            <table class="table report-table">
+                <thead>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Entrenador</th>
+                        <th>Promedio</th>
+                        <th>Participación</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Tenis Infantil</td>
+                        <td>María López</td>
+                        <td>4.8/5</td>
+                        <td>95%</td>
+                        <td><span class="badge-soft-success">Excelente</span></td>
+                    </tr>
+                    <tr>
+                        <td>Intermedio Juvenil</td>
+                        <td>Carlos Ramírez</td>
+                        <td>4.5/5</td>
+                        <td>90%</td>
+                        <td><span class="badge-soft-warning">Estable</span></td>
+                    </tr>
+                    <tr>
+                        <td>Avanzado Competitivo</td>
+                        <td>Ana Gómez</td>
+                        <td>4.2/5</td>
+                        <td>88%</td>
+                        <td><span class="badge-soft-danger">Seguimiento</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="module-actions">
         <button class="module-btn" onclick="mostrarVista('feedback-encuestas')">
             Configurar encuestas
         </button>
 
         <button class="module-btn" onclick="mostrarVista('feedback-profesor')">
-            Ver feedback del profesor
+            Ver resultados de entrenadores
+        </button>
+
+        <button class="module-btn" onclick="mostrarVista('feedback-usuario')">
+            Revisar experiencia del alumno
         </button>
     </div>
 </div>

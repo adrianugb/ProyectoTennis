@@ -1,49 +1,66 @@
 ﻿@{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Dashboard y Reportes";
 }
 
-<section id="dashboard-view" style="padding-top: 100px; padding-bottom: 100px; background: #f7f9fc;">
+<section id="dashboard-view" style="padding-top: 80px; padding-bottom: 80px; background: #f7f9fc;">
     <div class="container">
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="section-title text-center">
-                    <h2>Dashboard y Reportes</h2>
-                </div>
-            </div>
-        </div>
-
-        <div class="row" style="margin-bottom: 40px;">
+        <div class="row" style="margin-bottom: 20px;">
             <div class="col-md-12 text-center">
-                <a href="/Home/Index" class="section-btn btn btn-default">
-                    Volver al inicio
-                </a>
+                <h2 style="font-weight: 700;">Dashboard y Reportes</h2>
+                <p style="color:#6b7280;">Panel general para administración, docentes y estudiantes</p>
             </div>
         </div>
 
-        <div class="dashboard-block">
+        <div class="row" style="margin-bottom: 30px;">
+            <div class="col-md-12 text-center">
+                <a href="/Home/Index" class="section-btn btn btn-default">Volver al inicio</a>
+            </div>
+        </div>
+
+        <!-- BOTONES PARA CAMBIAR DE ROL -->
+        <div style="text-align:center; margin-bottom:30px;">
+            <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-admin')">
+                Administrador
+            </button>
+
+            <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-profesor')">
+                Profesor
+            </button>
+
+            <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-usuario-dashboard')">
+                Alumno
+            </button>
+        </div>
+
+        <div class="vista active" id="dashboard-admin">
             @await Html.PartialAsync("~/Views/Dashboard/_DashboardAdmin.cshtml")
         </div>
 
-        <div class="dashboard-block">
+        <div class="vista" id="dashboard-admin-dashboard">
             @await Html.PartialAsync("~/Views/Dashboard/_DashboardAdminDashboard.cshtml")
         </div>
 
-        <div class="dashboard-block">
+        <div class="vista" id="dashboard-admin-reportes">
             @await Html.PartialAsync("~/Views/Dashboard/_DashboardAdminReportes.cshtml")
         </div>
 
-        <div class="dashboard-block">
+        <div class="vista" id="dashboard-profesor">
             @await Html.PartialAsync("~/Views/Dashboard/_DashboardProfesor.cshtml")
         </div>
 
-        <div class="dashboard-block">
+        <div class="vista" id="dashboard-profesor-dashboard">
             @await Html.PartialAsync("~/Views/Dashboard/_DashboardProfesorDashboard.cshtml")
         </div>
 
-        <div class="dashboard-block">
+        <div class="vista" id="dashboard-usuario-dashboard">
             @await Html.PartialAsync("~/Views/Dashboard/_DashboardUsuarioDashboard.cshtml")
         </div>
 
     </div>
 </section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/Dashboard.js"></script>
+}

@@ -1,63 +1,175 @@
 ﻿<div class="dashboard-block">
-    <h1 class="page-title">Dashboard del Alumno</h1>
-    <p class="page-subtitle">
-        Resumen general del progreso, clases y actividad del estudiante.
-    </p>
+    <div class="dashboard-header">
+        <div>
+            <h1 class="page-title">Dashboard del Alumno</h1>
+            <p class="page-subtitle">
+                Resumen general del progreso, clases programadas, asistencia y actividad reciente del estudiante.
+            </p>
+        </div>
+
+        <div class="dashboard-status-badge">
+            <i class="fa fa-user-graduate"></i> Panel personal
+        </div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="dashboard-summary-strip">
+        <div class="summary-item">
+            <span class="summary-title">Estado actual</span>
+            <strong>Buen avance</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-title">Meta principal</span>
+            <strong>Mejorar técnica y constancia</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-title">Rendimiento mensual</span>
+            <strong>87% de asistencia</strong>
+        </div>
+    </div>
 
     <!-- Estadísticas -->
     <div class="row">
         <div class="col-md-3">
             <div class="dashboard-stat-card">
-                <i class="fa fa-calendar"></i>
+                <div class="stat-top">
+                    <i class="fa fa-calendar"></i>
+                    <span class="stat-badge positive">Semana</span>
+                </div>
                 <h3>4</h3>
                 <p>Clases esta semana</p>
+                <small>Sesiones programadas actualmente</small>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="dashboard-stat-card">
-                <i class="fa fa-trophy"></i>
+                <div class="stat-top">
+                    <i class="fa fa-trophy"></i>
+                    <span class="stat-badge positive">+1</span>
+                </div>
                 <h3>2</h3>
                 <p>Torneos inscritos</p>
+                <small>Participación en actividades competitivas</small>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="dashboard-stat-card">
-                <i class="fa fa-signal"></i>
+                <div class="stat-top">
+                    <i class="fa fa-signal"></i>
+                    <span class="stat-badge neutral">Actual</span>
+                </div>
                 <h3>Avanzado</h3>
                 <p>Nivel actual</p>
+                <small>Clasificación del progreso técnico</small>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="dashboard-stat-card">
-                <i class="fa fa-line-chart"></i>
+                <div class="stat-top">
+                    <i class="fa fa-line-chart"></i>
+                    <span class="stat-badge positive">Constante</span>
+                </div>
                 <h3>87%</h3>
                 <p>Asistencia mensual</p>
+                <small>Participación sostenida del estudiante</small>
             </div>
         </div>
     </div>
 
     <!-- Paneles -->
-    <div class="row" style="margin-top: 10px;">
-        <div class="col-md-6">
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-md-8">
             <div class="dashboard-card">
-                <i class="fa fa-clock-o"></i>
-                <h3>Próxima clase</h3>
-                <p>
-                    Martes, 5:00 p.m. con el profesor asignado.
-                </p>
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-calendar-check"></i> Agenda próxima</h3>
+                    <span class="mini-label">Actividades cercanas</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table custom-table">
+                        <thead>
+                            <tr>
+                                <th>Actividad</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Profesor</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Clase de técnica avanzada</td>
+                                <td>Martes</td>
+                                <td>5:00 p.m.</td>
+                                <td>Profesor asignado</td>
+                                <td><span class="badge-soft badge-soft-info">Próxima</span></td>
+                            </tr>
+                            <tr>
+                                <td>Entrenamiento funcional</td>
+                                <td>Jueves</td>
+                                <td>4:00 p.m.</td>
+                                <td>Andrea Solano</td>
+                                <td><span class="badge-soft badge-soft-success">Confirmada</span></td>
+                            </tr>
+                            <tr>
+                                <td>Torneo interno</td>
+                                <td>Sábado</td>
+                                <td>9:00 a.m.</td>
+                                <td>Coordinación deportiva</td>
+                                <td><span class="badge-soft badge-soft-warning">Pendiente</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <div class="dashboard-card" style="margin-bottom: 20px;">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-bullseye"></i> Objetivos técnicos</h3>
+                </div>
+
+                <ul class="dashboard-alert-list">
+                    <li>
+                        <i class="fa fa-check-circle"></i>
+                        Mejorar precisión en ejercicios técnicos.
+                    </li>
+                    <li>
+                        <i class="fa fa-running"></i>
+                        Aumentar resistencia en sesiones largas.
+                    </li>
+                    <li>
+                        <i class="fa fa-star"></i>
+                        Mantener asistencia superior al 85%.
+                    </li>
+                </ul>
+            </div>
+
             <div class="dashboard-card">
-                <i class="fa fa-bullseye"></i>
-                <h3>Objetivos técnicos</h3>
-                <p>
-                    Consulta rápida de metas y habilidades a mejorar.
-                </p>
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-bolt"></i> Resumen rápido</h3>
+                </div>
+
+                <ul class="dashboard-alert-list">
+                    <li>
+                        <i class="fa fa-arrow-up"></i>
+                        El estudiante mantiene una evolución positiva este mes.
+                    </li>
+                    <li>
+                        <i class="fa fa-medal"></i>
+                        Tiene participación activa en torneos y actividades.
+                    </li>
+                    <li>
+                        <i class="fa fa-clock-o"></i>
+                        La próxima clase está programada para esta semana.
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
