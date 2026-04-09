@@ -4,9 +4,10 @@
         Configuración de eventos automáticos y comunicación general.
     </p>
 
+
     <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-3">
-            <select class="form-control">
+            <select id="eventoAdmin" class="form-control">
                 <option>Confirmación de clase</option>
                 <option>Cancelación de clase</option>
                 <option>Reprogramación</option>
@@ -16,7 +17,7 @@
         </div>
 
         <div class="col-md-3">
-            <select class="form-control">
+            <select id="destinatarioAdmin" class="form-control">
                 <option>Todos los alumnos</option>
                 <option>Todos los profesores</option>
                 <option>Grupo específico</option>
@@ -25,7 +26,7 @@
         </div>
 
         <div class="col-md-3">
-            <select class="form-control">
+            <select id="alumnoAdmin" class="form-control">
                 <option>Seleccionar alumno</option>
                 <option>Juan Pérez</option>
                 <option>María López</option>
@@ -35,22 +36,21 @@
         </div>
 
         <div class="col-md-3">
-            <input type="text" class="form-control" placeholder="Asunto de la notificación" />
+            <input id="asuntoAdmin" type="text" class="form-control" placeholder="Asunto de la notificación" />
         </div>
     </div>
 
     <div style="margin-bottom: 20px;">
-        <textarea class="form-control" rows="5" placeholder="Escriba aquí el mensaje de la notificación"></textarea>
+        <textarea id="mensajeAdmin" class="form-control" rows="5" placeholder="Escriba aquí el mensaje de la notificación"></textarea>
     </div>
 
     <div class="module-actions">
-        <button class="module-btn">Enviar notificación</button>
-        <button class="module-btn">Ver historial</button>
+        <button type="button" class="module-btn" onclick="enviarNotificacionAdmin()">Enviar notificación</button>
     </div>
 
     <div class="row" style="margin-top: 30px;">
         <div class="col-md-6">
-            <div class="module-card">
+            <div class="module-card" onclick="mostrarEventosAdmin()" style="cursor:pointer;">
                 <i class="fa fa-bell"></i>
                 <h3>Eventos automáticos</h3>
                 <p>Definición visual de qué acciones generan avisos automáticos en el sistema.</p>
@@ -58,11 +58,74 @@
         </div>
 
         <div class="col-md-6">
-            <div class="module-card">
+            <div class="module-card" onclick="mostrarHistorialAdmin()" style="cursor:pointer;">
                 <i class="fa fa-history"></i>
                 <h3>Historial de envíos</h3>
                 <p>Consulta rápida de notificaciones enviadas a usuarios y profesores.</p>
             </div>
+        </div>
+    </div>
+
+    <div id="eventosAdmin" style="display:none; margin-top: 30px;">
+        <div class="module-card">
+            <h3>Configuración visual de eventos automáticos</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Evento</th>
+                        <th>Canal</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Confirmación de clase</td>
+                        <td>Correo electrónico</td>
+                        <td>Activo</td>
+                    </tr>
+                    <tr>
+                        <td>Cancelación de clase</td>
+                        <td>Sistema interno</td>
+                        <td>Activo</td>
+                    </tr>
+                    <tr>
+                        <td>Pago registrado</td>
+                        <td>Correo + sistema</td>
+                        <td>Activo</td>
+                    </tr>
+                    <tr>
+                        <td>Inscripción a campeonato</td>
+                        <td>Sistema interno</td>
+                        <td>Pendiente</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="historialAdmin" style="display:none; margin-top: 30px;">
+        <div class="module-card">
+            <h3>Historial de envíos</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Evento</th>
+                        <th>Destinatario</th>
+                        <th>Alumno</th>
+                        <th>Asunto</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaHistorialAdmin">
+                    <tr>
+                        <td>Confirmación de clase</td>
+                        <td>Todos los alumnos</td>
+                        <td>Seleccionar alumno</td>
+                        <td>Recordatorio de clase</td>
+                        <td>08/04/2026</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

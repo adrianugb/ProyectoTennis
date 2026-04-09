@@ -4,27 +4,63 @@
         Centro de notificaciones y preferencias de comunicación.
     </p>
 
-    <!-- Cards -->
+    <script>
+            function mostrarPanelAlumno(panel) {
+                document.getElementById("panelPreferenciasAlumno").style.display = "none";
+                document.getElementById("panelTiposAlumno").style.display = "none";
+
+                if (panel === "preferencias") {
+                    document.getElementById("panelPreferenciasAlumno").style.display = "block";
+                } else if (panel === "tipos") {
+                    document.getElementById("panelTiposAlumno").style.display = "block";
+                }
+            }
+
+            function guardarPreferenciasAlumno() {
+                const canal = document.getElementById("canalAlumno").value;
+                const estado = document.getElementById("estadoAlumno").value;
+
+                document.getElementById("textoCanalAlumno").innerText = "Canal principal: " + canal;
+                document.getElementById("textoEstadoAlumno").innerText = "Estado: " + estado;
+
+                alert("Preferencias actualizadas correctamente.");
+            }
+
+            function guardarTiposAlumno() {
+                alert("Tipos de aviso actualizados correctamente.");
+            }
+
+            function verDetalleAlumno(titulo, descripcion, estado) {
+                document.getElementById("detalleAlumno").style.display = "block";
+                document.getElementById("detalleTituloAlumno").innerText = titulo;
+                document.getElementById("detalleDescripcionAlumno").innerText = descripcion;
+                document.getElementById("detalleEstadoAlumno").innerText = estado;
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                mostrarPanelAlumno("preferencias");
+            });
+    </script>
+
     <div class="row">
         <div class="col-md-6">
-            <div class="module-card">
+            <div class="module-card" onclick="mostrarPanelAlumno('preferencias')" style="cursor:pointer;">
                 <i class="fa fa-sliders"></i>
-                <h3>Preferencias</h3>
-                <p>Canal principal: Correo electrónico</p>
-                <p>Estado: Notificaciones activas</p>
+                <h3 style="user-select:none;">Preferencias</h3>
+                <p id="textoCanalAlumno">Canal principal: Correo electrónico</p>
+                <p id="textoEstadoAlumno">Estado: Notificaciones activas</p>
             </div>
         </div>
 
         <div class="col-md-6">
-            <div class="module-card">
+            <div class="module-card" onclick="mostrarPanelAlumno('tipos')" style="cursor:pointer;">
                 <i class="fa fa-envelope"></i>
-                <h3>Tipos de aviso</h3>
+                <h3 style="user-select:none;">Tipos de aviso</h3>
                 <p>Clases, pagos, campeonatos y avance técnico.</p>
             </div>
         </div>
     </div>
 
-    <!-- Tabla -->
     <div class="table-responsive" style="margin-top: 25px;">
         <table class="table report-table">
             <thead>
@@ -32,6 +68,7 @@
                     <th>Notificación</th>
                     <th>Descripción</th>
                     <th>Estado</th>
+                    <th style="text-align:center;">Acción</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,20 +76,101 @@
                     <td>Clase confirmada</td>
                     <td>Tu reserva para el miércoles a las 5:00 p.m. fue confirmada correctamente.</td>
                     <td><span class="badge-soft-success">Recibida</span></td>
+                    <td style="text-align:center;">
+                        <button type="button" class="module-btn"
+                                onclick="verDetalleAlumno('Clase confirmada', 'Tu reserva para el miércoles a las 5:00 p.m. fue confirmada correctamente.', 'Recibida')">
+                            Ver detalle
+                        </button>
+                    </td>
                 </tr>
 
                 <tr>
                     <td>Pago registrado</td>
                     <td>Tu pago mensual fue procesado exitosamente.</td>
                     <td><span class="badge-soft-success">Recibida</span></td>
+                    <td style="text-align:center;">
+                        <button type="button" class="module-btn"
+                                onclick="verDetalleAlumno('Pago registrado', 'Tu pago mensual fue procesado exitosamente.', 'Recibida')">
+                            Ver detalle
+                        </button>
+                    </td>
                 </tr>
 
                 <tr>
                     <td>Avance de nivel</td>
                     <td>Has alcanzado el nivel Intermedio 2. ¡Sigue así!</td>
                     <td><span class="badge-soft-warning">Nueva</span></td>
+                    <td style="text-align:center;">
+                        <button type="button" class="module-btn"
+                                onclick="verDetalleAlumno('Avance de nivel', 'Has alcanzado el nivel Intermedio 2. ¡Sigue así!', 'Nueva')">
+                            Ver detalle
+                        </button>
+                    </td>
                 </tr>
             </tbody>
         </table>
+    </div>
+
+    <div id="panelPreferenciasAlumno" style="display:none; margin-top: 30px;">
+        <div class="module-card">
+            <h3>Configuración de preferencias</h3>
+
+            <div class="row" style="margin-top: 15px;">
+                <div class="col-md-6">
+                    <label>Canal principal</label>
+                    <select id="canalAlumno" class="form-control">
+                        <option>Correo electrónico</option>
+                        <option>SMS</option>
+                        <option>Notificación en plataforma</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Estado</label>
+                    <select id="estadoAlumno" class="form-control">
+                        <option>Notificaciones activas</option>
+                        <option>Solo avisos importantes</option>
+                        <option>Notificaciones desactivadas</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="module-actions" style="margin-top: 20px;">
+                <button type="button" class="module-btn" onclick="guardarPreferenciasAlumno()">Guardar preferencias</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="panelTiposAlumno" style="display:none; margin-top: 30px;">
+        <div class="module-card">
+            <h3>Tipos de aviso</h3>
+
+            <div style="margin-top: 15px;">
+                <label style="display:block; margin-bottom: 10px;">
+                    <input type="checkbox" checked /> Avisos de clases
+                </label>
+                <label style="display:block; margin-bottom: 10px;">
+                    <input type="checkbox" checked /> Avisos de pagos
+                </label>
+                <label style="display:block; margin-bottom: 10px;">
+                    <input type="checkbox" checked /> Avisos de campeonatos
+                </label>
+                <label style="display:block; margin-bottom: 10px;">
+                    <input type="checkbox" checked /> Avisos de avance técnico
+                </label>
+            </div>
+
+            <div class="module-actions" style="margin-top: 20px;">
+                <button type="button" class="module-btn" onclick="guardarTiposAlumno()">Guardar tipos de aviso</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="detalleAlumno" style="display:none; margin-top: 30px;">
+        <div class="module-card">
+            <h3 id="detalleTituloAlumno">Detalle de notificación</h3>
+            <p><strong>Descripción:</strong> <span id="detalleDescripcionAlumno"></span></p>
+            <p><strong>Estado:</strong> <span id="detalleEstadoAlumno"></span></p>
+        </div>
     </div>
 </div>

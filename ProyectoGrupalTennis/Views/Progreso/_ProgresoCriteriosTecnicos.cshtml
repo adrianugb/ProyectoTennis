@@ -4,6 +4,8 @@
         Definición de niveles y métricas para evaluar a los estudiantes.
     </p>
 
+
+
     <div class="table-responsive">
         <table class="table report-table">
             <thead>
@@ -14,30 +16,48 @@
                     <th>Estado</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tablaCriterios">
                 <tr>
                     <td>Básico</td>
                     <td>Control de bola</td>
                     <td>Mantiene rallies cortos</td>
-                    <td><span class="badge-soft-success">Activo</span></td>
+                    <td>
+                        <span class="badge-soft-success" onclick="cambiarEstado(this)" style="cursor:pointer;">
+                            Activo
+                        </span>
+                    </td>
                 </tr>
                 <tr>
                     <td>Intermedio</td>
                     <td>Saque</td>
                     <td>Precisión y consistencia</td>
-                    <td><span class="badge-soft-success">Activo</span></td>
+                    <td>
+                        <span class="badge-soft-success" onclick="cambiarEstado(this)" style="cursor:pointer;">
+                            Activo
+                        </span>
+                    </td>
                 </tr>
                 <tr>
                     <td>Avanzado</td>
                     <td>Desplazamiento</td>
                     <td>Cobertura eficiente de cancha</td>
-                    <td><span class="badge-soft-success">Activo</span></td>
+                    <td>
+                        <span class="badge-soft-success" onclick="cambiarEstado(this)" style="cursor:pointer;">
+                            Activo
+                        </span>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
     <div class="module-actions">
-        <button class="module-btn" onclick="mostrarVista('progreso-admin')">Volver</button>
+        <button type="button" class="module-btn" onclick="agregarCriterio()">
+            Agregar criterio
+        </button>
+
+        <button type="button" class="module-btn" onclick="mostrarVistaProgreso('vista-admin')">
+            Volver
+        </button>
     </div>
 </div>

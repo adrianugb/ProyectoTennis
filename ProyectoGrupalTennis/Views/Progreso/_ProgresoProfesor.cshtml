@@ -22,38 +22,116 @@
         </div>
     </div>
 
+    <div class="module-actions" style="margin-top: 20px;">
+        <button type="button" class="module-btn">Juan Pérez</button>
+        <button type="button" class="module-btn">María López</button>
+        <button type="button" class="module-btn">Carlos Rodríguez</button>
+    </div>
+
     <div class="table-responsive" style="margin-top: 25px;">
         <table class="table report-table">
             <thead>
                 <tr>
                     <th>Habilidad</th>
                     <th>Progreso</th>
+                    <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>Forehand</td>
                     <td>78%</td>
+                    <td>
+                        <button class="module-btn" onclick="mostrarVistaProgreso('vista-metricas')">
+                            Ver detalle
+                        </button>
+                    </td>
                 </tr>
                 <tr>
                     <td>Backhand</td>
                     <td>70%</td>
+                    <td>
+                        <button class="module-btn" onclick="mostrarVistaProgreso('vista-metricas')">
+                            Ver detalle
+                        </button>
+                    </td>
                 </tr>
                 <tr>
                     <td>Saque</td>
                     <td>65%</td>
+                    <td>
+                        <button class="module-btn" onclick="mostrarVistaProgreso('vista-metricas')">
+                            Ver detalle
+                        </button>
+                    </td>
                 </tr>
                 <tr>
                     <td>Desplazamiento</td>
                     <td>82%</td>
+                    <td>
+                        <button class="module-btn" onclick="mostrarVistaProgreso('vista-metricas')">
+                            Ver detalle
+                        </button>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <div class="module-actions">
-        <button class="module-btn" onclick="mostrarVista('progreso-registrar')">
+    <div class="table-responsive" style="margin-top: 25px;">
+        <h3> class="module-title" Historial alumno</h3>
+        <table class="table report-table">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Clase</th>
+                    <th>Promedio</th>
+                    <th>Observación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>28/03/2026</td>
+                    <td>Clase regular</td>
+                    <td>74%</td>
+                    <td>Buen avance general.</td>
+                </tr>
+                <tr>
+                    <td>21/03/2026</td>
+                    <td>Sesión técnica</td>
+                    <td>70%</td>
+                    <td>Debe mejorar el saque.</td>
+                </tr>
+                <tr>
+                    <td>14/03/2026</td>
+                    <td>Clase regular</td>
+                    <td>68%</td>
+                    <td>Mejoró desplazamiento.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="module-card" style="margin-top: 20px;">
+        <h3>Recomendación de avance</h3>
+        <p>El alumno presenta condiciones para avanzar al nivel Avanzado 1.</p>
+
+        <div class="module-actions">
+            <button class="module-btn">Recomendar ascenso</button>
+        </div>
+    </div>
+
+    <div class="module-actions" style="margin-top: 20px;">
+        <button class="module-btn" onclick="mostrarVistaProgreso('vista-metricas')">
             Registrar métricas
+        </button>
+
+        <button class="module-btn" onclick="mostrarVistaProgreso('vista-metricas')">
+            Modificar último registro
+        </button>
+
+        <button class="module-btn" onclick="mostrarVistaProgreso('vista-admin')">
+            Volver al panel
         </button>
     </div>
 </div>

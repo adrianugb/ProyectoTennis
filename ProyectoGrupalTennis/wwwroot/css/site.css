@@ -1000,3 +1000,35 @@ label {
         background: #7cb518;
         color: #fff;
     }
+
+.module-card h3 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.module-card table {
+    width: 95%;
+    margin: 0 auto;
+}
+
+    .module-card table th,
+    .module-card table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+.action-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6f42c1;
+    text-decoration: none;
+}
+
+    .action-link:hover {
+        text-decoration: underline;
+    }
+
+.action-separator {
+    margin: 0 6px;
+    color: #999;
+}

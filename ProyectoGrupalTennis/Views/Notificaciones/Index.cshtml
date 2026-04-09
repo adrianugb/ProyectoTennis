@@ -2,26 +2,34 @@
     ViewData["Title"] = "Notificaciones";
 }
 
-<link rel="stylesheet" href="~/css/adrian-modulos.css" />
+
+
 
 <div class="container" style="padding: 40px 0;">
     <div class="dashboard-block">
         <h1 class="page-title">Notificaciones Automáticas</h1>
+        <p class="page-subtitle">Panel visual para la gestión de avisos, recordatorios y mensajes del sistema.</p>
 
-        <div class="action-buttons" style="margin-bottom: 10px;">
+        <div class="action-buttons" style="margin-bottom: 10px; display:flex; flex-wrap:wrap; gap:10px;">
             <a href="/Home/Index" class="dashboard-mini-btn">Volver al inicio</a>
+            <button type="button" class="dashboard-mini-btn" onclick="mostrarVistaNotificaciones('vista-admin')">Administrador</button>
+            <button type="button" class="dashboard-mini-btn" onclick="mostrarVistaNotificaciones('vista-profesor')">Profesor</button>
+            <button type="button" class="dashboard-mini-btn" onclick="mostrarVistaNotificaciones('vista-usuario')">Usuario</button>
         </div>
     </div>
 
-    <div style="margin-top: 30px;">
+    <div id="vista-admin" class="vista-notificaciones" style="margin-top: 30px;">
         @await Html.PartialAsync("~/Views/Notificaciones/_NotificacionesAdmin.cshtml")
     </div>
 
-    <div style="margin-top: 30px;">
+    <div id="vista-profesor" class="vista-notificaciones" style="margin-top: 30px; display:none;">
         @await Html.PartialAsync("~/Views/Notificaciones/_NotificacionesProfesor.cshtml")
     </div>
 
-    <div style="margin-top: 30px;">
+    <div id="vista-usuario" class="vista-notificaciones" style="margin-top: 30px; display:none;">
         @await Html.PartialAsync("~/Views/Notificaciones/_NotificacionesUsuario.cshtml")
     </div>
 </div>
+@section Scripts {
+    <script src="~/js/Notificaciones.js"></script>
+}

@@ -4,12 +4,36 @@
         Resumen de avisos relacionados con clases, cambios de horario y seguimiento.
     </p>
 
-    <!-- Cards -->
+    <script>
+            function mostrarPanelProfesor(panel) {
+                document.getElementById("panelClasesProfesor").style.display = "none";
+                document.getElementById("panelAvisosProfesor").style.display = "none";
+
+                if (panel === "clases") {
+                    document.getElementById("panelClasesProfesor").style.display = "block";
+                } else if (panel === "avisos") {
+                    document.getElementById("panelAvisosProfesor").style.display = "block";
+                }
+            }
+
+            function mostrarDetalleProfesor(notificacion, fecha, estado, mensaje) {
+                document.getElementById("detalleNotificacionProfesor").style.display = "block";
+                document.getElementById("detalleTituloProfesor").innerText = notificacion;
+                document.getElementById("detalleFechaProfesor").innerText = fecha;
+                document.getElementById("detalleEstadoProfesor").innerText = estado;
+                document.getElementById("detalleMensajeProfesor").innerText = mensaje;
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                mostrarPanelProfesor("clases");
+            });
+    </script>
+
     <div class="row">
         <div class="col-md-6">
-            <div class="module-card">
+            <div class="module-card" onclick="mostrarPanelProfesor('clases')" style="cursor:pointer;">
                 <i class="fa fa-calendar"></i>
-                <h3>Próximas clases</h3>
+                <h3 style="user-select:none;">Próximas clases</h3>
                 <p>
                     Visualización rápida de clases confirmadas, reprogramadas o canceladas.
                 </p>
@@ -17,9 +41,9 @@
         </div>
 
         <div class="col-md-6">
-            <div class="module-card">
+            <div class="module-card" onclick="mostrarPanelProfesor('avisos')" style="cursor:pointer;">
                 <i class="fa fa-users"></i>
-                <h3>Avisos a estudiantes</h3>
+                <h3 style="user-select:none;">Avisos a estudiantes</h3>
                 <p>
                     Consulta de mensajes enviados al grupo o alumnos específicos.
                 </p>
@@ -27,7 +51,6 @@
         </div>
     </div>
 
-    <!-- Tabla -->
     <div class="table-responsive" style="margin-top: 25px;">
         <table class="table report-table">
             <thead>
@@ -44,7 +67,10 @@
                     <td>01 Abril 2026</td>
                     <td><span class="badge-soft-success">Leída</span></td>
                     <td style="text-align:center;">
-                        <button class="module-btn">Ver detalle</button>
+                        <button type="button" class="module-btn"
+                                onclick="mostrarDetalleProfesor('Cambio de horario', '01 Abril 2026', 'Leída', 'La clase del grupo intermedio fue reprogramada para las 4:00 p.m.')">
+                            Ver detalle
+                        </button>
                     </td>
                 </tr>
 
@@ -53,7 +79,10 @@
                     <td>02 Abril 2026</td>
                     <td><span class="badge-soft-warning">Pendiente</span></td>
                     <td style="text-align:center;">
-                        <button class="module-btn">Revisar</button>
+                        <button type="button" class="module-btn"
+                                onclick="mostrarDetalleProfesor('Clase confirmada', '02 Abril 2026', 'Pendiente', 'Se confirmó la clase de técnica individual para el jueves a las 3:00 p.m.')">
+                            Revisar
+                        </button>
                     </td>
                 </tr>
 
@@ -62,10 +91,86 @@
                     <td>03 Abril 2026</td>
                     <td><span class="badge-soft-success">Leída</span></td>
                     <td style="text-align:center;">
-                        <button class="module-btn">Abrir</button>
+                        <button type="button" class="module-btn"
+                                onclick="mostrarDetalleProfesor('Evaluación registrada', '03 Abril 2026', 'Leída', 'Se registró una nueva evaluación técnica para el grupo avanzado.')">
+                            Abrir
+                        </button>
                     </td>
                 </tr>
             </tbody>
         </table>
+    </div>
+
+    <div id="panelClasesProfesor" style="display:none; margin-top: 30px;">
+        <div class="module-card">
+            <h3>Resumen de próximas clases</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Clase</th>
+                        <th>Horario</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Tenis Básico</td>
+                        <td>04 Abril 2026 - 2:00 p.m.</td>
+                        <td>Confirmada</td>
+                    </tr>
+                    <tr>
+                        <td>Tenis Intermedio</td>
+                        <td>05 Abril 2026 - 4:00 p.m.</td>
+                        <td>Reprogramada</td>
+                    </tr>
+                    <tr>
+                        <td>Entrenamiento físico</td>
+                        <td>06 Abril 2026 - 3:00 p.m.</td>
+                        <td>Cancelada</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="panelAvisosProfesor" style="display:none; margin-top: 30px;">
+        <div class="module-card">
+            <h3>Avisos enviados a estudiantes</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Destinatario</th>
+                        <th>Mensaje</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Grupo Juvenil</td>
+                        <td>Recordatorio de uniforme para entrenamiento.</td>
+                        <td>01 Abril 2026</td>
+                    </tr>
+                    <tr>
+                        <td>María López</td>
+                        <td>Actualización de horario de clase individual.</td>
+                        <td>02 Abril 2026</td>
+                    </tr>
+                    <tr>
+                        <td>Grupo Avanzado</td>
+                        <td>Publicación de evaluación técnica semanal.</td>
+                        <td>03 Abril 2026</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="detalleNotificacionProfesor" style="display:none; margin-top: 30px;">
+        <div class="module-card">
+            <h3 id="detalleTituloProfesor">Detalle de la notificación</h3>
+            <p><strong>Fecha:</strong> <span id="detalleFechaProfesor"></span></p>
+            <p><strong>Estado:</strong> <span id="detalleEstadoProfesor"></span></p>
+            <p><strong>Descripción:</strong> <span id="detalleMensajeProfesor"></span></p>
+        </div>
     </div>
 </div>

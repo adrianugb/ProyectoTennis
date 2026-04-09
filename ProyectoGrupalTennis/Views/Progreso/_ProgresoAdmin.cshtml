@@ -6,7 +6,7 @@
 
     <div class="row">
         <div class="col-md-4">
-            <div class="module-card">
+            <div class="module-card" onclick="mostrarVistaProgreso('vista-usuario')" style="cursor:pointer;">
                 <i class="fa fa-signal"></i>
                 <h3>6</h3>
                 <p>Niveles definidos</p>
@@ -14,7 +14,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="module-card">
+            <div class="module-card" onclick="mostrarVistaProgreso('vista-criterios')" style="cursor:pointer;">
                 <i class="fa fa-list-alt"></i>
                 <h3>14</h3>
                 <p>Criterios activos</p>
@@ -22,7 +22,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="module-card">
+            <div class="module-card" onclick="mostrarVistaProgreso('vista-metricas')" style="cursor:pointer;">
                 <i class="fa fa-bar-chart"></i>
                 <h3>180</h3>
                 <p>Evaluaciones registradas</p>
@@ -31,8 +31,43 @@
     </div>
 
     <div class="module-actions">
-        <button class="module-btn" onclick="mostrarVista('progreso-criterios')">
+        <button type="button" class="module-btn" onclick="mostrarVistaProgreso('vista-criterios')">
             Ver criterios técnicos
         </button>
+        <button type="button" class="module-btn" onclick="mostrarVistaProgreso('vista-metricas')">
+            Registrar métricas
+        </button>
+        <button type="button" class="module-btn" onclick="mostrarVistaProgreso('vista-profesor')">
+            Ver seguimiento del profesor
+        </button>
+    </div>
+
+    <div class="table-responsive" style="margin-top: 25px;">
+        <table class="table report-table">
+            <thead>
+                <tr>
+                    <th>Área</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Niveles técnicos</td>
+                    <td><span class="badge-soft-success">Actualizado</span></td>
+                    <td>6</td>
+                </tr>
+                <tr>
+                    <td>Criterios de evaluación</td>
+                    <td><span class="badge-soft-success">Activo</span></td>
+                    <td>14</td>
+                </tr>
+                <tr>
+                    <td>Evaluaciones registradas</td>
+                    <td><span class="badge-soft-warning">En revisión</span></td>
+                    <td>180</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

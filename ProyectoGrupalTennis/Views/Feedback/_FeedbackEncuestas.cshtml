@@ -7,12 +7,12 @@
     <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-6">
             <label>Título de la encuesta</label>
-            <input type="text" class="form-control" placeholder="Ejemplo: Encuesta de satisfacción del entrenamiento" />
+            <input id="tituloEncuesta" type="text" class="form-control" placeholder="Ejemplo: Encuesta de satisfacción del entrenamiento" />
         </div>
 
         <div class="col-md-6">
             <label>Frecuencia de aplicación</label>
-            <select class="form-control">
+            <select id="frecuenciaEncuesta" class="form-control">
                 <option>Después de cada entrenamiento</option>
                 <option>Semanal</option>
                 <option>Por grupo</option>
@@ -25,22 +25,22 @@
 
         <div style="margin-bottom: 12px;">
             <label>Pregunta 1</label>
-            <input type="text" class="form-control" placeholder="¿Cómo califica la calidad del entrenamiento recibido?" />
+            <input id="pregunta1" type="text" class="form-control" placeholder="¿Cómo califica la calidad del entrenamiento recibido?" />
         </div>
 
         <div style="margin-bottom: 12px;">
             <label>Pregunta 2</label>
-            <input type="text" class="form-control" placeholder="¿Cómo califica el desempeño del entrenador?" />
+            <input id="pregunta2" type="text" class="form-control" placeholder="¿Cómo califica el desempeño del entrenador?" />
         </div>
 
         <div style="margin-bottom: 12px;">
             <label>Pregunta 3</label>
-            <input type="text" class="form-control" placeholder="¿La sesión cumplió con sus expectativas de aprendizaje y práctica?" />
+            <input id="pregunta3" type="text" class="form-control" placeholder="¿La sesión cumplió con sus expectativas de aprendizaje y práctica?" />
         </div>
 
         <div>
             <label>Comentarios abiertos</label>
-            <textarea class="form-control" placeholder="Espacio para sugerencias, observaciones o situaciones específicas del entrenamiento"></textarea>
+            <textarea id="comentariosEncuesta" class="form-control" placeholder="Espacio para sugerencias, observaciones o situaciones específicas del entrenamiento"></textarea>
         </div>
     </div>
 
@@ -49,21 +49,21 @@
 
         <div class="row">
             <div class="col-md-4">
-                <div class="module-card">
+                <div class="module-card criterio-card" onclick="seleccionarCriterio(this)" style="cursor:pointer;">
                     <h3>Entrenador</h3>
                     <p>Evalúa claridad en las instrucciones, atención brindada y manejo técnico durante la sesión.</p>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="module-card">
+                <div class="module-card criterio-card" onclick="seleccionarCriterio(this)" style="cursor:pointer;">
                     <h3>Entrenamiento</h3>
                     <p>Mide si la sesión fue dinámica, útil y adecuada al nivel del alumno o grupo.</p>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="module-card">
+                    <div class="module-card criterio-card" onclick="seleccionarCriterio(this)" style="cursor:pointer;">
                     <h3>Experiencia</h3>
                     <p>Considera organización, ambiente de práctica y satisfacción general dentro de la academia.</p>
                 </div>
@@ -72,8 +72,23 @@
     </div>
 
     <div class="module-actions">
-        <button class="module-btn">Guardar configuración</button>
-        <button class="module-btn">Vista previa</button>
+        <button class="module-btn" onclick="guardarConfiguracionEncuesta()">Guardar configuración</button>
+        <button class="module-btn" onclick="mostrarVistaPreviaEncuesta()">Vista previa</button>
         <button class="module-btn" onclick="mostrarVista('feedback-admin')">Volver</button>
+    </div>
+
+    <div id="mensajeGuardadoEncuesta" class="module-card" style="display:none; margin-top: 20px;">
+        <h3>Configuración guardada</h3>
+        <p>La configuración visual de la encuesta fue actualizada correctamente.</p>
+    </div>
+
+    <div id="vistaPreviaEncuesta" class="module-card" style="display:none; margin-top: 20px;">
+        <h3>Vista previa de la encuesta</h3>
+        <p><strong>Título:</strong> <span id="previewTituloEncuesta"></span></p>
+        <p><strong>Frecuencia:</strong> <span id="previewFrecuenciaEncuesta"></span></p>
+        <p><strong>Pregunta 1:</strong> <span id="previewPregunta1"></span></p>
+        <p><strong>Pregunta 2:</strong> <span id="previewPregunta2"></span></p>
+        <p><strong>Pregunta 3:</strong> <span id="previewPregunta3"></span></p>
+        <p><strong>Comentarios abiertos:</strong> <span id="previewComentariosEncuesta"></span></p>
     </div>
 </div>

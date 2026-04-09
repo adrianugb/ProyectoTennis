@@ -2,35 +2,43 @@
     ViewData["Title"] = "Progreso";
 }
 
-<link rel="stylesheet" href="~/css/adrian-modulos.css" />
+
 
 <div class="container" style="padding: 40px 0;">
     <div class="module-block">
         <h1 class="module-title">Progreso Técnico del Alumno</h1>
-        <p class="module-subtitle">Panel general del módulo 16.</p>
 
-        <div class="module-actions" style="margin-bottom: 10px;">
+        <div class="module-actions" style="margin-bottom: 10px; display:flex; flex-wrap:wrap; gap:10px;">
             <a href="/Home/Index" class="module-btn">Volver al inicio</a>
+
+            <button class="module-btn" onclick="mostrarVistaProgreso('vista-admin')">Admin</button>
+            <button class="module-btn" onclick="mostrarVistaProgreso('vista-criterios')">Criterios</button>
+            <button class="module-btn" onclick="mostrarVistaProgreso('vista-profesor')">Profesor</button>
+            <button class="module-btn" onclick="mostrarVistaProgreso('vista-metricas')">Registrar Métricas</button>
+            <button class="module-btn" onclick="mostrarVistaProgreso('vista-usuario')">Alumno</button>
         </div>
     </div>
 
-    <div style="margin-top: 30px;">
+    <div id="vista-admin" class="vista-progreso" style="margin-top: 30px;">
         @await Html.PartialAsync("~/Views/Progreso/_ProgresoAdmin.cshtml")
     </div>
 
-    <div style="margin-top: 30px;">
+    <div id="vista-criterios" class="vista-progreso" style="margin-top: 30px; display:none;">
         @await Html.PartialAsync("~/Views/Progreso/_ProgresoCriteriosTecnicos.cshtml")
     </div>
 
-    <div style="margin-top: 30px;">
+    <div id="vista-profesor" class="vista-progreso" style="margin-top: 30px; display:none;">
         @await Html.PartialAsync("~/Views/Progreso/_ProgresoProfesor.cshtml")
     </div>
 
-    <div style="margin-top: 30px;">
+    <div id="vista-metricas" class="vista-progreso" style="margin-top: 30px; display:none;">
         @await Html.PartialAsync("~/Views/Progreso/_ProgresoRegistrarMetricas.cshtml")
     </div>
 
-    <div style="margin-top: 30px;">
+    <div id="vista-usuario" class="vista-progreso" style="margin-top: 30px; display:none;">
         @await Html.PartialAsync("~/Views/Progreso/_ProgresoUsuario.cshtml")
     </div>
 </div>
+@section Scripts {
+    <script src="~/js/Progreso.js"></script>
+}
