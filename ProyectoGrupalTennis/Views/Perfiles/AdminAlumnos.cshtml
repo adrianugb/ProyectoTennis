@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "Gestión de Alumnos";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Gestión de Alumnos</h1>
+                    <p class="perfil-subtitle">
+                        Consulta, registra, modifica y administra la información general de los alumnos.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-user-graduate"></i> Administración de Alumnos
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Listado de alumnos</h2>
+
+                    <a href="#" class="perfil-btn">
+                        <i class="fa fa-plus"></i> Agregar alumno
+                    </a>
+                </div>
+
+                <div class="perfil-filter-row">
+                    <input type="text" class="form-control" placeholder="Buscar alumno..." />
+
+                    <select class="form-select">
+                        <option>Filtrar por estado</option>
+                        <option>Activo</option>
+                        <option>Inactivo</option>
+                    </select>
+
+                    <select class="form-select">
+                        <option>Filtrar por nivel</option>
+                        <option>Básico</option>
+                        <option>Intermedio</option>
+                        <option>Avanzado</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Alumno</th>
+                                <th>Correo</th>
+                                <th>Teléfono</th>
+                                <th>Nivel</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ALU-001</td>
+                                <td>María González</td>
+                                <td>maria.gonzalez@email.com</td>
+                                <td>8888-1111</td>
+                                <td>Básico</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Editar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Desactivar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>ALU-002</td>
+                                <td>Carlos Ramírez</td>
+                                <td>carlos.ramirez@email.com</td>
+                                <td>8777-2222</td>
+                                <td>Intermedio</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Editar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Desactivar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>ALU-003</td>
+                                <td>Ana López</td>
+                                <td>ana.lopez@email.com</td>
+                                <td>8666-3333</td>
+                                <td>Avanzado</td>
+                                <td><span class="perfil-badge-warning">Inactivo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Editar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Activar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>ALU-004</td>
+                                <td>José Fernández</td>
+                                <td>jose.fernandez@email.com</td>
+                                <td>8555-4444</td>
+                                <td>Básico</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Editar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Desactivar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

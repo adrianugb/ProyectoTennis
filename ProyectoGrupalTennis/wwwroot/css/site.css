@@ -1032,3 +1032,17 @@ label {
     margin: 0 6px;
     color: #999;
 }
+
+.navbar {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+}
+
+    .navbar .navbar-nav > li > a {
+        font-size: 15px !important;
+        padding: 15px 12px !important;
+    }
+
+.navbar-brand {
+    font-size: 20px !important;
+}

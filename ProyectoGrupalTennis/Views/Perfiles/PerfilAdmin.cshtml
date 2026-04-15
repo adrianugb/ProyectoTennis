@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Perfil Administrativo";
+}
+
+<section class="module-block">
+    <div class="dashboard-header">
+        <div>
+            <h1 class="module-title">Panel Administrativo</h1>
+            <p class="module-subtitle">
+                Gestiona cursos, alumnos y profesores desde un solo lugar.
+            </p>
+        </div>
+
+        <div class="dashboard-status-badge">
+            <i class="fa fa-user-shield"></i> Perfil Administrador
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-4 col-sm-6">
+            <div class="module-card">
+                <i class="fa fa-book"></i>
+                <h3>Gestión de Cursos</h3>
+                <p>
+                    Administra el catálogo de cursos, horarios, niveles
+                    y condiciones disponibles en la academia.
+                </p>
+
+                <div class="module-actions">
+                    <a asp-controller="Home" asp-action="AdminCursos" class="module-btn">
+                        Ir a Cursos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6">
+            <div class="module-card">
+                <i class="fa fa-user-graduate"></i>
+                <h3>Gestión de Alumnos</h3>
+                <p>
+                    Consulta, registra, edita y visualiza la información
+                    general de los alumnos de la academia.
+                </p>
+
+                <div class="module-actions">
+                    <a asp-controller="Home" asp-action="AdminAlumnos" class="module-btn">
+                        Ir a Alumnos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6">
+            <div class="module-card">
+                <i class="fa fa-chalkboard-teacher"></i>
+                <h3>Gestión de Profesores</h3>
+                <p>
+                    Visualiza y administra la información relacionada
+                    con los profesores y su participación en la academia.
+                </p>
+
+                <div class="module-actions">
+                    <a asp-controller="Home" asp-action="AdminProfesores" class="module-btn">
+                        Ir a Profesores
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

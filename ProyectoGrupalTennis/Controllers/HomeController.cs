@@ -69,6 +69,44 @@ namespace ProyectoGrupalTennis.Controllers
             return View("~/Views/Auth/Login.cshtml");
         }
 
+        public IActionResult Registro()
+        {
+            return View("~/Views/Auth/Registro.cshtml");
+        }
+
+        public IActionResult RecuperarContrasena()
+        {
+            return View("~/Views/Auth/RecuperarContrasena.cshtml");
+        }
+
+        #endregion
+
+        #region Perfiles
+
+        public IActionResult PerfilAdmin()
+        {
+            return View("~/Views/Perfiles/PerfilAdmin.cshtml");
+        }
+
+        public IActionResult AdminCursos()
+        {
+            return View("~/Views/Perfiles/AdminCursos.cshtml");
+        }
+
+        public IActionResult AdminAlumnos()
+        {
+            return View("~/Views/Perfiles/AdminAlumnos.cshtml");
+        }
+
+        public IActionResult AdminProfesores()
+        {
+            return View("~/Views/Perfiles/AdminProfesores.cshtml");
+        }
+        public IActionResult PerfilUsuario()
+        {
+            return View("~/Views/Perfiles/PerfilUsuario.cshtml");
+        }
+
         #endregion
 
         #region Gamificacion

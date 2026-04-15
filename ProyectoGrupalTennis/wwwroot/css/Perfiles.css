@@ -1,0 +1,520 @@
+﻿/* =========================================
+   PERFILES
+   Perfil Administrativo / Usuario / Profesor
+   ========================================= */
+
+/* CONTENEDOR PRINCIPAL */
+.perfil-page {
+    padding: 30px 0 40px;
+}
+
+.perfil-container {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f1f1;
+}
+
+/* HEADER DEL PERFIL */
+.perfil-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.perfil-title {
+    font-size: 34px;
+    font-weight: 700;
+    color: #252525;
+    margin: 0 0 8px;
+}
+
+.perfil-subtitle {
+    font-size: 15px;
+    color: #757575;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* BADGE DE PERFIL */
+.perfil-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #eef6d3;
+    color: #6f8f12;
+    border-radius: 30px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* GRID DE TARJETAS */
+.perfil-grid .row > div {
+    margin-bottom: 18px;
+}
+
+/* TARJETAS DE MÓDULOS */
+.perfil-card {
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f3f3f3;
+    transition: all 0.3s ease;
+    height: 100%;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+    .perfil-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .perfil-card i {
+        font-size: 34px;
+        color: #a5c422;
+        margin-bottom: 14px;
+        display: inline-block;
+    }
+
+    .perfil-card h3 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #252525;
+        margin-bottom: 12px;
+    }
+
+    .perfil-card p {
+        font-size: 14px;
+        color: #757575;
+        line-height: 1.6;
+        margin-bottom: 18px;
+    }
+
+/* BOTONES */
+.perfil-actions {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.perfil-btn {
+    background: linear-gradient(135deg, #a5c422 0%, #8eab1d 100%);
+    border: none;
+    border-radius: 8px;
+    color: #ffffff !important;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 11px 20px;
+    display: inline-block;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 14px rgba(165, 196, 34, 0.25);
+}
+
+    .perfil-btn:hover {
+        background: linear-gradient(135deg, #93b11f 0%, #7f9919 100%);
+        color: #ffffff !important;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 18px rgba(165, 196, 34, 0.35);
+    }
+
+.perfil-btn-outline {
+    background: transparent;
+    border: 2px solid #a5c422;
+    border-radius: 8px;
+    color: #7f9919 !important;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 18px;
+    display: inline-block;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+}
+
+    .perfil-btn-outline:hover {
+        background: #a5c422;
+        color: #ffffff !important;
+    }
+
+/* RESUMEN / MINI BLOQUES OPCIONALES */
+.perfil-summary-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.perfil-summary-item {
+    background: linear-gradient(135deg, #f8fbec, #ffffff);
+    border-left: 5px solid #a5c422;
+    padding: 16px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+    .perfil-summary-item strong {
+        display: block;
+        font-size: 24px;
+        color: #252525;
+        margin-bottom: 4px;
+    }
+
+    .perfil-summary-item span {
+        display: block;
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+/* TABLAS DE VISTAS INTERNAS */
+.perfil-table-block {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+    border: 1px solid #f3f3f3;
+    margin-bottom: 24px;
+}
+
+.perfil-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.perfil-table-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #252525;
+    margin: 0;
+}
+
+.perfil-filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+    .perfil-filter-row .form-control,
+    .perfil-filter-row .form-select {
+        min-width: 200px;
+        border-radius: 10px;
+        border: 1px solid #e4e4e4;
+        padding: 10px 14px;
+        font-size: 14px;
+        color: #444;
+        background-color: #fff;
+        box-shadow: none;
+    }
+
+        .perfil-filter-row .form-control:focus,
+        .perfil-filter-row .form-select:focus {
+            border-color: #a5c422;
+            box-shadow: 0 0 0 0.15rem rgba(165, 196, 34, 0.20);
+        }
+
+.perfil-table {
+    margin-bottom: 0;
+    background: #fff;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+    .perfil-table thead th {
+        background: #f8f9fa;
+        color: #252525;
+        font-size: 14px;
+        font-weight: 700;
+        border-bottom: 1px solid #ececec;
+        padding: 14px;
+        vertical-align: middle;
+    }
+
+    .perfil-table tbody td {
+        padding: 14px;
+        vertical-align: middle;
+        color: #555;
+        border-bottom: 1px solid #f1f1f1;
+        font-size: 14px;
+    }
+
+    .perfil-table tbody tr:hover {
+        background: #fafdf2;
+        transition: 0.3s;
+    }
+
+/* BADGES DE ESTADO */
+.perfil-badge-success {
+    display: inline-block;
+    background: #eaf7df;
+    color: #5f7f16;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.perfil-badge-warning {
+    display: inline-block;
+    background: #fff4db;
+    color: #b78103;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.perfil-badge-danger {
+    display: inline-block;
+    background: #fde8e8;
+    color: #c0392b;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* LINKS DE ACCIÓN EN TABLAS */
+.perfil-action-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6f42c1;
+    text-decoration: none;
+}
+
+    .perfil-action-link:hover {
+        text-decoration: underline;
+    }
+
+.perfil-action-separator {
+    margin: 0 6px;
+    color: #999;
+}
+
+/* VISTA COMPACTA PARA QUE NO SE HAGA ENORME */
+.perfil-page.compact .perfil-container {
+    padding: 22px;
+}
+
+.perfil-page.compact .perfil-title {
+    font-size: 30px;
+}
+
+.perfil-page.compact .perfil-subtitle {
+    margin-bottom: 0;
+}
+
+.perfil-page.compact .perfil-card {
+    min-height: 220px;
+    padding: 22px 18px;
+}
+
+    .perfil-page.compact .perfil-card i {
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
+
+    .perfil-page.compact .perfil-card h3 {
+        font-size: 21px;
+        margin-bottom: 10px;
+    }
+
+    .perfil-page.compact .perfil-card p {
+        font-size: 13px;
+        margin-bottom: 14px;
+    }
+
+/* RESPONSIVE */
+@media (max-width: 991px) {
+    .perfil-title {
+        font-size: 28px;
+    }
+
+    .perfil-container {
+        padding: 22px;
+    }
+
+    .perfil-card {
+        min-height: auto;
+    }
+
+    .perfil-actions {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .perfil-page {
+        padding: 20px 0 30px;
+    }
+
+    .perfil-title {
+        font-size: 24px;
+    }
+
+    .perfil-subtitle {
+        font-size: 14px;
+    }
+
+    .perfil-table-header {
+        align-items: flex-start;
+    }
+
+    .perfil-filter-row {
+        flex-direction: column;
+    }
+
+        .perfil-filter-row .form-control,
+        .perfil-filter-row .form-select {
+            width: 100%;
+            min-width: 100%;
+        }
+}
+/* =========================================
+   ADMIN / CURSOS
+   Gestión de Cursos
+   ========================================= */
+
+.perfil-table-block {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+    border: 1px solid #f3f3f3;
+    margin-bottom: 24px;
+}
+
+.perfil-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.perfil-table-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #252525;
+    margin: 0;
+}
+
+.perfil-filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+    .perfil-filter-row .form-control,
+    .perfil-filter-row .form-select {
+        min-width: 200px;
+        border-radius: 10px;
+        border: 1px solid #e4e4e4;
+        padding: 10px 14px;
+        font-size: 14px;
+        color: #444;
+        background-color: #fff;
+        box-shadow: none;
+    }
+
+        .perfil-filter-row .form-control:focus,
+        .perfil-filter-row .form-select:focus {
+            border-color: #a5c422;
+            box-shadow: 0 0 0 0.15rem rgba(165, 196, 34, 0.20);
+        }
+
+.perfil-table {
+    width: 100%;
+    margin-bottom: 0;
+    background: #fff;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+    .perfil-table thead th {
+        background: #f8f9fa;
+        color: #252525;
+        font-size: 14px;
+        font-weight: 700;
+        border-bottom: 1px solid #ececec;
+        padding: 14px;
+        vertical-align: middle;
+    }
+
+    .perfil-table tbody td {
+        padding: 14px;
+        vertical-align: middle;
+        color: #555;
+        border-bottom: 1px solid #f1f1f1;
+        font-size: 14px;
+    }
+
+    .perfil-table tbody tr:hover {
+        background: #fafdf2;
+        transition: 0.3s;
+    }
+
+.perfil-badge-success {
+    display: inline-block;
+    background: #eaf7df;
+    color: #5f7f16;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.perfil-badge-warning {
+    display: inline-block;
+    background: #fff4db;
+    color: #b78103;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.perfil-badge-danger {
+    display: inline-block;
+    background: #fde8e8;
+    color: #c0392b;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.perfil-action-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6f42c1;
+    text-decoration: none;
+}
+
+    .perfil-action-link:hover {
+        text-decoration: underline;
+    }
+
+.perfil-action-separator {
+    margin: 0 6px;
+    color: #999;
+}

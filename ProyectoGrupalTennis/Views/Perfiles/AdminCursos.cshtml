@@ -1,0 +1,129 @@
+﻿@{
+    ViewData["Title"] = "Gestión de Cursos";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Gestión de Cursos</h1>
+                    <p class="perfil-subtitle">
+                        Consulta, registra, modifica y administra los cursos disponibles de la academia.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-book"></i> Administración de Cursos
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Listado de cursos</h2>
+
+                    <a href="#" class="perfil-btn">
+                        <i class="fa fa-plus"></i> Agregar curso
+                    </a>
+                </div>
+
+                <div class="perfil-filter-row">
+                    <input type="text" class="form-control" placeholder="Buscar curso..." />
+
+                    <select class="form-select">
+                        <option>Filtrar por nivel</option>
+                        <option>Básico</option>
+                        <option>Intermedio</option>
+                        <option>Avanzado</option>
+                    </select>
+
+                    <select class="form-select">
+                        <option>Filtrar por estado</option>
+                        <option>Activo</option>
+                        <option>Inactivo</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Curso</th>
+                                <th>Nivel</th>
+                                <th>Horario</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CUR-001</td>
+                                <td>Tenis Infantil</td>
+                                <td>Básico</td>
+                                <td>Lunes y Miércoles, 4:00 PM</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Editar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Desactivar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>CUR-002</td>
+                                <td>Tenis Juvenil</td>
+                                <td>Intermedio</td>
+                                <td>Martes y Jueves, 5:00 PM</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Editar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Desactivar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>CUR-003</td>
+                                <td>Tenis Avanzado</td>
+                                <td>Avanzado</td>
+                                <td>Viernes, 6:00 PM</td>
+                                <td><span class="perfil-badge-warning">Inactivo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Editar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Activar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>CUR-004</td>
+                                <td>Tenis para Adultos</td>
+                                <td>Básico</td>
+                                <td>Sábado, 9:00 AM</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Editar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Desactivar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
