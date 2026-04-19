@@ -1,0 +1,50 @@
+@model ProyectoGrupalTennis.Models.Offer
+
+@{
+    ViewData["Title"] = "Crear Oferta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container" style="padding:40px 0;">
+    <h2>Crear Oferta</h2>
+
+    <form asp-controller="Offers" asp-action="Create" method="post">
+        <div class="form-group">
+            <label>Código</label>
+            <input asp-for="Code" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Descripción</label>
+            <input asp-for="Description" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Porcentaje (ej. 15 para 15%)</label>
+            <input asp-for="DiscountPercentage" class="form-control" type="number" step="0.01" />
+        </div>
+
+        <div class="form-group">
+            <label>Descuento Fijo (USD)</label>
+            <input asp-for="FixedDiscount" class="form-control" type="number" step="0.01" />
+        </div>
+
+        <div class="form-group">
+            <label>Activo</label>
+            <input asp-for="IsActive" type="checkbox" />
+        </div>
+
+        <div class="form-group">
+            <label>Válido desde</label>
+            <input asp-for="ValidFrom" class="form-control" type="date" />
+        </div>
+
+        <div class="form-group">
+            <label>Válido hasta</label>
+            <input asp-for="ValidTo" class="form-control" type="date" />
+        </div>
+
+        <button class="btn btn-success" type="submit">Crear</button>
+        <a asp-controller="Offers" asp-action="Index" class="btn btn-default">Cancelar</a>
+    </form>
+</div>

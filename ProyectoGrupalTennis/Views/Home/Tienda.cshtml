@@ -1,0 +1,177 @@
+﻿@{
+    ViewData["Title"] = "Tienda - Implementos de Tennis";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section id="shop" class="service" style="padding: 80px 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center section-title">
+                <h2>Tienda de Implementos</h2>
+                <p>Encuentra raquetas, pelotas y accesorios seleccionados para mejorar tu juego.</p>
+            </div>
+
+            <div class="col-md-3 col-sm-12">
+                <div class="news-ads sidebar-ads">
+                    <h4>Categorías</h4>
+                    <ul class="news-categories" style="margin-top:12px;">
+                        <li><a href="#">Raquetas</a></li><br />
+                        <li><a href="#">Pelotas</a></li><br />
+                        <li><a href="#">Accesorios</a></li><br />
+                        <li><a href="#">Promociones</a></li>
+                    </ul>
+
+                    <hr />
+
+                    <h4>Filtro de precio</h4>
+                    <p>
+                        <input type="range" min="5" max="500" value="100" style="width:100%;" />
+                    </p>
+
+                    <a href="#" class="btn btn-gray btn-block">Aplicar</a>
+                </div>
+            </div>
+
+            <div class="col-md-9 col-sm-12">
+                <div class="row">
+
+                    <!-- Producto 1 -->
+                    <div class="col-md-4 col-sm-6">
+                        <div class="news-thumb team-thumb">
+                            <img src="~/images/raquetapro.jpg" alt="Raqueta Pro" style="width:100%; height:220px; object-fit:cover;" />
+                            <div class="team-info news-info">
+                                <h3>Raqueta Pro 300</h3>
+                                <p>Raqueta ligera para control y potencia. Ideal jugadores intermedios y avanzados.</p>
+                                <span class="text-muted">Marca: AceTennis</span>
+                                <div class="author" style="margin-top:10px;">
+                                    <strong class="product-price" data-price="199.99" style="font-size:18px; color:#222;">₡1900.0</strong>
+                                </div>
+
+                                <div class="mt-3">
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control coupon-code" placeholder="Código descuento" />
+                                        <div class="input-group-append">
+                                            <button class="btn section-btn apply-coupon" type="button">Aplicar</button>
+                                        </div>
+                                    </div>
+
+                                    <a href="#" class="btn section-btn">Comprar</a>
+                                    <a href="#" class="btn btn-default">Ver detalle</a>
+                                </div>
+
+                                <div class="coupon-result mt-2" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Producto 2 -->
+                    <div class="col-md-4 col-sm-6">
+                        <div class="news-thumb team-thumb">
+                            <img src="~/images/pelotas.jpg" alt="Pelotas" style="width:100%; height:220px; object-fit:cover;" />
+                            <div class="team-info news-info">
+                                <h3>Pelotas Tournament Pack (3)</h3>
+                                <p>Pack oficial de 3 pelotas de alta durabilidad, presión estándar.</p>
+                                <span class="text-muted">Paquete x3</span>
+                                <div class="author" style="margin-top:10px;">
+                                    <strong class="product-price" data-price="14.99" style="font-size:18px; color:#222;">₡14990.0</strong>
+                                </div>
+
+                                <div class="mt-3">
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control coupon-code" placeholder="Código descuento" />
+                                        <div class="input-group-append">
+                                            <button class="btn section-btn apply-coupon" type="button">Aplicar</button>
+                                        </div>
+                                    </div>
+
+                                    <a href="#" class="btn section-btn">Agregar al carrito</a>
+                                    <a href="#" class="btn btn-default">Ver detalle</a>
+                                </div>
+
+                                <div class="coupon-result mt-2" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Producto 3 -->
+                    <div class="col-md-4 col-sm-6">
+                        <div class="news-thumb team-thumb">
+                            <img src="~/images/overgrip.jpg" alt="Overgrip" style="width:100%; height:220px; object-fit:cover;" />
+                            <div class="team-info news-info">
+                                <h3>Overgrip GripPlus (Pack 5)</h3>
+                                <p>Agarre cómodo y antideslizante para mayor control en cada golpe.</p>
+                                <span class="text-muted">Pack x5</span>
+                                <div class="author" style="margin-top:10px;">
+                                    <strong class="product-price" data-price="9.50" style="font-size:18px; color:#222;">₡9500</strong>
+                                </div>
+
+                                <div class="mt-3">
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control coupon-code" placeholder="Código descuento" />
+                                        <div class="input-group-append">
+                                            <button class="btn section-btn apply-coupon" type="button">Aplicar</button>
+                                        </div>
+                                    </div>
+
+                                    <a href="#" class="btn section-btn">Agregar al carrito</a>
+                                    <a href="#" class="btn btn-default">Ver detalle</a>
+                                </div>
+
+                                <div class="coupon-result mt-2" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Más productos de ejemplo (puedes duplicar y cambiar datos) -->
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-center" style="margin-top:30px;">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item disabled"><a class="page-link" href="#">«</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">»</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('.apply-coupon').on('click', function () {
+                var container = $(this).closest('.news-info');
+                var code = container.find('.coupon-code').val() || '';
+                var price = parseFloat(container.find('.product-price').data('price')) || 0;
+
+                if (!code) {
+                    container.find('.coupon-result').show().css('color', 'orange').text('Ingrese un código.');
+                    return;
+                }
+
+                $.post('/Offers/ApplyCoupon', { code: code, price: price })
+                    .done(function (res) {
+                        if (res.success) {
+                            container.find('.coupon-result')
+                                .show()
+                                .css('color', 'green')
+                                .html(res.message + '<br/>Total con descuento: <strong>' + res.newTotal.toFixed(2) + '</strong>');
+                        } else {
+                            container.find('.coupon-result').show().css('color', 'red').text(res.message);
+                        }
+                    })
+                    .fail(function () {
+                        container.find('.coupon-result').show().css('color', 'red').text('Error al validar el código.');
+                    });
+            });
+        });
+    </script>
+}

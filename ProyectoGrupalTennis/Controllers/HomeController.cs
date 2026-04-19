@@ -18,6 +18,12 @@ namespace ProyectoGrupalTennis.Controllers
             return View();
         }
 
+       
+        public IActionResult Tienda()
+        {
+            return View("~/Views/Home/Tienda.cshtml");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

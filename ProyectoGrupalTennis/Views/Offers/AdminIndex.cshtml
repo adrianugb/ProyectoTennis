@@ -1,0 +1,50 @@
+@model IEnumerable<ProyectoGrupalTennis.Models.Offer>
+
+@{
+    ViewData["Title"] = "Administrar Ofertas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container" style="padding:40px 0;">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Administrar Ofertas</h2>
+            <p>
+                <a asp-controller="Offers" asp-action="Create" class="btn btn-success">Nueva Oferta</a>
+            </p>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Porcentaje</th>
+                        <th>Fijo</th>
+                        <th>Activo</th>
+                        <th>Validez</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td>@o.Code</td>
+                            <td>@o.Description</td>
+                            <td>@(o.DiscountPercentage > 0 ? $"{o.DiscountPercentage} %" : "-")</td>
+                            <td>@(o.FixedDiscount > 0 ? $"{o.FixedDiscount:C2}" : "-")</td>
+                            <td>@(o.IsActive ? "Sí" : "No")</td>
+                            <td>@(o.ValidFrom?.ToString("yyyy-MM-dd") ?? "-") - @(o.ValidTo?.ToString("yyyy-MM-dd") ?? "-")</td>
+                            <td>
+                                <a asp-controller="Offers" asp-action="Edit" asp-route-id="@o.Id" class="btn btn-sm btn-primary">Editar</a>
+                                <form asp-controller="Offers" asp-action="Delete" asp-route-id="@o.Id" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Eliminar oferta?');">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
