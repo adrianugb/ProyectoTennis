@@ -1,0 +1,121 @@
+﻿@{
+    ViewData["Title"] = "Alumnos del Profesor";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Mis Alumnos</h1>
+                    <p class="perfil-subtitle">
+                        Visualiza la información relevante de los alumnos asignados a tus cursos.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-users"></i> Gestión de Alumnos
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Listado de alumnos</h2>
+
+                    <div class="perfil-actions">
+                        <a asp-controller="Home" asp-action="PerfilProfesor" class="perfil-btn-outline">
+                            <i class="fa fa-arrow-left"></i> Regresar
+                        </a>
+                    </div>
+                </div>
+
+                <div class="perfil-filter-row">
+                    <input type="text" class="form-control" placeholder="Buscar alumno..." />
+
+                    <select class="form-select">
+                        <option>Filtrar por curso</option>
+                        <option>Tenis Infantil</option>
+                        <option>Tenis Juvenil</option>
+                        <option>Tenis Avanzado</option>
+                    </select>
+
+                    <select class="form-select">
+                        <option>Filtrar por nivel</option>
+                        <option>Básico</option>
+                        <option>Intermedio</option>
+                        <option>Avanzado</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Alumno</th>
+                                <th>Correo</th>
+                                <th>Curso</th>
+                                <th>Nivel</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ALU-001</td>
+                                <td>María González</td>
+                                <td>maria.gonzalez@email.com</td>
+                                <td>Tenis Infantil</td>
+                                <td>Básico</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>ALU-002</td>
+                                <td>Carlos Ramírez</td>
+                                <td>carlos.ramirez@email.com</td>
+                                <td>Tenis Juvenil</td>
+                                <td>Intermedio</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>ALU-003</td>
+                                <td>Ana López</td>
+                                <td>ana.lopez@email.com</td>
+                                <td>Tenis Avanzado</td>
+                                <td>Avanzado</td>
+                                <td><span class="perfil-badge-warning">Inactivo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>ALU-004</td>
+                                <td>José Fernández</td>
+                                <td>jose.fernandez@email.com</td>
+                                <td>Tenis Infantil</td>
+                                <td>Básico</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "Facturación";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Facturación</h1>
+                    <p class="perfil-subtitle">
+                        Genera facturas, consulta comprobantes y administra la información de facturación.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-file-text"></i> Facturación
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+
+                    <a asp-controller="Home" asp-action="AdminFacturacion" class="perfil-btn-outline">
+                        <i class="fa fa-arrow-left"></i> Regresar
+                    </a>
+                    <h2 class="perfil-table-title">Listado de facturas</h2>
+
+                    <div class="perfil-actions">
+                        <a href="#" class="perfil-btn">
+                            <i class="fa fa-file-text"></i> Generar factura
+                        </a>
+
+                        <a href="#" class="perfil-btn-outline">
+                            <i class="fa fa-download"></i> Exportar reporte
+                        </a>
+                    </div>
+                </div>
+
+                <div class="perfil-filter-row">
+                    <input type="text" class="form-control" placeholder="Buscar por alumno o factura..." />
+
+                    <select class="form-select">
+                        <option>Filtrar por estado</option>
+                        <option>Emitida</option>
+                        <option>Pendiente</option>
+                        <option>Anulada</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>No. Factura</th>
+                                <th>Alumno</th>
+                                <th>Concepto</th>
+                                <th>Monto</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>FAC-001</td>
+                                <td>María González</td>
+                                <td>Matrícula anual</td>
+                                <td>₡35,000</td>
+                                <td>10/04/2026</td>
+                                <td><span class="perfil-badge-success">Emitida</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Descargar</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>FAC-002</td>
+                                <td>Carlos Ramírez</td>
+                                <td>Mensualidad</td>
+                                <td>₡28,000</td>
+                                <td>08/04/2026</td>
+                                <td><span class="perfil-badge-warning">Pendiente</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Generar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>FAC-003</td>
+                                <td>Ana López</td>
+                                <td>Clase especial</td>
+                                <td>₡12,000</td>
+                                <td>06/04/2026</td>
+                                <td><span class="perfil-badge-danger">Anulada</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

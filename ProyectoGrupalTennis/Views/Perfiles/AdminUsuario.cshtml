@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Gestión de Profesores";
+    ViewData["Title"] = "Administración de Usuarios";
 }
 
 <link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
@@ -10,20 +10,20 @@
 
             <div class="perfil-header">
                 <div>
-                    <h1 class="perfil-title">Gestión de Profesores</h1>
+                    <h1 class="perfil-title">Gestión de Usuarios</h1>
                     <p class="perfil-subtitle">
-                        Consulta y administra la información general de los profesores de la academia.
+                        Administra las cuentas del sistema, roles y estados de los usuarios.
                     </p>
                 </div>
 
                 <div class="perfil-badge">
-                    <i class="fa fa-user"></i> Administración de Profesores
+                    <i class="fa fa-users"></i> Administración de Usuarios
                 </div>
             </div>
 
             <div class="perfil-table-block">
                 <div class="perfil-table-header">
-                    <h2 class="perfil-table-title">Listado de profesores</h2>
+                    <h2 class="perfil-table-title">Listado de usuarios</h2>
 
                     <div class="perfil-actions">
                         <a asp-controller="Home" asp-action="PerfilAdmin" class="perfil-btn-outline">
@@ -31,19 +31,19 @@
                         </a>
 
                         <a href="#" class="perfil-btn">
-                            <i class="fa fa-plus"></i> Agregar profesor
+                            <i class="fa fa-plus"></i> Agregar usuario
                         </a>
                     </div>
                 </div>
 
                 <div class="perfil-filter-row">
-                    <input type="text" class="form-control" placeholder="Buscar profesor..." />
+                    <input type="text" class="form-control" placeholder="Buscar por nombre o correo..." />
 
                     <select class="form-select">
-                        <option>Filtrar por especialidad</option>
-                        <option>Técnica básica</option>
-                        <option>Técnica avanzada</option>
-                        <option>Entrenamiento funcional</option>
+                        <option>Filtrar por rol</option>
+                        <option>Administrador</option>
+                        <option>Usuario</option>
+                        <option>Profesor</option>
                     </select>
 
                     <select class="form-select">
@@ -58,74 +58,55 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Profesor</th>
+                                <th>Nombre</th>
                                 <th>Correo</th>
-                                <th>Teléfono</th>
-                                <th>Especialidad</th>
+                                <th>Rol</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             <tr>
-                                <td>PROF-001</td>
+                                <td>USR-001</td>
+                                <td>Fabiola Zamora</td>
+                                <td>fabi@email.com</td>
+                                <td>Administrador</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Editar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Desactivar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>USR-002</td>
+                                <td>Juan Pérez</td>
+                                <td>juan@email.com</td>
+                                <td>Usuario</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Editar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Desactivar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>USR-003</td>
                                 <td>Andrea Solano</td>
-                                <td>andrea.solano@email.com</td>
-                                <td>8888-2222</td>
-                                <td>Técnica básica</td>
-                                <td><span class="perfil-badge-success">Activo</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Editar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Desactivar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>PROF-002</td>
-                                <td>Daniel Rojas</td>
-                                <td>daniel.rojas@email.com</td>
-                                <td>8777-5555</td>
-                                <td>Técnica avanzada</td>
-                                <td><span class="perfil-badge-success">Activo</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Editar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Desactivar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>PROF-003</td>
-                                <td>Mariana López</td>
-                                <td>mariana.lopez@email.com</td>
-                                <td>8666-9999</td>
-                                <td>Entrenamiento funcional</td>
+                                <td>andrea@email.com</td>
+                                <td>Profesor</td>
                                 <td><span class="perfil-badge-warning">Inactivo</span></td>
                                 <td>
                                     <a href="#" class="perfil-action-link">Editar</a>
                                     <span class="perfil-action-separator">|</span>
                                     <a href="#" class="perfil-action-link">Activar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>PROF-004</td>
-                                <td>Jorge Fernández</td>
-                                <td>jorge.fernandez@email.com</td>
-                                <td>8555-1111</td>
-                                <td>Técnica básica</td>
-                                <td><span class="perfil-badge-success">Activo</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Editar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Desactivar</a>
                                     <span class="perfil-action-separator">|</span>
                                     <a href="#" class="perfil-action-link">Ver</a>
                                 </td>

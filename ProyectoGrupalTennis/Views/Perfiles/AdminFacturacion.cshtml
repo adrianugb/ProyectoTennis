@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Pagos y Facturación";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Pagos y Facturación</h1>
+                    <p class="perfil-subtitle">
+                        Administra transacciones, confirma pagos y genera facturas del sistema.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-credit-card"></i> Administración Financiera
+                </div>
+            </div>
+
+            <div class="perfil-grid">
+                <div class="row">
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-credit-card"></i>
+                            <h3>Gestión de Pagos</h3>
+                            <p>
+                                Registra pagos manuales, confirma transacciones y consulta el historial general de pagos.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="AdminPagos" class="perfil-btn">
+                                    Ir a Pagos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-file-text"></i>
+                            <h3>Facturación</h3>
+                            <p>
+                                Genera facturas, emite comprobantes y visualiza información relacionada con facturación.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="AdminFacturas" class="perfil-btn">
+                                    Ir a Facturación
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

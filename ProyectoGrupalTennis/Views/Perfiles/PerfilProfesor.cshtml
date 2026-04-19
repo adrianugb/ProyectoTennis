@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Perfil del Profesor";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Panel del Profesor</h1>
+                    <p class="perfil-subtitle">
+                        Consulta tus cursos asignados y visualiza la información relevante de tus alumnos.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-user"></i> Perfil Profesor
+                </div>
+            </div>
+
+            <div class="perfil-grid">
+                <div class="row">
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-book"></i>
+                            <h3>Mis Cursos</h3>
+                            <p>
+                                Visualiza el catálogo de cursos asignados, niveles y horarios disponibles para impartir.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="ProfesorCursos" class="perfil-btn-outline">
+                                    Ver cursos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-users"></i>
+                            <h3>Mis Alumnos</h3>
+                            <p>
+                                Consulta la información de tus estudiantes y revisa detalles relevantes para el seguimiento.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="ProfesorAlumnos" class="perfil-btn">
+                                    Ver alumnos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

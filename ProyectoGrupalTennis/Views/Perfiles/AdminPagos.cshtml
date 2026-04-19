@@ -1,0 +1,118 @@
+﻿@{
+    ViewData["Title"] = "Gestión de Pagos";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Gestión de Pagos</h1>
+                    <p class="perfil-subtitle">
+                        Registra, confirma, consulta y administra pagos realizados dentro del sistema.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-money"></i> Pagos Administrativos
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Listado de pagos</h2>
+
+                    <div class="perfil-actions">
+                        <a asp-controller="Home" asp-action="AdminFacturacion" class="perfil-btn-outline">
+                            <i class="fa fa-arrow-left"></i> Regresar
+                        </a>
+
+                        <a href="#" class="perfil-btn">
+                            <i class="fa fa-plus"></i> Registrar pago
+                        </a>
+                    </div>
+                </div>
+
+                <div class="perfil-filter-row">
+                    <input type="text" class="form-control" placeholder="Buscar por alumno..." />
+
+                    <select class="form-select">
+                        <option>Filtrar por estado</option>
+                        <option>Pendiente</option>
+                        <option>Pagado</option>
+                        <option>Anulado</option>
+                    </select>
+
+                    <select class="form-select">
+                        <option>Filtrar por fecha</option>
+                        <option>Hoy</option>
+                        <option>Esta semana</option>
+                        <option>Este mes</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Alumno</th>
+                                <th>Concepto</th>
+                                <th>Monto</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PAG-001</td>
+                                <td>María González</td>
+                                <td>Matrícula</td>
+                                <td>₡35,000</td>
+                                <td>10/04/2026</td>
+                                <td><span class="perfil-badge-warning">Pendiente</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Confirmar</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Anular</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>PAG-002</td>
+                                <td>Carlos Ramírez</td>
+                                <td>Mensualidad</td>
+                                <td>₡28,000</td>
+                                <td>08/04/2026</td>
+                                <td><span class="perfil-badge-success">Pagado</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                    <span class="perfil-action-separator">|</span>
+                                    <a href="#" class="perfil-action-link">Revertir</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>PAG-003</td>
+                                <td>Ana López</td>
+                                <td>Clase especial</td>
+                                <td>₡12,000</td>
+                                <td>06/04/2026</td>
+                                <td><span class="perfil-badge-danger">Anulado</span></td>
+                                <td>
+                                    <a href="#" class="perfil-action-link">Ver</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+              
+            </div>
+
+        </div>
+    </div>
+</section>

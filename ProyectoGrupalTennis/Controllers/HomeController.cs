@@ -81,8 +81,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         #endregion
 
-        #region Perfiles
-
+        #region Perfil Admin 
         public IActionResult PerfilAdmin()
         {
             return View("~/Views/Perfiles/PerfilAdmin.cshtml");
@@ -102,11 +101,62 @@ namespace ProyectoGrupalTennis.Controllers
         {
             return View("~/Views/Perfiles/AdminProfesores.cshtml");
         }
+
+        public IActionResult AdminFacturacion()
+        {
+            return View("~/Views/Perfiles/AdminFacturacion.cshtml");
+        }
+
+        public IActionResult AdminPagos()
+        {
+            return View("~/Views/Perfiles/AdminPagos.cshtml");
+        }
+
+        public IActionResult AdminFacturas()
+        {
+            return View("~/Views/Perfiles/AdminFacturas.cshtml");
+        }
+
+        public IActionResult AdminUsuario()
+        {
+            return View("~/Views/Perfiles/AdminUsuario.cshtml");
+        }
+        #endregion
+
+        #region Perfil Usuario 
+
         public IActionResult PerfilUsuario()
         {
             return View("~/Views/Perfiles/PerfilUsuario.cshtml");
         }
+        public IActionResult UsuarioPagos()
+        {
+            return View("~/Views/Perfiles/UsuarioPagos.cshtml");
+        }
 
+        public IActionResult UsuarioHistorialPagos()
+        {
+            return View("~/Views/Perfiles/UsuarioHistorialPagos.cshtml");
+        }
+
+        #endregion
+
+        #region Perfil Profesor
+
+        public IActionResult PerfilProfesor()
+        {
+            return View("~/Views/Perfiles/PerfilProfesor.cshtml");
+        }
+
+        public IActionResult ProfesorAlumnos()
+        {
+            return View("~/Views/Perfiles/ProfesorAlumnos.cshtml");
+        }
+
+       public IActionResult ProfesorCursos()
+        {
+            return View("~/Views/Perfiles/ProfesorCursos.cshtml");
+        }
         #endregion
 
         #region Gamificacion

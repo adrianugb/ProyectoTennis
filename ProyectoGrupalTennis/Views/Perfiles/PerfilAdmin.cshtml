@@ -2,72 +2,111 @@
     ViewData["Title"] = "Perfil Administrativo";
 }
 
-<section class="module-block">
-    <div class="dashboard-header">
-        <div>
-            <h1 class="module-title">Panel Administrativo</h1>
-            <p class="module-subtitle">
-                Gestiona cursos, alumnos y profesores desde un solo lugar.
-            </p>
-        </div>
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
 
-        <div class="dashboard-status-badge">
-            <i class="fa fa-user-shield"></i> Perfil Administrador
-        </div>
-    </div>
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
 
-    <div class="row">
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Panel Administrativo</h1>
+                    <p class="perfil-subtitle">
+                        Gestiona cursos, alumnos, profesores y facturación desde un solo lugar.
+                    </p>
+                </div>
 
-        <div class="col-md-4 col-sm-6">
-            <div class="module-card">
-                <i class="fa fa-book"></i>
-                <h3>Gestión de Cursos</h3>
-                <p>
-                    Administra el catálogo de cursos, horarios, niveles
-                    y condiciones disponibles en la academia.
-                </p>
-
-                <div class="module-actions">
-                    <a asp-controller="Home" asp-action="AdminCursos" class="module-btn">
-                        Ir a Cursos
-                    </a>
+                <div class="perfil-badge">
+                    <i class="fa fa-user-shield"></i> Perfil Administrador
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4 col-sm-6">
-            <div class="module-card">
-                <i class="fa fa-user-graduate"></i>
-                <h3>Gestión de Alumnos</h3>
-                <p>
-                    Consulta, registra, edita y visualiza la información
-                    general de los alumnos de la academia.
-                </p>
+            <div class="perfil-grid">
+                <div class="row">
 
-                <div class="module-actions">
-                    <a asp-controller="Home" asp-action="AdminAlumnos" class="module-btn">
-                        Ir a Alumnos
-                    </a>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-book"></i>
+                            <h3>Gestión de Cursos</h3>
+                            <p>
+                                Administra el catálogo de cursos, horarios, niveles y condiciones disponibles en la academia.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="AdminCursos" class="perfil-btn">
+                                    Ir a Cursos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-user-graduate"></i>
+                            <h3>Gestión de Alumnos</h3>
+                            <p>
+                                Consulta, registra, edita y visualiza la información general de los alumnos de la academia.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="AdminAlumnos" class="perfil-btn">
+                                    Ir a Alumnos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-chalkboard-teacher"></i>
+                            <h3>Gestión de Profesores</h3>
+                            <p>
+                                Visualiza y administra la información relacionada con los profesores y su participación en la academia.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="AdminProfesores" class="perfil-btn">
+                                    Ir a Profesores
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-file-invoice-dollar"></i>
+                            <h3>Pagos y Facturación</h3>
+                            <p>
+                                Registra pagos, confirma transacciones, genera facturas y consulta el historial financiero.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="AdminFacturacion" class="perfil-btn">
+                                    Ir a Facturación
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+
+                            <div class="col-md-6 col-sm-6">
+                                <div class="perfil-card">
+                                    <i class="fa fa-file-invoice-dollar"></i>
+                                    <h3>Gestión de Usuarios</h3>
+                                    <p>
+                                        Registra pagos, confirma transacciones, genera facturas y consulta el historial financiero.
+                                    </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="AdminUsuario" class="perfil-btn">
+                                    Ir a Gestión de Usuarios
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
+
         </div>
-
-        <div class="col-md-4 col-sm-6">
-            <div class="module-card">
-                <i class="fa fa-chalkboard-teacher"></i>
-                <h3>Gestión de Profesores</h3>
-                <p>
-                    Visualiza y administra la información relacionada
-                    con los profesores y su participación en la academia.
-                </p>
-
-                <div class="module-actions">
-                    <a asp-controller="Home" asp-action="AdminProfesores" class="module-btn">
-                        Ir a Profesores
-                    </a>
-                </div>
-            </div>
-        </div>
-
     </div>
 </section>

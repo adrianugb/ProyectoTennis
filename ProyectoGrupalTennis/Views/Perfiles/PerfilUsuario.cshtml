@@ -1,5 +1,96 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Perfil de Usuario";
 }
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Panel de Usuario</h1>
+                    <p class="perfil-subtitle">
+                        Consulta tu información, revisa tus pagos y da seguimiento a tu historial.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-user"></i> Perfil Usuario
+                </div>
+            </div>
+
+            <div class="perfil-grid">
+                <div class="row">
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-calendar"></i>
+                            <h3>Mis Clases</h3>
+                            <p>
+                                Consulta tus clases programadas, horarios, profesores y seguimiento de tu progreso.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="UsuarioAgenda" class="perfil-btn">
+                                    Ver agenda
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-credit-card"></i>
+                            <h3>Mis Pagos</h3>
+                            <p>
+                                Consulta el estado de tus pagos y revisa los montos pendientes o registrados.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="UsuarioPagos" class="perfil-btn">
+                                    Ir a Pagos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-receipt"></i>
+                            <h3>Historial de Pagos</h3>
+                            <p>
+                                Revisa el detalle de pagos realizados, fechas, conceptos y estado de transacciones.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="UsuarioHistorialPagos" class="perfil-btn">
+                                    Ver Historial
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-id-card"></i>
+                            <h3>Mi Cuenta</h3>
+                            <p>
+                                Visualiza tu información general de usuario y accede a opciones relacionadas con tu perfil.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a href="#" class="perfil-btn-outline">
+                                    Ver información
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

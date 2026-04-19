@@ -1,0 +1,191 @@
+﻿@{
+    ViewData["Title"] = "Cursos del Profesor";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Mis Cursos</h1>
+                    <p class="perfil-subtitle">
+                        Visualiza los cursos asignados, niveles y horarios disponibles para impartir.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-book"></i> Cursos Asignados
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Listado de cursos</h2>
+
+                    <div class="perfil-actions">
+                        <a asp-controller="Home" asp-action="PerfilProfesor" class="perfil-btn-outline">
+                            <i class="fa fa-arrow-left"></i> Regresar
+                        </a>
+                    </div>
+                </div>
+
+                <div class="perfil-filter-row">
+                    <input type="text" class="form-control" placeholder="Buscar curso..." />
+
+                    <select class="form-select">
+                        <option>Filtrar por nivel</option>
+                        <option>Básico</option>
+                        <option>Intermedio</option>
+                        <option>Avanzado</option>
+                    </select>
+
+                    <select class="form-select">
+                        <option>Filtrar por horario</option>
+                        <option>Mañana</option>
+                        <option>Tarde</option>
+                        <option>Noche</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Curso</th>
+                                <th>Nivel</th>
+                                <th>Horario</th>
+                                <th>Modalidad</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CUR-001</td>
+                                <td>Tenis Infantil</td>
+                                <td>Básico</td>
+                                <td>Lunes y Miércoles, 4:00 PM</td>
+                                <td>Presencial</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td><a href="#" class="perfil-action-link">Ver</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>CUR-002</td>
+                                <td>Tenis Juvenil</td>
+                                <td>Intermedio</td>
+                                <td>Martes y Jueves, 5:00 PM</td>
+                                <td>Presencial</td>
+                                <td><span class="perfil-badge-success">Activo</span></td>
+                                <td><a href="#" class="perfil-action-link">Ver</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>CUR-003</td>
+                                <td>Entrenamiento Funcional</td>
+                                <td>Avanzado</td>
+                                <td>Viernes, 6:00 PM</td>
+                                <td>Mixto</td>
+                                <td><span class="perfil-badge-warning">Reprogramado</span></td>
+                                <td><a href="#" class="perfil-action-link">Ver</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="perfil-agenda">
+                        <div class="agenda-toolbar">
+                            <div class="agenda-nav">
+                                <button class="agenda-btn">‹</button>
+                                <button class="agenda-btn">Hoy</button>
+                                <button class="agenda-btn">›</button>
+                            </div>
+
+                            <h2 class="perfil-section-title">Agenda Semanal</h2>
+
+                            <div class="agenda-view-label">
+                                Vista semanal
+                            </div>
+                        </div>
+
+                        <div class="agenda-week-grid">
+                            <div class="agenda-week-day">
+                                <div class="agenda-week-header">
+                                    <span class="agenda-day-name">Lunes</span>
+                                    <span class="agenda-day-number">10</span>
+                                </div>
+
+                                <div class="agenda-event">
+                                    <span class="agenda-time">4:00 PM</span>
+                                    <strong>Tenis Infantil</strong>
+                                    <small>Cancha 1</small>
+                                </div>
+
+                                <div class="agenda-event">
+                                    <span class="agenda-time">6:00 PM</span>
+                                    <strong>Entrenamiento Funcional</strong>
+                                    <small>Cancha 2</small>
+                                </div>
+                            </div>
+
+                            <div class="agenda-week-day">
+                                <div class="agenda-week-header">
+                                    <span class="agenda-day-name">Martes</span>
+                                    <span class="agenda-day-number">11</span>
+                                </div>
+
+                                <div class="agenda-event">
+                                    <span class="agenda-time">5:00 PM</span>
+                                    <strong>Tenis Juvenil</strong>
+                                    <small>Cancha 3</small>
+                                </div>
+                            </div>
+
+                            <div class="agenda-week-day">
+                                <div class="agenda-week-header">
+                                    <span class="agenda-day-name">Miércoles</span>
+                                    <span class="agenda-day-number">12</span>
+                                </div>
+
+                                <div class="agenda-event">
+                                    <span class="agenda-time">4:00 PM</span>
+                                    <strong>Tenis Infantil</strong>
+                                    <small>Cancha 1</small>
+                                </div>
+                            </div>
+
+                            <div class="agenda-week-day">
+                                <div class="agenda-week-header">
+                                    <span class="agenda-day-name">Jueves</span>
+                                    <span class="agenda-day-number">13</span>
+                                </div>
+
+                                <div class="agenda-event">
+                                    <span class="agenda-time">5:00 PM</span>
+                                    <strong>Tenis Juvenil</strong>
+                                    <small>Cancha 3</small>
+                                </div>
+                            </div>
+
+                            <div class="agenda-week-day">
+                                <div class="agenda-week-header">
+                                    <span class="agenda-day-name">Viernes</span>
+                                    <span class="agenda-day-number">14</span>
+                                </div>
+
+                                <div class="agenda-event">
+                                    <span class="agenda-time">6:00 PM</span>
+                                    <strong>Entrenamiento Funcional</strong>
+                                    <small>Cancha 2</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

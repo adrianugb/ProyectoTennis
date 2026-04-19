@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Historial de Pagos";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Historial de Pagos</h1>
+                    <p class="perfil-subtitle">
+                        Revisa el detalle de pagos realizados, conceptos, fechas y estado de transacciones.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-file-text"></i> Historial Financiero
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Historial registrado</h2>
+
+                    <div class="perfil-actions">
+                        <a asp-controller="Home" asp-action="PerfilUsuario" class="perfil-btn-outline">
+                            <i class="fa fa-arrow-left"></i> Regresar
+                        </a>
+                    </div>
+                </div>
+
+                <div class="perfil-filter-row">
+                    <input type="text" class="form-control" placeholder="Buscar por concepto..." />
+
+                    <select class="form-select">
+                        <option>Filtrar por año</option>
+                        <option>2026</option>
+                        <option>2025</option>
+                    </select>
+
+                    <select class="form-select">
+                        <option>Filtrar por estado</option>
+                        <option>Pagado</option>
+                        <option>Pendiente</option>
+                        <option>Anulado</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Concepto</th>
+                                <th>Monto</th>
+                                <th>Fecha</th>
+                                <th>Método</th>
+                                <th>Estado</th>
+                                <th>Comprobante</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>HIS-001</td>
+                                <td>Matrícula anual</td>
+                                <td>₡35,000</td>
+                                <td>10/01/2026</td>
+                                <td>Transferencia</td>
+                                <td><span class="perfil-badge-success">Pagado</span></td>
+                                <td><a href="#" class="perfil-action-link">Ver</a></td>
+                            </tr>
+                            <tr>
+                                <td>HIS-002</td>
+                                <td>Mensualidad marzo</td>
+                                <td>₡28,000</td>
+                                <td>05/03/2026</td>
+                                <td>Sinpe</td>
+                                <td><span class="perfil-badge-success">Pagado</span></td>
+                                <td><a href="#" class="perfil-action-link">Ver</a></td>
+                            </tr>
+                            <tr>
+                                <td>HIS-003</td>
+                                <td>Clase especial</td>
+                                <td>₡12,000</td>
+                                <td>22/03/2026</td>
+                                <td>Efectivo</td>
+                                <td><span class="perfil-badge-warning">Pendiente</span></td>
+                                <td><a href="#" class="perfil-action-link">Ver</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

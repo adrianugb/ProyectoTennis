@@ -518,3 +518,129 @@
     margin: 0 6px;
     color: #999;
 }
+
+/* =========================================
+   AGENDA SEMANAL
+   ========================================= */
+
+.perfil-agenda {
+    margin-top: 35px;
+}
+
+.agenda-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.agenda-nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.agenda-btn {
+    border: 1px solid #d9e5b3;
+    background: #fff;
+    color: #7f9919;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+    .agenda-btn:hover {
+        background: #eef6d3;
+    }
+
+.agenda-view-label {
+    background: #eef6d3;
+    color: #6f8f12;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.agenda-week-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+
+.agenda-week-day {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #eef1f5;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 14px;
+    min-height: 220px;
+}
+
+.agenda-week-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.agenda-day-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #252525;
+}
+
+.agenda-day-number {
+    font-size: 13px;
+    font-weight: 600;
+    color: #7f9919;
+    background: #f8fbec;
+    padding: 6px 10px;
+    border-radius: 20px;
+}
+
+.agenda-event {
+    background: #f8f9fa;
+    border-left: 4px solid #a5c422;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+}
+
+    .agenda-event strong {
+        display: block;
+        color: #252525;
+        font-size: 14px;
+        margin-bottom: 3px;
+    }
+
+    .agenda-event small {
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+.agenda-time {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #7f9919;
+    margin-bottom: 5px;
+}
+
+@media (max-width: 1100px) {
+    .agenda-week-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .agenda-week-grid {
+        grid-template-columns: 1fr;
+    }
+}
