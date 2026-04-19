@@ -1046,3 +1046,120 @@ label {
 .navbar-brand {
     font-size: 20px !important;
 }
+
+/* Estilos personalizados para el Footer */
+.main-footer {
+    background: #1a1a1a; /* Fondo oscuro profesional */
+    color: #eeeeee;
+    padding: 80px 0 30px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.main-footer h4 {
+    color: #a5c422; /* El color verde tennis o el de tu marca */
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+}
+
+.footer-logo {
+    color: #fff;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.footer-info p {
+    line-height: 1.8;
+    color: #bbb;
+}
+
+.footer-links p {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.footer-links i {
+    margin-right: 10px;
+    color: #a5c422;
+    font-size: 18px;
+}
+
+.footer-links a {
+    color: #bbb;
+    transition: 0.3s;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: #fff;
+    padding-left: 5px;
+}
+
+/* Iconos Sociales */
+.social-icon {
+    padding: 0;
+    margin: 20px 0;
+    list-style: none;
+}
+
+.social-icon li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.social-icon li a {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border: 1px solid #444;
+    color: #fff;
+    display: block;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.social-icon li a:hover {
+    background: #a5c422;
+    border-color: #a5c422;
+    transform: translateY(-3px);
+}
+
+/* Mapa */
+.map-container {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #333;
+}
+
+/* Bottom bar */
+.footer-bottom {
+    margin-top: 50px;
+    padding-top: 25px;
+    border-top: 1px solid #333;
+}
+
+.footer-bottom p {
+    color: #777;
+    font-size: 14px;
+}
+
+.angle-up-btn a {
+    background: #a5c422;
+    width: 45px;
+    height: 45px;
+    display: inline-block;
+    text-align: center;
+    line-height: 45px;
+    color: #fff;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.angle-up-btn a:hover {
+    background: #fff;
+    color: #a5c422;
+}
