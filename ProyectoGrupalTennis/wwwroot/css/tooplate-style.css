@@ -1055,3 +1055,12 @@ http://www.tooplate.com/view/2098-health
 
   }
 
+
+
+#about {
+    background: none !important;
+    background-size: auto !important;
+    padding-top: 150px;
+    padding-bottom: 150px;
+}
+

@@ -56,9 +56,9 @@
             </div>
         </div>
 
-        <div class="col-md-4 col-sm-12">
+        <div class="col-md-4 col-sm-12 about-profile" aria-hidden="false">
             <figure class="profile wow fadeInUp" data-wow-delay="1s" style="text-align:center;">
-                <img src="~/images/author-image.jpg" class="img-responsive" alt="Mario Muñoz Picado" style="border-radius:100%; width:140px; height:140px; object-fit:cover;" />
+                <img src="~/images/author-image.jpg" class="img-responsive" alt="Mario Muñoz Picado" />
                 <figcaption style="margin-top:12px;">
                     <h3>Mario Muñoz Picado</h3>
                     <p>Fundador y Director Técnico</p>
@@ -67,3 +67,16 @@
         </div>
     </div>
 </div>
+
+<style>
+/* Hacemos la imagen más pequeña y la ocultamos en pantallas pequeñas para evitar solapamientos */
+.about-profile .profile img {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 100%;
+    display: inline-block;
+}
+
+}
+</style>
