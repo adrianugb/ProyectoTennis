@@ -150,6 +150,7 @@
             </div>
         </div>
 
+
         <!-- Panel lateral -->
         <div class="col-md-4">
             <div class="dashboard-card" style="margin-bottom: 20px;">
@@ -179,18 +180,17 @@
                 </div>
 
                 <div class="quick-actions">
-                    <button class="dashboard-mini-btn">
-                        <i class="fa fa-file-export"></i> Exportar todos
-                    </button>
-
-                    <button class="dashboard-mini-btn">
-                        <i class="fa fa-clock"></i> Ver recientes
-                    </button>
-
-                    <button class="dashboard-mini-btn"
-                            onclick="mostrarVista('dashboard-admin')">
+                    <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-admin')">
                         <i class="fa fa-arrow-left"></i> Volver
                     </button>
+
+                    <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-admin-reportes')">
+                        <i class="fa fa-file-alt"></i> Ver reportes
+                    </button>
+
+                    <a asp-controller="Home" asp-action="Campeonatos" class="dashboard-mini-btn">
+                        <i class="fa fa-trophy"></i> Campeonatos
+                    </a>
                 </div>
             </div>
         </div>

@@ -1,0 +1,838 @@
+@{
+    ViewData["Title"] = "Retención y Detección de Abandono";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    :root {
+        --tennis-green: #a5c422;
+        --tennis-green-dark: #7a9318;
+        --section-bg: #f4f6f0;
+        --card-white: #ffffff;
+        --border-light: #e0e0e0;
+        --text-dark: #1a1a1a;
+        --text-muted: #6b6b6b;
+    }
+
+    /* ── HERO ── */
+    .ret-hero {
+        background: #1a1a1a;
+        border-bottom: 4px solid var(--tennis-green);
+        padding: 40px 0 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ret-hero::before {
+        content: '';
+        position: absolute;
+        right: -60px; top: -60px;
+        width: 260px; height: 260px;
+        border-radius: 50%;
+        border: 50px solid rgba(165,196,34,0.06);
+    }
+
+    .ret-breadcrumb {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+    }
+
+    .ret-breadcrumb span { color: var(--tennis-green); }
+
+    .ret-hero-badge {
+        display: inline-block;
+        background: rgba(226,75,74,0.15);
+        color: #f09595;
+        border: 1px solid rgba(226,75,74,0.3);
+        border-radius: 20px;
+        padding: 4px 16px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .ret-hero h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 8px;
+    }
+
+    .ret-hero p {
+        font-size: 14px;
+        color: #888;
+        margin: 0;
+    }
+
+    /* ── BODY ── */
+    .ret-body {
+        background: var(--section-bg);
+        padding: 36px 0 60px;
+    }
+
+    /* ── MÉTRICAS ── */
+    .metrics-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .metric-card {
+        background: var(--card-white);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 18px 16px 14px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .metric-accent {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 4px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .metric-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
+        margin-bottom: 8px;
+    }
+
+    .metric-value {
+        font-size: 30px;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 6px;
+    }
+
+    .metric-delta {
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .c-green { color: #3b6d11; }
+    .c-red   { color: #a32d2d; }
+    .c-amber { color: #854f0b; }
+    .c-blue  { color: #185fa5; }
+    .delta-bad  { color: #e24b4a; }
+    .delta-good { color: #639922; }
+    .delta-neu  { color: #999; }
+
+    /* ── CARDS ── */
+    .ret-card {
+        background: var(--card-white);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+
+    .ret-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fff;
+    }
+
+    .ret-card-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+    }
+
+    .ret-card-title i { color: var(--tennis-green); font-size: 13px; }
+
+    .badge-danger  { background: #fde8e8; color: #a32d2d; border: 1px solid #f5a5a5; }
+    .badge-warning { background: #fff8e6; color: #854f0b; border: 1px solid #f0d580; }
+    .badge-success { background: #edf8d8; color: #3b6d11; border: 1px solid #c5dc6a; }
+    .badge-info    { background: #e8f3fd; color: #185fa5; border: 1px solid #a8cff0; }
+
+    .ret-badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        padding: 3px 12px;
+        border-radius: 20px;
+    }
+
+    /* ── SEGMENTOS ── */
+    .seg-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        padding: 16px 20px;
+    }
+
+    .seg-card {
+        border-radius: 8px;
+        padding: 14px;
+        border: 1px solid;
+    }
+
+    .seg-card .seg-title {
+        font-size: 10px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 1px;
+        margin-bottom: 6px;
+    }
+
+    .seg-card .seg-count {
+        font-size: 24px; font-weight: 700; margin-bottom: 2px;
+    }
+
+    .seg-card .seg-sub { font-size: 11px; }
+
+    .seg-red    { background: #fdf4f4; border-color: #f5c0c0; }
+    .seg-red    .seg-title, .seg-red .seg-count { color: #a32d2d; }
+    .seg-red    .seg-sub { color: #c05050; }
+
+    .seg-amber  { background: #fffbf0; border-color: #f0d580; }
+    .seg-amber  .seg-title, .seg-amber .seg-count { color: #854f0b; }
+    .seg-amber  .seg-sub { color: #a06010; }
+
+    .seg-green  { background: #f4fbea; border-color: #c5dc6a; }
+    .seg-green  .seg-title, .seg-green .seg-count { color: #3b6d11; }
+    .seg-green  .seg-sub { color: #4a8010; }
+
+    /* ── TABLA DE RIESGO ── */
+    .risk-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+    .risk-table th {
+        text-align: left;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #bbb;
+        padding: 0 16px 10px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .risk-table td {
+        padding: 10px 16px;
+        border-bottom: 1px solid #f8f8f8;
+        color: #444;
+        vertical-align: middle;
+    }
+
+    .risk-table tr:last-child td { border-bottom: none; }
+
+    .risk-pill {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .risk-high   { background: #fde8e8; color: #a32d2d; }
+    .risk-medium { background: #fff8e6; color: #854f0b; }
+    .risk-low    { background: #edf8d8; color: #3b6d11; }
+
+    .avatar-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px; height: 30px;
+        border-radius: 50%;
+        font-size: 10px;
+        font-weight: 700;
+        margin-right: 8px;
+        vertical-align: middle;
+        flex-shrink: 0;
+    }
+
+    .av-red    { background: #fde8e8; color: #a32d2d; }
+    .av-amber  { background: #fff8e6; color: #854f0b; }
+    .av-green  { background: #edf8d8; color: #3b6d11; }
+
+    .score-bar-wrap {
+        display: inline-block;
+        width: 60px; height: 6px;
+        background: #f0f0f0;
+        border-radius: 10px;
+        overflow: hidden;
+        vertical-align: middle;
+        margin-right: 6px;
+    }
+
+    .score-bar-fill { height: 100%; border-radius: 10px; }
+
+    .tbl-action-link {
+        color: var(--tennis-green-dark);
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .tbl-action-link:hover { text-decoration: underline; }
+    .tbl-sep { color: #ccc; margin: 0 6px; }
+
+    /* ── QUICK ACTIONS ── */
+    .quick-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 14px 20px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .qbtn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid var(--border-light);
+        background: #fff;
+        color: #555;
+        text-decoration: none;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .qbtn:hover { border-color: var(--tennis-green); color: var(--tennis-green-dark); text-decoration: none; }
+
+    .qbtn.primary {
+        background: var(--tennis-green);
+        border-color: var(--tennis-green);
+        color: #fff;
+    }
+
+    .qbtn.primary:hover { background: var(--tennis-green-dark); border-color: var(--tennis-green-dark); color: #fff; }
+
+    /* ── FACTORES ── */
+    .factor-list { list-style: none; padding: 0 20px; margin: 0; }
+
+    .factor-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 13px;
+        color: #555;
+    }
+
+    .factor-item:last-child { border-bottom: none; }
+
+    .factor-icon {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .fi-red    { background: #fde8e8; color: #e24b4a; }
+    .fi-amber  { background: #fff8e6; color: #ef9f27; }
+    .fi-blue   { background: #e8f3fd; color: #378add; }
+    .fi-green  { background: #edf8d8; color: #639922; }
+    .fi-purple { background: #eeedfe; color: #534ab7; }
+
+    .factor-name { flex: 1; }
+
+    .pct-bar-wrap {
+        width: 70px; height: 5px;
+        background: #f0f0f0;
+        border-radius: 10px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .pct-bar-fill { height: 100%; border-radius: 10px; }
+
+    .factor-pct {
+        font-size: 12px;
+        font-weight: 700;
+        color: #333;
+        min-width: 32px;
+        text-align: right;
+    }
+
+    /* ── ALERTAS ── */
+    .alert-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 11px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        margin-bottom: 8px;
+        border: 1px solid;
+    }
+
+    .alert-item:last-child { margin-bottom: 0; }
+
+    .alert-item i { font-size: 13px; margin-top: 1px; flex-shrink: 0; }
+
+    .alert-danger  { background: #fdf4f4; border-color: #f5c0c0; color: #a32d2d; }
+    .alert-warning { background: #fffbf0; border-color: #f0d580; color: #854f0b; }
+    .alert-info    { background: #f0f7ff; border-color: #b0d0f0; color: #185fa5; }
+
+    /* ── LEYENDA GRÁFICO ── */
+    .chart-legend {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 12px;
+        font-size: 12px;
+        color: #888;
+        padding: 0 20px;
+    }
+
+    .legend-dot {
+        display: inline-block;
+        width: 12px; height: 3px;
+        border-radius: 2px;
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+
+    /* ── SOPORTE ASIDE ── */
+    .support-item {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .support-item i { color: var(--tennis-green); width: 14px; }
+    .support-item a { color: var(--text-muted); text-decoration: none; }
+    .support-item a:hover { color: var(--tennis-green-dark); }
+</style>
+
+<!-- HERO -->
+<section class="ret-hero">
+    <div class="container">
+        <div class="ret-breadcrumb">
+            <a href="/" style="color:#666; text-decoration:none;">Inicio</a>
+            &rsaquo; Módulos &rsaquo;
+            <span>Retención y Abandono</span>
+        </div>
+        <div class="ret-hero-badge">
+            <i class="fa fa-exclamation-circle"></i> &nbsp;5 alumnos en riesgo alto
+        </div>
+        <h1>Retención y Detección de Abandono</h1>
+        <p>Seguimiento de alumnos en riesgo y acciones preventivas para la academia</p>
+    </div>
+</section>
+
+<!-- BODY -->
+<section class="ret-body">
+    <div class="container">
+
+        <!-- MÉTRICAS -->
+        <div class="metrics-row">
+            <div class="metric-card">
+                <div class="metric-accent" style="background: #a5c422;"></div>
+                <div class="metric-label">Tasa de retención</div>
+                <div class="metric-value c-green">84%</div>
+                <div class="metric-delta delta-bad">&#9660; 3% vs mes anterior</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-accent" style="background: #e24b4a;"></div>
+                <div class="metric-label">Riesgo de abandono</div>
+                <div class="metric-value c-red">5</div>
+                <div class="metric-delta delta-bad">&#8593; 2 nuevos esta semana</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-accent" style="background: #ef9f27;"></div>
+                <div class="metric-label">En seguimiento</div>
+                <div class="metric-value c-amber">12</div>
+                <div class="metric-delta delta-neu">Riesgo medio-alto</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-accent" style="background: #378add;"></div>
+                <div class="metric-label">Recuperados este mes</div>
+                <div class="metric-value c-blue">3</div>
+                <div class="metric-delta delta-good">&#8593; Intervención exitosa</div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <!-- COLUMNA PRINCIPAL -->
+            <div class="col-md-8">
+
+                <!-- GRÁFICO DE TENDENCIA -->
+                <div class="ret-card">
+                    <div class="ret-card-header">
+                        <h3 class="ret-card-title">
+                            <i class="fa fa-chart-line"></i>
+                            Tendencia de retención — últimos 6 meses
+                        </h3>
+                        <span class="ret-badge badge-warning">Tendencia descendente</span>
+                    </div>
+                    <div class="chart-legend">
+                        <span><span class="legend-dot" style="background:#a5c422;"></span>Retención real</span>
+                        <span><span class="legend-dot" style="background:#ddd; border-top:1px dashed #bbb;"></span>Meta (90%)</span>
+                    </div>
+                    <div style="padding: 0 20px 16px;">
+                        <div style="position:relative; width:100%; height:220px;">
+                            <canvas id="retTendenciaChart"
+                                    role="img"
+                                    aria-label="Gráfico de línea: retención mensual de nov a abr, bajando de 91% a 84%. Meta fija en 90%.">
+                                Retención: Nov 91%, Dic 90%, Ene 89%, Feb 88%, Mar 86%, Abr 84%. Meta: 90%.
+                            </canvas>
+                        </div>
+                    </div>
+                    <div class="seg-grid">
+                        <div class="seg-card seg-red">
+                            <div class="seg-title">Riesgo alto</div>
+                            <div class="seg-count">5</div>
+                            <div class="seg-sub">Ausentismo &gt; 3 semanas</div>
+                        </div>
+                        <div class="seg-card seg-amber">
+                            <div class="seg-title">Riesgo medio</div>
+                            <div class="seg-count">12</div>
+                            <div class="seg-sub">2+ semanas irregulares</div>
+                        </div>
+                        <div class="seg-card seg-green">
+                            <div class="seg-title">Activos estables</div>
+                            <div class="seg-count">63</div>
+                            <div class="seg-sub">Asistencia regular</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABLA DE ALUMNOS EN RIESGO -->
+                <div class="ret-card">
+                    <div class="ret-card-header">
+                        <h3 class="ret-card-title">
+                            <i class="fa fa-exclamation-triangle" style="color:#e24b4a;"></i>
+                            Alumnos en riesgo de abandono
+                        </h3>
+                        <span class="ret-badge badge-danger">Requiere acción</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="risk-table">
+                            <thead>
+                                <tr>
+                                    <th>Alumno</th>
+                                    <th>Riesgo</th>
+                                    <th>Puntuación</th>
+                                    <th>Motivo principal</th>
+                                    <th style="text-align:center;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <span class="avatar-circle av-red">MV</span>
+                                        María Vargas
+                                    </td>
+                                    <td><span class="risk-pill risk-high">Alto</span></td>
+                                    <td>
+                                        <div class="score-bar-wrap">
+                                            <div class="score-bar-fill" style="width:92%; background:#e24b4a;"></div>
+                                        </div>
+                                        92%
+                                    </td>
+                                    <td>Sin asistir 4 semanas</td>
+                                    <td style="text-align:center; white-space:nowrap;">
+                                        <a href="#" class="tbl-action-link">Ver perfil</a>
+                                        <span class="tbl-sep">|</span>
+                                        <a href="#" class="tbl-action-link">Contactar</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="avatar-circle av-red">CL</span>
+                                        Carlos López
+                                    </td>
+                                    <td><span class="risk-pill risk-high">Alto</span></td>
+                                    <td>
+                                        <div class="score-bar-wrap">
+                                            <div class="score-bar-fill" style="width:85%; background:#e24b4a;"></div>
+                                        </div>
+                                        85%
+                                    </td>
+                                    <td>Pagos atrasados</td>
+                                    <td style="text-align:center; white-space:nowrap;">
+                                        <a href="#" class="tbl-action-link">Ver perfil</a>
+                                        <span class="tbl-sep">|</span>
+                                        <a href="#" class="tbl-action-link">Contactar</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="avatar-circle av-red">DP</span>
+                                        Diego Pérez
+                                    </td>
+                                    <td><span class="risk-pill risk-high">Alto</span></td>
+                                    <td>
+                                        <div class="score-bar-wrap">
+                                            <div class="score-bar-fill" style="width:80%; background:#e24b4a;"></div>
+                                        </div>
+                                        80%
+                                    </td>
+                                    <td>Sin asistir 3 semanas</td>
+                                    <td style="text-align:center; white-space:nowrap;">
+                                        <a href="#" class="tbl-action-link">Ver perfil</a>
+                                        <span class="tbl-sep">|</span>
+                                        <a href="#" class="tbl-action-link">Contactar</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="avatar-circle av-amber">SR</span>
+                                        Sofía Ramírez
+                                    </td>
+                                    <td><span class="risk-pill risk-medium">Medio</span></td>
+                                    <td>
+                                        <div class="score-bar-wrap">
+                                            <div class="score-bar-fill" style="width:62%; background:#ef9f27;"></div>
+                                        </div>
+                                        62%
+                                    </td>
+                                    <td>Asistencia irregular</td>
+                                    <td style="text-align:center; white-space:nowrap;">
+                                        <a href="#" class="tbl-action-link">Ver perfil</a>
+                                        <span class="tbl-sep">|</span>
+                                        <a href="#" class="tbl-action-link">Contactar</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="avatar-circle av-amber">JM</span>
+                                        José Mora
+                                    </td>
+                                    <td><span class="risk-pill risk-medium">Medio</span></td>
+                                    <td>
+                                        <div class="score-bar-wrap">
+                                            <div class="score-bar-fill" style="width:55%; background:#ef9f27;"></div>
+                                        </div>
+                                        55%
+                                    </td>
+                                    <td>Bajo rendimiento técnico</td>
+                                    <td style="text-align:center; white-space:nowrap;">
+                                        <a href="#" class="tbl-action-link">Ver perfil</a>
+                                        <span class="tbl-sep">|</span>
+                                        <a href="#" class="tbl-action-link">Contactar</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="quick-row">
+                        <a href="#" class="qbtn primary">
+                            <i class="fa fa-envelope"></i> Notificar a todos
+                        </a>
+                        <a href="#" class="qbtn">
+                            <i class="fa fa-file-export"></i> Exportar lista
+                        </a>
+                        <a href="#" class="qbtn">
+                            <i class="fa fa-history"></i> Ver historial completo
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <!-- FIN COLUMNA PRINCIPAL -->
+
+            <!-- COLUMNA LATERAL -->
+            <div class="col-md-4">
+
+                <!-- FACTORES DE RIESGO -->
+                <div class="ret-card">
+                    <div class="ret-card-header">
+                        <h3 class="ret-card-title">
+                            <i class="fa fa-search"></i> Factores de riesgo detectados
+                        </h3>
+                    </div>
+                    <ul class="factor-list" style="padding: 8px 20px 16px;">
+                        <li class="factor-item">
+                            <div class="factor-icon fi-red"><i class="fa fa-calendar-times"></i></div>
+                            <span class="factor-name">Ausentismo prolongado</span>
+                            <div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:85%; background:#e24b4a;"></div></div>
+                            <span class="factor-pct">85%</span>
+                        </li>
+                        <li class="factor-item">
+                            <div class="factor-icon fi-amber"><i class="fa fa-credit-card"></i></div>
+                            <span class="factor-name">Pagos atrasados</span>
+                            <div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:62%; background:#ef9f27;"></div></div>
+                            <span class="factor-pct">62%</span>
+                        </li>
+                        <li class="factor-item">
+                            <div class="factor-icon fi-blue"><i class="fa fa-chart-bar"></i></div>
+                            <span class="factor-name">Bajo rendimiento técnico</span>
+                            <div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:45%; background:#378add;"></div></div>
+                            <span class="factor-pct">45%</span>
+                        </li>
+                        <li class="factor-item">
+                            <div class="factor-icon fi-purple"><i class="fa fa-comment-slash"></i></div>
+                            <span class="factor-name">Sin interacción reciente</span>
+                            <div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:38%; background:#534ab7;"></div></div>
+                            <span class="factor-pct">38%</span>
+                        </li>
+                        <li class="factor-item">
+                            <div class="factor-icon fi-green"><i class="fa fa-star-half-alt"></i></div>
+                            <span class="factor-name">Feedback negativo</span>
+                            <div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:25%; background:#639922;"></div></div>
+                            <span class="factor-pct">25%</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- ALERTAS AUTOMÁTICAS -->
+                <div class="ret-card">
+                    <div class="ret-card-header">
+                        <h3 class="ret-card-title">
+                            <i class="fa fa-bell"></i> Alertas automáticas
+                        </h3>
+                        <span class="ret-badge badge-danger">3 activas</span>
+                    </div>
+                    <div style="padding: 14px 18px;">
+                        <div class="alert-item alert-danger">
+                            <i class="fa fa-user-slash"></i>
+                            <span><strong>María Vargas</strong> lleva 4 semanas sin asistir. Requiere contacto inmediato.</span>
+                        </div>
+                        <div class="alert-item alert-danger">
+                            <i class="fa fa-exclamation-circle"></i>
+                            <span><strong>Carlos López</strong> tiene 2 pagos pendientes y asistencia al 40%.</span>
+                        </div>
+                        <div class="alert-item alert-warning">
+                            <i class="fa fa-clock"></i>
+                            <span><strong>3 alumnos</strong> con asistencia irregular durante el último mes.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SOPORTE / ACCIONES RÁPIDAS -->
+                <div class="ret-card">
+                    <div class="ret-card-header">
+                        <h3 class="ret-card-title">
+                            <i class="fa fa-bolt"></i> Acciones rápidas
+                        </h3>
+                    </div>
+                    <div style="padding: 14px 18px;">
+                        <a asp-controller="Home" asp-action="Dashboard" class="qbtn" style="width:100%; margin-bottom:8px; justify-content:center;">
+                            <i class="fa fa-arrow-left"></i> Volver al Dashboard
+                        </a>
+                        <a asp-controller="Home" asp-action="Notificaciones" class="qbtn" style="width:100%; margin-bottom:8px; justify-content:center;">
+                            <i class="fa fa-bell"></i> Enviar notificaciones
+                        </a>
+                        <a asp-controller="Home" asp-action="Feedback" class="qbtn" style="width:100%; justify-content:center;">
+                            <i class="fa fa-comments"></i> Ver encuestas
+                        </a>
+                    </div>
+                    <div style="padding: 0 18px 16px; border-top: 1px solid #f5f5f5; padding-top: 14px; margin-top: 4px;">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color: var(--tennis-green-dark); margin-bottom: 12px;">
+                            <i class="fa fa-headset" style="margin-right:5px;"></i> Soporte
+                        </div>
+                        <div class="support-item">
+                            <i class="fa fa-phone"></i>
+                            <a href="tel:+50622839369">(506) 2283-9369</a>
+                        </div>
+                        <div class="support-item">
+                            <i class="fa fa-envelope"></i>
+                            <a href="mailto:info@tenismmp.com">info@tenismmp.com</a>
+                        </div>
+                        <div class="support-item">
+                            <i class="fab fa-whatsapp"></i>
+                            <a href="https://wa.me/50683764752">(506) 8376-4752</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- FIN COLUMNA LATERAL -->
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    (function () {
+        var canvas = document.getElementById('retTendenciaChart');
+        if (!canvas) return;
+        new Chart(canvas.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr'],
+                datasets: [
+                    {
+                        label: 'Retención (%)',
+                        data: [91, 90, 89, 88, 86, 84],
+                        borderColor: '#a5c422',
+                        backgroundColor: 'rgba(165,196,34,0.08)',
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#a5c422',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.35
+                    },
+                    {
+                        label: 'Meta (%)',
+                        data: [90, 90, 90, 90, 90, 90],
+                        borderColor: '#cccccc',
+                        borderWidth: 1.5,
+                        borderDash: [6, 4],
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (ctx) {
+                                return ctx.dataset.label + ': ' + Math.round(ctx.raw) + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 78, max: 95,
+                        ticks: {
+                            callback: function (v) { return v + '%'; },
+                            font: { size: 11 },
+                            color: '#aaa'
+                        },
+                        grid: { color: '#f0f0f0' }
+                    },
+                    x: {
+                        ticks: { font: { size: 11 }, color: '#aaa', autoSkip: false },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    })();
+</script>
+}

@@ -18,7 +18,15 @@ namespace ProyectoGrupalTennis.Controllers
             return View();
         }
 
-       
+        public IActionResult Retencion()
+        {
+            return View();
+        }
+        public IActionResult Campeonatos()
+        {
+            return View("~/Views/Campeonatos/campeonatos.cshtml");
+        }
+
         public IActionResult Tienda()
         {
             return View("~/Views/Home/Tienda.cshtml");
@@ -87,7 +95,9 @@ namespace ProyectoGrupalTennis.Controllers
 
         #endregion
 
-        #region Perfil Admin 
+        #region Perfiles
+
+       
         public IActionResult PerfilAdmin()
         {
             return View("~/Views/Perfiles/PerfilAdmin.cshtml");

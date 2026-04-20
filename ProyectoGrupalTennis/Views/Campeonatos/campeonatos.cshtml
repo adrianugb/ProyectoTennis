@@ -1,0 +1,1022 @@
+﻿@{
+    ViewData["Title"] = "Inscripción a Campeonatos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    :root {
+        --tennis-green: #a5c422;
+        --tennis-green-dark: #7a9318;
+        --section-bg: #f4f6f0;
+        --card-white: #ffffff;
+        --border-light: #e0e0e0;
+        --text-dark: #1a1a1a;
+        --text-muted: #6b6b6b;
+        --text-hint: #999;
+    }
+
+    /* ── PAGE HERO ── */
+    .champ-hero {
+        background: #1a1a1a;
+        border-bottom: 4px solid var(--tennis-green);
+        padding: 40px 0 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .champ-hero::before {
+            content: '';
+            position: absolute;
+            right: -60px;
+            top: -60px;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            border: 50px solid rgba(165, 196, 34, 0.06);
+        }
+
+        .champ-hero::after {
+            content: '';
+            position: absolute;
+            right: 80px;
+            top: 40px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 28px solid rgba(165, 196, 34, 0.04);
+        }
+
+    .champ-breadcrumb {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+    }
+
+        .champ-breadcrumb span {
+            color: var(--tennis-green);
+        }
+
+    .champ-hero-badge {
+        display: inline-block;
+        background: rgba(165, 196, 34, 0.15);
+        color: var(--tennis-green);
+        border: 1px solid rgba(165, 196, 34, 0.3);
+        border-radius: 20px;
+        padding: 4px 16px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .champ-hero h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 8px;
+        letter-spacing: 0.3px;
+    }
+
+    .champ-hero p {
+        font-size: 14px;
+        color: #888;
+        margin: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .champ-body {
+        background: var(--section-bg);
+        padding: 36px 0 60px;
+    }
+
+    .champ-grid {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 28px;
+        align-items: start;
+    }
+
+    /* ── STEP WIZARD ── */
+    .step-tabs {
+        display: flex;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border-light);
+        background: var(--card-white);
+        margin-bottom: 24px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .step-tab {
+        flex: 1;
+        padding: 12px 8px;
+        text-align: center;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        background: var(--card-white);
+        color: #bbb;
+        border-right: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+    }
+
+        .step-tab:last-child {
+            border-right: none;
+        }
+
+        .step-tab .step-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            background: #eee;
+            color: #bbb;
+            flex-shrink: 0;
+        }
+
+        .step-tab.done {
+            color: var(--tennis-green);
+            background: #f8faf0;
+        }
+
+            .step-tab.done .step-dot {
+                background: var(--tennis-green);
+                color: #fff;
+            }
+
+        .step-tab.active {
+            background: var(--tennis-green);
+            color: #fff;
+        }
+
+            .step-tab.active .step-dot {
+                background: rgba(255,255,255,0.25);
+                color: #fff;
+            }
+
+    /* ── CARDS ── */
+    .champ-card {
+        background: var(--card-white);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+        .champ-card:last-of-type {
+            margin-bottom: 0;
+        }
+
+    .card-section-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--tennis-green-dark);
+        margin: 0 0 18px;
+    }
+
+    /* ── FORM FIELDS ── */
+    .form-row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        margin-bottom: 7px;
+    }
+
+    .field-display {
+        background: #f9fafb;
+        border: 1.5px solid #e8efe0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+        .field-display.editable {
+            background: #fff;
+            border-color: var(--border-light);
+            color: #aaa;
+        }
+
+    .field-arrow {
+        color: #ccc;
+        font-size: 10px;
+    }
+
+    /* ── TOURNAMENT GRID ── */
+    .tournament-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .tourn-card {
+        border: 2px solid var(--border-light);
+        border-radius: 10px;
+        padding: 16px;
+        cursor: pointer;
+        background: #fff;
+        position: relative;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .tourn-card:hover {
+            border-color: #c5dc6a;
+            box-shadow: 0 2px 8px rgba(165, 196, 34, 0.15);
+        }
+
+        .tourn-card.selected {
+            border-color: var(--tennis-green);
+            background: #fafdf2;
+            box-shadow: 0 2px 12px rgba(165, 196, 34, 0.18);
+        }
+
+            .tourn-card.selected .tourn-name {
+                color: var(--tennis-green-dark);
+            }
+
+    .tourn-check {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--tennis-green);
+        color: #fff;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .tourn-card.selected .tourn-check {
+        display: flex;
+    }
+
+    .tourn-badge {
+        display: inline-block;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+    }
+
+    .badge-gold {
+        background: #fff8e6;
+        color: #b07d00;
+        border: 1px solid #f0d580;
+    }
+
+    .badge-silver {
+        background: #f4f4f4;
+        color: #888;
+        border: 1px solid #ddd;
+    }
+
+    .badge-green {
+        background: #f0f8e0;
+        color: var(--tennis-green-dark);
+        border: 1px solid #c5dc6a;
+    }
+
+    .badge-blue {
+        background: #e8f3fd;
+        color: #1a6fb5;
+        border: 1px solid #a8cff0;
+    }
+
+    .tourn-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .tourn-meta {
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+
+    .tourn-prize {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 8px;
+    }
+
+        .tourn-prize strong {
+            color: var(--tennis-green-dark);
+        }
+
+    /* ── CATEGORY PILLS ── */
+    .category-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .pill {
+        padding: 7px 18px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1.5px solid var(--border-light);
+        background: #fff;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .pill:hover {
+            border-color: var(--tennis-green);
+            color: var(--tennis-green-dark);
+        }
+
+        .pill.active {
+            background: #f0f8e0;
+            border-color: var(--tennis-green);
+            color: var(--tennis-green-dark);
+        }
+
+        .pill.unavail {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+    /* ── MODALIDAD ── */
+    .modalidad-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        margin-top: 4px;
+    }
+
+    .mod-option {
+        border: 1.5px solid var(--border-light);
+        border-radius: 8px;
+        padding: 12px;
+        cursor: pointer;
+        background: #fff;
+        transition: border-color 0.2s;
+    }
+
+        .mod-option.selected {
+            border-color: var(--tennis-green);
+            background: #f8fdf0;
+        }
+
+    .mod-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #bbb;
+        margin-bottom: 4px;
+    }
+
+    .mod-option.selected .mod-label {
+        color: var(--tennis-green);
+    }
+
+    .mod-name {
+        font-size: 13px;
+        color: #aaa;
+        font-weight: 600;
+    }
+
+    .mod-option.selected .mod-name {
+        color: var(--text-dark);
+    }
+
+    /* ── INFO BOXES ── */
+    .info-box {
+        background: #eaf3fd;
+        border: 1px solid #b8d8f5;
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-size: 12px;
+        color: #1a6fb5;
+        margin-bottom: 18px;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .info-icon {
+        font-size: 14px;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    .warning-box {
+        background: #fff8e6;
+        border: 1px solid #f0d580;
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-size: 12px;
+        color: #946a00;
+        margin-top: 14px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    /* ── DOCUMENTOS ── */
+    .docs-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .doc-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+
+        .doc-item:last-child {
+            border-bottom: none;
+        }
+
+    .doc-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 7px;
+        background: #f4f6f0;
+        border: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .doc-name {
+        flex: 1;
+        font-size: 13px;
+        color: #444;
+    }
+
+    .doc-status {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        text-transform: uppercase;
+    }
+
+    .doc-ok {
+        background: #edf8d8;
+        color: #4a8000;
+        border: 1px solid #c5dc6a;
+    }
+
+    .doc-pend {
+        background: #fff8e6;
+        color: #946a00;
+        border: 1px solid #f0d580;
+    }
+
+    .doc-req {
+        background: #fde8e8;
+        color: #b02020;
+        border: 1px solid #f5a5a5;
+    }
+
+    .progress-bar-wrap {
+        margin-top: 18px;
+    }
+
+    .progress-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+    }
+
+    .progress-track {
+        background: #eee;
+        border-radius: 20px;
+        height: 7px;
+    }
+
+    .progress-fill {
+        background: var(--tennis-green);
+        border-radius: 20px;
+        height: 7px;
+        width: 50%;
+    }
+
+    /* ── ASIDE SUMMARY ── */
+    .aside-card {
+        background: var(--card-white);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        position: sticky;
+        top: 100px;
+    }
+
+    .aside-header {
+        background: #f0f8e0;
+        border-bottom: 1px solid #d4e8a0;
+        padding: 16px 20px;
+    }
+
+    .aside-header-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--tennis-green-dark);
+        margin: 0;
+    }
+
+    .aside-body {
+        padding: 20px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 9px 0;
+        border-bottom: 1px solid #f4f4f4;
+        font-size: 13px;
+    }
+
+        .summary-row:last-of-type {
+            border-bottom: none;
+        }
+
+    .summary-label {
+        color: var(--text-muted);
+    }
+
+    .summary-value {
+        color: var(--text-dark);
+        font-weight: 500;
+        text-align: right;
+        max-width: 160px;
+    }
+
+        .summary-value.green {
+            color: var(--tennis-green-dark);
+        }
+
+    .aside-divider {
+        border: none;
+        border-top: 1.5px solid #eee;
+        margin: 12px 0;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 18px;
+    }
+
+    .total-amount {
+        font-size: 22px;
+        color: var(--tennis-green-dark);
+    }
+
+    .btn-champ-primary {
+        display: block;
+        width: 100%;
+        background: var(--tennis-green);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 13px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        margin-bottom: 10px;
+        text-align: center;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+        .btn-champ-primary:hover {
+            background: var(--tennis-green-dark);
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .btn-champ-secondary {
+        display: block;
+        width: 100%;
+        background: transparent;
+        color: var(--text-muted);
+        border: 1.5px solid var(--border-light);
+        border-radius: 8px;
+        padding: 11px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+        .btn-champ-secondary:hover {
+            border-color: var(--tennis-green);
+            color: var(--tennis-green-dark);
+            text-decoration: none;
+        }
+
+    .aside-support {
+        background: var(--card-white);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-top: 16px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .aside-support-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--tennis-green-dark);
+        margin: 0 0 12px;
+    }
+
+    .support-item {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 7px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .support-item i {
+            color: var(--tennis-green);
+            width: 14px;
+        }
+
+        .support-item a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+            .support-item a:hover {
+                color: var(--tennis-green-dark);
+            }
+</style>
+
+<!-- HERO -->
+<section class="champ-hero">
+    <div class="container">
+        <div class="champ-breadcrumb">
+            <a href="/" style="color:#666; text-decoration:none;">Inicio</a>
+            &rsaquo; Módulos &rsaquo;
+            <span>Inscripción a Campeonatos</span>
+        </div>
+        <div class="champ-hero-badge">
+            <i class="fa fa-trophy"></i> Módulo activo — Temporada 2026
+        </div>
+        <h1>Inscripción a Campeonatos</h1>
+        <p>Selecciona el torneo, categoría y completa tu ficha de participación</p>
+    </div>
+</section>
+
+<!-- BODY -->
+<section class="champ-body">
+    <div class="container">
+        <div class="champ-grid">
+
+            <!-- COLUMNA PRINCIPAL -->
+            <div>
+
+                <!-- WIZARD DE PASOS -->
+                <div class="step-tabs">
+                    <div class="step-tab done">
+                        <div class="step-dot"><i class="fa fa-check" style="font-size:8px;"></i></div>
+                        Datos personales
+                    </div>
+                    <div class="step-tab active">
+                        <div class="step-dot">2</div>
+                        Torneo &amp; categoría
+                    </div>
+                    <div class="step-tab">
+                        <div class="step-dot">3</div>
+                        Documentos
+                    </div>
+                    <div class="step-tab">
+                        <div class="step-dot">4</div>
+                        Pago
+                    </div>
+                </div>
+
+                <!-- DATOS DEL PARTICIPANTE -->
+                <div class="champ-card">
+                    <p class="card-section-title"><i class="fa fa-user" style="margin-right:6px;"></i>Datos del participante</p>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Nombre completo</label>
+                            <div class="field-display">Marco Ureña Sánchez</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Número de cédula</label>
+                            <div class="field-display">1-0890-0451</div>
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Fecha de nacimiento</label>
+                            <div class="field-display">14 / 03 / 1998</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Nivel de juego</label>
+                            <div class="field-display">
+                                Intermedio (3.5 NTRP)
+                                <span class="field-arrow">&#9660;</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Teléfono de contacto</label>
+                            <div class="field-display">(506) 8712-3344</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Correo electrónico</label>
+                            <div class="field-display">marco.urena@gmail.com</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SELECCIÓN DE TORNEO -->
+                <div class="champ-card">
+                    <p class="card-section-title"><i class="fa fa-trophy" style="margin-right:6px;"></i>Seleccionar torneo</p>
+                    <div class="tournament-grid">
+
+                        <div class="tourn-card selected">
+                            <div class="tourn-check"><i class="fa fa-check" style="font-size:9px;"></i></div>
+                            <span class="tourn-badge badge-gold">Torneo principal</span>
+                            <div class="tourn-name">Copa San José Open 2026</div>
+                            <div class="tourn-meta">
+                                <i class="fa fa-calendar" style="margin-right:4px;"></i> 15 – 22 Jul 2026<br>
+                                <i class="fa fa-map-marker-alt" style="margin-right:4px;"></i> Academia M.M.P.
+                            </div>
+                            <div class="tourn-prize">Premio: <strong>₡2.500.000</strong></div>
+                        </div>
+
+                        <div class="tourn-card">
+                            <span class="tourn-badge badge-green">Clasificatorio</span>
+                            <div class="tourn-name">Torneo Verano Escazú</div>
+                            <div class="tourn-meta">
+                                <i class="fa fa-calendar" style="margin-right:4px;"></i> 5 – 8 Jul 2026<br>
+                                <i class="fa fa-map-marker-alt" style="margin-right:4px;"></i> Club Escazú
+                            </div>
+                            <div class="tourn-prize">Premio: <strong>₡800.000</strong></div>
+                        </div>
+
+                        <div class="tourn-card">
+                            <span class="tourn-badge badge-silver">Juvenil</span>
+                            <div class="tourn-name">Intercolegial Nacional</div>
+                            <div class="tourn-meta">
+                                <i class="fa fa-calendar" style="margin-right:4px;"></i> 19 – 21 Jul 2026<br>
+                                <i class="fa fa-map-marker-alt" style="margin-right:4px;"></i> Multisede
+                            </div>
+                            <div class="tourn-prize">Premio: <strong>Trofeo + Beca</strong></div>
+                        </div>
+
+                        <div class="tourn-card">
+                            <span class="tourn-badge badge-blue">Dobles</span>
+                            <div class="tourn-name">Torneo por Parejas CR</div>
+                            <div class="tourn-meta">
+                                <i class="fa fa-calendar" style="margin-right:4px;"></i> 26 – 27 Jul 2026<br>
+                                <i class="fa fa-map-marker-alt" style="margin-right:4px;"></i> Santa Ana
+                            </div>
+                            <div class="tourn-prize">Premio: <strong>₡400.000</strong></div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- CATEGORÍA -->
+                <div class="champ-card">
+                    <p class="card-section-title"><i class="fa fa-list-alt" style="margin-right:6px;"></i>Categoría de inscripción</p>
+
+                    <div class="info-box">
+                        <span class="info-icon"><i class="fa fa-info-circle"></i></span>
+                        <span>Las categorías disponibles se determinan por tu nivel NTRP registrado y tu fecha de nacimiento. Las marcadas en gris no están disponibles para tu perfil.</span>
+                    </div>
+
+                    <div class="category-pills">
+                        <div class="pill">Sub-18</div>
+                        <div class="pill active">Open Masculino</div>
+                        <div class="pill">Open Femenino</div>
+                        <div class="pill">35+ Masculino</div>
+                        <div class="pill unavail">45+ Masculino</div>
+                        <div class="pill unavail">Dobles Mixto</div>
+                        <div class="pill">Dobles Masculino</div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label>Modalidad de juego</label>
+                        <div class="modalidad-grid">
+                            <div class="mod-option">
+                                <div class="mod-label">Individual</div>
+                                <div class="mod-name">Singles</div>
+                            </div>
+                            <div class="mod-option selected">
+                                <div class="mod-label"><i class="fa fa-check" style="margin-right:4px;font-size:9px;"></i>Seleccionado</div>
+                                <div class="mod-name">Singles + Dobles</div>
+                            </div>
+                            <div class="mod-option">
+                                <div class="mod-label">Solo dobles</div>
+                                <div class="mod-name">Dobles</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Compañero de dobles (opcional)</label>
+                        <div class="field-display editable">
+                            <span>Buscar jugador registrado...</span>
+                            <span style="color:var(--tennis-green-dark); font-size:12px; font-weight:700;">+ Agregar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOCUMENTOS -->
+                <div class="champ-card">
+                    <p class="card-section-title"><i class="fa fa-folder-open" style="margin-right:6px;"></i>Documentos requeridos</p>
+
+                    <ul class="docs-list">
+                        <li class="doc-item">
+                            <div class="doc-icon"><i class="fa fa-id-card"></i></div>
+                            <span class="doc-name">Cédula de identidad (ambos lados)</span>
+                            <span class="doc-status doc-ok">Cargado</span>
+                        </li>
+                        <li class="doc-item">
+                            <div class="doc-icon"><i class="fa fa-file-medical"></i></div>
+                            <span class="doc-name">Formulario médico de aptitud</span>
+                            <span class="doc-status doc-ok">Cargado</span>
+                        </li>
+                        <li class="doc-item">
+                            <div class="doc-icon"><i class="fa fa-camera"></i></div>
+                            <span class="doc-name">Fotografía reciente (fondo blanco)</span>
+                            <span class="doc-status doc-pend">Pendiente</span>
+                        </li>
+                        <li class="doc-item">
+                            <div class="doc-icon"><i class="fa fa-certificate"></i></div>
+                            <span class="doc-name">Certificado de ranking COTENNIS</span>
+                            <span class="doc-status doc-req">Requerido</span>
+                        </li>
+                    </ul>
+
+                    <div class="progress-bar-wrap">
+                        <div class="progress-meta">
+                            <span>Progreso de documentación</span>
+                            <span>2 / 4</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- FIN COLUMNA PRINCIPAL -->
+            <!-- ASIDE: RESUMEN -->
+            <div>
+                <div class="aside-card">
+                    <div class="aside-header">
+                        <p class="aside-header-title"><i class="fa fa-clipboard-list" style="margin-right:6px;"></i>Resumen de inscripción</p>
+                    </div>
+                    <div class="aside-body">
+                        <div class="summary-row">
+                            <span class="summary-label">Torneo</span>
+                            <span class="summary-value green">Copa San José Open 2026</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Categoría</span>
+                            <span class="summary-value">Open Masculino</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Modalidad</span>
+                            <span class="summary-value">Singles + Dobles</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Fecha</span>
+                            <span class="summary-value">15 – 22 Jul 2026</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Sede</span>
+                            <span class="summary-value">Academia M.M.P., San José</span>
+                        </div>
+
+                        <hr class="aside-divider" />
+
+                        <div class="summary-row">
+                            <span class="summary-label">Inscripción singles</span>
+                            <span class="summary-value">₡35.000</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Inscripción dobles</span>
+                            <span class="summary-value">₡18.000</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Gastos administrativos</span>
+                            <span class="summary-value">₡2.500</span>
+                        </div>
+
+                        <hr class="aside-divider" />
+
+                        <div class="total-row">
+                            <span>Total a pagar</span>
+                            <span class="total-amount">₡55.500</span>
+                        </div>
+
+                        <a href="#" class="btn-champ-primary">
+                            Continuar al pago &nbsp;<i class="fa fa-arrow-right"></i>
+                        </a>
+                        <a href="#" class="btn-champ-secondary">
+                            <i class="fa fa-save" style="margin-right:5px;"></i> Guardar borrador
+                        </a>
+
+                        <div class="warning-box" style="margin-top:14px;">
+                            <i class="fa fa-clock" style="font-size:14px; flex-shrink:0;"></i>
+                            &nbsp; Cierre de inscripciones: <strong style="margin-left:4px;">30 Jun 2026</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soporte -->
+                <div class="aside-support">
+                    <p class="aside-support-title"><i class="fa fa-headset" style="margin-right:6px;"></i>Soporte</p>
+                    <div class="support-item">
+                        <i class="fa fa-phone"></i>
+                        <a href="tel:+50622839369">(506) 2283-9369</a>
+                    </div>
+                    <div class="support-item">
+                        <i class="fa fa-envelope"></i>
+                        <a href="mailto:torneos@tenismmp.com">torneos@tenismmp.com</a>
+                    </div>
+                    <div class="support-item">
+                        <i class="fab fa-whatsapp"></i>
+                        <a href="https://wa.me/50683764752">(506) 8376-4752</a>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN ASIDE -->
+
+        </div>
+    </div>
+</section>
+
+}
