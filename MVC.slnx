@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="AcademiaTennisBLL/AcademiaTennisBLL.csproj" Id="3972f7a3-8633-488a-8e16-a89d4a320639" />
+  <Project Path="AcademiaTennisDAL/AcademiaTennisDAL.csproj" Id="8b8d446c-988b-4e5a-b5f7-849fe91e535b" />
   <Project Path="ProyectoGrupalTennis/ProyectoGrupalTennis.csproj" />
 </Solution>
