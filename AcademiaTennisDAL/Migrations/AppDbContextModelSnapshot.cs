@@ -103,6 +103,54 @@ namespace AcademiaTennisDAL.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.AsistenciaClase", b =>
+                {
+                    b.Property<int>("IdAsistencia")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAsistencia"));
+
+                    b.Property<bool>("Asistio")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IdReserva")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdAsistencia");
+
+                    b.HasIndex("IdReserva");
+
+                    b.ToTable("AsistenciasClase");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Cancha", b =>
+                {
+                    b.Property<int>("IdCancha")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCancha"));
+
+                    b.Property<bool>("Disponible")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EnMantenimiento")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("IdCancha");
+
+                    b.ToTable("Canchas");
+                });
+
             modelBuilder.Entity("AcademiaTennisDAL.Entities.Cupon", b =>
                 {
                     b.Property<int>("IdCupon")
@@ -171,6 +219,125 @@ namespace AcademiaTennisDAL.Migrations
                     b.ToTable("CuponUsos");
                 });
 
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Curso", b =>
+                {
+                    b.Property<int>("IdCurso")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCurso"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("CuposDisponibles")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Nivel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("IdCurso");
+
+                    b.ToTable("Cursos");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Factura", b =>
+                {
+                    b.Property<int>("IdFactura")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdFactura"));
+
+                    b.Property<DateTime>("FechaFactura")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IdPago")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NumeroFactura")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("IdFactura");
+
+                    b.HasIndex("IdPago")
+                        .IsUnique();
+
+                    b.ToTable("Facturas");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Horario", b =>
+                {
+                    b.Property<int>("IdHorario")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdHorario"));
+
+                    b.Property<string>("DiaSemana")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("HoraFin")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("HoraInicio")
+                        .HasColumnType("time");
+
+                    b.Property<int>("IdCurso")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdHorario");
+
+                    b.HasIndex("IdCurso");
+
+                    b.ToTable("Horarios");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Matricula", b =>
+                {
+                    b.Property<int>("IdMatricula")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdMatricula"));
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaMatricula")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IdAlumno")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("IdCurso")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdMatricula");
+
+                    b.HasIndex("IdAlumno");
+
+                    b.HasIndex("IdCurso");
+
+                    b.ToTable("Matriculas");
+                });
+
             modelBuilder.Entity("AcademiaTennisDAL.Entities.Oferta", b =>
                 {
                     b.Property<int>("IdOferta")
@@ -202,13 +369,101 @@ namespace AcademiaTennisDAL.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ProductosAplicables")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
                     b.HasKey("IdOferta");
 
                     b.ToTable("Ofertas");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Pago", b =>
+                {
+                    b.Property<int>("IdPago")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdPago"));
+
+                    b.Property<bool>("EsManual")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("FechaPago")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IdAlumno")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MetodoPago")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Observaciones")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("TipoPago")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("IdPago");
+
+                    b.HasIndex("IdAlumno");
+
+                    b.ToTable("Pagos");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Reserva", b =>
+                {
+                    b.Property<int>("IdReserva")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdReserva"));
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaReserva")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("HoraFin")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("HoraInicio")
+                        .HasColumnType("time");
+
+                    b.Property<string>("IdAlumno")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("IdCancha")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdProfesor")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("IdReserva");
+
+                    b.HasIndex("IdAlumno");
+
+                    b.HasIndex("IdCancha");
+
+                    b.HasIndex("IdProfesor");
+
+                    b.ToTable("Reservas");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -344,6 +599,17 @@ namespace AcademiaTennisDAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.AsistenciaClase", b =>
+                {
+                    b.HasOne("AcademiaTennisDAL.Entities.Reserva", "Reserva")
+                        .WithMany()
+                        .HasForeignKey("IdReserva")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reserva");
+                });
+
             modelBuilder.Entity("AcademiaTennisDAL.Entities.Cupon", b =>
                 {
                     b.HasOne("AcademiaTennisDAL.Entities.Oferta", "Oferta")
@@ -370,6 +636,83 @@ namespace AcademiaTennisDAL.Migrations
                     b.Navigation("Cupon");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Factura", b =>
+                {
+                    b.HasOne("AcademiaTennisDAL.Entities.Pago", "Pago")
+                        .WithOne("Factura")
+                        .HasForeignKey("AcademiaTennisDAL.Entities.Factura", "IdPago")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pago");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Horario", b =>
+                {
+                    b.HasOne("AcademiaTennisDAL.Entities.Curso", "Curso")
+                        .WithMany("Horarios")
+                        .HasForeignKey("IdCurso")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Curso");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Matricula", b =>
+                {
+                    b.HasOne("AcademiaTennisDAL.Entities.ApplicationUser", "Alumno")
+                        .WithMany()
+                        .HasForeignKey("IdAlumno")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AcademiaTennisDAL.Entities.Curso", "Curso")
+                        .WithMany("Matriculas")
+                        .HasForeignKey("IdCurso")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Alumno");
+
+                    b.Navigation("Curso");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Pago", b =>
+                {
+                    b.HasOne("AcademiaTennisDAL.Entities.ApplicationUser", "Alumno")
+                        .WithMany()
+                        .HasForeignKey("IdAlumno")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Alumno");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Reserva", b =>
+                {
+                    b.HasOne("AcademiaTennisDAL.Entities.ApplicationUser", "Alumno")
+                        .WithMany()
+                        .HasForeignKey("IdAlumno")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AcademiaTennisDAL.Entities.Cancha", "Cancha")
+                        .WithMany()
+                        .HasForeignKey("IdCancha")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AcademiaTennisDAL.Entities.ApplicationUser", "Profesor")
+                        .WithMany()
+                        .HasForeignKey("IdProfesor");
+
+                    b.Navigation("Alumno");
+
+                    b.Navigation("Cancha");
+
+                    b.Navigation("Profesor");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -428,9 +771,21 @@ namespace AcademiaTennisDAL.Migrations
                     b.Navigation("Usos");
                 });
 
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Curso", b =>
+                {
+                    b.Navigation("Horarios");
+
+                    b.Navigation("Matriculas");
+                });
+
             modelBuilder.Entity("AcademiaTennisDAL.Entities.Oferta", b =>
                 {
                     b.Navigation("Cupones");
+                });
+
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.Pago", b =>
+                {
+                    b.Navigation("Factura");
                 });
 #pragma warning restore 612, 618
         }
