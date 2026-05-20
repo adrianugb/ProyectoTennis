@@ -110,7 +110,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         public IActionResult AdminAlumnos()
         {
-            return View("~/Views/Perfiles/AdminAlumnos.cshtml");
+            return RedirectToAction("Index", "Alumnos");
         }
 
         public IActionResult AdminProfesores()

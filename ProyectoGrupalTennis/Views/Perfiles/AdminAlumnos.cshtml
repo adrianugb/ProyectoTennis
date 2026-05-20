@@ -1,4 +1,5 @@
-﻿@{
+﻿@model ProyectoGrupalTennis.Models.AdminAlumnosViewModel
+@{
     ViewData["Title"] = "Gestión de Alumnos";
 }
 
@@ -15,115 +16,121 @@
                         Consulta, registra, modifica y administra la información general de los alumnos.
                     </p>
                 </div>
-
                 <div class="perfil-badge">
                     <i class="fa fa-user-graduate"></i> Administración de Alumnos
                 </div>
             </div>
 
+            @* ── Mensajes de éxito / error ── *@
+            @if (!string.IsNullOrEmpty(Model.MensajeExito))
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa fa-check-circle me-2"></i> @Model.MensajeExito
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.MensajeError))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fa fa-exclamation-circle me-2"></i> @Model.MensajeError
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
             <div class="perfil-table-block">
                 <div class="perfil-table-header">
                     <h2 class="perfil-table-title">Listado de alumnos</h2>
 
-                    <a href="#" class="perfil-btn">
+                    @* Botón que abre el modal de agregar alumno (Historia 1) *@
+                    <button type="button" class="perfil-btn" data-bs-toggle="modal" data-bs-target="#modalAgregarAlumno">
                         <i class="fa fa-plus"></i> Agregar alumno
-                    </a>
+                    </button>
                 </div>
 
+                @* ── Filtros de búsqueda ── *@
                 <div class="perfil-filter-row">
-                    <input type="text" class="form-control" placeholder="Buscar alumno..." />
+                    <input type="text" id="filtroNombre" class="form-control"
+                           placeholder="Buscar alumno..." oninput="filtrarTabla()" />
 
-                    <select class="form-select">
-                        <option>Filtrar por estado</option>
-                        <option>Activo</option>
-                        <option>Inactivo</option>
-                    </select>
-
-                    <select class="form-select">
-                        <option>Filtrar por nivel</option>
-                        <option>Básico</option>
-                        <option>Intermedio</option>
-                        <option>Avanzado</option>
+                    <select id="filtroEstado" class="form-select" onchange="filtrarTabla()">
+                        <option value="">Filtrar por estado</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
                     </select>
                 </div>
 
+                @* ── Tabla de alumnos ── *@
                 <div class="table-responsive">
-                    <table class="perfil-table">
+                    <table class="perfil-table" id="tablaAlumnos">
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Alumno</th>
                                 <th>Correo</th>
                                 <th>Teléfono</th>
-                                <th>Nivel</th>
                                 <th>Estado</th>
+                                <th>Fecha Registro</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>ALU-001</td>
-                                <td>María González</td>
-                                <td>maria.gonzalez@email.com</td>
-                                <td>8888-1111</td>
-                                <td>Básico</td>
-                                <td><span class="perfil-badge-success">Activo</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Editar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Desactivar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                </td>
-                            </tr>
+                            @if (!Model.Alumnos.Any())
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="fa fa-users fa-2x mb-2 d-block"></i>
+                                        No hay alumnos registrados en el sistema.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var alumno in Model.Alumnos)
+                                {
+                                    <tr>
+                                        <td>@alumno.NombreCompleto</td>
+                                        <td>@alumno.Correo</td>
+                                        <td>@alumno.Telefono</td>
+                                        <td>
+                                            @if (alumno.Activo)
+                                            {
+                                                <span class="perfil-badge-success">Activo</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="perfil-badge-warning">Inactivo</span>
+                                            }
+                                        </td>
+                                        <td>@alumno.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            @* Botón Editar → abre modal de edición (Historia 2) *@
+                                            <a href="#"
+                                               class="perfil-action-link"
+                                               onclick="abrirModalEditar('@alumno.Id'); return false;">
+                                                Editar
+                                            </a>
 
-                            <tr>
-                                <td>ALU-002</td>
-                                <td>Carlos Ramírez</td>
-                                <td>carlos.ramirez@email.com</td>
-                                <td>8777-2222</td>
-                                <td>Intermedio</td>
-                                <td><span class="perfil-badge-success">Activo</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Editar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Desactivar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                </td>
-                            </tr>
+                                            <span class="perfil-action-separator">|</span>
 
-                            <tr>
-                                <td>ALU-003</td>
-                                <td>Ana López</td>
-                                <td>ana.lopez@email.com</td>
-                                <td>8666-3333</td>
-                                <td>Avanzado</td>
-                                <td><span class="perfil-badge-warning">Inactivo</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Editar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Activar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>ALU-004</td>
-                                <td>José Fernández</td>
-                                <td>jose.fernandez@email.com</td>
-                                <td>8555-4444</td>
-                                <td>Básico</td>
-                                <td><span class="perfil-badge-success">Activo</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Editar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Desactivar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                </td>
-                            </tr>
+                                            @* Botón Desactivar → abre modal de confirmación (Historia 3) *@
+                                            @if (alumno.Activo)
+                                            {
+                                                <a href="#"
+                                                   class="perfil-action-link text-danger"
+                                                   onclick="abrirModalDesactivar('@alumno.Id', '@alumno.NombreCompleto'); return false;">
+                                                    Desactivar
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="perfil-action-link text-muted" style="cursor:default;">
+                                                    Inactivo
+                                                </span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -132,3 +139,335 @@
         </div>
     </div>
 </section>
+
+
+@* ══════════════════════════════════════════════════════════
+   MODAL 1 — Agregar alumno  (Historia 1)
+   ══════════════════════════════════════════════════════════ *@
+<div class="modal fade" id="modalAgregarAlumno" tabindex="-1" aria-labelledby="tituloModalAgregar" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="tituloModalAgregar">
+                    <i class="fa fa-user-plus me-2"></i> Agregar Alumno
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancelar"></button>
+            </div>
+
+            @* data-bs-backdrop="static" y el botón Cancelar con onclick garantizan que al cancelar
+               no se guarda nada (criterio: "mantener info actual si admin cancela") *@
+            <form asp-controller="Alumnos" asp-action="Crear" method="post" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div class="modal-body">
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label asp-for="NuevoAlumno.Nombre" class="form-label fw-semibold"></label>
+                            <input asp-for="NuevoAlumno.Nombre" class="form-control"
+                                   placeholder="Ej: María" autocomplete="off" />
+                            <span asp-validation-for="NuevoAlumno.Nombre" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NuevoAlumno.Apellido" class="form-label fw-semibold"></label>
+                            <input asp-for="NuevoAlumno.Apellido" class="form-control"
+                                   placeholder="Ej: González" autocomplete="off" />
+                            <span asp-validation-for="NuevoAlumno.Apellido" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NuevoAlumno.Correo" class="form-label fw-semibold"></label>
+                            <input asp-for="NuevoAlumno.Correo" class="form-control" type="email"
+                                   placeholder="Ej: alumno@correo.com" autocomplete="off" />
+                            <span asp-validation-for="NuevoAlumno.Correo" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NuevoAlumno.Telefono" class="form-label fw-semibold"></label>
+                            <input asp-for="NuevoAlumno.Telefono" class="form-control"
+                                   placeholder="Ej: 8888-1234" autocomplete="off" />
+                            <span asp-validation-for="NuevoAlumno.Telefono" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NuevoAlumno.Contrasena" class="form-label fw-semibold"></label>
+                            <input asp-for="NuevoAlumno.Contrasena" class="form-control" type="password"
+                                   placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
+                            <span asp-validation-for="NuevoAlumno.Contrasena" class="text-danger small"></span>
+                            <div class="form-text">El alumno podrá cambiarla después de su primer ingreso.</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    @* Cancelar: cierra sin guardar (Historia 1, criterio de cancelación) *@
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fa fa-times me-1"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save me-1"></i> Guardar alumno
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+@* ══════════════════════════════════════════════════════════
+   MODAL 2 — Editar alumno  (Historia 2)
+   ══════════════════════════════════════════════════════════ *@
+<div class="modal fade" id="modalEditarAlumno" tabindex="-1" aria-labelledby="tituloModalEditar" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="tituloModalEditar">
+                    <i class="fa fa-user-edit me-2"></i> Editar Alumno
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancelar"></button>
+            </div>
+
+            <form asp-controller="Alumnos" asp-action="Editar" method="post" id="formEditar" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div class="modal-body">
+
+                    @* Spinner de carga mientras se obtienen los datos vía AJAX *@
+                    <div id="editarCargando" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Cargando información del alumno...</p>
+                    </div>
+
+                    @* Mensaje de error si el alumno no existe (Historia 2, criterio 2) *@
+                    <div id="editarError" class="alert alert-danger d-none" role="alert">
+                        <i class="fa fa-exclamation-circle me-2"></i>
+                        <span id="editarErrorMensaje"></span>
+                    </div>
+
+                    <div id="editarFormulario" class="d-none">
+                        <input type="hidden" id="editarId" name="Id" />
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label for="editarNombre" class="form-label fw-semibold">Nombre</label>
+                                <input type="text" id="editarNombre" name="Nombre" class="form-control"
+                                       placeholder="Ej: María" required maxlength="100" />
+                                <div class="invalid-feedback">El nombre es obligatorio.</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="editarApellido" class="form-label fw-semibold">Apellido</label>
+                                <input type="text" id="editarApellido" name="Apellido" class="form-control"
+                                       placeholder="Ej: González" required maxlength="100" />
+                                <div class="invalid-feedback">El apellido es obligatorio.</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="editarCorreo" class="form-label fw-semibold">Correo electrónico</label>
+                                <input type="email" id="editarCorreo" name="Correo" class="form-control"
+                                       placeholder="Ej: alumno@correo.com" required maxlength="150" />
+                                <div class="invalid-feedback">Ingrese un correo válido.</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="editarTelefono" class="form-label fw-semibold">Teléfono</label>
+                                <input type="tel" id="editarTelefono" name="Telefono" class="form-control"
+                                       placeholder="Ej: 8888-1234" required maxlength="20" />
+                                <div class="invalid-feedback">El teléfono es obligatorio.</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer" id="editarFooter" style="display:none!important;">
+                    @* Cancelar: cierra sin guardar (Historia 2, criterio 3 - mantiene info actual) *@
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            onclick="resetearModalEditar()">
+                        <i class="fa fa-times me-1"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save me-1"></i> Guardar cambios
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+@* ══════════════════════════════════════════════════════════
+   MODAL 3 — Confirmar desactivación  (Historia 3)
+   ══════════════════════════════════════════════════════════ *@
+<div class="modal fade" id="modalDesactivar" tabindex="-1" aria-labelledby="tituloModalDesactivar" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header bg-warning bg-opacity-10">
+                <h5 class="modal-title" id="tituloModalDesactivar">
+                    <i class="fa fa-user-slash me-2 text-warning"></i> Desactivar Alumno
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancelar"></button>
+            </div>
+
+            <div class="modal-body">
+                <p>
+                    ¿Está seguro que desea desactivar al alumno
+                    <strong id="nombreDesactivar"></strong>?
+                </p>
+                <p class="text-muted small">
+                    El alumno quedará inactivo y no podrá ingresar al sistema.
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                @* Cancelar: no ejecuta la acción, mantiene alumno activo (Historia 3, criterio 3) *@
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa fa-times me-1"></i> Cancelar
+                </button>
+
+                @* Formulario que envía el POST para desactivar *@
+                <form asp-controller="Alumnos" asp-action="Desactivar" method="post" id="formDesactivar">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="idDesactivar" name="id" />
+                    <button type="submit" class="btn btn-warning text-white">
+                        <i class="fa fa-user-slash me-1"></i> Sí, desactivar
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // ────────────────────────────────────────────────
+        // Historia 2: Cargar datos del alumno en el modal
+        // de edición mediante AJAX
+        // ────────────────────────────────────────────────
+        async function abrirModalEditar(id) {
+            // Resetear estado del modal antes de abrir
+            resetearModalEditar();
+            const modal = new bootstrap.Modal(document.getElementById('modalEditarAlumno'));
+            modal.show();
+
+            try {
+                const response = await fetch(`/Alumnos/ObtenerDatos/${encodeURIComponent(id)}`);
+                const data = await response.json();
+
+                if (!data.exito) {
+                    // Criterio 2: mostrar mensaje si el alumno no existe
+                    document.getElementById('editarError').classList.remove('d-none');
+                    document.getElementById('editarErrorMensaje').textContent = data.mensaje;
+                    document.getElementById('editarCargando').classList.add('d-none');
+                    return;
+                }
+
+                // Llenar el formulario con los datos actuales del alumno
+                document.getElementById('editarId').value       = data.id;
+                document.getElementById('editarNombre').value   = data.nombre;
+                document.getElementById('editarApellido').value = data.apellido;
+                document.getElementById('editarCorreo').value   = data.correo;
+                document.getElementById('editarTelefono').value = data.telefono || '';
+
+                // Mostrar formulario y botones
+                document.getElementById('editarCargando').classList.add('d-none');
+                document.getElementById('editarFormulario').classList.remove('d-none');
+                document.getElementById('editarFooter').style.removeProperty('display');
+
+            } catch (error) {
+                document.getElementById('editarError').classList.remove('d-none');
+                document.getElementById('editarErrorMensaje').textContent =
+                    'Ocurrió un error al obtener los datos del alumno. Intente nuevamente.';
+                document.getElementById('editarCargando').classList.add('d-none');
+            }
+        }
+
+        // Resetea el modal de edición a su estado inicial
+        function resetearModalEditar() {
+            document.getElementById('editarCargando').classList.remove('d-none');
+            document.getElementById('editarFormulario').classList.add('d-none');
+            document.getElementById('editarError').classList.add('d-none');
+            document.getElementById('editarFooter').style.setProperty('display', 'none', 'important');
+            document.getElementById('formEditar').reset();
+        }
+
+        // ────────────────────────────────────────────────
+        // Historia 3: Abrir modal de confirmación con el
+        // nombre del alumno y su ID para desactivar
+        // ────────────────────────────────────────────────
+        function abrirModalDesactivar(id, nombre) {
+            document.getElementById('idDesactivar').value       = id;
+            document.getElementById('nombreDesactivar').textContent = nombre;
+            const modal = new bootstrap.Modal(document.getElementById('modalDesactivar'));
+            modal.show();
+        }
+
+        // ────────────────────────────────────────────────
+        // Filtro de búsqueda en la tabla de alumnos
+        // ────────────────────────────────────────────────
+        function filtrarTabla() {
+            const textoBuscar = document.getElementById('filtroNombre').value.toLowerCase();
+            const estadoFiltro = document.getElementById('filtroEstado').value;
+            const filas = document.querySelectorAll('#tablaAlumnos tbody tr');
+
+            filas.forEach(fila => {
+                const nombre = fila.cells[0]?.textContent.toLowerCase() ?? '';
+                const estado = fila.cells[3]?.textContent.trim() ?? '';
+
+                const coincideNombre = nombre.includes(textoBuscar);
+                const coincideEstado = !estadoFiltro || estado === estadoFiltro;
+
+                fila.style.display = coincideNombre && coincideEstado ? '' : 'none';
+            });
+        }
+
+        // Reabrir modal de agregar si hubo errores de validación server-side
+        @if (Model.NuevoAlumno.Nombre != string.Empty ||
+                  Model.NuevoAlumno.Apellido != string.Empty ||
+                  Model.NuevoAlumno.Correo != string.Empty)
+        {
+                <text>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var modal = new bootstrap.Modal(document.getElementById('modalAgregarAlumno'));
+                        modal.show();
+                    });
+                </text>
+        }
+
+        // Reabrir modal de editar si hubo errores de validación server-side
+        @if (Model.AlumnoAEditar != null)
+        {
+                <text>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        document.getElementById('editarId').value       = '@Model.AlumnoAEditar.Id';
+                        document.getElementById('editarNombre').value   = '@Html.Raw(Model.AlumnoAEditar.Nombre)';
+                        document.getElementById('editarApellido').value = '@Html.Raw(Model.AlumnoAEditar.Apellido)';
+                        document.getElementById('editarCorreo').value   = '@Model.AlumnoAEditar.Correo';
+                        document.getElementById('editarTelefono').value = '@Model.AlumnoAEditar.Telefono';
+                        document.getElementById('editarCargando').classList.add('d-none');
+                        document.getElementById('editarFormulario').classList.remove('d-none');
+                        document.getElementById('editarFooter').style.removeProperty('display');
+                        var modal = new bootstrap.Modal(document.getElementById('modalEditarAlumno'));
+                        modal.show();
+                    });
+                </text>
+        }
+    </script>
+}

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to container
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -23,10 +23,19 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
+// Redirigir al login del proyecto en lugar de /Account/Login (ruta por defecto de Identity)
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Auth/Login";
+});
+
+// Registrar servicio de InMemoryOfferService
+builder.Services.AddScoped<ProyectoGrupalTennis.Services.IOfferService,
+                            ProyectoGrupalTennis.Services.InMemoryOfferService>();
+
 var app = builder.Build();
 
-
-// CREAR ROLES AUTOMÁTICAMENTE
+// ── CREAR ROLES AUTOMÁTICAMENTE ──────────────────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -42,8 +51,36 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// ── CREAR USUARIO ADMINISTRADOR POR DEFECTO ───────────────────────────────────
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-// Configure the HTTP request pipeline.
+    string adminEmail = "admin@tennis.com";
+    string adminPassword = "Admin123";
+
+    var adminExistente = await userManager.FindByEmailAsync(adminEmail);
+    if (adminExistente == null)
+    {
+        var admin = new ApplicationUser
+        {
+            Nombre = "Admin",
+            Apellido = "Sistema",
+            UserName = adminEmail,
+            Email = adminEmail,
+            FechaRegistro = DateTime.Now,
+            Bloqueado = false
+        };
+
+        var resultado = await userManager.CreateAsync(admin, adminPassword);
+        if (resultado.Succeeded)
+        {
+            await userManager.AddToRoleAsync(admin, "Administrador");
+        }
+    }
+}
+
+// ── PIPELINE ──────────────────────────────────────────────────────────────────
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
