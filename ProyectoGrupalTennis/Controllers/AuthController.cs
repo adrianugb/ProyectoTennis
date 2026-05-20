@@ -1,0 +1,93 @@
+﻿using AcademiaTennisDAL.Entities;
+using AcademiaTennisDAL.Context;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using ProyectoGrupalTennis.Models;
+
+namespace ProyectoGrupalTennis.Controllers
+{
+    public class AuthController : Controller
+    {
+        // UserManager permite gestionar usuarios de Identity:
+        // crear usuarios, buscar correos, validar información, etc.
+        private readonly UserManager<ApplicationUser> _userManager; 
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
+        public AuthController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
+
+        [HttpGet]
+        public IActionResult Registro()
+        {
+            return View();
+        }
+
+   
+
+        [HttpPost]
+        public async Task<IActionResult> Registro(RegisterViewModel model)
+        {
+            model.Email = model.Email.Trim().ToLower();  // Elimina espacios vacíos y convierte el correo a minúsculas
+            model.Nombre = model.Nombre.Trim();     // Elimina espacios al inicio o final del nombre y apellido
+            model.Apellido = model.Apellido.Trim();
+
+            // Verifica si las validaciones del modelo son correctas.
+            // Ejemplo:
+            // - campos obligatorios
+            // - contraseña mínima
+            // - confirmación de contraseña
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Busca si ya existe un usuario con ese correo
+            var usuarioExistente = await _userManager.FindByEmailAsync(model.Email);
+
+            // Si el correo ya existe, muestra mensaje de error
+            if (usuarioExistente != null)
+            {
+                ModelState.AddModelError("Email", "El correo ya está registrado.");
+                return View(model);
+            }
+
+            // Crea un nuevo objeto ApplicationUser
+            // con la información ingresada en el formulario
+            var usuario = new ApplicationUser
+            {
+                Nombre = model.Nombre,
+                Apellido = model.Apellido,
+                UserName = model.Email,
+                Email = model.Email,
+                FechaRegistro = DateTime.Now,
+                Bloqueado = false
+            };
+
+            // Crea el usuario en AspNetUsers
+            // y guarda la contraseña en formato hash
+            var resultado = await _userManager.CreateAsync(usuario, model.Password);
+
+            if (resultado.Succeeded)
+            {
+                // Inicia sesión automáticamente
+                await _signInManager.SignInAsync(usuario, isPersistent: false);
+
+                // Redirige al Home
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Si hubo errores de Identity  los agrega al formulario para mostrarlos en pantalla
+            foreach (var error in resultado.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View(model);
+        }
+    }
+}

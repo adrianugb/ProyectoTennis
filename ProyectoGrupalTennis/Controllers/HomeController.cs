@@ -85,7 +85,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         public IActionResult Registro()
         {
-            return View("~/Views/Auth/Registro.cshtml");
+            return RedirectToAction("Registro", "Auth");
         }
 
         public IActionResult RecuperarContrasena()
