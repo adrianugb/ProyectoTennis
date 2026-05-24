@@ -32,7 +32,6 @@ namespace ProyectoGrupalTennis.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -43,6 +42,17 @@ namespace ProyectoGrupalTennis.Controllers
                 return View(model);
             }
 
+            // Busca el usuario por correo
+            var usuario = await _userManager.FindByEmailAsync(model.Email);
+
+            // Verifica si el usuario está bloqueado
+            if (usuario != null && usuario.Bloqueado)
+            {
+                ModelState.AddModelError("", "Tu cuenta ha sido bloqueada.");
+                return View(model);
+            }
+
+            // Intenta iniciar sesión
             var resultado = await _signInManager.PasswordSignInAsync(
                 model.Email,
                 model.Password,
@@ -50,14 +60,17 @@ namespace ProyectoGrupalTennis.Controllers
                 lockoutOnFailure: false
             );
 
+            // Login exitoso
             if (resultado.Succeeded)
             {
                 return RedirectToAction("Index", "Home");
             }
 
+            // Credenciales incorrectas
             ModelState.AddModelError("", "Correo o contraseña incorrectos.");
             return View(model);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Registro(RegisterViewModel model)
