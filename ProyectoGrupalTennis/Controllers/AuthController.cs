@@ -27,7 +27,37 @@ namespace ProyectoGrupalTennis.Controllers
             return View();
         }
 
-   
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            model.Email = model.Email.Trim().ToLower();
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var resultado = await _signInManager.PasswordSignInAsync(
+                model.Email,
+                model.Password,
+                model.Recordarme,
+                lockoutOnFailure: false
+            );
+
+            if (resultado.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            ModelState.AddModelError("", "Correo o contraseña incorrectos.");
+            return View(model);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Registro(RegisterViewModel model)

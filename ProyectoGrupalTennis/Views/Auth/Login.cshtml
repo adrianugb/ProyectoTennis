@@ -1,4 +1,5 @@
-﻿@{
+﻿@model ProyectoGrupalTennis.Models.LoginViewModel
+@{
     ViewData["Title"] = "Iniciar Sesión";
     Layout = null;
 }
@@ -38,22 +39,25 @@
                         <p class="brand-subtitle">
                             Ingresa tus credenciales para continuar
                         </p>
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>  @* //Eso mostrara errores generales del login *@
 
-                        <form class="auth-form">
+                        <form asp-controller="Auth" asp-action="Login" method="post" class="auth-form">
                             <div class="mb-3">
-                                <label for="correo" class="form-label">Correo electrónico</label>
-                                <input type="email" class="form-control" id="correo" placeholder="ejemplo@correo.com" />
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control" placeholder="ejemplo@correo.com" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
-                                <label for="contrasena" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="contrasena" placeholder="Ingresa tu contraseña" />
+                                <label asp-for="Password" class="form-label"></label>
+                                <input asp-for="Password" class="form-control" placeholder="Ingresa tu contraseña" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
 
                             <div class="auth-inline">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="recordarme" />
-                                    <label class="form-check-label" for="recordarme">
+                                    <input asp-for="Recordarme" class="form-check-input" />
+                                    <label asp-for="Recordarme" class="form-check-label">
                                         Recordarme
                                     </label>
                                 </div>
@@ -63,7 +67,9 @@
                             </div>
 
                             <div class="d-grid auth-actions">
-                                <a href="/Home/Dashboard" class="btn btn-login">Iniciar sesión</a>
+                                <button type="submit" class="btn btn-login">
+                                    Iniciar sesión
+                                </button>
                             </div>
 
                             <div class="text-center">
