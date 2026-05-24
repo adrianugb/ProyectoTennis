@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoGrupalTennis.Models;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -141,6 +142,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Perfil Usuario 
 
+        [Authorize]
         public IActionResult PerfilUsuario()
         {
             return View("~/Views/Perfiles/PerfilUsuario.cshtml");

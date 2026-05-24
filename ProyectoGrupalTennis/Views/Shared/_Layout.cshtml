@@ -237,18 +237,45 @@
                             <li><a asp-controller="Home" asp-action="Progreso"><i class="fa fa-chart-bar"></i> Progreso Técnico</a></li>
                         </ul>
                     </li>
-                    <li class="appointment-btn">
-                        <a href="/#appointment">Agendar una cita</a>
-                    </li>
+@if (User?.Identity?.IsAuthenticated != true)
+{
+    <li class="appointment-btn">
+        <a asp-controller="Home" asp-action="Login">
+            Iniciar Sesión
+        </a>
+    </li>
 
-                    <li class="appointment-btn">
-                        <a asp-controller="Home" asp-action="Login">Iniciar Sesión</a>
-                    </li>
+    <li class="appointment-btn">
+        <a asp-controller="Home" asp-action="Registro">
+            Registrarse
+        </a>
+    </li>
+}
 
-                    <li class="appointment-btn">
-                        <a asp-controller="Home" asp-action="Registro">Registrarse</a>
-                    </li>
+@if (User?.Identity?.IsAuthenticated == true)
+{
+    <li class="appointment-btn">
 
+        <form asp-controller="Auth"
+              asp-action="Logout"
+              method="post"
+              style="margin:0;">
+
+            <button type="submit"
+                    style="background:#d9534f;
+                           border:none;
+                           color:white;
+                           padding:10px 18px;
+                           border-radius:4px;">
+
+                Cerrar sesión
+
+            </button>
+
+        </form>
+
+    </li>
+}
                 </ul>
             </div>
         </div>

@@ -63,7 +63,7 @@ namespace ProyectoGrupalTennis.Controllers
             // Login exitoso
             if (resultado.Succeeded)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("PerfilUsuario", "Home");
             }
 
             // Credenciales incorrectas
@@ -131,6 +131,14 @@ namespace ProyectoGrupalTennis.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }
