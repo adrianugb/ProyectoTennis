@@ -175,7 +175,7 @@ http://www.tooplate.com/view/2098-health
     display: inline-block;
     vertical-align: top;
   }
-  .author-info h5 {
+  .author-info h5 { 
     margin-bottom: 0;
   }
   .author img {
@@ -190,7 +190,7 @@ http://www.tooplate.com/view/2098-health
   #news-detail {
     position: relative;
     padding-top: 100px;
-    padding-bottom: 100px;
+    padding-bottom: 0;
   }
 
   #news, #service {
@@ -1061,6 +1061,6 @@ http://www.tooplate.com/view/2098-health
     background: none !important;
     background-size: auto !important;
     padding-top: 150px;
-    padding-bottom: 150px;
+    padding-bottom: 0 ;
 }
 

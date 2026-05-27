@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
+
+
 namespace AcademiaTennisDAL.Context
 {
     public class AppDbContext : IdentityDbContext<ApplicationUser>
@@ -67,6 +69,9 @@ namespace AcademiaTennisDAL.Context
 
         // Módulo 16 - Player Card
         public DbSet<ProgresoAlumno> ProgresosAlumno { get; set; }
+
+        // Nueva entidad: Profesores
+        public DbSet<Profesor> Profesores { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

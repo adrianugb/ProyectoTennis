@@ -1,0 +1,120 @@
+﻿@model AcademiaTennisDAL.Entities.Profesor
+@{
+    ViewData["Title"] = "Editar Profesor";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Editar Profesor</h1>
+                    <p class="perfil-subtitle">Modifica la información del profesor seleccionado.</p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-user-edit"></i> Editar Profesor
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Datos del profesor</h2>
+                    <div class="perfil-actions">
+                        <a asp-controller="Profesor" asp-action="Index" class="perfil-btn-outline">
+                            <i class="fa fa-arrow-left"></i> Regresar
+                        </a>
+                    </div>
+                </div>
+
+                <form asp-controller="Profesor" asp-action="Editar" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="FechaCreacion" />
+
+                    <div class="row" style="padding: 20px 0;">
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Nombre">Nombre</label>
+                                <input asp-for="Nombre" class="form-control" placeholder="Nombre del profesor" />
+                                <span asp-validation-for="Nombre" class="text-danger" style="font-size:12px;"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Apellidos">Apellidos</label>
+                                <input asp-for="Apellidos" class="form-control" placeholder="Apellidos del profesor" />
+                                <span asp-validation-for="Apellidos" class="text-danger" style="font-size:12px;"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Email">Correo electrónico</label>
+                                <input asp-for="Email" class="form-control" placeholder="correo@ejemplo.com" />
+                                <span asp-validation-for="Email" class="text-danger" style="font-size:12px;"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Telefono">Teléfono</label>
+                                <input asp-for="Telefono" class="form-control" placeholder="8888-0000" />
+                                <span asp-validation-for="Telefono" class="text-danger" style="font-size:12px;"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label asp-for="Especialidad">Especialidad</label>
+                                <select asp-for="Especialidad" class="form-select">
+                                    <option value="">Seleccione una especialidad</option>
+                                    <option>Técnica básica</option>
+                                    <option>Técnica avanzada</option>
+                                    <option>Entrenamiento funcional</option>
+                                </select>
+                                <span asp-validation-for="Especialidad" class="text-danger" style="font-size:12px;"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label>Estado</label>
+                                <div style="padding-top: 8px;">
+                                    <input type="checkbox" asp-for="Activo" id="estadoCheck"
+                                           style="width:18px;height:18px;margin-right:8px;cursor:pointer;" />
+                                    <label for="estadoCheck" style="font-weight:normal;cursor:pointer;">
+                                        Profesor activo
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="perfil-actions" style="padding-bottom: 10px;">
+                        <a asp-controller="Profesor" asp-action="Index" class="perfil-btn-outline">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="perfil-btn">
+                            <i class="fa fa-save"></i> Guardar cambios
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

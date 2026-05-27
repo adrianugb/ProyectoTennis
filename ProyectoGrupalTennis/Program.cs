@@ -1,5 +1,7 @@
+using AcademiaTennisBLL.Services;
 using AcademiaTennisDAL.Context;
 using AcademiaTennisDAL.Entities;
+using AcademiaTennisDAL.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +34,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 // Registrar servicio de InMemoryOfferService
 builder.Services.AddScoped<ProyectoGrupalTennis.Services.IOfferService,
                             ProyectoGrupalTennis.Services.InMemoryOfferService>();
+
+//---------- Registrar repositorios y servicios--------------------------
+builder.Services.AddScoped<IProfesorRepository, ProfesorRepository>();
+builder.Services.AddScoped<IProfesorService, ProfesorService>();
+
+//----------------------------------------------------------------------------
 
 var app = builder.Build();
 
@@ -81,6 +89,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ── PIPELINE ──────────────────────────────────────────────────────────────────
+
+
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
