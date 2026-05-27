@@ -38,7 +38,14 @@ var app = builder.Build();
 // ── CREAR ROLES AUTOMÁTICAMENTE ──────────────────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+    
+    // Asegurarnos de que la base de datos esté creada y las tablas existan
+    // Si usas comandos de migración (Add-Migration), puedes cambiar esto a: await context.Database.MigrateAsync();
+    await context.Database.EnsureCreatedAsync();
+
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
     string[] roles = { "Administrador", "Profesor", "Usuario" };
 
