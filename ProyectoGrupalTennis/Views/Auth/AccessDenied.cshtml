@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Acceso Denegado";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+
+        <div class="perfil-container text-center">
+
+            <div class="d-flex flex-column align-items-center justify-content-center py-5">
+
+                <i class="fa fa-lock fa-5x text-danger mb-4"></i>
+
+                <h1 class="perfil-title text-danger mb-3">
+                    Acceso Denegado
+                </h1>
+
+                <p class="perfil-subtitle mb-4">
+                    No tienes permisos para acceder a esta sección del sistema.
+                </p>
+
+                <p class="text-muted mb-4">
+                    Si crees que esto es un error,
+                    comunícate con un administrador.
+                </p>
+
+                <a asp-controller="Home"
+                       asp-action="Index"
+                       class="perfil-btn">
+
+                    Volver al Inicio
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>

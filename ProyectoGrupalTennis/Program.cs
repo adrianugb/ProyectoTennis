@@ -29,6 +29,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Auth/Login";
+
+    options.AccessDeniedPath = "/Auth/AccessDenied";
 });
 
 // Registrar servicio de InMemoryOfferService

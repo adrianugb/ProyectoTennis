@@ -110,23 +110,6 @@
                                                 Editar
                                             </a>
 
-                                            <span class="perfil-action-separator">|</span>
-
-                                            @* Botón Desactivar → abre modal de confirmación (Historia 3) *@
-                                            @if (alumno.Activo)
-                                            {
-                                                <a href="#"
-                                                   class="perfil-action-link text-danger"
-                                                   onclick="abrirModalDesactivar('@alumno.Id', '@alumno.NombreCompleto'); return false;">
-                                                    Desactivar
-                                                </a>
-                                            }
-                                            else
-                                            {
-                                                <span class="perfil-action-link text-muted" style="cursor:default;">
-                                                    Inactivo
-                                                </span>
-                                            }
                                         </td>
                                     </tr>
                                 }

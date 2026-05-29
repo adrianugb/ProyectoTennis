@@ -90,17 +90,33 @@
                     </div>
 
 
-                            <div class="col-md-6 col-sm-6">
-                                <div class="perfil-card">
-                                    <i class="fa fa-file-invoice-dollar"></i>
-                                    <h3>Gestión de Usuarios</h3>
-                                    <p>
-                                        Registra pagos, confirma transacciones, genera facturas y consulta el historial financiero.
-                                    </p>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
 
-                            
+                            <i class="fa fa-users-cog"></i>
+
+                            <h3>Gestión de Usuarios</h3>
+
+                            <p>
+                                Administra usuarios del sistema, roles, accesos y estados de bloqueo.
+                            </p>
+
+                            <div class="perfil-actions">
+
+                                <a asp-controller="Admin"
+                                       asp-action="Index"
+                                       class="perfil-btn">
+
+                                    Ir a Usuarios
+
+                                </a>
+
+                            </div>
+
                         </div>
                     </div>
+                    ```
+
 
 
         <!-- Nuevo módulo: Gestión de Ofertas -->

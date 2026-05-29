@@ -10,7 +10,7 @@ namespace ProyectoGrupalTennis.Controllers
     {
         // UserManager permite gestionar usuarios de Identity:
         // crear usuarios, buscar correos, validar información, etc.
-        private readonly UserManager<ApplicationUser> _userManager; 
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         public AuthController(
@@ -117,6 +117,8 @@ namespace ProyectoGrupalTennis.Controllers
 
             if (resultado.Succeeded)
             {
+
+                await _userManager.AddToRoleAsync(usuario, "Usuario");
                 // Inicia sesión automáticamente
                 await _signInManager.SignInAsync(usuario, isPersistent: false);
 
@@ -140,5 +142,13 @@ namespace ProyectoGrupalTennis.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
+
+
     }
 }
