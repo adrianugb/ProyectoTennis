@@ -1,191 +1,124 @@
-﻿@{
-    ViewData["Title"] = "Cursos del Profesor";
+﻿@model ProyectoGrupalTennis.Models.ProfesorCursosViewModel
+@{
+	ViewData["Title"] = "Mis Cursos";
 }
 
 <link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
 
 <section class="perfil-page compact">
-    <div class="container">
-        <div class="perfil-container">
+	<div class="container">
+		<div class="perfil-container">
 
-            <div class="perfil-header">
-                <div>
-                    <h1 class="perfil-title">Mis Cursos</h1>
-                    <p class="perfil-subtitle">
-                        Visualiza los cursos asignados, niveles y horarios disponibles para impartir.
-                    </p>
-                </div>
+			<div class="perfil-header">
+				<div>
+					<h1 class="perfil-title">Mis Cursos</h1>
+					<p class="perfil-subtitle">
+						Visualiza los cursos disponibles, niveles y horarios de la academia.
+					</p>
+				</div>
+				<div class="perfil-badge">
+					<i class="fa fa-book"></i> Catálogo de Cursos
+				</div>
+			</div>
 
-                <div class="perfil-badge">
-                    <i class="fa fa-book"></i> Cursos Asignados
-                </div>
-            </div>
+			<div class="perfil-table-block">
+				<div class="perfil-table-header">
+					<h2 class="perfil-table-title">Listado de cursos</h2>
+				</div>
 
-            <div class="perfil-table-block">
-                <div class="perfil-table-header">
-                    <h2 class="perfil-table-title">Listado de cursos</h2>
+				@* ── Filtros: se envían al servidor al hacer submit ── *@
+				<form method="get" asp-controller="PerfilProfesor" asp-action="MisCursos">
+					<div class="perfil-filter-row">
+						<input type="text" name="buscar" class="form-control"
+							   placeholder="Buscar curso..."
+							   value="@Model.FiltroBuscar" />
 
-                    <div class="perfil-actions">
-                        <a asp-controller="Home" asp-action="PerfilProfesor" class="perfil-btn-outline">
-                            <i class="fa fa-arrow-left"></i> Regresar
-                        </a>
-                    </div>
-                </div>
+						<select name="nivel" class="form-select">
+							<option value="">Filtrar por nivel</option>
+							<option value="Básico" @(Model.FiltroNivel == "Básico" ? "selected" : "")>Básico</option>
+							<option value="Intermedio" @(Model.FiltroNivel == "Intermedio" ? "selected" : "")>Intermedio</option>
+							<option value="Avanzado" @(Model.FiltroNivel == "Avanzado" ? "selected" : "")>Avanzado</option>
+						</select>
 
-                <div class="perfil-filter-row">
-                    <input type="text" class="form-control" placeholder="Buscar curso..." />
+						<button type="submit" class="btn btn-primary">
+							<i class="fa fa-search me-1"></i> Buscar
+						</button>
 
-                    <select class="form-select">
-                        <option>Filtrar por nivel</option>
-                        <option>Básico</option>
-                        <option>Intermedio</option>
-                        <option>Avanzado</option>
-                    </select>
+						@if (!string.IsNullOrWhiteSpace(Model.FiltroBuscar) || !string.IsNullOrWhiteSpace(Model.FiltroNivel))
+						{
+							<a asp-controller="PerfilProfesor" asp-action="MisCursos" class="btn btn-secondary">
+								<i class="fa fa-times me-1"></i> Limpiar
+							</a>
+						}
+					</div>
+				</form>
 
-                    <select class="form-select">
-                        <option>Filtrar por horario</option>
-                        <option>Mañana</option>
-                        <option>Tarde</option>
-                        <option>Noche</option>
-                    </select>
-                </div>
+				<div class="table-responsive">
+					<table class="perfil-table" id="tablaCursos">
+						<thead>
+							<tr>
+								<th>Curso</th>
+								<th>Nivel</th>
+								<th>Horarios</th>
+								<th>Cupos</th>
+								<th>Estado</th>
+							</tr>
+						</thead>
+						<tbody>
+							@if (!Model.Cursos.Any())
+							{
+								<tr>
+									<td colspan="5" class="text-center text-muted py-4">
+										<i class="fa fa-book fa-2x mb-2 d-block"></i>
+										No hay cursos disponibles con los criterios indicados.
+									</td>
+								</tr>
+							}
+							else
+							{
+								@foreach (var curso in Model.Cursos)
+								{
+									<tr>
+										<td>
+											<strong>@curso.Nombre</strong>
+											@if (!string.IsNullOrWhiteSpace(curso.Descripcion))
+											{
+												<br /><small class="text-muted">@curso.Descripcion</small>
+											}
+										</td>
+										<td>@curso.Nivel</td>
+										<td>
+											@if (curso.Horarios.Any())
+											{
+												@foreach (var h in curso.Horarios)
+												{
+													<small class="d-block">@h</small>
+												}
+											}
+											else
+											{
+												<small class="text-muted">Sin horario asignado</small>
+											}
+										</td>
+										<td>@curso.CuposDisponibles</td>
+										<td>
+											@if (curso.Activo)
+											{
+												<span class="perfil-badge-success">Activo</span>
+											}
+											else
+											{
+												<span class="perfil-badge-warning">Inactivo</span>
+											}
+										</td>
+									</tr>
+								}
+							}
+						</tbody>
+					</table>
+				</div>
 
-                <div class="table-responsive">
-                    <table class="perfil-table">
-                        <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Curso</th>
-                                <th>Nivel</th>
-                                <th>Horario</th>
-                                <th>Modalidad</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>CUR-001</td>
-                                <td>Tenis Infantil</td>
-                                <td>Básico</td>
-                                <td>Lunes y Miércoles, 4:00 PM</td>
-                                <td>Presencial</td>
-                                <td><span class="perfil-badge-success">Activo</span></td>
-                                <td><a href="#" class="perfil-action-link">Ver</a></td>
-                            </tr>
-
-                            <tr>
-                                <td>CUR-002</td>
-                                <td>Tenis Juvenil</td>
-                                <td>Intermedio</td>
-                                <td>Martes y Jueves, 5:00 PM</td>
-                                <td>Presencial</td>
-                                <td><span class="perfil-badge-success">Activo</span></td>
-                                <td><a href="#" class="perfil-action-link">Ver</a></td>
-                            </tr>
-
-                            <tr>
-                                <td>CUR-003</td>
-                                <td>Entrenamiento Funcional</td>
-                                <td>Avanzado</td>
-                                <td>Viernes, 6:00 PM</td>
-                                <td>Mixto</td>
-                                <td><span class="perfil-badge-warning">Reprogramado</span></td>
-                                <td><a href="#" class="perfil-action-link">Ver</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="perfil-agenda">
-                        <div class="agenda-toolbar">
-                            <div class="agenda-nav">
-                                <button class="agenda-btn">‹</button>
-                                <button class="agenda-btn">Hoy</button>
-                                <button class="agenda-btn">›</button>
-                            </div>
-
-                            <h2 class="perfil-section-title">Agenda Semanal</h2>
-
-                            <div class="agenda-view-label">
-                                Vista semanal
-                            </div>
-                        </div>
-
-                        <div class="agenda-week-grid">
-                            <div class="agenda-week-day">
-                                <div class="agenda-week-header">
-                                    <span class="agenda-day-name">Lunes</span>
-                                    <span class="agenda-day-number">10</span>
-                                </div>
-
-                                <div class="agenda-event">
-                                    <span class="agenda-time">4:00 PM</span>
-                                    <strong>Tenis Infantil</strong>
-                                    <small>Cancha 1</small>
-                                </div>
-
-                                <div class="agenda-event">
-                                    <span class="agenda-time">6:00 PM</span>
-                                    <strong>Entrenamiento Funcional</strong>
-                                    <small>Cancha 2</small>
-                                </div>
-                            </div>
-
-                            <div class="agenda-week-day">
-                                <div class="agenda-week-header">
-                                    <span class="agenda-day-name">Martes</span>
-                                    <span class="agenda-day-number">11</span>
-                                </div>
-
-                                <div class="agenda-event">
-                                    <span class="agenda-time">5:00 PM</span>
-                                    <strong>Tenis Juvenil</strong>
-                                    <small>Cancha 3</small>
-                                </div>
-                            </div>
-
-                            <div class="agenda-week-day">
-                                <div class="agenda-week-header">
-                                    <span class="agenda-day-name">Miércoles</span>
-                                    <span class="agenda-day-number">12</span>
-                                </div>
-
-                                <div class="agenda-event">
-                                    <span class="agenda-time">4:00 PM</span>
-                                    <strong>Tenis Infantil</strong>
-                                    <small>Cancha 1</small>
-                                </div>
-                            </div>
-
-                            <div class="agenda-week-day">
-                                <div class="agenda-week-header">
-                                    <span class="agenda-day-name">Jueves</span>
-                                    <span class="agenda-day-number">13</span>
-                                </div>
-
-                                <div class="agenda-event">
-                                    <span class="agenda-time">5:00 PM</span>
-                                    <strong>Tenis Juvenil</strong>
-                                    <small>Cancha 3</small>
-                                </div>
-                            </div>
-
-                            <div class="agenda-week-day">
-                                <div class="agenda-week-header">
-                                    <span class="agenda-day-name">Viernes</span>
-                                    <span class="agenda-day-number">14</span>
-                                </div>
-
-                                <div class="agenda-event">
-                                    <span class="agenda-time">6:00 PM</span>
-                                    <strong>Entrenamiento Funcional</strong>
-                                    <small>Cancha 2</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
+			</div>
+		</div>
+	</div>
 </section>
