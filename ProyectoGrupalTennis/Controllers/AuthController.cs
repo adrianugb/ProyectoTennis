@@ -117,12 +117,15 @@ namespace ProyectoGrupalTennis.Controllers
 
             if (resultado.Succeeded)
             {
+                var rolResultado = await _userManager.AddToRoleAsync(usuario, "Usuario");
+                if (!rolResultado.Succeeded)
+                {
+                    await _userManager.DeleteAsync(usuario);
+                    ModelState.AddModelError("", "Error al asignar el rol. Intente nuevamente.");
+                    return View(model);
+                }
 
-                await _userManager.AddToRoleAsync(usuario, "Usuario");
-                // Inicia sesión automáticamente
                 await _signInManager.SignInAsync(usuario, isPersistent: false);
-
-                // Redirige al Home
                 return RedirectToAction("Index", "Home");
             }
 
