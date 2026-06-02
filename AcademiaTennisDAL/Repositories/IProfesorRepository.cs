@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AcademiaTennisDAL.Repositories
+namespace AcademiaTennisDAL.Repositories 
 {
    public interface IProfesorRepository
     {

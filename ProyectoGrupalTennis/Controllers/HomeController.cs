@@ -106,7 +106,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         public IActionResult AdminCursos()
         {
-            return View("~/Views/Perfiles/AdminCursos.cshtml");
+            return RedirectToAction("Index", "Curso");
         }
 
         public IActionResult AdminAlumnos()

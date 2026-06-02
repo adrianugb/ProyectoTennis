@@ -1,0 +1,112 @@
+﻿@model List<AcademiaTennisDAL.Entities.Curso>
+@{
+    ViewData["Title"] = "Gestión de Cursos";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Gestión de Cursos</h1>
+                    <p class="perfil-subtitle">Consulta y administra los cursos de la academia.</p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-book"></i> Administración de Cursos
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Listado de cursos</h2>
+                    <div class="perfil-actions">
+                        <a asp-controller="Home" asp-action="PerfilAdmin" class="perfil-btn-outline">
+                            <i class="fa fa-arrow-left"></i> Regresar
+                        </a>
+                        <a asp-controller="Curso" asp-action="Agregar" class="perfil-btn">
+                            <i class="fa fa-plus"></i> Agregar curso
+                        </a>
+                    </div>
+                </div>
+
+                <form method="get" asp-action="Index">
+                    <div class="perfil-filter-row">
+                        <input type="text" name="buscar" class="form-control"
+                               placeholder="Buscar curso..."
+                               value="@Context.Request.Query["buscar"]" />
+
+                        <select name="nivel" class="form-select">
+                            <option value="">Filtrar por nivel</option>
+                            <option>Principiante</option>
+                            <option>Intermedio</option>
+                            <option>Avanzado</option>
+                        </select>
+
+                        <select name="estado" class="form-select">
+                            <option value="">Filtrar por estado</option>
+                            <option>Activo</option>
+                            <option>Inactivo</option>
+                        </select>
+
+                        <button type="submit" class="perfil-btn">Buscar</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Nivel</th>
+                                <th>Cupos</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model)
+                            {
+                                <tr>
+                                    <td>CUR-@c.IdCurso.ToString("D3")</td>
+                                    <td>@c.Nombre</td>
+                                    <td>@c.Descripcion</td>
+                                    <td>@c.Nivel</td>
+                                    <td>@c.CuposDisponibles</td>
+                                    <td>
+                                        @if (c.Activo)
+                                        {
+                                            <span class="perfil-badge-success">Activo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="perfil-badge-warning">Inactivo</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Curso" asp-action="Editar"
+                                           asp-route-id="@c.IdCurso" class="perfil-action-link">Editar</a>
+                                        <span class="perfil-action-separator">|</span>
+                                        <form asp-controller="Curso" asp-action="CambiarEstado"
+                                              method="post" style="display:inline">
+                                            <input type="hidden" name="id" value="@c.IdCurso" />
+                                            <input type="hidden" name="activo" value="@(!c.Activo)" />
+                                            <button type="submit" class="perfil-action-link"
+                                                    style="background:none;border:none;padding:0;cursor:pointer;">
+                                                @(c.Activo ? "Desactivar" : "Activar")
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

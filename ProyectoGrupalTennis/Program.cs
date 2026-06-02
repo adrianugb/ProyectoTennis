@@ -40,6 +40,8 @@ builder.Services.AddScoped<ProyectoGrupalTennis.Services.IOfferService,
 //---------- Registrar repositorios y servicios--------------------------
 builder.Services.AddScoped<IProfesorRepository, ProfesorRepository>();
 builder.Services.AddScoped<IProfesorService, ProfesorService>();
+builder.Services.AddScoped<ICursoRepository, CursoRepository>();
+builder.Services.AddScoped<ICursoService, CursoService>();
 
 //----------------------------------------------------------------------------
 

@@ -9,20 +9,19 @@ namespace AcademiaTennisDAL.Entities
 
         [Required]
         [StringLength(100)]
-        public string Nombre { get; set; }
+        public string Nombre { get; set; } = string.Empty;
 
         [StringLength(500)]
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
 
         [Required]
-        public string Nivel { get; set; }
+        public string Nivel { get; set; } = string.Empty;
 
         public int CuposDisponibles { get; set; }
 
         public bool Activo { get; set; } = true;
 
-        public ICollection<Horario> Horarios { get; set; }
-
-        public ICollection<Matricula> Matriculas { get; set; }
+        public ICollection<Horario> Horarios { get; set; } = new List<Horario>();
+        public ICollection<Matricula> Matriculas { get; set; } = new List<Matricula>();
     }
 }

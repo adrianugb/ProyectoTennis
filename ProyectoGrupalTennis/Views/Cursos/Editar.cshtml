@@ -1,0 +1,109 @@
+﻿@model AcademiaTennisDAL.Entities.Curso
+@{
+    ViewData["Title"] = "Editar Curso";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Editar Curso</h1>
+                    <p class="perfil-subtitle">Modifica la información del curso seleccionado.</p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-edit"></i> Editar Curso
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Datos del curso</h2>
+                    <div class="perfil-actions">
+                        <a asp-controller="Curso" asp-action="Index" class="perfil-btn-outline">
+                            <i class="fa fa-arrow-left"></i> Regresar
+                        </a>
+                    </div>
+                </div>
+
+                <form asp-controller="Curso" asp-action="Editar" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="IdCurso" />
+
+                    <div class="row" style="padding: 20px 0;">
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Nombre">Nombre</label>
+                                <input asp-for="Nombre" class="form-control" placeholder="Nombre del curso" />
+                                <span asp-validation-for="Nombre" class="text-danger" style="font-size:12px;"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Nivel">Nivel</label>
+                                <select asp-for="Nivel" class="form-select">
+                                    <option value="">Seleccione un nivel</option>
+                                    <option>Principiante</option>
+                                    <option>Intermedio</option>
+                                    <option>Avanzado</option>
+                                </select>
+                                <span asp-validation-for="Nivel" class="text-danger" style="font-size:12px;"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="CuposDisponibles">Cupos disponibles</label>
+                                <input asp-for="CuposDisponibles" type="number" min="0"
+                                       class="form-control" placeholder="0" />
+                                <span asp-validation-for="CuposDisponibles" class="text-danger" style="font-size:12px;"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label asp-for="Descripcion">Descripción</label>
+                                <textarea asp-for="Descripcion" class="form-control"
+                                          placeholder="Descripción del curso"></textarea>
+                                <span asp-validation-for="Descripcion" class="text-danger" style="font-size:12px;"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label>Estado</label>
+                                <div style="padding-top: 8px;">
+                                    <input type="checkbox" asp-for="Activo" id="estadoCheck"
+                                           style="width:18px;height:18px;margin-right:8px;cursor:pointer;" />
+                                    <label for="estadoCheck" style="font-weight:normal;cursor:pointer;">
+                                        Curso activo
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="perfil-actions" style="padding-bottom: 10px;">
+                        <a asp-controller="Curso" asp-action="Index" class="perfil-btn-outline">Cancelar</a>
+                        <button type="submit" class="perfil-btn">
+                            <i class="fa fa-save"></i> Guardar cambios
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
