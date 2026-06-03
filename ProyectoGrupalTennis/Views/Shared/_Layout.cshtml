@@ -16,186 +16,233 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        :root {
-            --primary-color: #a5c422; /* Verde Tennis */
-            --dark-bg: #121212;
-            --card-bg: #1e1e1e;
-            --text-main: #ffffff;
-            --text-muted: #b0b0b0;
-        }
+            :root {
+                --primary-color: #a5c422; /* Verde Tennis */
+                --dark-bg: #121212;
+                --card-bg: #1e1e1e;
+                --text-main: #ffffff;
+                --text-muted: #b0b0b0;
+            }
 
-        .main-footer {
-            background-color: var(--dark-bg);
-            color: var(--text-main);
-            padding: 60px 0 30px 0;
-            font-family: 'Montserrat', 'Segoe UI', Roboto, sans-serif;
-        }
+            .main-footer {
+                background-color: var(--dark-bg);
+                color: var(--text-main);
+                padding: 60px 0 30px 0;
+                font-family: 'Montserrat', 'Segoe UI', Roboto, sans-serif;
+            }
 
-        .footer-thumb {
-            margin-bottom: 30px; /* Separación en dispositivos móviles */
-        }
+            .footer-thumb {
+                margin-bottom: 30px; /* Separación en dispositivos móviles */
+            }
 
-        .footer-thumb h4 {
-            color: var(--primary-color);
-            text-transform: uppercase;
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            margin-bottom: 25px;
-            text-align: left; /* Alineado a la izquierda */
-        }
+                .footer-thumb h4 {
+                    color: var(--primary-color);
+                    text-transform: uppercase;
+                    font-size: 15px;
+                    font-weight: 700;
+                    letter-spacing: 1.5px;
+                    margin-bottom: 25px;
+                    text-align: left; /* Alineado a la izquierda */
+                }
 
-        .footer-info-text {
-            color: var(--text-muted);
-            font-size: 14px;
-            line-height: 1.6;
-            text-align: left; /* Alineado a la izquierda */
-        }
+            .footer-info-text {
+                color: var(--text-muted);
+                font-size: 14px;
+                line-height: 1.6;
+                text-align: left; /* Alineado a la izquierda */
+            }
 
-        /* Contacto Unificado */
-        .contact-list {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start; /* Alineado a la izquierda */
-            gap: 15px;
-        }
+            /* Contacto Unificado */
+            .contact-list {
+                list-style: none;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start; /* Alineado a la izquierda */
+                gap: 15px;
+            }
 
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            transition: 0.3s;
-        }
+            .contact-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                color: var(--text-muted);
+                text-decoration: none;
+                font-size: 14px;
+                transition: 0.3s;
+            }
 
-        .contact-item:hover {
-            color: var(--primary-color);
-        }
+                .contact-item:hover {
+                    color: var(--primary-color);
+                }
 
-        .icon-circle {
-            width: 35px;
-            height: 35px;
-            background: var(--card-bg);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
-            font-size: 14px;
-            border: 1px solid #333;
-        }
+            .icon-circle {
+                width: 35px;
+                height: 35px;
+                background: var(--card-bg);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--primary-color);
+                font-size: 14px;
+                border: 1px solid #333;
+            }
 
-        /* Horarios */
-        .hours-box {
-            text-align: left;
-            margin-top: 20px;
-            font-size: 13px;
-            color: var(--text-muted);
-            border-top: 1px solid #2a2a2a;
-            padding-top: 15px;
-        }
+            /* Horarios */
+            .hours-box {
+                text-align: left;
+                margin-top: 20px;
+                font-size: 13px;
+                color: var(--text-muted);
+                border-top: 1px solid #2a2a2a;
+                padding-top: 15px;
+            }
 
-        .hours-box span { color: #fff; font-weight: 600; }
+                .hours-box span {
+                    color: #fff;
+                    font-weight: 600;
+                }
 
-        /* Redes Sociales Integradas en la columna */
-        .social-container {
-            display: flex;
-            justify-content: flex-start;
-            gap: 12px;
-            margin-top: 20px;
-        }
+            /* Redes Sociales Integradas en la columna */
+            .social-container {
+                display: flex;
+                justify-content: flex-start;
+                gap: 12px;
+                margin-top: 20px;
+            }
 
-        .social-btn {
-            width: 40px;
-            height: 40px;
-            background: var(--card-bg);
-            color: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            transition: 0.3s;
-            text-decoration: none;
-            border: 1px solid #333;
-        }
+            .social-btn {
+                width: 40px;
+                height: 40px;
+                background: var(--card-bg);
+                color: #fff;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+                transition: 0.3s;
+                text-decoration: none;
+                border: 1px solid #333;
+            }
 
-        .social-btn:hover {
-            background: var(--primary-color);
-            color: #000;
-            transform: translateY(-3px);
-        }
+                .social-btn:hover {
+                    background: var(--primary-color);
+                    color: #000;
+                    transform: translateY(-3px);
+                }
 
-        /* Mapa */
-        .map-wrapper {
-            border-radius: 12px;
-            overflow: hidden;
-            filter: grayscale(0.2);
-            transition: 0.5s;
-            border: 1px solid #333;
-        }
-        .map-wrapper:hover { filter: grayscale(0); }
+            /* Mapa */
+            .map-wrapper {
+                border-radius: 12px;
+                overflow: hidden;
+                filter: grayscale(0.2);
+                transition: 0.5s;
+                border: 1px solid #333;
+            }
 
-        /* Footer Bottom Centrado y Balanceado */
-        .footer-bottom {
-            border-top: 1px solid #2a2a2a;
-            padding-top: 25px;
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap; /* Para móviles */
-        }
+                .map-wrapper:hover {
+                    filter: grayscale(0);
+                }
 
-        .copyright {
-            font-size: 13px;
-            color: #777;
-            margin: 0; /* Sin margen para alinear con el botón */
-        }
+            /* Footer Bottom Centrado y Balanceado */
+            .footer-bottom {
+                border-top: 1px solid #2a2a2a;
+                padding-top: 25px;
+                margin-top: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap; /* Para móviles */
+            }
 
-        .btn-scroll-top {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: #222;
-            color: var(--primary-color);
-            border-radius: 50%;
-            text-decoration: none;
-            transition: 0.3s;
-        }
+            .copyright {
+                font-size: 13px;
+                color: #777;
+                margin: 0; /* Sin margen para alinear con el botón */
+            }
 
-        .btn-scroll-top:hover {
-            background: var(--primary-color);
-            color: #000;
-        }
-  
-        html {
-            height: 100%;
-        }
+            .btn-scroll-top {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                background: #222;
+                color: var(--primary-color);
+                border-radius: 50%;
+                text-decoration: none;
+                transition: 0.3s;
+            }
 
-        body {
-            min-height: 100%;
-            margin: 0 !important;
-            padding: 0 !important;
-            display: flex;
-            flex-direction: column;
-        }
+                .btn-scroll-top:hover {
+                    background: var(--primary-color);
+                    color: #000;
+                }
 
-        .main-content {
-            flex: 1;
-        }
+            html {
+                height: 100%;
+            }
 
-        .main-footer {
-            margin: 0 !important;
-            padding-bottom: 0 !important;
-            flex-shrink: 0;
-        }
+            body {
+                min-height: 100%;
+                margin: 0 !important;
+                padding: 0 !important;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .main-content {
+                flex: 1;
+            }
+
+            .main-footer {
+                margin: 0 !important;
+                padding-bottom: 0 !important;
+                flex-shrink: 0;
+            }
+
+            /* Fix modales Bootstrap 5 */
+
+            .modal.fade.show {
+                opacity: 1 !important;
+            }
+
+            .modal.fade {
+                opacity: 0;
+                transition: opacity 0.15s linear;
+            }
+
+            .modal {
+                z-index: 1055 !important;
+            }
+
+            .modal-backdrop {
+                z-index: 1054 !important;
+            }
+
+            .modal-content {
+                color: #212529 !important;
+                background-color: #fff !important;
+            }
+
+            .modal-body {
+                color: #212529 !important;
+            }
+
+            .modal-header {
+                color: #212529 !important;
+            }
+
+            .form-control {
+                color: #212529 !important;
+                background-color: #fff !important;
+            }
+
+            label {
+                color: #212529 !important;
+            }
     </style>
 </head>
 <body id="top" data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
@@ -243,8 +290,9 @@
                     <li><a asp-controller="Home" asp-action="Tienda">Tienda</a></li>
                     <li><a href="/#google-map" class="smoothScroll">Contacto</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle nav-link text-dark" data-toggle="dropdown">
-                            <i class="fa fa-th-large"></i> Módulos <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle nav-link text-dark" data-bs-toggle="dropdown">
+                            <i class="fa fa-th-large"></i> Módulos <span class="caret"></span>
+                        </a>
                         <ul class="dropdown-menu">
                             <li> <a asp-controller="Home" asp-action="Retencion"> <i class="fa fa-shield-alt"></i> Retención y Abandono </a></li>
                             <li><a asp-controller="Home" asp-action="Campeonatos"><i class="fa fa-trophy"></i> Inscripción a Campeonatos</a></li>
@@ -259,45 +307,45 @@
                             <li><a asp-controller="Home" asp-action="Progreso"><i class="fa fa-chart-bar"></i> Progreso Técnico</a></li>
                         </ul>
                     </li>
-@if (User?.Identity?.IsAuthenticated != true)
-{
-    <li class="appointment-btn">
-        <a asp-controller="Home" asp-action="Login">
-            Iniciar Sesión
-        </a>
-    </li>
+                    @if (User?.Identity?.IsAuthenticated != true)
+                    {
+                        <li class="appointment-btn">
+                            <a asp-controller="Home" asp-action="Login">
+                                Iniciar Sesión
+                            </a>
+                        </li>
 
-    <li class="appointment-btn">
-        <a asp-controller="Home" asp-action="Registro">
-            Registrarse
-        </a>
-    </li>
-}
+                        <li class="appointment-btn">
+                            <a asp-controller="Home" asp-action="Registro">
+                                Registrarse
+                            </a>
+                        </li>
+                    }
 
-@if (User?.Identity?.IsAuthenticated == true)
-{
-    <li class="appointment-btn">
+                    @if (User?.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="appointment-btn">
 
-        <form asp-controller="Auth"
-              asp-action="Logout"
-              method="post"
-              style="margin:0;">
+                            <form asp-controller="Auth"
+                                  asp-action="Logout"
+                                  method="post"
+                                  style="margin:0;">
 
-            <button type="submit"
-                    style="background:#d9534f;
-                           border:none;
-                           color:white;
-                           padding:10px 18px;
-                           border-radius:4px;">
+                                <button type="submit"
+                                        style="background:#d9534f;
+                                    border:none;
+                                    color:white;
+                                    padding:10px 18px;
+                                    border-radius:4px;">
 
-                Cerrar sesión
+                                    Cerrar sesión
 
-            </button>
+                                </button>
 
-        </form>
+                            </form>
 
-    </li>
-}
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
@@ -305,93 +353,93 @@
     <div class="main-content">
         @RenderBody()
     </div>
-   
+
     <!-- FOOTER -->
     <footer class="main-footer">
         <div class="container">
-			<div class="row">
-				<div class="col-md-4 col-sm-6">
-					<div class="footer-thumb">
-						<h4>Nuestra Academia</h4>
-						<p class="footer-info-text">
-							Pasión por el tennis en cada entrenamiento. Instalaciones profesionales en el corazón de San José para todos los niveles.
-						</p>
-						<div class="social-container">
-							<a href="https://www.facebook.com/tenismmp" class="social-btn">
-								<i class="fab fa-facebook-f"></i>
-							</a>
-							<a href="#" class="social-btn">
-								<i class="fab fa-instagram"></i>
-							</a>
-							<a href="https://wa.me/50683764752" class="social-btn">
-								<i class="fab fa-whatsapp"></i>
-							</a>
-							<a href="https://x.com/mariomunozp" class="social-btn">
-								<i class="fab fa-x-twitter"></i>
-							</a>
-						</div>
-					</div>
-				</div>
+            <div class="row">
+                <div class="col-md-4 col-sm-6">
+                    <div class="footer-thumb">
+                        <h4>Nuestra Academia</h4>
+                        <p class="footer-info-text">
+                            Pasión por el tennis en cada entrenamiento. Instalaciones profesionales en el corazón de San José para todos los niveles.
+                        </p>
+                        <div class="social-container">
+                            <a href="https://www.facebook.com/tenismmp" class="social-btn">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-btn">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://wa.me/50683764752" class="social-btn">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            <a href="https://x.com/mariomunozp" class="social-btn">
+                                <i class="fab fa-x-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-				<div class="col-md-4 col-sm-6">
-					<div class="footer-thumb">
-						<h4>Contacto & Horario</h4>
-						<div class="contact-list">
-							<a href="tel:+50622839369" class="contact-item">
-								<div class="icon-circle">
-									<i class="fa fa-phone"></i>
-								</div>
-								(506) 2283-9369
-							</a>
-							<a href="https://wa.me/50683764752" class="contact-item">
-								<div class="icon-circle">
-									<i class="fab fa-whatsapp"></i>
-								</div>
-								(506) 8376-4752
-							</a>
-							<a href="mailto:info@tenismmp.com" class="contact-item">
-								<div class="icon-circle">
-									<i class="fa fa-envelope"></i>
-								</div>
-								info@tenismmp.com
-							</a>
-						</div>
-						<div class="hours-box">
-							<p>
-								Lunes - Sábado: <span>6:00 AM - 11:00 PM</span><br />
-								Domingo: <span>6:00 AM - 12:00 MD</span>
-							</p>
-						</div>
-					</div>
-				</div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="footer-thumb">
+                        <h4>Contacto & Horario</h4>
+                        <div class="contact-list">
+                            <a href="tel:+50622839369" class="contact-item">
+                                <div class="icon-circle">
+                                    <i class="fa fa-phone"></i>
+                                </div>
+                                (506) 2283-9369
+                            </a>
+                            <a href="https://wa.me/50683764752" class="contact-item">
+                                <div class="icon-circle">
+                                    <i class="fab fa-whatsapp"></i>
+                                </div>
+                                (506) 8376-4752
+                            </a>
+                            <a href="mailto:info@tenismmp.com" class="contact-item">
+                                <div class="icon-circle">
+                                    <i class="fa fa-envelope"></i>
+                                </div>
+                                info@tenismmp.com
+                            </a>
+                        </div>
+                        <div class="hours-box">
+                            <p>
+                                Lunes - Sábado: <span>6:00 AM - 11:00 PM</span><br />
+                                Domingo: <span>6:00 AM - 12:00 MD</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-				<div class="col-md-4 col-sm-12">
-					<div class="footer-thumb">
-						<h4>Ubicación</h4>
-						<div class="map-wrapper">
-							<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3930.1906940445497!2d-84.06010078470023!3d9.918070577159687!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0e39fc33e177b%3A0x51f513e80d90af60!2sAcademia+de+Tenis+M.M.P.!5e0!3m2!1ses-419!2scr!4v1446309209705"
-									width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-						</div>
-						<p class="mt-2 small" style="color: #666; text-align: left;">
-							<br /><i class="fa fa-map-marker-alt" style="color: var(--primary-color);"></i> San José, Costa Rica.
-						</p>
-					</div>
-				</div>
-			</div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="footer-thumb">
+                        <h4>Ubicación</h4>
+                        <div class="map-wrapper">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3930.1906940445497!2d-84.06010078470023!3d9.918070577159687!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0e39fc33e177b%3A0x51f513e80d90af60!2sAcademia+de+Tenis+M.M.P.!5e0!3m2!1ses-419!2scr!4v1446309209705"
+                                    width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                        <p class="mt-2 small" style="color: #666; text-align: left;">
+                            <br /><i class="fa fa-map-marker-alt" style="color: var(--primary-color);"></i> San José, Costa Rica.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-			<div class="footer-bottom">
-				<p class="copyright">
-					© 2026 <strong>Tenis M.M.P</strong> | Academia de Tenis.
-				</p>
-				<a href="#top" class="smoothScroll btn-scroll-top">
-					<i class="fa fa-chevron-up"></i>
-				</a>
-			</div>
-		</div>
-	</footer>
+            <div class="footer-bottom">
+                <p class="copyright">
+                    © 2026 <strong>Tenis M.M.P</strong> | Academia de Tenis.
+                </p>
+                <a href="#top" class="smoothScroll btn-scroll-top">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
 
     <script src="~/js/jquery.js"></script>
-    <script src="~/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/jquery.sticky.js"></script>
     <script src="~/js/jquery.stellar.min.js"></script>
     <script src="~/js/wow.min.js"></script>
