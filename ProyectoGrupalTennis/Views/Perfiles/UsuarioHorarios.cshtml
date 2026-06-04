@@ -1,0 +1,129 @@
+﻿@model ProyectoGrupalTennis.Models.UsuarioHorariosViewModel
+@{
+    ViewData["Title"] = "Horarios Disponibles";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Horarios Disponibles</h1>
+                    <p class="perfil-subtitle">
+                        Consultá los horarios de los cursos activos de la academia.
+                    </p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-clock"></i> Horarios
+                </div>
+            </div>
+
+            @* Botón volver al panel *@
+            <div class="mb-3">
+                <a asp-controller="Home" asp-action="PerfilUsuario" class="btn-volver">
+                    <i class="fa fa-arrow-left"></i> Volver al Perfil
+                </a>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Listado de horarios</h2>
+                </div>
+
+                <form method="get" asp-controller="Usuario" asp-action="MisHorarios">
+                    <div class="perfil-filter-row">
+                        <input type="text" name="buscar" class="form-control"
+                               placeholder="Buscar por curso..."
+                               value="@Model.FiltroBuscar" />
+
+                        <select name="dia" class="form-select">
+                            <option value="">Filtrar por día</option>
+                            @foreach (var d in Model.DiasDisponibles)
+                            {
+                                if (Model.FiltroDia == d)
+                                {
+                                    <option value="@d" selected>@d</option>
+                                }
+                                else
+                                {
+                                    <option value="@d">@d</option>
+                                }
+                            }
+                        </select>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-search me-1"></i> Buscar
+                        </button>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.FiltroBuscar) || !string.IsNullOrWhiteSpace(Model.FiltroDia))
+                        {
+                            <a asp-controller="Usuario" asp-action="MisHorarios" class="btn btn-secondary">
+                                <i class="fa fa-times me-1"></i> Limpiar
+                            </a>
+                        }
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="perfil-table" id="tablaHorarios">
+                        <thead>
+                            <tr>
+                                <th>Día</th>
+                                <th>Hora</th>
+                                <th>Curso</th>
+                                <th>Nivel</th>
+                                <th>Cupos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.Horarios.Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="fa fa-clock fa-2x mb-2 d-block"></i>
+                                        @if (!string.IsNullOrWhiteSpace(Model.FiltroBuscar) || !string.IsNullOrWhiteSpace(Model.FiltroDia))
+                                        {
+                                            <span>No se encontraron horarios con los criterios indicados.</span>
+                                        }
+                                        else
+                                        {
+                                            <span>No hay horarios disponibles en este momento.</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var horario in Model.Horarios)
+                                {
+                                    <tr>
+                                        <td><strong>@horario.DiaSemana</strong></td>
+                                        <td>
+                                            <i class="fa fa-clock me-1 text-muted"></i>
+                                            @horario.HoraInicio - @horario.HoraFin
+                                        </td>
+                                        <td><strong>@horario.NombreCurso</strong></td>
+                                        <td>@horario.Nivel</td>
+                                        <td>
+                                            @if (horario.CuposDisponibles > 0)
+                                            {
+                                                <span class="perfil-badge-success">@horario.CuposDisponibles disponibles</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="perfil-badge-warning">Sin cupos</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,98 @@
+﻿@{
+    ViewData["Title"] = "Agregar Alumno";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Agregar Alumno</h1>
+                    <p class="perfil-subtitle">Completa el formulario para registrar un nuevo alumno.</p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-user-plus"></i> Nuevo Alumno
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Datos del alumno</h2>
+                    <div class="perfil-actions">
+                        <a asp-controller="Alumnos" asp-action="Index" class="perfil-btn-outline">
+                            <i class="fa fa-arrow-left"></i> Regresar
+                        </a>
+                    </div>
+                </div>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                        <i class="fa fa-exclamation-circle me-2"></i> @ViewBag.Error
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <form asp-controller="Alumnos" asp-action="Agregar" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="row" style="padding: 20px 0;">
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                                <input type="text" name="Nombre" id="Nombre" class="form-control"
+                                       placeholder="Ej: María" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Apellido" class="form-label">Apellido <span class="text-danger">*</span></label>
+                                <input type="text" name="Apellido" id="Apellido" class="form-control"
+                                       placeholder="Ej: González" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Email" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+                                <input type="email" name="Email" id="Email" class="form-control"
+                                       placeholder="Ej: alumno@correo.com" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Telefono" class="form-label">Teléfono</label>
+                                <input type="tel" name="Telefono" id="Telefono" class="form-control"
+                                       placeholder="Ej: 8888-1234" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Contrasena" class="form-label">Contraseña temporal <span class="text-danger">*</span></label>
+                                <input type="password" name="Contrasena" id="Contrasena" class="form-control"
+                                       placeholder="Mínimo 6 caracteres" required />
+                                <small class="form-text text-muted">El alumno podrá cambiarla después de su primer ingreso.</small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="perfil-actions" style="padding-bottom: 10px;">
+                        <a asp-controller="Alumnos" asp-action="Index" class="perfil-btn-outline">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="perfil-btn">
+                            <i class="fa fa-save"></i> Guardar alumno
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

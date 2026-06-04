@@ -1,0 +1,106 @@
+﻿@model AcademiaTennisDAL.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "Editar Alumno";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Editar Alumno</h1>
+                    <p class="perfil-subtitle">Modifica la información del alumno seleccionado.</p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-user-edit"></i> Editar Alumno
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Datos del alumno</h2>
+                    <div class="perfil-actions">
+                        <a asp-controller="Alumnos" asp-action="Index" class="perfil-btn-outline">
+                            <i class="fa fa-arrow-left"></i> Regresar
+                        </a>
+                    </div>
+                </div>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                        <i class="fa fa-exclamation-circle me-2"></i> @ViewBag.Error
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <form asp-controller="Alumnos" asp-action="Editar" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Id" value="@Model.Id" />
+
+                    <div class="row" style="padding: 20px 0;">
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                                <input type="text" name="Nombre" id="Nombre" class="form-control"
+                                       value="@Model.Nombre" placeholder="Ej: María" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Apellido" class="form-label">Apellido <span class="text-danger">*</span></label>
+                                <input type="text" name="Apellido" id="Apellido" class="form-control"
+                                       value="@Model.Apellido" placeholder="Ej: González" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Email" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+                                <input type="email" name="Email" id="Email" class="form-control"
+                                       value="@Model.Email" placeholder="Ej: alumno@correo.com" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Telefono" class="form-label">Teléfono</label>
+                                <input type="tel" name="Telefono" id="Telefono" class="form-control"
+                                       value="@Model.PhoneNumber" placeholder="Ej: 8888-1234" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Estado</label>
+                                <div style="padding-top: 8px;">
+                                    <input type="checkbox" name="Activo" id="estadoCheck"
+                                    @(!Model.Bloqueado ? "checked" : "")
+                                           style="width:18px;height:18px;margin-right:8px;cursor:pointer;" />
+                                    <label for="estadoCheck" style="font-weight:normal;cursor:pointer;">
+                                        Alumno activo
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="perfil-actions" style="padding-bottom: 10px;">
+                        <a asp-controller="Alumnos" asp-action="Index" class="perfil-btn-outline">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="perfil-btn">
+                            <i class="fa fa-save"></i> Guardar cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

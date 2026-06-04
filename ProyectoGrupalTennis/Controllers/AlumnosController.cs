@@ -2,11 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ProyectoGrupalTennis.Models;
 
 namespace ProyectoGrupalTennis.Controllers
 {
-    // Solo administradores pueden acceder a este controlador
     [Authorize(Roles = "Administrador")]
     public class AlumnosController : Controller
     {
@@ -17,235 +15,128 @@ namespace ProyectoGrupalTennis.Controllers
             _userManager = userManager;
         }
 
-
         // GET: /Alumnos/Index
-        // Muestra la lista de alumnos con rol "Usuario"
-
-        public async Task<IActionResult> Index(string? mensajeExito = null, string? mensajeError = null)
+        public async Task<IActionResult> Index(string? buscar, string? estado)
         {
             var alumnos = await _userManager.GetUsersInRoleAsync("Usuario");
 
-            var viewModel = new AdminAlumnosViewModel
-            {
-                Alumnos = alumnos
-                    .OrderBy(a => a.Nombre)
-                    .Select(a => new AlumnoListItemViewModel
-                    {
-                        Id = a.Id,
-                        NombreCompleto = $"{a.Nombre} {a.Apellido}",
-                        Correo = a.Email ?? string.Empty,
-                        Telefono = a.PhoneNumber ?? "No registrado",
-                        Activo = !a.Bloqueado,
-                        FechaRegistro = a.FechaRegistro
-                    })
-                    .ToList(),
+            if (!string.IsNullOrEmpty(buscar))
+                alumnos = alumnos
+                    .Where(a => a.Nombre.Contains(buscar, StringComparison.OrdinalIgnoreCase)
+                             || a.Apellido.Contains(buscar, StringComparison.OrdinalIgnoreCase)
+                             || (a.Email ?? "").Contains(buscar, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
-                MensajeExito = mensajeExito,
-                MensajeError = mensajeError
-            };
+            if (estado == "Activo")
+                alumnos = alumnos.Where(a => !a.Bloqueado).ToList();
+            else if (estado == "Inactivo")
+                alumnos = alumnos.Where(a => a.Bloqueado).ToList();
 
-            return View("~/Views/Perfiles/AdminAlumnos.cshtml", viewModel);
+            return View("~/Views/Alumnos/Index.cshtml", alumnos.OrderBy(a => a.Nombre).ToList());
         }
 
-        // Alumnos/Crear  →  Historia 1: Agregar alumno
+        // GET: /Alumnos/Agregar
+        public IActionResult Agregar() => View("~/Views/Alumnos/Agregar.cshtml");
+
+        // POST: /Alumnos/Agregar
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear(CrearAlumnoViewModel model)
+        public async Task<IActionResult> Agregar(string Nombre, string Apellido,
+            string Email, string Telefono, string Contrasena)
         {
-            // 1. Validar campos obligatorios del modelo
-            if (!ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(Nombre) || string.IsNullOrWhiteSpace(Apellido)
+                || string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Contrasena))
             {
-                return await RecargarConErrores(model, null, "Por favor, corrija los errores del formulario.");
+                ViewBag.Error = "Todos los campos obligatorios deben completarse.";
+                return View("~/Views/Alumnos/Agregar.cshtml");
             }
 
-            var correoNormalizado = model.Correo.Trim().ToLower();
-
-            // 2. Validar que no exista un alumno con el mismo correo (evitar duplicados)
-            var usuarioExistente = await _userManager.FindByEmailAsync(correoNormalizado);
-            if (usuarioExistente != null)
+            var correo = Email.Trim().ToLower();
+            var existente = await _userManager.FindByEmailAsync(correo);
+            if (existente != null)
             {
-                return await RecargarConErrores(model, null, "Ya existe un alumno registrado con ese correo electrónico.");
+                ViewBag.Error = "Ya existe un alumno con ese correo electrónico.";
+                return View("~/Views/Alumnos/Agregar.cshtml");
             }
 
-            // 3. Crear el nuevo usuario
-            var nuevoAlumno = new ApplicationUser
+            var alumno = new ApplicationUser
             {
-                Nombre = model.Nombre.Trim(),
-                Apellido = model.Apellido.Trim(),
-                UserName = correoNormalizado,
-                Email = correoNormalizado,
-                PhoneNumber = model.Telefono.Trim(),
+                Nombre = Nombre.Trim(),
+                Apellido = Apellido.Trim(),
+                UserName = correo,
+                Email = correo,
+                PhoneNumber = Telefono?.Trim(),
                 FechaRegistro = DateTime.Now,
                 Bloqueado = false
             };
 
-            var resultado = await _userManager.CreateAsync(nuevoAlumno, model.Contrasena);
-
+            var resultado = await _userManager.CreateAsync(alumno, Contrasena);
             if (!resultado.Succeeded)
             {
-                var errores = string.Join(" ", resultado.Errors.Select(e => e.Description));
-                return await RecargarConErrores(model, null, errores);
+                ViewBag.Error = string.Join(" ", resultado.Errors.Select(e => e.Description));
+                return View("~/Views/Alumnos/Agregar.cshtml");
             }
 
-            // 4. Asignar rol "Usuario" al nuevo alumno
-            await _userManager.AddToRoleAsync(nuevoAlumno, "Usuario");
-
-            return RedirectToAction(nameof(Index),
-                new { mensajeExito = $"El alumno {nuevoAlumno.Nombre} {nuevoAlumno.Apellido} fue registrado exitosamente." });
+            await _userManager.AddToRoleAsync(alumno, "Usuario");
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Alumnos/ObtenerDatos/{id}  →  Historia 2: Cargar datos para editar
-        // Retorna JSON para llenar el modal de edición desde el cliente
-
-        [HttpGet]
-        public async Task<IActionResult> ObtenerDatos(string id)
+        // GET: /Alumnos/Editar/id
+        public async Task<IActionResult> Editar(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                return Json(new { exito = false, mensaje = "ID de alumno no válido." });
-
             var alumno = await _userManager.FindByIdAsync(id);
-
-            if (alumno == null)
-                return Json(new { exito = false, mensaje = "El alumno solicitado no existe en el sistema." });
-
-            return Json(new
-            {
-                exito = true,
-                id = alumno.Id,
-                nombre = alumno.Nombre,
-                apellido = alumno.Apellido,
-                correo = alumno.Email,
-                telefono = alumno.PhoneNumber
-            });
+            if (alumno == null) return NotFound();
+            return View("~/Views/Alumnos/Editar.cshtml", alumno);
         }
 
-
-        // GET: /Alumnos/Editar  →  Historia 2: Modificar alumno
-
+        // POST: /Alumnos/Editar
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(EditarAlumnoViewModel model)
+        public async Task<IActionResult> Editar(string Id, string Nombre, string Apellido,
+            string Email, string Telefono)
         {
-            // 1. Validar campos obligatorios
-            if (!ModelState.IsValid)
-            {
-                var errores = string.Join(" ", ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage));
-                return await RecargarConErrores(null, model, errores);
-            }
+            var alumno = await _userManager.FindByIdAsync(Id);
+            if (alumno == null) return NotFound();
 
-            // 2. Verificar que el alumno exista
-            var alumno = await _userManager.FindByIdAsync(model.Id);
-            if (alumno == null)
+            var correo = Email.Trim().ToLower();
+            if (!string.Equals(alumno.Email, correo, StringComparison.OrdinalIgnoreCase))
             {
-                return await RecargarConErrores(null, model, "El alumno que intenta modificar no existe en el sistema.");
-            }
-
-            var correoNormalizado = model.Correo.Trim().ToLower();
-
-            // 3. Si cambió el correo, verificar que el nuevo no esté en uso por otro usuario
-            if (!string.Equals(alumno.Email, correoNormalizado, StringComparison.OrdinalIgnoreCase))
-            {
-                var correoEnUso = await _userManager.FindByEmailAsync(correoNormalizado);
-                if (correoEnUso != null && correoEnUso.Id != alumno.Id)
+                var enUso = await _userManager.FindByEmailAsync(correo);
+                if (enUso != null && enUso.Id != alumno.Id)
                 {
-                    return await RecargarConErrores(null, model, "El correo ingresado ya está en uso por otro alumno.");
+                    ViewBag.Error = "El correo ingresado ya está en uso.";
+                    return View("~/Views/Alumnos/Editar.cshtml", alumno);
                 }
-
-                // Actualizar correo y username
-                alumno.Email = correoNormalizado;
-                alumno.UserName = correoNormalizado;
+                alumno.Email = correo;
+                alumno.UserName = correo;
             }
 
-            // 4. Actualizar los campos editables
-            alumno.Nombre = model.Nombre.Trim();
-            alumno.Apellido = model.Apellido.Trim();
-            alumno.PhoneNumber = model.Telefono.Trim();
+            alumno.Nombre = Nombre.Trim();
+            alumno.Apellido = Apellido.Trim();
+            alumno.PhoneNumber = Telefono?.Trim();
 
             var resultado = await _userManager.UpdateAsync(alumno);
-
             if (!resultado.Succeeded)
             {
-                var errores = string.Join(" ", resultado.Errors.Select(e => e.Description));
-                return await RecargarConErrores(null, model, errores);
+                ViewBag.Error = string.Join(" ", resultado.Errors.Select(e => e.Description));
+                return View("~/Views/Alumnos/Editar.cshtml", alumno);
             }
 
-            return RedirectToAction(nameof(Index),
-                new { mensajeExito = $"La información de {alumno.Nombre} {alumno.Apellido} fue actualizada exitosamente." });
+            return RedirectToAction(nameof(Index));
         }
 
-
-        // POST: /Alumnos/Desactivar/{id}  →  Historia 3: Desactivar alumno (bloquear)
-
+        // POST: /Alumnos/CambiarEstado
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Desactivar(string id)
+        public async Task<IActionResult> CambiarEstado(string id, bool activo)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                return RedirectToAction(nameof(Index), new { mensajeError = "ID de alumno no válido." });
-
-            // 1. Verificar que el alumno exista
             var alumno = await _userManager.FindByIdAsync(id);
-            if (alumno == null)
+            if (alumno != null)
             {
-                return RedirectToAction(nameof(Index),
-                    new { mensajeError = "El alumno que intenta desactivar no existe en el sistema." });
+                alumno.Bloqueado = !activo;
+                await _userManager.UpdateAsync(alumno);
             }
-
-            // 2. Verificar que el alumno no esté ya inactivo
-            if (alumno.Bloqueado)
-            {
-                return RedirectToAction(nameof(Index),
-                    new { mensajeError = $"El alumno {alumno.Nombre} {alumno.Apellido} ya se encuentra inactivo." });
-            }
-
-            // 3. Desactivar el alumno marcándolo como bloqueado
-            alumno.Bloqueado = true;
-            var resultado = await _userManager.UpdateAsync(alumno);
-
-            if (!resultado.Succeeded)
-            {
-                var errores = string.Join(" ", resultado.Errors.Select(e => e.Description));
-                return RedirectToAction(nameof(Index), new { mensajeError = errores });
-            }
-
-            return RedirectToAction(nameof(Index),
-                new { mensajeExito = $"El alumno {alumno.Nombre} {alumno.Apellido} fue desactivado exitosamente." });
-        }
-
-
-        // Método privado: recarga la vista con mensajes de error sin perder
-        // el estado del formulario (evita que el admin pierda lo que escribió)
-
-        private async Task<IActionResult> RecargarConErrores(
-            CrearAlumnoViewModel? modelCrear,
-            EditarAlumnoViewModel? modelEditar,
-            string mensajeError)
-        {
-            var alumnos = await _userManager.GetUsersInRoleAsync("Usuario");
-
-            var viewModel = new AdminAlumnosViewModel
-            {
-                Alumnos = alumnos
-                    .OrderBy(a => a.Nombre)
-                    .Select(a => new AlumnoListItemViewModel
-                    {
-                        Id = a.Id,
-                        NombreCompleto = $"{a.Nombre} {a.Apellido}",
-                        Correo = a.Email ?? string.Empty,
-                        Telefono = a.PhoneNumber ?? "No registrado",
-                        Activo = !a.Bloqueado,
-                        FechaRegistro = a.FechaRegistro
-                    })
-                    .ToList(),
-
-                NuevoAlumno = modelCrear ?? new CrearAlumnoViewModel(),
-                AlumnoAEditar = modelEditar,
-                MensajeError = mensajeError
-            };
-
-            return View("~/Views/Perfiles/AdminAlumnos.cshtml", viewModel);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

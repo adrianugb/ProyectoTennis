@@ -1,0 +1,332 @@
+﻿@model ProyectoGrupalTennis.Models.AdminCanchasViewModel
+@{
+    ViewData["Title"] = "Gestión de Canchas";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Gestión de Canchas</h1>
+                    <p class="perfil-subtitle">
+                        Administrá la disponibilidad y mantenimiento de las canchas de la academia.
+                    </p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-table-tennis"></i> Administración de Canchas
+                </div>
+            </div>
+
+            @* Botón volver al panel *@
+            <div class="mb-3">
+                <a asp-controller="Home" asp-action="PerfilAdmin" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa fa-arrow-left me-1"></i> Volver al Panel
+                </a>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.MensajeExito))
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa fa-check-circle me-2"></i> @Model.MensajeExito
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.MensajeError))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fa fa-exclamation-circle me-2"></i> @Model.MensajeError
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Listado de canchas</h2>
+                    <button type="button" class="perfil-btn" data-bs-toggle="modal" data-bs-target="#modalAgregarCancha">
+                        <i class="fa fa-plus"></i> Agregar cancha
+                    </button>
+                </div>
+
+                <div class="perfil-filter-row">
+                    <input type="text" id="filtroNombre" class="form-control"
+                           placeholder="Buscar cancha..." oninput="filtrarTabla()" />
+                    <select id="filtroEstado" class="form-select" onchange="filtrarTabla()">
+                        <option value="">Filtrar por estado</option>
+                        <option value="Disponible">Disponible</option>
+                        <option value="En mantenimiento">En mantenimiento</option>
+                        <option value="No disponible">No disponible</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="perfil-table" id="tablaCanchas">
+                        <thead>
+                            <tr>
+                                <th>Cancha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.Canchas.Any())
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-4">
+                                        <i class="fa fa-table-tennis fa-2x mb-2 d-block"></i>
+                                        No hay canchas registradas en el sistema.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var cancha in Model.Canchas)
+                                {
+                                    <tr>
+                                        <td><strong>@cancha.Nombre</strong></td>
+                                        <td>
+                                            @if (cancha.EnMantenimiento)
+                                            {
+                                                <span class="perfil-badge-warning">En mantenimiento</span>
+                                            }
+                                            else if (cancha.Disponible)
+                                            {
+                                                <span class="perfil-badge-success">Disponible</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">No disponible</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="#" class="perfil-action-link"
+                                               onclick="abrirModalEditar(@cancha.IdCancha); return false;">
+                                                Editar
+                                            </a>
+                                            <span class="perfil-action-separator">|</span>
+                                            @if (!cancha.EnMantenimiento)
+                                            {
+                                                <a href="#" class="perfil-action-link text-warning"
+                                                   onclick="abrirModalMantenimiento(@cancha.IdCancha, '@cancha.Nombre'); return false;">
+                                                    Mantenimiento
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <form asp-controller="Canchas" asp-action="FinalizarMantenimiento"
+                                                      method="post" style="display:inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@cancha.IdCancha" />
+                                                    <button type="submit" class="perfil-action-link text-success"
+                                                            style="background:none;border:none;padding:0;cursor:pointer;">
+                                                        Finalizar mantenimiento
+                                                    </button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@* MODAL 1 — Agregar cancha *@
+<div class="modal fade" id="modalAgregarCancha" tabindex="-1" aria-labelledby="tituloModalAgregar" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tituloModalAgregar">
+                    <i class="fa fa-plus me-2"></i> Agregar Cancha
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancelar"></button>
+            </div>
+            <form asp-controller="Canchas" asp-action="Crear" method="post" novalidate>
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label asp-for="NuevaCancha.Nombre" class="form-label fw-semibold"></label>
+                            <input asp-for="NuevaCancha.Nombre" class="form-control"
+                                   placeholder="Ej: Cancha 1" autocomplete="off" />
+                            <span asp-validation-for="NuevaCancha.Nombre" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input asp-for="NuevaCancha.Disponible" class="form-check-input" type="checkbox" />
+                                <label asp-for="NuevaCancha.Disponible" class="form-check-label">Disponible al registrar</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fa fa-times me-1"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save me-1"></i> Guardar cancha
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@* MODAL 2 — Editar cancha *@
+<div class="modal fade" id="modalEditarCancha" tabindex="-1" aria-labelledby="tituloModalEditar" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tituloModalEditar">
+                    <i class="fa fa-edit me-2"></i> Editar Cancha
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancelar"></button>
+            </div>
+            <form asp-controller="Canchas" asp-action="Editar" method="post" id="formEditar" novalidate>
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div id="editarCargando" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Cargando información...</p>
+                    </div>
+                    <div id="editarError" class="alert alert-danger d-none" role="alert">
+                        <i class="fa fa-exclamation-circle me-2"></i>
+                        <span id="editarErrorMensaje"></span>
+                    </div>
+                    <div id="editarFormulario" class="d-none">
+                        <input type="hidden" id="editarId" name="IdCancha" />
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="editarNombre" class="form-label fw-semibold">Nombre</label>
+                                <input type="text" id="editarNombre" name="Nombre" class="form-control"
+                                       placeholder="Ej: Cancha 1" required maxlength="100" />
+                                <div class="invalid-feedback">El nombre es obligatorio.</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input type="checkbox" id="editarDisponible" name="Disponible"
+                                           class="form-check-input" value="true" />
+                                    <label for="editarDisponible" class="form-check-label">Disponible</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="editarFooter" style="display:none!important;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            onclick="resetearModalEditar()">
+                        <i class="fa fa-times me-1"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save me-1"></i> Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@* MODAL 3 — Confirmar mantenimiento *@
+<div class="modal fade" id="modalMantenimiento" tabindex="-1" aria-labelledby="tituloModalMant" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning bg-opacity-10">
+                <h5 class="modal-title" id="tituloModalMant">
+                    <i class="fa fa-tools me-2 text-warning"></i> Registrar Mantenimiento
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancelar"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro que desea marcar la cancha <strong id="nombreMantenimiento"></strong> como en mantenimiento?</p>
+                <p class="text-muted small">La cancha quedará no disponible hasta que se finalice el mantenimiento.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa fa-times me-1"></i> Cancelar
+                </button>
+                <form asp-controller="Canchas" asp-action="Mantenimiento" method="post" id="formMantenimiento">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="idMantenimiento" name="id" />
+                    <button type="submit" class="btn btn-warning text-white">
+                        <i class="fa fa-tools me-1"></i> Sí, registrar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        async function abrirModalEditar(id) {
+            resetearModalEditar();
+            const modal = new bootstrap.Modal(document.getElementById('modalEditarCancha'));
+            modal.show();
+            try {
+                const response = await fetch(`/Canchas/ObtenerDatos/${id}`);
+                const data = await response.json();
+                if (!data.exito) {
+                    document.getElementById('editarError').classList.remove('d-none');
+                    document.getElementById('editarErrorMensaje').textContent = data.mensaje;
+                    document.getElementById('editarCargando').classList.add('d-none');
+                    return;
+                }
+                document.getElementById('editarId').value = data.idCancha;
+                document.getElementById('editarNombre').value = data.nombre;
+                document.getElementById('editarDisponible').checked = data.disponible;
+                document.getElementById('editarCargando').classList.add('d-none');
+                document.getElementById('editarFormulario').classList.remove('d-none');
+                document.getElementById('editarFooter').style.removeProperty('display');
+            } catch (error) {
+                document.getElementById('editarError').classList.remove('d-none');
+                document.getElementById('editarErrorMensaje').textContent = 'Error al obtener los datos. Intente nuevamente.';
+                document.getElementById('editarCargando').classList.add('d-none');
+            }
+        }
+
+        function resetearModalEditar() {
+            document.getElementById('editarCargando').classList.remove('d-none');
+            document.getElementById('editarFormulario').classList.add('d-none');
+            document.getElementById('editarError').classList.add('d-none');
+            document.getElementById('editarFooter').style.setProperty('display', 'none', 'important');
+            document.getElementById('formEditar').reset();
+        }
+
+        function abrirModalMantenimiento(id, nombre) {
+            document.getElementById('idMantenimiento').value = id;
+            document.getElementById('nombreMantenimiento').textContent = nombre;
+            const modal = new bootstrap.Modal(document.getElementById('modalMantenimiento'));
+            modal.show();
+        }
+
+        function filtrarTabla() {
+            const textoBuscar = document.getElementById('filtroNombre').value.toLowerCase();
+            const estadoFiltro = document.getElementById('filtroEstado').value;
+            const filas = document.querySelectorAll('#tablaCanchas tbody tr');
+            filas.forEach(fila => {
+                const nombre = fila.cells[0]?.textContent.toLowerCase() ?? '';
+                const estado = fila.cells[1]?.textContent.trim() ?? '';
+                const coincideNombre = nombre.includes(textoBuscar);
+                const coincideEstado = !estadoFiltro || estado === estadoFiltro;
+                fila.style.display = coincideNombre && coincideEstado ? '' : 'none';
+            });
+        }
+    </script>
+}

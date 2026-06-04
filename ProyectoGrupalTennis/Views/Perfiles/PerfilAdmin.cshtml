@@ -15,12 +15,10 @@
                         Gestiona cursos, alumnos, profesores y facturación desde un solo lugar.
                     </p>
                 </div>
-
                 <div class="perfil-badge">
                     <i class="fa fa-user-shield"></i> Perfil Administrador
                 </div>
             </div>
-
 
             <div class="perfil-grid">
                 <div class="row">
@@ -29,12 +27,9 @@
                         <div class="perfil-card">
                             <i class="fa fa-book"></i>
                             <h3>Gestión de Cursos</h3>
-                            <p>
-                                Administra el catálogo de cursos, horarios, niveles y condiciones disponibles en la academia.
-                            </p>
-
+                            <p>Administra el catálogo de cursos y asigná profesores.</p>
                             <div class="perfil-actions">
-                                <a asp-controller="Home" asp-action="AdminCursos" class="perfil-btn">
+                                <a asp-controller="AdminCursos" asp-action="Index" class="perfil-btn">
                                     Ir a Cursos
                                 </a>
                             </div>
@@ -45,13 +40,23 @@
                         <div class="perfil-card">
                             <i class="fa fa-user-graduate"></i>
                             <h3>Gestión de Alumnos</h3>
-                            <p>
-                                Consulta, registra, edita y visualiza la información general de los alumnos de la academia.
-                            </p>
-
+                            <p>Consulta, registra, edita y visualiza la información general de los alumnos.</p>
                             <div class="perfil-actions">
-                                <a asp-controller="Home" asp-action="AdminAlumnos" class="perfil-btn">
+                                <a asp-controller="Alumnos" asp-action="Index" class="perfil-btn">
                                     Ir a Alumnos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-table-tennis"></i>
+                            <h3>Gestión de Canchas</h3>
+                            <p>Administrá la disponibilidad y mantenimiento de las canchas de la academia.</p>
+                            <div class="perfil-actions">
+                                <a asp-controller="Canchas" asp-action="Index" class="perfil-btn">
+                                    Ir a Canchas
                                 </a>
                             </div>
                         </div>
@@ -61,10 +66,7 @@
                         <div class="perfil-card">
                             <i class="fa fa-chalkboard-teacher"></i>
                             <h3>Gestión de Profesores</h3>
-                            <p>
-                                Visualiza y administra la información relacionada con los profesores y su participación en la academia.
-                            </p>
-
+                            <p>Visualiza y administra la información relacionada con los profesores.</p>
                             <div class="perfil-actions">
                                 <a asp-controller="Home" asp-action="AdminProfesores" class="perfil-btn">
                                     Ir a Profesores
@@ -77,10 +79,7 @@
                         <div class="perfil-card">
                             <i class="fa fa-file-invoice-dollar"></i>
                             <h3>Pagos y Facturación</h3>
-                            <p>
-                                Registra pagos, confirma transacciones, genera facturas y consulta el historial financiero.
-                            </p>
-
+                            <p>Registra pagos, confirma transacciones y consulta el historial financiero.</p>
                             <div class="perfil-actions">
                                 <a asp-controller="Home" asp-action="AdminFacturacion" class="perfil-btn">
                                     Ir a Facturación
@@ -89,55 +88,35 @@
                         </div>
                     </div>
 
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-users-cog"></i>
+                            <h3>Gestión de Usuarios</h3>
+                            <p>Administra usuarios del sistema, roles, accesos y estados de bloqueo.</p>
+                            <div class="perfil-actions">
+                                <a asp-controller="Admin" asp-action="Index" class="perfil-btn">
+                                    Ir a Usuarios
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="col-md-6 col-sm-6">
                         <div class="perfil-card">
-
-                            <i class="fa fa-users-cog"></i>
-
-                            <h3>Gestión de Usuarios</h3>
-
-                            <p>
-                                Administra usuarios del sistema, roles, accesos y estados de bloqueo.
-                            </p>
-
+                            <i class="fa fa-tags"></i>
+                            <h3>Gestión de Ofertas</h3>
+                            <p>Crea y administra códigos de descuento y promociones.</p>
                             <div class="perfil-actions">
-
-                                <a asp-controller="Admin"
-                                       asp-action="Index"
-                                       class="perfil-btn">
-
-                                    Ir a Usuarios
-
+                                <a asp-controller="Offers" asp-action="Index" class="perfil-btn">
+                                    Ir a Ofertas
                                 </a>
-
                             </div>
-
                         </div>
                     </div>
-                    ```
 
-
-
-        <!-- Nuevo módulo: Gestión de Ofertas -->
-        <div class="col-md-4 col-sm-6" style="margin-top:18px;">
-            <div class="module-card">
-                <i class="fa fa-tags"></i>
-                <h3>Gestión de Ofertas</h3>
-                <p>
-                    Crea y administra códigos de descuento y promociones.
-                    Los códigos pueden ser porcentaje o descuento fijo y
-                    tener rango de validez.
-                </p>
-
-                <div class="module-actions">
-                    <a asp-controller="Offers" asp-action="Index" class="module-btn">
-                        Ir a Ofertas
-                    </a>
                 </div>
             </div>
+
         </div>
-
-
     </div>
 </section>
