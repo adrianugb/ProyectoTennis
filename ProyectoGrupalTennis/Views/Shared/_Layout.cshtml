@@ -17,7 +17,7 @@
 
     <style>
             :root {
-                --primary-color: #a5c422; /* Verde Tennis */
+                --primary-color: #a5c422;
                 --dark-bg: #121212;
                 --card-bg: #1e1e1e;
                 --text-main: #ffffff;
@@ -32,7 +32,7 @@
             }
 
             .footer-thumb {
-                margin-bottom: 30px; /* Separación en dispositivos móviles */
+                margin-bottom: 30px;
             }
 
                 .footer-thumb h4 {
@@ -42,14 +42,14 @@
                     font-weight: 700;
                     letter-spacing: 1.5px;
                     margin-bottom: 25px;
-                    text-align: left; /* Alineado a la izquierda */
+                    text-align: left;
                 }
 
             .footer-info-text {
                 color: var(--text-muted);
                 font-size: 14px;
                 line-height: 1.6;
-                text-align: left; /* Alineado a la izquierda */
+                text-align: left;
             }
 
             /* Contacto Unificado */
@@ -58,7 +58,7 @@
                 padding: 0;
                 display: flex;
                 flex-direction: column;
-                align-items: flex-start; /* Alineado a la izquierda */
+                align-items: flex-start;
                 gap: 15px;
             }
 
@@ -154,13 +154,13 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                flex-wrap: wrap; /* Para móviles */
+                flex-wrap: wrap;
             }
 
             .copyright {
                 font-size: 13px;
                 color: #777;
-                margin: 0; /* Sin margen para alinear con el botón */
+                margin: 0;
             }
 
             .btn-scroll-top {
@@ -204,7 +204,6 @@
             }
 
             /* Fix modales Bootstrap 5 */
-
             .modal.fade.show {
                 opacity: 1 !important;
             }
@@ -244,7 +243,7 @@
                 color: #212529 !important;
             }
 
-            /* Botón regresar mejorado */
+            /* Botón regresar */
             .btn-volver {
                 display: inline-flex;
                 align-items: center;
@@ -316,10 +315,10 @@
                             <i class="fa fa-th-large"></i> Módulos <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li> <a asp-controller="Home" asp-action="Retencion"> <i class="fa fa-shield-alt"></i> Retención y Abandono </a></li>
+                            <li><a asp-controller="Home" asp-action="Retencion"><i class="fa fa-shield-alt"></i> Retención y Abandono</a></li>
                             <li><a asp-controller="Home" asp-action="Campeonatos"><i class="fa fa-trophy"></i> Inscripción a Campeonatos</a></li>
-                            <li><a asp-controller="Home" asp-action="PerfilAdmin"> <i class="fa fa-user-shield"></i> Perfil Administrador</a></li>
-                            <li><a asp-controller="Home" asp-action="PerfilUsuario"> <i class="fa fa-user-shield"></i> Perfil Usuario</a></li>
+                            <li><a asp-controller="Home" asp-action="PerfilAdmin"><i class="fa fa-user-shield"></i> Perfil Administrador</a></li>
+                            <li><a asp-controller="Home" asp-action="PerfilUsuario"><i class="fa fa-user"></i> Perfil Usuario</a></li>
                             <li><a asp-controller="Home" asp-action="Gamificacion"><i class="fa fa-gamepad"></i> Gamificación</a></li>
                             <li><a asp-controller="Home" asp-action="Geolocalizacion"><i class="fa fa-map-marker-alt"></i> Geolocalización</a></li>
                             <li><a asp-controller="Home" asp-action="Matricula"><i class="fa fa-file-signature"></i> Matrícula</a></li>
@@ -329,49 +328,62 @@
                             <li><a asp-controller="Home" asp-action="Progreso"><i class="fa fa-chart-bar"></i> Progreso Técnico</a></li>
                         </ul>
                     </li>
+
                     @if (User?.Identity?.IsAuthenticated != true)
                     {
                         <li class="appointment-btn">
-                            <a asp-controller="Home" asp-action="Login">
-                                Iniciar Sesión
-                            </a>
+                            <a asp-controller="Home" asp-action="Login">Iniciar Sesión</a>
                         </li>
-
                         <li class="appointment-btn">
-                            <a asp-controller="Home" asp-action="Registro">
-                                Registrarse
-                            </a>
+                            <a asp-controller="Home" asp-action="Registro">Registrarse</a>
                         </li>
                     }
 
                     @if (User?.Identity?.IsAuthenticated == true)
                     {
+                        @* Link a perfil según rol *@
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <li>
+                                <a asp-controller="Home" asp-action="PerfilAdmin"
+                                   style="color:#a5c422; font-weight:600;">
+                                    <i class="fa fa-user-shield me-1"></i> Mi Panel
+                                </a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Profesor"))
+                        {
+                            <li>
+                                <a asp-controller="Home" asp-action="PerfilProfesor"
+                                   style="color:#a5c422; font-weight:600;">
+                                    <i class="fa fa-chalkboard-teacher me-1"></i> Mi Panel
+                                </a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Usuario"))
+                        {
+                            <li>
+                                <a asp-controller="Home" asp-action="PerfilUsuario"
+                                   style="color:#a5c422; font-weight:600;">
+                                    <i class="fa fa-user me-1"></i> Mi Perfil
+                                </a>
+                            </li>
+                        }
+
                         <li class="appointment-btn">
-
-                            <form asp-controller="Auth"
-                                  asp-action="Logout"
-                                  method="post"
-                                  style="margin:0;">
-
+                            <form asp-controller="Auth" asp-action="Logout" method="post" style="margin:0;">
                                 <button type="submit"
-                                        style="background:#d9534f;
-                                    border:none;
-                                    color:white;
-                                    padding:10px 18px;
-                                    border-radius:4px;">
-
+                                        style="background:#d9534f;border:none;color:white;padding:10px 18px;border-radius:4px;">
                                     Cerrar sesión
-
                                 </button>
-
                             </form>
-
                         </li>
                     }
                 </ul>
             </div>
         </div>
     </section>
+
     <div class="main-content">
         @RenderBody()
     </div>
@@ -387,18 +399,10 @@
                             Pasión por el tennis en cada entrenamiento. Instalaciones profesionales en el corazón de San José para todos los niveles.
                         </p>
                         <div class="social-container">
-                            <a href="https://www.facebook.com/tenismmp" class="social-btn">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="#" class="social-btn">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            <a href="https://wa.me/50683764752" class="social-btn">
-                                <i class="fab fa-whatsapp"></i>
-                            </a>
-                            <a href="https://x.com/mariomunozp" class="social-btn">
-                                <i class="fab fa-x-twitter"></i>
-                            </a>
+                            <a href="https://www.facebook.com/tenismmp" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+                            <a href="https://wa.me/50683764752" class="social-btn"><i class="fab fa-whatsapp"></i></a>
+                            <a href="https://x.com/mariomunozp" class="social-btn"><i class="fab fa-x-twitter"></i></a>
                         </div>
                     </div>
                 </div>
@@ -408,21 +412,15 @@
                         <h4>Contacto & Horario</h4>
                         <div class="contact-list">
                             <a href="tel:+50622839369" class="contact-item">
-                                <div class="icon-circle">
-                                    <i class="fa fa-phone"></i>
-                                </div>
+                                <div class="icon-circle"><i class="fa fa-phone"></i></div>
                                 (506) 2283-9369
                             </a>
                             <a href="https://wa.me/50683764752" class="contact-item">
-                                <div class="icon-circle">
-                                    <i class="fab fa-whatsapp"></i>
-                                </div>
+                                <div class="icon-circle"><i class="fab fa-whatsapp"></i></div>
                                 (506) 8376-4752
                             </a>
                             <a href="mailto:info@tenismmp.com" class="contact-item">
-                                <div class="icon-circle">
-                                    <i class="fa fa-envelope"></i>
-                                </div>
+                                <div class="icon-circle"><i class="fa fa-envelope"></i></div>
                                 info@tenismmp.com
                             </a>
                         </div>
@@ -450,9 +448,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p class="copyright">
-                    © 2026 <strong>Tenis M.M.P</strong> | Academia de Tenis.
-                </p>
+                <p class="copyright">© 2026 <strong>Tenis M.M.P</strong> | Academia de Tenis.</p>
                 <a href="#top" class="smoothScroll btn-scroll-top">
                     <i class="fa fa-chevron-up"></i>
                 </a>

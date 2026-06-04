@@ -4,135 +4,126 @@
 
 <link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
 
-<section class="perfil-page">
+<section class="perfil-page compact">
     <div class="container">
         <div class="perfil-container">
 
             <div class="perfil-header">
                 <div>
-                    <h1 class="perfil-title">Perfil de Usuario</h1>
+                    <h1 class="perfil-title">Panel de Usuario</h1>
                     <p class="perfil-subtitle">
-                        Resumen de tu cuenta, progreso, próximas clases y opciones rápidas.
+                        Accedé a tus cursos, horarios, pagos y más desde un solo lugar.
                     </p>
                 </div>
-
                 <div class="perfil-badge">
-                    <i class="fa fa-user"></i> Cuenta
+                    <i class="fa fa-user"></i> Perfil Usuario
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="perfil-table-block">
-                        <div class="perfil-table-header">
-                            <h2 class="perfil-table-title">Información básica</h2>
+            <div class="perfil-grid">
+                <div class="row g-4">
 
-                            <a href="#" class="perfil-btn-outline">
-                                <i class="fa fa-edit"></i> Editar perfil
-                            </a>
-                        </div>
-
-                        <div class="row" style="margin-top:12px;">
-                            <div class="col-sm-4">
-                                <img src="~/images/author-image.jpg" class="img-responsive" style="width:100%; border-radius:12px;" alt="Usuario" />
-                            </div>
-                            <div class="col-sm-8">
-                                <p><strong>Nombre:</strong> María González</p>
-                                <p><strong>Correo:</strong> maria.gonzalez@email.com</p>
-                                <p><strong>Teléfono:</strong> 8888-1111</p>
-                                <p><strong>Nivel:</strong> Intermedio</p>
-                                <p><strong>Matrícula:</strong> ACT-2024-045</p>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-book-open"></i>
+                            <h3>Cursos Disponibles</h3>
+                            <p>Explorá los cursos activos de la academia, niveles, horarios y profesores.</p>
+                            <div class="perfil-actions">
+                                <a asp-controller="Usuario" asp-action="MisCursos" class="perfil-btn">
+                                    Ver Cursos
+                                </a>
                             </div>
                         </div>
                     </div>
 
-                    <div class="perfil-table-block">
-                        <div class="perfil-table-header">
-                            <h2 class="perfil-table-title">Próximas clases</h2>
-
-                            <a href="/Home/Matricula" class="perfil-btn">
-                                Ver agenda
-                            </a>
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="perfil-table">
-                                <thead>
-                                    <tr>
-                                        <th>Clase</th>
-                                        <th>Fecha</th>
-                                        <th>Hora</th>
-                                        <th>Profesor</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Técnica - Drives</td>
-                                        <td>2026-04-22</td>
-                                        <td>17:00</td>
-                                        <td>Mario Muñoz</td>
-                                        <td><span class="perfil-badge-success">Confirmada</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Entrenamiento físico</td>
-                                        <td>2026-04-24</td>
-                                        <td>18:30</td>
-                                        <td>Andrea Solano</td>
-                                        <td><span class="perfil-badge-info">Pendiente</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="col-md-4">
-                    <div class="perfil-card" style="text-align:left;">
-                        <i class="fa fa-trophy"></i>
-                        <h3>Progreso</h3>
-                        <p>Seguimiento técnico y metas alcanzadas.</p>
-
-                        <div style="margin-top:12px;">
-                            <div><strong>Asistencia mensual:</strong> 87%</div>
-                            <div><strong>Objetivo actual:</strong> Mejorar precisión en drives</div>
-                            <div style="margin-top:10px;">
-                                <div class="perfil-summary-item" style="padding:10px;">
-                                    <strong>Nivel actual</strong>
-                                    <span>Intermedio</span>
-                                </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-clock"></i>
+                            <h3>Horarios Disponibles</h3>
+                            <p>Consultá los horarios de los cursos activos y filtrá por día.</p>
+                            <div class="perfil-actions">
+                                <a asp-controller="Usuario" asp-action="MisHorarios" class="perfil-btn">
+                                    Ver Horarios
+                                </a>
                             </div>
                         </div>
                     </div>
 
-                    <div class="perfil-card" style="margin-top:16px; text-align:left;">
-                        <i class="fa fa-wallet"></i>
-                        <h3>Pagos y suscripciones</h3>
-                        <p>Estado de suscripción y recibos recientes.</p>
-
-                        <div style="margin-top:12px;">
-                            <p><strong>Plan:</strong> Mensual</p>
-                            <p><strong>Último pago:</strong> 2026-04-01 • ₡45,000</p>
-                            <a href="#" class="perfil-btn" style="margin-top:6px;">Ver recibos</a>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-file-signature"></i>
+                            <h3>Matrícula</h3>
+                            <p>Revisá el estado de tu matrícula e inscribite a cursos disponibles.</p>
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="Matricula" class="perfil-btn">
+                                    Ver Matrícula
+                                </a>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="perfil-card" style="margin-top:16px; text-align:left;">
-                        <i class="fa fa-headset"></i>
-                        <h3>Soporte</h3>
-                        <p>¿Necesitas ayuda?</p>
-                        <div class="module-actions" style="margin-top:10px;">
-                            <a href="/Home/Contacto" class="perfil-btn-outline">Contactar soporte</a>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-trophy"></i>
+                            <h3>Campeonatos</h3>
+                            <p>Ver torneos disponibles e inscribirte como jugador.</p>
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="Campeonatos" class="perfil-btn">
+                                    Ver Campeonatos
+                                </a>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="perfil-card" style="margin-top:16px; text-align:left;">
-                        <i class="fa fa-trophy"></i>
-                        <h3>Campeonatos e Inscripciones</h3>
-                        <p>Ver torneos disponibles e inscribirte como jugador (vista mockup).</p>
-                        <div style="margin-top:12px;">
-                            <a asp-controller="Home" asp-action="Campeonatos" class="perfil-btn">Ir a Campeonatos</a>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-chart-bar"></i>
+                            <h3>Mi Progreso</h3>
+                            <p>Revisá tu progreso técnico, metas y seguimiento de clases.</p>
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="Progreso" class="perfil-btn">
+                                    Ver Progreso
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-wallet"></i>
+                            <h3>Pagos</h3>
+                            <p>Consultá el estado de tus pagos, suscripciones y recibos.</p>
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="UsuarioPagos" class="perfil-btn">
+                                    Ver Pagos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-bell"></i>
+                            <h3>Notificaciones</h3>
+                            <p>Revisá tus notificaciones y mensajes recientes.</p>
+                            <div class="perfil-actions">
+                                <a asp-controller="Home" asp-action="Notificaciones" class="perfil-btn">
+                                    Ver Notificaciones
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-headset"></i>
+                            <h3>Soporte</h3>
+                            <p>¿Necesitás ayuda? Contactá al equipo de soporte de la academia.</p>
+                            <div class="perfil-actions">
+                                <a href="/#google-map" class="perfil-btn">
+                                    Contactar
+                                </a>
+                            </div>
                         </div>
                     </div>
 
