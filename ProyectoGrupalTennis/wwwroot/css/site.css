@@ -12,7 +12,7 @@ html {
 
     body {
         margin-bottom: 0 !important;
-        padding-bottom: 0 !important; 
+        padding-bottom: 0 !important;
     }
 
     .main-content {
@@ -1231,3 +1231,41 @@ html {
         margin: 0 !important;
         padding-bottom: 0 !important;
     }
+
+    /* Cambiar contraseña */
+    .cambiar-password-page .cambiar-password-title {
+        margin-bottom: 40px !important;
+    }
+
+    .cambiar-password-page .password-form-group {
+        margin-bottom: 30px !important;
+    }
+
+    .cambiar-password-page .password-last-group {
+        margin-bottom: 45px !important;
+    }
+
+    .cambiar-password-page .password-label {
+        display: block !important;
+        margin-bottom: 10px !important;
+        font-weight: bold !important;
+    }
+
+    .cambiar-password-page .password-wrapper {
+        position: relative !important;
+        width: 100% !important;
+    }
+
+    .cambiar-password-page .password-input {
+        padding-right: 45px !important;
+    }
+
+    .cambiar-password-page .password-eye {
+        position: absolute !important;
+        right: 15px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        cursor: pointer !important;
+        color: #777 !important;
+    }
+}

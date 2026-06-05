@@ -3,6 +3,7 @@ using AcademiaTennisDAL.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoGrupalTennis.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -151,7 +152,69 @@ namespace ProyectoGrupalTennis.Controllers
             return View();
         }
 
+        [Authorize]
+        [HttpGet]
+        public IActionResult CambiarPassword()
+        {
+            return View();
+        }
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CambiarPassword(CambiarPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Debe completar correctamente todos los campos."
+                });
+            }
 
+            var usuario = await _userManager.GetUserAsync(User);
 
+            if (usuario == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Debe iniciar sesión nuevamente."
+                });
+            }
+
+            var resultado = await _userManager.ChangePasswordAsync(
+                usuario,
+                model.PasswordActual,
+                model.NuevaPassword);
+
+            if (resultado.Succeeded)
+            {
+                return Json(new
+                {
+                    success = true,
+                    message = "Contraseña actualizada correctamente."
+                });
+            }
+
+            foreach (var error in resultado.Errors)
+            {
+                if (error.Code == "PasswordMismatch")
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "La contraseña actual es incorrecta."
+                    });
+                }
+            }
+
+            return Json(new
+            {
+                success = false,
+                message = "No se pudo cambiar la contraseña. Verifique los datos ingresados."
+            });
+
+        }
     }
 }
