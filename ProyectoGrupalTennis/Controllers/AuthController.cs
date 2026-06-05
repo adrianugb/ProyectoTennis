@@ -1,26 +1,33 @@
 ﻿using AcademiaTennisDAL.Entities;
-using AcademiaTennisDAL.Context;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoGrupalTennis.Models;
-using Microsoft.AspNetCore.Authorization;
+using ProyectoGrupalTennis.Services;
 
 namespace ProyectoGrupalTennis.Controllers
 {
     public class AuthController : Controller
     {
-        // UserManager permite gestionar usuarios de Identity:
-        // crear usuarios, buscar correos, validar información, etc.
+        #region Dependencias
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly EmailService _emailService;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            EmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailService = emailService;
         }
+
+        #endregion
+
+        #region Registro
 
         [HttpGet]
         public IActionResult Registro()
@@ -28,80 +35,26 @@ namespace ProyectoGrupalTennis.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
-        {
-            model.Email = model.Email.Trim().ToLower();
-
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            // Busca el usuario por correo
-            var usuario = await _userManager.FindByEmailAsync(model.Email);
-
-            // Verifica si el usuario está bloqueado
-            if (usuario != null && usuario.Bloqueado)
-            {
-                ModelState.AddModelError("", "Tu cuenta ha sido bloqueada.");
-                return View(model);
-            }
-
-            // Intenta iniciar sesión
-            var resultado = await _signInManager.PasswordSignInAsync(
-                model.Email,
-                model.Password,
-                model.Recordarme,
-                lockoutOnFailure: false
-            );
-
-            // Login exitoso
-            if (resultado.Succeeded)
-            {
-                return RedirectToAction("PerfilUsuario", "Home");
-            }
-
-            // Credenciales incorrectas
-            ModelState.AddModelError("", "Correo o contraseña incorrectos.");
-            return View(model);
-        }
-
-
         [HttpPost]
         public async Task<IActionResult> Registro(RegisterViewModel model)
         {
-            model.Email = model.Email.Trim().ToLower();  // Elimina espacios vacíos y convierte el correo a minúsculas
-            model.Nombre = model.Nombre.Trim();     // Elimina espacios al inicio o final del nombre y apellido
+            model.Email = model.Email.Trim().ToLower();
+            model.Nombre = model.Nombre.Trim();
             model.Apellido = model.Apellido.Trim();
 
-            // Verifica si las validaciones del modelo son correctas.
-            // Ejemplo:
-            // - campos obligatorios
-            // - contraseña mínima
-            // - confirmación de contraseña
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            // Busca si ya existe un usuario con ese correo
             var usuarioExistente = await _userManager.FindByEmailAsync(model.Email);
 
-            // Si el correo ya existe, muestra mensaje de error
             if (usuarioExistente != null)
             {
                 ModelState.AddModelError("Email", "El correo ya está registrado.");
                 return View(model);
             }
 
-            // Crea un nuevo objeto ApplicationUser
-            // con la información ingresada en el formulario
             var usuario = new ApplicationUser
             {
                 Nombre = model.Nombre,
@@ -112,13 +65,12 @@ namespace ProyectoGrupalTennis.Controllers
                 Bloqueado = false
             };
 
-            // Crea el usuario en AspNetUsers
-            // y guarda la contraseña en formato hash
             var resultado = await _userManager.CreateAsync(usuario, model.Password);
 
             if (resultado.Succeeded)
             {
                 var rolResultado = await _userManager.AddToRoleAsync(usuario, "Usuario");
+
                 if (!rolResultado.Succeeded)
                 {
                     await _userManager.DeleteAsync(usuario);
@@ -130,7 +82,6 @@ namespace ProyectoGrupalTennis.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // Si hubo errores de Identity  los agrega al formulario para mostrarlos en pantalla
             foreach (var error in resultado.Errors)
             {
                 ModelState.AddModelError("", error.Description);
@@ -139,18 +90,170 @@ namespace ProyectoGrupalTennis.Controllers
             return View(model);
         }
 
+        #endregion
+
+        #region Login
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            model.Email = model.Email.Trim().ToLower();
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var usuario = await _userManager.FindByEmailAsync(model.Email);
+
+            if (usuario != null && usuario.Bloqueado)
+            {
+                ModelState.AddModelError("", "Tu cuenta ha sido bloqueada.");
+                return View(model);
+            }
+
+            var resultado = await _signInManager.PasswordSignInAsync(
+                model.Email,
+                model.Password,
+                model.Recordarme,
+                lockoutOnFailure: false
+            );
+
+            if (resultado.Succeeded)
+            {
+                return RedirectToAction("PerfilUsuario", "Home");
+            }
+
+            ModelState.AddModelError("", "Correo o contraseña incorrectos.");
+            return View(model);
+        }
+
+        #endregion
+
+        #region Logout
+
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-
             return RedirectToAction("Index", "Home");
         }
+
+        #endregion
+
+        #region Recuperar contraseña
+
         [HttpGet]
-        public IActionResult AccessDenied()
+        public IActionResult RecuperarContrasena()
         {
             return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> RecuperarContrasena(RecuperarPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var email = model.Email.Trim().ToLower();
+            var usuario = await _userManager.FindByEmailAsync(email);
+
+            if (usuario == null)
+            {
+                ModelState.AddModelError("", "No existe ninguna cuenta registrada con ese correo.");
+                return View(model);
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
+
+            var link = Url.Action(
+                "RestablecerPassword",
+                "Auth",
+                new
+                {
+                    email = usuario.Email,
+                    token = token
+                },
+                Request.Scheme);
+
+            var asunto = "Restablecer contraseña - Academia de Tennis";
+
+            var mensaje = $@"
+    <h2>Restablecer contraseña</h2>
+    <p>Hola,</p>
+    <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta.</p>
+    <p>Haz clic en el siguiente enlace para crear una nueva contraseña:</p>
+    <p><a href='{link}'>Restablecer contraseña</a></p>
+    <p>Si no solicitaste este cambio, puedes ignorar este correo.</p>
+";
+
+            await _emailService.EnviarCorreoAsync(usuario.Email, asunto, mensaje);
+
+            ViewBag.Mensaje = "Se han enviado instrucciones para restablecer la contraseña a tu correo.";
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult RestablecerPassword(string token, string email)
+        {
+            var model = new RestablecerPasswordViewModel
+            {
+                Token = token,
+                Email = email
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RestablecerPassword(RestablecerPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var usuario = await _userManager.FindByEmailAsync(model.Email);
+
+            if (usuario == null)
+            {
+                ModelState.AddModelError("", "No se encontró el usuario.");
+                return View(model);
+            }
+
+            var resultado = await _userManager.ResetPasswordAsync(
+                usuario,
+                model.Token,
+                model.NuevaPassword);
+
+            if (resultado.Succeeded)
+            {
+                TempData["Mensaje"] = "Contraseña actualizada correctamente.";
+                return RedirectToAction("Login");
+            }
+
+            foreach (var error in resultado.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View(model);
+        }
+
+        #endregion
+
+
+
+        #region Cambiar contraseña
 
         [Authorize]
         [HttpGet]
@@ -158,6 +261,7 @@ namespace ProyectoGrupalTennis.Controllers
         {
             return View();
         }
+
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -214,7 +318,18 @@ namespace ProyectoGrupalTennis.Controllers
                 success = false,
                 message = "No se pudo cambiar la contraseña. Verifique los datos ingresados."
             });
-
         }
+
+        #endregion
+
+        #region Acceso denegado
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
+        #endregion
     }
 }

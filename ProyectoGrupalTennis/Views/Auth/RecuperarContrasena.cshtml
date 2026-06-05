@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ProyectoGrupalTennis.Models.RecuperarPasswordViewModel
+
+@{
     ViewData["Title"] = "Recuperar contraseña";
     Layout = null;
 }
@@ -19,10 +21,9 @@
         <div class="card auth-card">
             <div class="row g-0">
 
-                <!-- LADO VERDE -->
                 <div class="col-lg-5">
                     <div class="auth-left">
-                        <a href="/Home/Index" class="badge-custom">
+                        <a asp-controller="Home" asp-action="Index" class="badge-custom">
                             Academia de Tennis
                         </a>
 
@@ -35,31 +36,63 @@
                     </div>
                 </div>
 
-                <!-- LADO FORM -->
                 <div class="col-lg-7">
                     <div class="auth-right">
 
                         <h2 class="brand-title">Recuperar contraseña</h2>
+
                         <p class="brand-subtitle">
                             Escribe el correo asociado a tu cuenta
                         </p>
 
-                        <form class="auth-form">
+                        @if (ViewBag.Mensaje != null)
+                        {
+                            <div class="alert alert-success">
+                                @ViewBag.Mensaje
+                            </div>
+                        }
+
+                        <form asp-controller="Auth"
+                              asp-action="RecuperarContrasena"
+                              method="post"
+                              class="auth-form">
+
+                            <div asp-validation-summary="ModelOnly"
+                                 class="text-danger mb-3">
+                            </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Correo electrónico</label>
-                                <input type="email" class="form-control" placeholder="ejemplo@correo.com" />
+                                <label asp-for="Email"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Email"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="ejemplo@correo.com" />
+
+                                <span asp-validation-for="Email"
+                                      class="text-danger">
+                                </span>
                             </div>
 
                             <div class="d-grid auth-actions">
-                                <button class="btn btn-login">
-                                    Enviar nueva contraseña
+                                <button type="submit"
+                                        class="btn btn-login">
+                                    Enviar instrucciones
                                 </button>
                             </div>
 
                             <div class="text-center mt-3">
-                                <span class="text-muted">¿Recordaste tu contraseña? </span>
-                                <a href="/Home/Login" class="helper-link">Iniciar sesión</a>
+                                <span class="text-muted">
+                                    ¿Recordaste tu contraseña?
+                                </span>
+
+                                <a asp-controller="Auth"
+                                   asp-action="Login"
+                                   class="helper-link">
+                                    Iniciar sesión
+                                </a>
                             </div>
 
                         </form>
@@ -70,5 +103,10 @@
             </div>
         </div>
     </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
 </body>
 </html>

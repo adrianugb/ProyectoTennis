@@ -4,6 +4,8 @@ using AcademiaTennisDAL.Entities;
 using AcademiaTennisDAL.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ProyectoGrupalTennis.Models;
+using ProyectoGrupalTennis.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,13 +31,19 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Auth/Login";
-
     options.AccessDeniedPath = "/Auth/AccessDenied";
 });
 
 // Registrar servicio de InMemoryOfferService
-builder.Services.AddScoped<ProyectoGrupalTennis.Services.IOfferService,
-                            ProyectoGrupalTennis.Services.InMemoryOfferService>();
+builder.Services.AddScoped<IOfferService, InMemoryOfferService>();
+
+// Registrar servicio de correo
+var emailSettings = builder.Configuration
+    .GetSection("EmailSettings")
+    .Get<EmailSettings>();
+
+builder.Services.AddSingleton(emailSettings);
+builder.Services.AddScoped<EmailService>();
 
 //---------- Registrar repositorios y servicios--------------------------
 builder.Services.AddScoped<IProfesorRepository, ProfesorRepository>();
@@ -52,9 +60,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<AppDbContext>();
-    
-    // Asegurarnos de que la base de datos esté creada y las tablas existan
-    // Si usas comandos de migración (Add-Migration), puedes cambiar esto a: await context.Database.MigrateAsync();
+
     await context.Database.EnsureCreatedAsync();
 
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
@@ -100,8 +106,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ── PIPELINE ──────────────────────────────────────────────────────────────────
-
-
 
 if (!app.Environment.IsDevelopment())
 {
