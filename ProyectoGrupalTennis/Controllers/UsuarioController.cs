@@ -103,5 +103,47 @@ namespace ProyectoGrupalTennis.Controllers
 
             return View("~/Views/Perfiles/UsuarioHorarios.cshtml", viewModel);
         }
+
+        // GET: /Usuario/AgendaPersonal
+        // USER-04-007: Consultar agenda personal
+        public async Task<IActionResult> AgendaPersonal(string? dia)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var query =
+                from m in _context.Matriculas
+                join c in _context.Cursos on m.IdCurso equals c.IdCurso
+                join h in _context.Horarios on c.IdCurso equals h.IdCurso
+                where m.IdAlumno == userId
+                select new AgendaPersonalItemViewModel
+                {
+                    Curso = c.Nombre,
+                    Nivel = c.Nivel,
+                    DiaSemana = h.DiaSemana,
+                    HoraInicio = h.HoraInicio.ToString(@"hh\:mm"),
+                    HoraFin = h.HoraFin.ToString(@"hh\:mm"),
+                    EstadoMatricula = m.Estado
+                };
+
+            if (!string.IsNullOrWhiteSpace(dia))
+            {
+                query = query.Where(x => x.DiaSemana == dia);
+            }
+
+            var diasDisponibles = await _context.Horarios
+                .Select(h => h.DiaSemana)
+                .Distinct()
+                .OrderBy(d => d)
+                .ToListAsync();
+
+            var viewModel = new AgendaPersonalViewModel
+            {
+                FiltroDia = dia,
+                DiasDisponibles = diasDisponibles,
+                Clases = await query.ToListAsync()
+            };
+
+            return View("~/Views/Matricula/_UsuarioAgenda.cshtml", viewModel);
+        }
     }
 }

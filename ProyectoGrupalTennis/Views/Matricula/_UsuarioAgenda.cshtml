@@ -1,118 +1,83 @@
+@model ProyectoGrupalTennis.Models.AgendaPersonalViewModel
+
 <div class="dashboard-block">
-    <h1 class="page-title">Mi Agenda Personal</h1>
-    <p class="page-subtitle">Todas tus clases programadas y su estado actual.</p>
-
-    <div class="row">
-        <div class="col-md-8">
-            <h4 style="font-size:16px;font-weight:700;margin-bottom:14px;">
-                <i class="fa fa-calendar" style="color:#a5c422;"></i> Clases — Abril 2026
-            </h4>
-
-            <div style="display:flex;flex-direction:column;gap:0;">
-                <div style="position:relative;padding-left:48px;padding-bottom:18px;">
-                    <div style="position:absolute;left:7px;top:8px;width:22px;height:22px;border-radius:50%;background:#a5c422;display:flex;align-items:center;justify-content:center;">
-                        <i class="fa fa-check" style="color:#fff;font-size:9px;"></i>
-                    </div>
-                    <div style="position:absolute;left:17px;top:30px;bottom:0;width:2px;background:#f1f1f1;"></div>
-                    <div style="background:#fff;border:1px solid #f1f1f1;border-radius:12px;padding:14px 16px;box-shadow:0 3px 10px rgba(0,0,0,0.05);">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
-                            <div>
-                                <strong style="font-size:14px;">Tenis Principiante</strong>
-                                <p style="margin:0;font-size:12px;color:#757575;">Lunes 7 Abr · 4:00–5:30 PM · Cancha 2 · Prof. López</p>
-                            </div>
-                            <span class="badge-soft-success">Confirmada</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="position:relative;padding-left:48px;padding-bottom:18px;">
-                    <div style="position:absolute;left:7px;top:8px;width:22px;height:22px;border-radius:50%;background:#a5c422;display:flex;align-items:center;justify-content:center;">
-                        <i class="fa fa-check" style="color:#fff;font-size:9px;"></i>
-                    </div>
-                    <div style="position:absolute;left:17px;top:30px;bottom:0;width:2px;background:#f1f1f1;"></div>
-                    <div style="background:#fff;border:1px solid #f1f1f1;border-radius:12px;padding:14px 16px;box-shadow:0 3px 10px rgba(0,0,0,0.05);">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
-                            <div>
-                                <strong style="font-size:14px;">Tenis Principiante</strong>
-                                <p style="margin:0;font-size:12px;color:#757575;">Miércoles 9 Abr · 4:00–5:30 PM · Cancha 2 · Prof. López</p>
-                            </div>
-                            <span class="badge-soft-success">Confirmada</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="position:relative;padding-left:48px;padding-bottom:18px;">
-                    <div style="position:absolute;left:7px;top:8px;width:22px;height:22px;border-radius:50%;background:#f39c12;display:flex;align-items:center;justify-content:center;">
-                        <i class="fa fa-clock-o" style="color:#fff;font-size:9px;"></i>
-                    </div>
-                    <div style="position:absolute;left:17px;top:30px;bottom:0;width:2px;background:#f1f1f1;"></div>
-                    <div style="background:#fff;border:1px solid #f39c12;border-radius:12px;padding:14px 16px;box-shadow:0 3px 10px rgba(0,0,0,0.05);">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
-                            <div>
-                                <strong style="font-size:14px;">Clase Individual</strong>
-                                <p style="margin:0;font-size:12px;color:#757575;">Viernes 11 Abr · 2:00–3:00 PM · Cancha 3 · Prof. Torres</p>
-                            </div>
-                            <span class="badge-soft-warning">Pago pendiente</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="position:relative;padding-left:48px;padding-bottom:0;">
-                    <div style="position:absolute;left:7px;top:8px;width:22px;height:22px;border-radius:50%;background:#e74c3c;display:flex;align-items:center;justify-content:center;">
-                        <i class="fa fa-times" style="color:#fff;font-size:9px;"></i>
-                    </div>
-                    <div style="background:#fff;border:1px solid #f5a5a5;border-radius:12px;padding:14px 16px;box-shadow:0 3px 10px rgba(0,0,0,0.05);opacity:0.65;">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
-                            <div>
-                                <strong style="font-size:14px;">Tenis Principiante</strong>
-                                <p style="margin:0;font-size:12px;color:#757575;">Viernes 12 Abr · <span style="color:#e74c3c;">Cancelada por academia</span></p>
-                            </div>
-                            <span class="badge-soft-danger">Cancelada</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+        <div>
+            <h1 class="page-title">Mi Agenda Personal</h1>
+            <p class="page-subtitle">Consulta tus clases programadas y filtra por día.</p>
         </div>
 
-        <div class="col-md-4">
-            <div class="dashboard-stat-card" style="min-height:auto;padding:18px;text-align:left;margin-bottom:16px;">
-                <h4 style="font-size:15px;font-weight:700;margin-bottom:14px;">
-                    <i class="fa fa-bar-chart" style="color:#a5c422;"></i> Resumen del mes
-                </h4>
-                <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#eaf7df;border-radius:10px;">
-                        <span><i class="fa fa-check-circle" style="color:#5f7f16;"></i> Asistidas</span><strong>12</strong>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#fff4db;border-radius:10px;">
-                        <span><i class="fa fa-clock-o" style="color:#f39c12;"></i> Pendientes</span><strong>1</strong>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#fde8e8;border-radius:10px;">
-                        <span><i class="fa fa-times-circle" style="color:#e74c3c;"></i> Canceladas</span><strong>2</strong>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#f0f0f0;border-radius:10px;">
-                        <span><i class="fa fa-calendar"></i> Total mes</span><strong>16</strong>
-                    </div>
-                </div>
-                <div style="margin-top:14px;">
-                    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px;">
-                        <span>Asistencia</span><span style="color:#a5c422;">75%</span>
-                    </div>
-                    <div style="background:#f0f0f0;border-radius:20px;height:8px;overflow:hidden;">
-                        <div style="background:linear-gradient(90deg,#a5c422,#d4e85c);height:100%;width:75%;border-radius:20px;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dashboard-stat-card" style="min-height:auto;padding:18px;text-align:left;">
-                <h4 style="font-size:15px;font-weight:700;margin-bottom:10px;">
-                    <i class="fa fa-info-circle" style="color:#a5c422;"></i> Consultar reserva
-                </h4>
-                <p style="font-size:13px;color:#757575;margin-bottom:10px;">Ingresa el ID para consultar el estado.</p>
-                <div style="display:flex;gap:8px;">
-                    <input type="text" class="form-control" placeholder="Ej: #R-101" />
-                    <button class="dashboard-mini-btn" style="padding:9px 13px;"><i class="fa fa-search"></i></button>
-                </div>
-            </div>
+        <div class="dashboard-stat-card" style="min-height:auto;padding:14px 18px;text-align:center;">
+            <strong style="font-size:22px;color:#a5c422;">@Model.Clases.Count</strong>
+            <p style="margin:0;font-size:12px;color:#757575;">Clases programadas</p>
         </div>
     </div>
+
+    <form method="get" asp-controller="Usuario" asp-action="AgendaPersonal" style="margin:20px 0;">
+        <div class="perfil-filter-row">
+            <select name="dia" class="form-select">
+                <option value="">Todos los días</option>
+
+                @foreach (var dia in Model.DiasDisponibles)
+                {
+                    <option value="@dia" selected="@(Model.FiltroDia == dia)">
+                        @dia
+                    </option>
+                }
+            </select>
+
+            <button type="submit" class="perfil-btn">
+                <i class="fa fa-filter"></i> Filtrar
+            </button>
+
+            <a asp-controller="Usuario" asp-action="AgendaPersonal" class="perfil-btn-outline">
+                Limpiar
+            </a>
+        </div>
+    </form>
+
+    @if (!Model.Clases.Any())
+    {
+        <div class="alert alert-info mt-3">
+            No existen clases registradas para tu agenda.
+        </div>
+    }
+    else
+    {
+        <div style="display:flex;flex-direction:column;gap:0;">
+            @foreach (var clase in Model.Clases)
+            {
+                <div style="position:relative;padding-left:48px;padding-bottom:18px;">
+                    <div style="position:absolute;left:7px;top:8px;width:22px;height:22px;border-radius:50%;background:#a5c422;display:flex;align-items:center;justify-content:center;">
+                        <i class="fa fa-calendar-check-o" style="color:#fff;font-size:10px;"></i>
+                    </div>
+
+                    <div style="position:absolute;left:17px;top:30px;bottom:0;width:2px;background:#f1f1f1;"></div>
+
+                    <div style="background:#fff;border:1px solid #f1f1f1;border-radius:12px;padding:16px 18px;box-shadow:0 3px 10px rgba(0,0,0,0.05);">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+                            <div>
+                                <strong style="font-size:15px;">@clase.Curso</strong>
+
+                                <p style="margin:4px 0 0;font-size:13px;color:#757575;">
+                                    <i class="fa fa-signal" style="color:#a5c422;"></i>
+                                    @clase.Nivel
+                                    &nbsp; | &nbsp;
+                                    <i class="fa fa-calendar" style="color:#a5c422;"></i>
+                                    @clase.DiaSemana
+                                    &nbsp; | &nbsp;
+                                    <i class="fa fa-clock-o" style="color:#a5c422;"></i>
+                                    @clase.HoraInicio - @clase.HoraFin
+                                </p>
+                            </div>
+
+                            <span class="perfil-badge-success">
+                                @clase.EstadoMatricula
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>

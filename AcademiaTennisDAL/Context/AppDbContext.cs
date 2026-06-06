@@ -40,6 +40,8 @@ namespace AcademiaTennisDAL.Context
 
         public DbSet<ConfiguracionNotificacion> ConfiguracionesNotificacion { get; set; }
 
+        public DbSet<ClaseProgramada> ClasesProgramadas { get; set; }
+
         // Módulo 6 - Asistente Virtual
         public DbSet<PreguntaFrecuente> PreguntasFrecuentes { get; set; }
         public DbSet<ConsultaChatbot> ConsultasChatbot { get; set; }
