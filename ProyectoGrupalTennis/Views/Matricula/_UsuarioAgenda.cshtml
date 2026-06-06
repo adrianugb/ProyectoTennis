@@ -15,24 +15,22 @@
 
     <form method="get" asp-controller="Usuario" asp-action="AgendaPersonal" style="margin:20px 0;">
         <div class="perfil-filter-row">
-            <select name="dia" class="form-select">
-                <option value="">Todos los días</option>
-
-                @foreach (var dia in Model.DiasDisponibles)
-                {
-                    <option value="@dia" selected="@(Model.FiltroDia == dia)">
-                        @dia
-                    </option>
-                }
-            </select>
+            <input type="date"
+                   name="fecha"
+                   class="form-control"
+                   value="@Model.FiltroFecha"
+                   style="max-width:220px;" />
 
             <button type="submit" class="perfil-btn">
                 <i class="fa fa-filter"></i> Filtrar
             </button>
 
-            <a asp-controller="Usuario" asp-action="AgendaPersonal" class="perfil-btn-outline">
+            <a asp-controller="Usuario"
+               asp-action="AgendaPersonal"
+               class="perfil-btn-outline">
                 Limpiar
             </a>
+
         </div>
     </form>
 
@@ -64,7 +62,7 @@
                                     @clase.Nivel
                                     &nbsp; | &nbsp;
                                     <i class="fa fa-calendar" style="color:#a5c422;"></i>
-                                    @clase.DiaSemana
+                                    @(string.IsNullOrWhiteSpace(clase.FechaClase) ? clase.DiaSemana : clase.FechaClase) 
                                     &nbsp; | &nbsp;
                                     <i class="fa fa-clock-o" style="color:#a5c422;"></i>
                                     @clase.HoraInicio - @clase.HoraFin

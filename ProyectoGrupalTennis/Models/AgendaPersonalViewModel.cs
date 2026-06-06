@@ -6,6 +6,9 @@
 
         public List<string> DiasDisponibles { get; set; } = new();
 
+        public string? FiltroFecha { get; set; }
+
+
         public List<AgendaPersonalItemViewModel> Clases { get; set; } = new();
     }
 
@@ -16,6 +19,8 @@
         public string Nivel { get; set; } = string.Empty;
 
         public string DiaSemana { get; set; } = string.Empty;
+        public string FechaClase { get; set; } = string.Empty;
+
 
         public string HoraInicio { get; set; } = string.Empty;
 

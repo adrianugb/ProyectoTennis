@@ -106,7 +106,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         // GET: /Usuario/AgendaPersonal
         // USER-04-007: Consultar agenda personal
-        public async Task<IActionResult> AgendaPersonal(string? dia)
+        public async Task<IActionResult> AgendaPersonal(string? dia, string? fecha)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
@@ -120,11 +120,11 @@ namespace ProyectoGrupalTennis.Controllers
                     Curso = c.Nombre,
                     Nivel = c.Nivel,
                     DiaSemana = h.DiaSemana,
+                    FechaClase = "",
                     HoraInicio = h.HoraInicio.ToString(@"hh\:mm"),
                     HoraFin = h.HoraFin.ToString(@"hh\:mm"),
                     EstadoMatricula = m.Estado
                 };
-
             if (!string.IsNullOrWhiteSpace(dia))
             {
                 query = query.Where(x => x.DiaSemana == dia);
@@ -139,6 +139,7 @@ namespace ProyectoGrupalTennis.Controllers
             var viewModel = new AgendaPersonalViewModel
             {
                 FiltroDia = dia,
+                FiltroFecha = fecha,
                 DiasDisponibles = diasDisponibles,
                 Clases = await query.ToListAsync()
             };
