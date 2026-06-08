@@ -28,6 +28,20 @@
                 </a>
             </div>
 
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success mt-3">
+                    @TempData["Success"]
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger mt-3">
+                    @TempData["Error"]
+                </div>
+            }
+
             <div class="perfil-table-block">
                 <div class="perfil-table-header">
                     <h2 class="perfil-table-title">Listado de cursos</h2>
@@ -79,13 +93,14 @@
                                 <th>Horarios</th>
                                 <th>Profesor</th>
                                 <th>Cupos</th>
+                                <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if (!Model.Cursos.Any())
                             {
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">
+                                    <td colspan="6" class="text-center text-muted py-4">
                                         <i class="fa fa-book fa-2x mb-2 d-block"></i>
                                         @if (!string.IsNullOrWhiteSpace(Model.FiltroBuscar) || !string.IsNullOrWhiteSpace(Model.FiltroNivel))
                                         {
@@ -142,6 +157,30 @@
                                             else
                                             {
                                                 <span class="perfil-badge-warning">Sin cupos</span>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            @if (curso.CuposDisponibles > 0)
+                                            {
+                                                <form asp-controller="Usuario"
+                                                      asp-action="MatricularCurso"
+                                                      method="post">
+
+                                                    @Html.AntiForgeryToken()
+
+                                                    <input type="hidden"
+                                                           name="idCurso"
+                                                           value="@curso.IdCurso" />
+
+                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                        Matricular
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No disponible</span>
                                             }
                                         </td>
                                     </tr>

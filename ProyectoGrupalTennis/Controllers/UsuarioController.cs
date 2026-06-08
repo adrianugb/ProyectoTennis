@@ -58,6 +58,65 @@ namespace ProyectoGrupalTennis.Controllers
             return View("~/Views/Perfiles/UsuarioCursos.cshtml", viewModel);
         }
 
+        // POST: /Usuario/MatricularCurso
+        // USER-04-001: Matricular cursos
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MatricularCurso(int idCurso)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["Error"] = "Debe iniciar sesión para matricular un curso.";
+                return RedirectToAction("Login", "Auth");
+            }
+
+            var curso = await _context.Cursos
+                .FirstOrDefaultAsync(c => c.IdCurso == idCurso && c.Activo);
+
+            if (curso == null)
+            {
+                TempData["Error"] = "El curso seleccionado no existe o no está activo.";
+                return RedirectToAction("MisCursos");
+            }
+
+            if (curso.CuposDisponibles <= 0)
+            {
+                TempData["Error"] = "No hay cupos disponibles para este curso.";
+                return RedirectToAction("MisCursos");
+            }
+
+            var yaMatriculado = await _context.Matriculas
+                .AnyAsync(m => m.IdAlumno == userId &&
+                               m.IdCurso == idCurso &&
+                               m.Estado == "Activa");
+
+            if (yaMatriculado)
+            {
+                TempData["Error"] = "Ya estás matriculado en este curso.";
+                return RedirectToAction("MisCursos");
+            }
+
+            var matricula = new AcademiaTennisDAL.Entities.Matricula
+            {
+                IdAlumno = userId,
+                IdCurso = idCurso,
+                FechaMatricula = DateTime.Now,
+                Estado = "Activa"
+            };
+
+            _context.Matriculas.Add(matricula);
+
+            curso.CuposDisponibles -= 1;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Matrícula realizada correctamente.";
+
+            return RedirectToAction("MisCursos");
+        }
+
         // GET: /Usuario/MisHorarios
         // USER-04-003: Alumno visualiza horarios disponibles
         public async Task<IActionResult> MisHorarios(string? buscar, string? dia)
@@ -106,42 +165,55 @@ namespace ProyectoGrupalTennis.Controllers
 
         // GET: /Usuario/AgendaPersonal
         // USER-04-007: Consultar agenda personal
-        public async Task<IActionResult> AgendaPersonal(string? dia, string? fecha)
+        public async Task<IActionResult> AgendaPersonal(string? fecha)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            DateTime? fechaSeleccionada = null;
+
+            if (!string.IsNullOrWhiteSpace(fecha))
+            {
+                fechaSeleccionada = DateTime.Parse(fecha);
+            }
 
             var query =
                 from m in _context.Matriculas
                 join c in _context.Cursos on m.IdCurso equals c.IdCurso
-                join h in _context.Horarios on c.IdCurso equals h.IdCurso
+                join cp in _context.ClasesProgramadas on c.IdCurso equals cp.IdCurso
                 where m.IdAlumno == userId
-                select new AgendaPersonalItemViewModel
+                select new
                 {
                     Curso = c.Nombre,
                     Nivel = c.Nivel,
-                    DiaSemana = h.DiaSemana,
-                    FechaClase = "",
-                    HoraInicio = h.HoraInicio.ToString(@"hh\:mm"),
-                    HoraFin = h.HoraFin.ToString(@"hh\:mm"),
-                    EstadoMatricula = m.Estado
+                    FechaClase = cp.FechaClase,
+                    HoraInicio = cp.HoraInicio,
+                    HoraFin = cp.HoraFin,
+                    EstadoClase = cp.Estado
                 };
-            if (!string.IsNullOrWhiteSpace(dia))
+
+            if (fechaSeleccionada.HasValue)
             {
-                query = query.Where(x => x.DiaSemana == dia);
+                query = query.Where(x => x.FechaClase.Date == fechaSeleccionada.Value.Date);
             }
 
-            var diasDisponibles = await _context.Horarios
-                .Select(h => h.DiaSemana)
-                .Distinct()
-                .OrderBy(d => d)
+            var clases = await query
+                .OrderBy(x => x.FechaClase)
+                .ThenBy(x => x.HoraInicio)
                 .ToListAsync();
 
             var viewModel = new AgendaPersonalViewModel
             {
-                FiltroDia = dia,
                 FiltroFecha = fecha,
-                DiasDisponibles = diasDisponibles,
-                Clases = await query.ToListAsync()
+                Clases = clases.Select(x => new AgendaPersonalItemViewModel
+                {
+                    Curso = x.Curso,
+                    Nivel = x.Nivel,
+                    DiaSemana = x.FechaClase.ToString("dddd"),
+                    FechaClase = x.FechaClase.ToString("dd/MM/yyyy"),
+                    HoraInicio = x.HoraInicio.ToString(@"hh\:mm"),
+                    HoraFin = x.HoraFin.ToString(@"hh\:mm"),
+                    EstadoMatricula = x.EstadoClase
+                }).ToList()
             };
 
             return View("~/Views/Matricula/_UsuarioAgenda.cshtml", viewModel);

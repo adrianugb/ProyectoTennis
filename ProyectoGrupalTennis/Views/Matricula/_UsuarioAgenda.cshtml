@@ -1,10 +1,19 @@
 @model ProyectoGrupalTennis.Models.AgendaPersonalViewModel
 
 <div class="dashboard-block">
+
+    <div style="margin-bottom:15px;">
+        <a asp-controller="Home"
+           asp-action="PerfilUsuario"
+           style="color:#a5c422;font-weight:600;text-decoration:none;">
+            <i class="fa fa-arrow-left"></i> Regresar a Mi Perfil
+        </a>
+    </div>
+
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
         <div>
             <h1 class="page-title">Mi Agenda Personal</h1>
-            <p class="page-subtitle">Consulta tus clases programadas y filtra por día.</p>
+            <p class="page-subtitle">Consulta tus clases programadas y filtra por fecha.</p>
         </div>
 
         <div class="dashboard-stat-card" style="min-height:auto;padding:14px 18px;text-align:center;">
@@ -13,21 +22,25 @@
         </div>
     </div>
 
-    <form method="get" asp-controller="Usuario" asp-action="AgendaPersonal" style="margin:20px 0;">
-        <div class="perfil-filter-row">
+    <form method="get" asp-controller="Usuario" asp-action="AgendaPersonal" style="margin:24px 0;">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+
             <input type="date"
                    name="fecha"
                    class="form-control"
                    value="@Model.FiltroFecha"
-                   style="max-width:220px;" />
+                   style="max-width:220px;height:46px;" />
 
-            <button type="submit" class="perfil-btn">
+            <button type="submit"
+                    class="perfil-btn"
+                    style="height:46px;padding:0 22px;">
                 <i class="fa fa-filter"></i> Filtrar
             </button>
 
             <a asp-controller="Usuario"
                asp-action="AgendaPersonal"
-               class="perfil-btn-outline">
+               class="perfil-btn-outline"
+               style="height:46px;padding:11px 22px;text-decoration:none;">
                 Limpiar
             </a>
 
@@ -62,7 +75,7 @@
                                     @clase.Nivel
                                     &nbsp; | &nbsp;
                                     <i class="fa fa-calendar" style="color:#a5c422;"></i>
-                                    @(string.IsNullOrWhiteSpace(clase.FechaClase) ? clase.DiaSemana : clase.FechaClase) 
+                                    @(string.IsNullOrWhiteSpace(clase.FechaClase) ? clase.DiaSemana : clase.FechaClase)
                                     &nbsp; | &nbsp;
                                     <i class="fa fa-clock-o" style="color:#a5c422;"></i>
                                     @clase.HoraInicio - @clase.HoraFin
