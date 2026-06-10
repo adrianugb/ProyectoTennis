@@ -35,8 +35,13 @@
     public class ProfesorAlumnosViewModel
     {
         public IList<AlumnoProfesorListItemViewModel> Alumnos { get; set; } = new List<AlumnoProfesorListItemViewModel>();
+
         public string? FiltroBuscar { get; set; }
+
         public string? FiltroCurso { get; set; }
+
+        public string? FiltroFecha { get; set; }
+
         public List<string> CursosDisponibles { get; set; } = new();
     }
 }

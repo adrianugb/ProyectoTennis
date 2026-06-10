@@ -62,16 +62,33 @@ namespace ProyectoGrupalTennis.Controllers
         }
 
         // GET: /PerfilProfesor/MisAlumnos
-        // Historia 6: Profesor visualiza alumnos matriculados
-        public async Task<IActionResult> MisAlumnos(string? buscar, string? curso)
+        // PROF-04-005: Visualizar lista de alumnos por clase
+        public async Task<IActionResult> MisAlumnos(string? buscar, string? curso, string? fecha)
         {
-            // Traer todos los alumnos con rol "Usuario" que tengan al menos una matrícula
-            var matriculas = await _context.Matriculas
+            var matriculasQuery = _context.Matriculas
                 .Include(m => m.Alumno)
                 .Include(m => m.Curso)
-                .ToListAsync();
+                .Where(m => m.Estado == "Activa")
+                .AsQueryable();
 
-            // Agrupar por alumno
+            if (!string.IsNullOrWhiteSpace(curso))
+            {
+                matriculasQuery = matriculasQuery
+                    .Where(m => m.Curso.Nombre == curso);
+            }
+
+            if (!string.IsNullOrWhiteSpace(fecha))
+            {
+                var fechaSeleccionada = DateTime.Parse(fecha).Date;
+
+                matriculasQuery = matriculasQuery
+                    .Where(m => _context.ClasesProgramadas
+                        .Any(cp => cp.IdCurso == m.IdCurso
+                                   && cp.FechaClase.Date == fechaSeleccionada));
+            }
+
+            var matriculas = await matriculasQuery.ToListAsync();
+
             var alumnosAgrupados = matriculas
                 .GroupBy(m => m.IdAlumno)
                 .Select(g => new AlumnoProfesorListItemViewModel
@@ -85,19 +102,13 @@ namespace ProyectoGrupalTennis.Controllers
                 })
                 .ToList();
 
-            // Filtro por nombre
             if (!string.IsNullOrWhiteSpace(buscar))
+            {
                 alumnosAgrupados = alumnosAgrupados
                     .Where(a => a.NombreCompleto.Contains(buscar, StringComparison.OrdinalIgnoreCase))
                     .ToList();
+            }
 
-            // Filtro por curso
-            if (!string.IsNullOrWhiteSpace(curso))
-                alumnosAgrupados = alumnosAgrupados
-                    .Where(a => a.CursosMatriculados.Contains(curso, StringComparer.OrdinalIgnoreCase))
-                    .ToList();
-
-            // Lista de cursos para el select del filtro
             var cursosList = await _context.Cursos
                 .Where(c => c.Activo)
                 .OrderBy(c => c.Nombre)
@@ -109,6 +120,7 @@ namespace ProyectoGrupalTennis.Controllers
                 Alumnos = alumnosAgrupados.OrderBy(a => a.NombreCompleto).ToList(),
                 FiltroBuscar = buscar,
                 FiltroCurso = curso,
+                FiltroFecha = fecha,
                 CursosDisponibles = cursosList
             };
 
