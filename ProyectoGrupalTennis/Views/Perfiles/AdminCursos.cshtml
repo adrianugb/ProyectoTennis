@@ -1,4 +1,4 @@
-﻿@model ProyectoGrupalTennis.Models.AdminCursosViewModel
+﻿@model ProyectoGrupalTennis.Models.GestionCursosViewModel
 @{
     ViewData["Title"] = "Gestión de Cursos";
 }
@@ -12,16 +12,13 @@
             <div class="perfil-header">
                 <div>
                     <h1 class="perfil-title">Gestión de Cursos</h1>
-                    <p class="perfil-subtitle">
-                        Asigná profesores a los cursos de la academia.
-                    </p>
+                    <p class="perfil-subtitle">Administrá cursos, profesores y horarios de la academia.</p>
                 </div>
                 <div class="perfil-badge">
                     <i class="fa fa-book"></i> Administración de Cursos
                 </div>
             </div>
 
-            @* Botón volver al panel *@
             <div class="mb-3">
                 <a asp-controller="Home" asp-action="PerfilAdmin" class="btn-volver">
                     <i class="fa fa-arrow-left"></i> Volver al Panel
@@ -46,18 +43,34 @@
             <div class="perfil-table-block">
                 <div class="perfil-table-header">
                     <h2 class="perfil-table-title">Listado de cursos</h2>
+                    <div class="perfil-actions">
+                        <a asp-controller="Curso" asp-action="Agregar" class="perfil-btn">
+                            <i class="fa fa-plus"></i> Agregar curso
+                        </a>
+                    </div>
                 </div>
 
-                <form method="get" asp-controller="AdminCursos" asp-action="Index">
+                <form method="get" asp-controller="Curso" asp-action="Index">
                     <div class="perfil-filter-row">
                         <input type="text" name="buscar" class="form-control"
                                placeholder="Buscar curso..." value="@Model.FiltroBuscar" />
-                        <button type="submit" class="btn btn-primary">
+                        <select name="nivel" class="form-select">
+                            <option value="">Filtrar por nivel</option>
+                            <option value="Principiante" selected="@(Context.Request.Query["nivel"] == "Principiante")">Principiante</option>
+                            <option value="Intermedio" selected="@(Context.Request.Query["nivel"] == "Intermedio")">Intermedio</option>
+                            <option value="Avanzado" selected="@(Context.Request.Query["nivel"] == "Avanzado")">Avanzado</option>
+                        </select>
+                        <select name="estado" class="form-select">
+                            <option value="">Filtrar por estado</option>
+                            <option value="Activo" selected="@(Context.Request.Query["estado"] == "Activo")">Activo</option>
+                            <option value="Inactivo" selected="@(Context.Request.Query["estado"] == "Inactivo")">Inactivo</option>
+                        </select>
+                        <button type="submit" class="perfil-btn">
                             <i class="fa fa-search me-1"></i> Buscar
                         </button>
                         @if (!string.IsNullOrWhiteSpace(Model.FiltroBuscar))
                         {
-                            <a asp-controller="AdminCursos" asp-action="Index" class="btn btn-secondary">
+                            <a asp-controller="Curso" asp-action="Index" class="perfil-btn-outline">
                                 <i class="fa fa-times me-1"></i> Limpiar
                             </a>
                         }
@@ -65,13 +78,14 @@
                 </form>
 
                 <div class="table-responsive">
-                    <table class="perfil-table" id="tablaCursos">
+                    <table class="perfil-table">
                         <thead>
                             <tr>
-                                <th>Curso</th>
+                                <th>ID</th>
+                                <th>Nombre</th>
                                 <th>Nivel</th>
                                 <th>Horarios</th>
-                                <th>Profesor asignado</th>
+                                <th>Profesor</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -80,7 +94,7 @@
                             @if (!Model.Cursos.Any())
                             {
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">
+                                    <td colspan="7" class="text-center text-muted py-4">
                                         <i class="fa fa-book fa-2x mb-2 d-block"></i>
                                         No hay cursos registrados en el sistema.
                                     </td>
@@ -91,10 +105,11 @@
                                 @foreach (var curso in Model.Cursos)
                                 {
                                     <tr>
+                                        <td>CUR-@curso.IdCurso.ToString("D3")</td>
                                         <td><strong>@curso.Nombre</strong></td>
                                         <td>@curso.Nivel</td>
                                         <td>
-                                            @if (curso.Horarios.Any())
+                                            @if (curso.Horarios != null && curso.Horarios.Any())
                                             {
                                                 @foreach (var h in curso.Horarios)
                                                 {
@@ -127,24 +142,22 @@
                                             }
                                         </td>
                                         <td>
-                                            <a href="#" class="perfil-action-link"
-                                               onclick="abrirModalAsignar(@curso.IdCurso); return false;">
-                                                Asignar profesor
-                                            </a>
-                                            @if (!string.IsNullOrEmpty(curso.NombreProfesor))
-                                            {
-                                                <span class="perfil-action-separator">|</span>
-                                                <form asp-controller="AdminCursos" asp-action="QuitarProfesor"
-                                                      method="post" style="display:inline;">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="idCurso" value="@curso.IdCurso" />
-                                                    <button type="submit"
-                                                            class="perfil-action-link text-danger"
-                                                            style="background:none;border:none;padding:0;cursor:pointer;">
-                                                        Quitar profesor
-                                                    </button>
-                                                </form>
-                                            }
+                                            <a asp-controller="Curso" asp-action="Editar"
+                                               asp-route-id="@curso.IdCurso"
+                                               class="perfil-action-link">Editar</a>
+
+                                            <span class="perfil-action-separator">|</span>
+
+                                            <form asp-controller="Curso" asp-action="CambiarEstado"
+                                                  method="post" style="display:inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@curso.IdCurso" />
+                                                <input type="hidden" name="activo" value="@(!curso.Activo)" />
+                                                <button type="submit" class="perfil-action-link"
+                                                        style="background:none;border:none;padding:0;cursor:pointer;">
+                                                    @(curso.Activo ? "Desactivar" : "Activar")
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 }
@@ -156,95 +169,3 @@
         </div>
     </div>
 </section>
-
-
-@* MODAL — Asignar profesor *@
-<div class="modal fade" id="modalAsignarProfesor" tabindex="-1" aria-labelledby="tituloModalAsignar" aria-hidden="true"
-     data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="tituloModalAsignar">
-                    <i class="fa fa-chalkboard-teacher me-2"></i> Asignar Profesor
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancelar"></button>
-            </div>
-            <form asp-controller="AdminCursos" asp-action="AsignarProfesor" method="post" novalidate>
-                @Html.AntiForgeryToken()
-                <div class="modal-body">
-                    <div id="asignarCargando" class="text-center py-4">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Cargando...</span>
-                        </div>
-                        <p class="mt-2 text-muted">Cargando información...</p>
-                    </div>
-                    <div id="asignarFormulario" class="d-none">
-                        <input type="hidden" id="asignarIdCurso" name="idCurso" />
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Curso</label>
-                                <p id="asignarNombreCurso" class="form-control-plaintext fw-bold"></p>
-                            </div>
-                            <div class="col-12">
-                                <label for="asignarIdProfesor" class="form-label fw-semibold">Profesor</label>
-                                <select id="asignarIdProfesor" name="idProfesor" class="form-select" required>
-                                    <option value="">-- Seleccioná un profesor --</option>
-                                    @foreach (var p in Model.Profesores)
-                                    {
-                                        <option value="@p.Id">@p.NombreCompleto</option>
-                                    }
-                                </select>
-                                <div class="invalid-feedback">Seleccioná un profesor.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer" id="asignarFooter" style="display:none!important;">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fa fa-times me-1"></i> Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa fa-save me-1"></i> Asignar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
-@section Scripts {
-    <script>
-        async function abrirModalAsignar(id) {
-            document.getElementById('asignarCargando').classList.remove('d-none');
-            document.getElementById('asignarFormulario').classList.add('d-none');
-            document.getElementById('asignarFooter').style.setProperty('display', 'none', 'important');
-
-            const modal = new bootstrap.Modal(document.getElementById('modalAsignarProfesor'));
-            modal.show();
-
-            try {
-                const response = await fetch(`/AdminCursos/ObtenerProfesor/${id}`);
-                const data = await response.json();
-
-                if (!data.exito) {
-                    alert(data.mensaje);
-                    return;
-                }
-
-                document.getElementById('asignarIdCurso').value = data.idCurso;
-                document.getElementById('asignarNombreCurso').textContent = data.nombreCurso;
-
-                const select = document.getElementById('asignarIdProfesor');
-                select.value = data.idProfesorActual || '';
-
-                document.getElementById('asignarCargando').classList.add('d-none');
-                document.getElementById('asignarFormulario').classList.remove('d-none');
-                document.getElementById('asignarFooter').style.removeProperty('display');
-
-            } catch (error) {
-                alert('Error al cargar los datos del curso.');
-            }
-        }
-    </script>
-}

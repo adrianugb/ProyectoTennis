@@ -1,4 +1,4 @@
-﻿@model AcademiaTennisDAL.Entities.Curso
+﻿@model ProyectoGrupalTennis.Models.CursoFormViewModel
 @{
     ViewData["Title"] = "Editar Curso";
 }
@@ -19,11 +19,20 @@
                 </div>
             </div>
 
+            @if (TempData["MensajeError"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fa fa-exclamation-circle me-2"></i> @TempData["MensajeError"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
+
             <div class="perfil-table-block">
                 <div class="perfil-table-header">
                     <h2 class="perfil-table-title">Datos del curso</h2>
                     <div class="perfil-actions">
-                        <a asp-controller="Curso" asp-action="Index" class="perfil-btn-outline">
+                        <a asp-controller="AdminCursos" asp-action="Index" class="perfil-btn-outline">
                             <i class="fa fa-arrow-left"></i> Regresar
                         </a>
                     </div>
@@ -31,46 +40,66 @@
 
                 <form asp-controller="Curso" asp-action="Editar" method="post">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="IdCurso" />
+                    <input type="hidden" asp-for="Curso.IdCurso" />
 
                     <div class="row" style="padding: 20px 0;">
 
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label asp-for="Nombre">Nombre</label>
-                                <input asp-for="Nombre" class="form-control" placeholder="Nombre del curso" />
-                                <span asp-validation-for="Nombre" class="text-danger" style="font-size:12px;"></span>
+                                <label asp-for="Curso.Nombre">Nombre</label>
+                                <input asp-for="Curso.Nombre" class="form-control" placeholder="Nombre del curso" />
+                                <span asp-validation-for="Curso.Nombre" class="text-danger" style="font-size:12px;"></span>
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label asp-for="Nivel">Nivel</label>
-                                <select asp-for="Nivel" class="form-select">
+                                <label asp-for="Curso.Nivel">Nivel</label>
+                                <select asp-for="Curso.Nivel" class="form-select">
                                     <option value="">Seleccione un nivel</option>
-                                    <option>Principiante</option>
-                                    <option>Intermedio</option>
-                                    <option>Avanzado</option>
+                                    <option value="Principiante">Principiante</option>
+                                    <option value="Intermedio">Intermedio</option>
+                                    <option value="Avanzado">Avanzado</option>
                                 </select>
-                                <span asp-validation-for="Nivel" class="text-danger" style="font-size:12px;"></span>
+                                <span asp-validation-for="Curso.Nivel" class="text-danger" style="font-size:12px;"></span>
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label asp-for="CuposDisponibles">Cupos disponibles</label>
-                                <input asp-for="CuposDisponibles" type="number" min="0"
+                                <label asp-for="Curso.CuposDisponibles">Cupos disponibles</label>
+                                <input asp-for="Curso.CuposDisponibles" type="number" min="0"
                                        class="form-control" placeholder="0" />
-                                <span asp-validation-for="CuposDisponibles" class="text-danger" style="font-size:12px;"></span>
+                                <span asp-validation-for="Curso.CuposDisponibles" class="text-danger" style="font-size:12px;"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Curso.IdProfesor">Profesor asignado</label>
+                                <select asp-for="Curso.IdProfesor" class="form-select">
+                                    <option value="">Sin profesor asignado</option>
+                                    @foreach (var p in Model.Profesores)
+                                    {
+                                        if (Model.Curso.IdProfesor == p.Id)
+                                        {
+                                            <option value="@p.Id" selected>@p.Nombre @p.Apellidos</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@p.Id">@p.Nombre @p.Apellidos</option>
+                                        }
+                                    }
+                                </select>
                             </div>
                         </div>
 
                         <div class="col-md-12">
                             <div class="mb-3">
-                                <label asp-for="Descripcion">Descripción</label>
-                                <textarea asp-for="Descripcion" class="form-control"
+                                <label asp-for="Curso.Descripcion">Descripción</label>
+                                <textarea asp-for="Curso.Descripcion" class="form-control"
                                           placeholder="Descripción del curso"></textarea>
-                                <span asp-validation-for="Descripcion" class="text-danger" style="font-size:12px;"></span>
+                                <span asp-validation-for="Curso.Descripcion" class="text-danger" style="font-size:12px;"></span>
                             </div>
                         </div>
 
@@ -78,7 +107,7 @@
                             <div class="mb-3">
                                 <label>Estado</label>
                                 <div style="padding-top: 8px;">
-                                    <input type="checkbox" asp-for="Activo" id="estadoCheck"
+                                    <input type="checkbox" asp-for="Curso.Activo" id="estadoCheck"
                                            style="width:18px;height:18px;margin-right:8px;cursor:pointer;" />
                                     <label for="estadoCheck" style="font-weight:normal;cursor:pointer;">
                                         Curso activo
@@ -90,14 +119,109 @@
                     </div>
 
                     <div class="perfil-actions" style="padding-bottom: 10px;">
-                        <a asp-controller="Curso" asp-action="Index" class="perfil-btn-outline">Cancelar</a>
+                        <a asp-controller="AdminCursos" asp-action="Index" class="perfil-btn-outline">Cancelar</a>
                         <button type="submit" class="perfil-btn">
                             <i class="fa fa-save"></i> Guardar cambios
                         </button>
                     </div>
-
                 </form>
             </div>
+
+ 
+            <div class="perfil-table-block" style="margin-top: 24px;">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Horarios</h2>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>Día</th>
+                                <th>Hora inicio</th>
+                                <th>Hora fin</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Horarios == null || !Model.Horarios.Any())
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-3">
+                                        Sin horarios registrados.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var h in Model.Horarios)
+                                {
+                                    <tr>
+                                        <td>@h.DiaSemana</td>
+                                        <td>@h.HoraInicio.ToString(@"hh\:mm")</td>
+                                        <td>@h.HoraFin.ToString(@"hh\:mm")</td>
+                                        <td>
+                                            <form asp-controller="Curso" asp-action="EliminarHorario"
+                                                  method="post" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="idHorario" value="@h.IdHorario" />
+                                                <input type="hidden" name="idCurso" value="@Model.Curso.IdCurso" />
+                                                <button type="submit" class="perfil-action-link text-danger"
+                                                        style="background:none;border:none;padding:0;cursor:pointer;"
+                                                        onclick="return confirm('¿Eliminar este horario?')">
+                                                    <i class="fa fa-trash"></i> Eliminar
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+    
+                <div style="padding: 16px 0 8px;">
+                    <h3 style="font-size:1rem;font-weight:600;margin-bottom:12px;">
+                        <i class="fa fa-plus"></i> Agregar horario
+                    </h3>
+                    <form asp-controller="Curso" asp-action="AgregarHorario" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Curso.IdCurso" value="@Model.Curso.IdCurso" />
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label">Día de la semana</label>
+                                <select name="NuevoHorario.DiaSemana" class="form-select" required>
+                                    <option value="">Seleccione un día</option>
+                                    <option value="Lunes">Lunes</option>
+                                    <option value="Martes">Martes</option>
+                                    <option value="Miércoles">Miércoles</option>
+                                    <option value="Jueves">Jueves</option>
+                                    <option value="Viernes">Viernes</option>
+                                    <option value="Sábado">Sábado</option>
+                                    <option value="Domingo">Domingo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Hora inicio</label>
+                                <input type="time" name="NuevoHorario.HoraInicio"
+                                       class="form-control" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Hora fin</label>
+                                <input type="time" name="NuevoHorario.HoraFin"
+                                       class="form-control" required />
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="perfil-btn w-100">
+                                    <i class="fa fa-plus"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>

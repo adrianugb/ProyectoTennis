@@ -37,20 +37,17 @@
                         <input type="text" name="buscar" class="form-control"
                                placeholder="Buscar curso..."
                                value="@Context.Request.Query["buscar"]" />
-
                         <select name="nivel" class="form-select">
                             <option value="">Filtrar por nivel</option>
-                            <option>Principiante</option>
-                            <option>Intermedio</option>
-                            <option>Avanzado</option>
+                            <option value="Principiante">Principiante</option>
+                            <option value="Intermedio">Intermedio</option>
+                            <option value="Avanzado">Avanzado</option>
                         </select>
-
                         <select name="estado" class="form-select">
                             <option value="">Filtrar por estado</option>
-                            <option>Activo</option>
-                            <option>Inactivo</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
                         </select>
-
                         <button type="submit" class="perfil-btn">Buscar</button>
                     </div>
                 </form>
@@ -63,6 +60,7 @@
                                 <th>Nombre</th>
                                 <th>Descripción</th>
                                 <th>Nivel</th>
+                                <th>Profesor</th>
                                 <th>Cupos</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
@@ -76,6 +74,16 @@
                                     <td>@c.Nombre</td>
                                     <td>@c.Descripcion</td>
                                     <td>@c.Nivel</td>
+                                    <td>
+                                        @if (c.Profesor != null)
+                                        {
+                                            @($"{c.Profesor.Nombre} {c.Profesor.Apellidos}")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Sin asignar</span>
+                                        }
+                                    </td>
                                     <td>@c.CuposDisponibles</td>
                                     <td>
                                         @if (c.Activo)

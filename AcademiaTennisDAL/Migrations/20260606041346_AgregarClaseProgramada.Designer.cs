@@ -404,7 +404,7 @@ namespace AcademiaTennisDAL.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("IdProfesorUserId")
+                    b.Property<string>("IdProfesor")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Nivel")
@@ -418,7 +418,7 @@ namespace AcademiaTennisDAL.Migrations
 
                     b.HasKey("IdCurso");
 
-                    b.HasIndex("IdProfesorUserId");
+                    b.HasIndex("IdProfesor");
 
                     b.ToTable("Cursos");
                 });
@@ -1381,7 +1381,7 @@ namespace AcademiaTennisDAL.Migrations
                 {
                     b.HasOne("AcademiaTennisDAL.Entities.ApplicationUser", "Profesor")
                         .WithMany()
-                        .HasForeignKey("IdProfesorUserId");
+                        .HasForeignKey("IdProfesor");
 
                     b.Navigation("Profesor");
                 });

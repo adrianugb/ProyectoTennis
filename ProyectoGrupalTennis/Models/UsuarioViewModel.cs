@@ -59,12 +59,5 @@
         public string NombreCompleto { get; set; } = string.Empty;
     }
 
-    public class AdminCursosViewModel
-    {
-        public IList<CursoAdminItemViewModel> Cursos { get; set; } = new List<CursoAdminItemViewModel>();
-        public IList<ProfesorSelectViewModel> Profesores { get; set; } = new List<ProfesorSelectViewModel>();
-        public string? MensajeExito { get; set; }
-        public string? MensajeError { get; set; }
-        public string? FiltroBuscar { get; set; }
-    }
+    
 }

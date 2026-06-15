@@ -1,6 +1,7 @@
 ﻿using AcademiaTennisBLL.Services;
 using AcademiaTennisDAL.Entities;
 using Microsoft.AspNetCore.Mvc;
+using ProyectoGrupalTennis.Models;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -33,32 +34,55 @@ namespace ProyectoGrupalTennis.Controllers
             return View("~/Views/Cursos/Index.cshtml", cursos);
         }
 
-        public IActionResult Agregar() =>
-            View("~/Views/Cursos/Agregar.cshtml", new Curso());
+        public IActionResult Agregar()
+        {
+            var vm = new CursoFormViewModel
+            {
+                Curso = new Curso(),
+                Profesores = _service.ObtenerProfesores()
+            };
+            return View("~/Views/Cursos/Agregar.cshtml", vm);
+        }
 
         [HttpPost]
-        public IActionResult Agregar(Curso curso)
+        public IActionResult Agregar(CursoFormViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View("~/Views/Cursos/Agregar.cshtml", curso);
-            _service.Agregar(curso);
+            {
+                vm.Profesores = _service.ObtenerProfesores();
+                return View("~/Views/Cursos/Agregar.cshtml", vm);
+            }
+            _service.Agregar(vm.Curso);
             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Editar(int id)
         {
-            var curso = _service.ObtenerPorId(id);
+            var curso = _service.ObtenerPorId(id); // ahora trae Profesor y Horarios
             if (curso == null) return NotFound();
-            return View("~/Views/Cursos/Editar.cshtml", curso);
+            var vm = new CursoFormViewModel
+            {
+                Curso = curso,
+                Profesores = _service.ObtenerProfesores(),
+                Horarios = _service.ObtenerHorarios(id)
+            };
+            return View("~/Views/Cursos/Editar.cshtml", vm);
         }
 
         [HttpPost]
-        public IActionResult Editar(Curso curso)
+        public IActionResult AgregarHorario(CursoFormViewModel vm)
         {
-            if (!ModelState.IsValid)
-                return View("~/Views/Cursos/Editar.cshtml", curso);
-            _service.Actualizar(curso);
-            return RedirectToAction(nameof(Index));
+            vm.NuevoHorario.IdCurso = vm.Curso.IdCurso;
+            try { _service.AgregarHorario(vm.NuevoHorario); }
+            catch (Exception ex) { TempData["MensajeError"] = ex.Message; }
+            return RedirectToAction(nameof(Editar), new { id = vm.Curso.IdCurso });
+        }
+
+        [HttpPost]
+        public IActionResult EliminarHorario(int idHorario, int idCurso)
+        {
+            _service.EliminarHorario(idHorario);
+            return RedirectToAction(nameof(Editar), new { id = idCurso });
         }
 
         [HttpPost]

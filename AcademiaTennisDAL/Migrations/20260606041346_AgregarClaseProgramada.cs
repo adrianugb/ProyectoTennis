@@ -22,7 +22,7 @@ namespace AcademiaTennisDAL.Migrations
                 oldMaxLength: 500);
 
             migrationBuilder.AddColumn<string>(
-                name: "IdProfesorUserId",
+                name: "IdProfesor",
                 table: "Cursos",
                 type: "nvarchar(450)",
                 nullable: true);
@@ -51,9 +51,9 @@ namespace AcademiaTennisDAL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cursos_IdProfesorUserId",
+                name: "IX_Cursos_IdProfesor",
                 table: "Cursos",
-                column: "IdProfesorUserId");
+                column: "IdProfesor");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClasesProgramadas_IdCurso",
@@ -61,9 +61,9 @@ namespace AcademiaTennisDAL.Migrations
                 column: "IdCurso");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Cursos_AspNetUsers_IdProfesorUserId",
+                name: "FK_Cursos_AspNetUsers_IdProfesor",
                 table: "Cursos",
-                column: "IdProfesorUserId",
+                column: "IdProfesor",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id");
         }
@@ -72,18 +72,18 @@ namespace AcademiaTennisDAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Cursos_AspNetUsers_IdProfesorUserId",
+                name: "FK_Cursos_AspNetUsers_IdProfesor",
                 table: "Cursos");
 
             migrationBuilder.DropTable(
                 name: "ClasesProgramadas");
 
             migrationBuilder.DropIndex(
-                name: "IX_Cursos_IdProfesorUserId",
+                name: "IX_Cursos_IdProfesor",
                 table: "Cursos");
 
             migrationBuilder.DropColumn(
-                name: "IdProfesorUserId",
+                name: "IdProfesor",
                 table: "Cursos");
 
             migrationBuilder.AlterColumn<string>(

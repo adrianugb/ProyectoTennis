@@ -21,6 +21,9 @@ namespace AcademiaTennisBLL.Services
 
         public Curso? ObtenerPorId(int id) => _repo.ObtenerPorId(id);
 
+   
+        public List<Profesor> ObtenerProfesores() => _repo.ObtenerProfesores();
+
         public void Agregar(Curso curso)
         {
             if (string.IsNullOrWhiteSpace(curso.Nombre))
@@ -39,5 +42,23 @@ namespace AcademiaTennisBLL.Services
 
         public void CambiarEstado(int id, bool activo) =>
             _repo.CambiarEstado(id, activo);
+
+
+        public List<Horario> ObtenerHorarios(int idCurso) =>
+    _repo.ObtenerHorarios(idCurso);
+
+        public void AgregarHorario(Horario horario)
+        {
+            if (string.IsNullOrWhiteSpace(horario.DiaSemana))
+                throw new Exception("El día es obligatorio.");
+            if (horario.HoraFin <= horario.HoraInicio)
+                throw new Exception("La hora de fin debe ser mayor a la hora de inicio.");
+            _repo.AgregarHorario(horario);
+        }
+
+        public void EliminarHorario(int idHorario) =>
+            _repo.EliminarHorario(idHorario);
+
+
     }
 }

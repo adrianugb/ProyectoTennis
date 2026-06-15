@@ -1,4 +1,5 @@
-﻿using AcademiaTennisDAL.Context;
+﻿using AcademiaTennisBLL.Services;
+using AcademiaTennisDAL.Context;
 using AcademiaTennisDAL.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,17 +12,18 @@ namespace ProyectoGrupalTennis.Controllers
     [Authorize(Roles = "Administrador")]
     public class AdminCursosController : Controller
     {
+        private readonly ICursoService _service;
         private readonly AppDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AdminCursosController(AppDbContext context, UserManager<ApplicationUser> userManager)
+
+        public AdminCursosController(AppDbContext context)
+
         {
             _context = context;
-            _userManager = userManager;
+
         }
 
         // GET: /AdminCursos/Index
-        // ADM-04-006: Visualizar cursos con profesor asignado
         public async Task<IActionResult> Index(string? buscar)
         {
             var cursos = await _context.Cursos
@@ -35,18 +37,20 @@ namespace ProyectoGrupalTennis.Controllers
                     .Where(c => c.Nombre.Contains(buscar, StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
-            // Obtener todos los usuarios con rol Profesor
-            var profesores = await _userManager.GetUsersInRoleAsync("Profesor");
+            var profesores = await _context.Profesores
+                .Where(p => p.Activo)
+                .OrderBy(p => p.Nombre)
+                .ToListAsync();
 
-            var viewModel = new AdminCursosViewModel
+            var viewModel = new GestionCursosViewModel
             {
                 FiltroBuscar = buscar,
                 MensajeExito = TempData["MensajeExito"]?.ToString(),
                 MensajeError = TempData["MensajeError"]?.ToString(),
                 Profesores = profesores.Select(p => new ProfesorSelectViewModel
                 {
-                    Id = p.Id,
-                    NombreCompleto = $"{p.Nombre} {p.Apellido}"
+                    Id = p.Id.ToString(),
+                    NombreCompleto = $"{p.Nombre} {p.Apellidos}"
                 }).ToList(),
                 Cursos = cursos.Select(c => new CursoAdminItemViewModel
                 {
@@ -55,7 +59,7 @@ namespace ProyectoGrupalTennis.Controllers
                     Nivel = c.Nivel,
                     Activo = c.Activo,
                     NombreProfesor = c.Profesor != null
-                        ? $"{c.Profesor.Nombre} {c.Profesor.Apellido}"
+                        ? $"{c.Profesor.Nombre} {c.Profesor.Apellidos}"
                         : null,
                     Horarios = c.Horarios != null
                         ? c.Horarios.Select(h =>
@@ -68,7 +72,6 @@ namespace ProyectoGrupalTennis.Controllers
         }
 
         // GET: /AdminCursos/ObtenerProfesor/5
-        // AJAX: obtener profesor asignado a un curso
         [HttpGet]
         public async Task<IActionResult> ObtenerProfesor(int id)
         {
@@ -84,41 +87,37 @@ namespace ProyectoGrupalTennis.Controllers
                 exito = true,
                 idCurso = curso.IdCurso,
                 nombreCurso = curso.Nombre,
-                idProfesorActual = curso.IdProfesorUserId ?? ""
+                idProfesorActual = curso.IdProfesor ?? 0
             });
         }
 
         // POST: /AdminCursos/AsignarProfesor
-        // ADM-04-006: Asignar profesor a curso
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AsignarProfesor(int idCurso, string idProfesor)
+        public async Task<IActionResult> AsignarProfesor(int idCurso, int idProfesor)
         {
             var curso = await _context.Cursos.FindAsync(idCurso);
-
             if (curso == null)
             {
                 TempData["MensajeError"] = "El curso no existe en el sistema.";
                 return RedirectToAction(nameof(Index));
             }
 
-            // Verificar que el profesor existe y tiene rol Profesor
-            var profesor = await _userManager.FindByIdAsync(idProfesor);
-            if (profesor == null || !await _userManager.IsInRoleAsync(profesor, "Profesor"))
+            var profesor = await _context.Profesores.FindAsync(idProfesor);
+            if (profesor == null || !profesor.Activo)
             {
                 TempData["MensajeError"] = "El profesor seleccionado no es válido.";
                 return RedirectToAction(nameof(Index));
             }
 
-            // Verificar conflicto de horario:
-            // Un profesor no puede tener dos cursos con horarios que se solapan
+            // Verificar conflicto de horario
             var horariosNuevoCurso = await _context.Horarios
                 .Where(h => h.IdCurso == idCurso)
                 .ToListAsync();
 
             var cursosProfesor = await _context.Cursos
                 .Include(c => c.Horarios)
-                .Where(c => c.IdProfesorUserId == idProfesor && c.IdCurso != idCurso)
+                .Where(c => c.IdProfesor == idProfesor && c.IdCurso != idCurso)
                 .ToListAsync();
 
             foreach (var cursoExistente in cursosProfesor)
@@ -132,41 +131,95 @@ namespace ProyectoGrupalTennis.Controllers
                             horarioExistente.HoraFin > horarioNuevo.HoraInicio)
                         {
                             TempData["MensajeError"] =
-                                $"El profesor tiene un conflicto de horario con el curso '{cursoExistente.Nombre}' " +
-                                $"el {horarioExistente.DiaSemana} de {horarioExistente.HoraInicio:hh\\:mm} a {horarioExistente.HoraFin:hh\\:mm}.";
+                                $"Conflicto de horario con el curso '{cursoExistente.Nombre}' " +
+                                $"el {horarioExistente.DiaSemana} de " +
+                                $"{horarioExistente.HoraInicio:hh\\:mm} a {horarioExistente.HoraFin:hh\\:mm}.";
                             return RedirectToAction(nameof(Index));
                         }
                     }
                 }
             }
 
-            curso.IdProfesorUserId = idProfesor;
+            curso.IdProfesor = idProfesor;
             await _context.SaveChangesAsync();
 
             TempData["MensajeExito"] =
-                $"Profesor '{profesor.Nombre} {profesor.Apellido}' asignado al curso '{curso.Nombre}' correctamente.";
+                $"Profesor '{profesor.Nombre} {profesor.Apellidos}' asignado al curso '{curso.Nombre}' correctamente.";
             return RedirectToAction(nameof(Index));
         }
 
         // POST: /AdminCursos/QuitarProfesor
-        // Quitar profesor asignado a un curso
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> QuitarProfesor(int idCurso)
         {
             var curso = await _context.Cursos.FindAsync(idCurso);
-
             if (curso == null)
             {
                 TempData["MensajeError"] = "El curso no existe en el sistema.";
                 return RedirectToAction(nameof(Index));
             }
 
-            curso.IdProfesorUserId = null;
+            curso.IdProfesor = null;
             await _context.SaveChangesAsync();
 
             TempData["MensajeExito"] = $"Profesor removido del curso '{curso.Nombre}'.";
             return RedirectToAction(nameof(Index));
         }
+        //agregar curso
+        [HttpPost]
+        public IActionResult Agregar()
+        {
+            var vm = new CursoFormViewModel
+            {
+                Curso = new Curso(),
+                Profesores = _service.ObtenerProfesores()
+            };
+            return View("~/Views/Cursos/Agregar.cshtml", vm);
+        }
+
+        [HttpPost]
+        public IActionResult Agregar(CursoFormViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                vm.Profesores = _service.ObtenerProfesores();
+                return View("~/Views/Cursos/Agregar.cshtml", vm);
+            }
+            _service.Agregar(vm.Curso);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Editar(int id)
+        {
+            var curso = _service.ObtenerPorId(id);
+            if (curso == null) return NotFound();
+            var vm = new CursoFormViewModel
+            {
+                Curso = curso,
+                Profesores = _service.ObtenerProfesores()
+            };
+            return View("~/Views/Cursos/Editar.cshtml", vm);
+        }
+
+        [HttpPost]
+        public IActionResult Editar(CursoFormViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                vm.Profesores = _service.ObtenerProfesores();
+                return View("~/Views/Cursos/Editar.cshtml", vm);
+            }
+            _service.Actualizar(vm.Curso);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public IActionResult CambiarEstado(int id, bool activo)
+        {
+            _service.CambiarEstado(id, activo);
+            return RedirectToAction(nameof(Index));
+        }
     }
+
 }

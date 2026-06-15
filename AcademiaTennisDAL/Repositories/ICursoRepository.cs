@@ -9,5 +9,10 @@ namespace AcademiaTennisDAL.Repositories
         void Agregar(Curso curso);
         void Actualizar(Curso curso);
         void CambiarEstado(int id, bool activo);
+        List<Profesor> ObtenerProfesores();
+        //Horarios
+        List<Horario> ObtenerHorarios(int idCurso);
+        void AgregarHorario(Horario horario);
+        void EliminarHorario(int idHorario);
     }
 }
