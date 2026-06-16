@@ -20,6 +20,6 @@ namespace AcademiaTennisDAL.Entities
         public int IdCurso { get; set; }
 
         [ForeignKey("IdCurso")]
-        public Curso Curso { get; set; }
+        public Curso? Curso { get; set; }
     }
 }

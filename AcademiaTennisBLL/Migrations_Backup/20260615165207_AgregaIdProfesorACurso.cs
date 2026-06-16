@@ -11,21 +11,21 @@ namespace AcademiaTennisDAL.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
+            /*migrationBuilder.DropForeignKey(
                 name: "FK_Cursos_AspNetUsers_IdProfesor",
                 table: "Cursos");
 
             migrationBuilder.DropIndex(
                 name: "IX_Cursos_IdProfesor",
                 table: "Cursos");
-
+            
             migrationBuilder.AddColumn<TimeSpan>(
                 name: "HoraInicio",
                 table: "Reservas",
                 type: "time",
                 nullable: false,
                 defaultValue: new TimeSpan(0, 0, 0, 0, 0));
-
+            
             migrationBuilder.AlterColumn<string>(
                 name: "IdProfesor",
                 table: "Cursos",
@@ -34,7 +34,7 @@ namespace AcademiaTennisDAL.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(450)",
                 oldNullable: true);
-
+        */
             migrationBuilder.AddColumn<int>(
                 name: "IdProfesor",
                 table: "Cursos",
@@ -53,7 +53,7 @@ namespace AcademiaTennisDAL.Migrations
                 principalTable: "Profesores",
                 principalColumn: "Id");
         }
-
+            
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {

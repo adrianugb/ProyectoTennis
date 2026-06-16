@@ -81,6 +81,35 @@
                             </div>
                         </div>
 
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label asp-for="NuevoHorario.DiaSemana">Día</label>
+                                <select asp-for="NuevoHorario.DiaSemana" class="form-select">
+                                    <option value="">Seleccione el día</option>
+                                    <option value="Lunes">Lunes</option>
+                                    <option value="Martes">Martes</option>
+                                    <option value="Miércoles">Miércoles</option>
+                                    <option value="Jueves">Jueves</option>
+                                    <option value="Viernes">Viernes</option>
+                                    <option value="Sábado">Sábado</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label asp-for="NuevoHorario.HoraInicio">Hora Inicio</label>
+                                <input asp-for="NuevoHorario.HoraInicio" type="time" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label asp-for="NuevoHorario.HoraFin">Hora Fin</label>
+                                <input asp-for="NuevoHorario.HoraFin" type="time" class="form-control" />
+                            </div>
+                        </div>
+
                         <div class="col-md-12">
                             <div class="mb-3">
                                 <label asp-for="Curso.Descripcion">Descripción</label>

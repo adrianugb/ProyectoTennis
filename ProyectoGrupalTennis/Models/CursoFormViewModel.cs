@@ -8,5 +8,7 @@ namespace ProyectoGrupalTennis.Models
         public List<Profesor> Profesores { get; set; } = new List<Profesor>();
         public List<Horario> Horarios { get; set; } = new List<Horario>();
         public Horario NuevoHorario { get; set; } = new Horario();
+
+
     }
 }

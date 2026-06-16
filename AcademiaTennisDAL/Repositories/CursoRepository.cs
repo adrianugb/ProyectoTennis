@@ -14,10 +14,14 @@ namespace AcademiaTennisDAL.Repositories
                 _context = context;
             }
 
-            public List<Curso> ObtenerTodos() =>
-                _context.Cursos.OrderBy(c => c.Nombre).ToList();
+        public List<Curso> ObtenerTodos() =>
+        _context.Cursos
+            .Include(c => c.Profesor)
+            .Include(c => c.Horarios)
+            .OrderBy(c => c.Nombre)
+            .ToList();
 
-            public void Agregar(Curso curso)
+        public void Agregar(Curso curso)
             {
                 _context.Cursos.Add(curso);
                 _context.SaveChanges();

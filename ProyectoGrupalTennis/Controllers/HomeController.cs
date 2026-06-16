@@ -142,7 +142,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Perfil Usuario 
 
-        [Authorize]
+        
         public IActionResult PerfilUsuario()
         {
             return View("~/Views/Perfiles/PerfilUsuario.cshtml");

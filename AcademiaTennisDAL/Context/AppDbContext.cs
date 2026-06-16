@@ -75,6 +75,7 @@ namespace AcademiaTennisDAL.Context
         // Nueva entidad: Profesores
         public DbSet<Profesor> Profesores { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
