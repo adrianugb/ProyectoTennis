@@ -16,10 +16,11 @@ namespace AcademiaTennisDAL.Entities
         public int CuposDisponibles { get; set; }
         public bool Activo { get; set; } = true;
 
-        // FK Profesor
-        public int? IdProfesor { get; set; }
-        [ForeignKey("IdProfesor")]
-        public Profesor? Profesor { get; set; }
+        // FK Profesor asignado como usuario Identity
+        public string? IdProfesorUserId { get; set; }
+
+        [ForeignKey("IdProfesorUserId")]
+        public ApplicationUser? Profesor { get; set; }
 
         public ICollection<Horario> Horarios { get; set; } = new List<Horario>();
         public ICollection<Matricula> Matriculas { get; set; } = new List<Matricula>();

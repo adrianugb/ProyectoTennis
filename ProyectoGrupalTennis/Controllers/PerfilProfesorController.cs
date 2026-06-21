@@ -65,46 +65,66 @@ namespace ProyectoGrupalTennis.Controllers
         // PROF-04-005: Visualizar lista de alumnos por clase
         public async Task<IActionResult> MisAlumnos(string? buscar, string? curso, string? fecha)
         {
-            var matriculasQuery = _context.Matriculas
+            var query = _context.Matriculas
                 .Include(m => m.Alumno)
                 .Include(m => m.Curso)
                 .Where(m => m.Estado == "Activa")
+                .Join(
+                    _context.ClasesProgramadas,
+                    matricula => matricula.IdCurso,
+                    claseProgramada => claseProgramada.IdCurso,
+                    (matricula, claseProgramada) => new
+                    {
+                        Matricula = matricula,
+                        ClaseProgramada = claseProgramada
+                    }
+                )
+                .Where(x => x.ClaseProgramada.Estado == "Programada")
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(curso))
             {
-                matriculasQuery = matriculasQuery
-                    .Where(m => m.Curso.Nombre == curso);
+                query = query.Where(x => x.Matricula.Curso.Nombre == curso);
             }
 
             if (!string.IsNullOrWhiteSpace(fecha))
             {
                 var fechaSeleccionada = DateTime.Parse(fecha).Date;
 
-                matriculasQuery = matriculasQuery
-                    .Where(m => _context.ClasesProgramadas
-                        .Any(cp => cp.IdCurso == m.IdCurso
-                                   && cp.FechaClase.Date == fechaSeleccionada));
+                query = query.Where(x => x.ClaseProgramada.FechaClase.Date == fechaSeleccionada);
             }
 
-            var matriculas = await matriculasQuery.ToListAsync();
+            var datos = await query.ToListAsync();
 
-            var alumnosAgrupados = matriculas
-                .GroupBy(m => m.IdAlumno)
-                .Select(g => new AlumnoProfesorListItemViewModel
-                {
-                    Id = g.Key,
-                    NombreCompleto = $"{g.First().Alumno.Nombre} {g.First().Alumno.Apellido}",
-                    Correo = g.First().Alumno.Email ?? string.Empty,
-                    Telefono = g.First().Alumno.PhoneNumber ?? "No registrado",
-                    Activo = !g.First().Alumno.Bloqueado,
-                    CursosMatriculados = g.Select(m => m.Curso.Nombre).Distinct().ToList()
-                })
-                .ToList();
+            var alumnos = datos.Select(x => new AlumnoProfesorListItemViewModel
+            {
+                Id = x.Matricula.IdAlumno,
+
+                FechaClase = x.ClaseProgramada.FechaClase.ToString("dd/MM/yyyy"),
+
+                HoraClase = $"{x.ClaseProgramada.HoraInicio:hh\\:mm} - {x.ClaseProgramada.HoraFin:hh\\:mm}",
+
+                DiaSemana = x.ClaseProgramada.FechaClase
+                    .ToString("dddd", new System.Globalization.CultureInfo("es-ES")),
+
+                HoraInicioEntera = x.ClaseProgramada.HoraInicio.Hours,
+
+                NombreCompleto = $"{x.Matricula.Alumno.Nombre} {x.Matricula.Alumno.Apellido}",
+
+                Correo = x.Matricula.Alumno.Email ?? string.Empty,
+
+                Telefono = x.Matricula.Alumno.PhoneNumber ?? "No registrado",
+
+                Clase = x.Matricula.Curso.Nombre,
+
+                Activo = !x.Matricula.Alumno.Bloqueado,
+
+                EstadoMatricula = x.Matricula.Estado
+            }).ToList();
 
             if (!string.IsNullOrWhiteSpace(buscar))
             {
-                alumnosAgrupados = alumnosAgrupados
+                alumnos = alumnos
                     .Where(a => a.NombreCompleto.Contains(buscar, StringComparison.OrdinalIgnoreCase))
                     .ToList();
             }
@@ -117,7 +137,12 @@ namespace ProyectoGrupalTennis.Controllers
 
             var viewModel = new ProfesorAlumnosViewModel
             {
-                Alumnos = alumnosAgrupados.OrderBy(a => a.NombreCompleto).ToList(),
+                Alumnos = alumnos
+                    .OrderBy(a => DateTime.ParseExact(a.FechaClase, "dd/MM/yyyy", null))
+                    .ThenBy(a => a.HoraClase)
+                    .ThenBy(a => a.NombreCompleto)
+                    .ToList(),
+
                 FiltroBuscar = buscar,
                 FiltroCurso = curso,
                 FiltroFecha = fecha,

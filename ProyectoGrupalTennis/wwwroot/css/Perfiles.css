@@ -644,3 +644,26 @@
         grid-template-columns: 1fr;
     }
 }
+
+.agenda-calendar-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+    .agenda-calendar-table th,
+    .agenda-calendar-table td {
+        vertical-align: top;
+        min-height: 85px;
+        height: 85px;
+        padding: 12px;
+    }
+
+.agenda-calendar-card {
+    background: #eef8d8;
+    border-left: 4px solid #a5c422;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}

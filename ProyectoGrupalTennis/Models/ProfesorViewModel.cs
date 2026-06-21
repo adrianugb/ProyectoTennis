@@ -25,11 +25,26 @@
     public class AlumnoProfesorListItemViewModel
     {
         public string Id { get; set; } = string.Empty;
+
+        public string FechaClase { get; set; } = string.Empty;
+
+        public string HoraClase { get; set; } = string.Empty;
+
         public string NombreCompleto { get; set; } = string.Empty;
+
         public string Correo { get; set; } = string.Empty;
+
         public string Telefono { get; set; } = string.Empty;
+
+        public string Clase { get; set; } = string.Empty;
+
         public bool Activo { get; set; }
-        public List<string> CursosMatriculados { get; set; } = new();
+
+        public string EstadoMatricula { get; set; } = string.Empty;
+
+        public string DiaSemana { get; set; } = string.Empty;
+
+        public int HoraInicioEntera { get; set; }
     }
 
     public class ProfesorAlumnosViewModel

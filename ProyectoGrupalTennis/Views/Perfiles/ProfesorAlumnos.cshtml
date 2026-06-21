@@ -6,8 +6,8 @@
 <link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
 
 <section class="perfil-page compact">
-    <div class="container">
-        <div class="perfil-container">
+    <div class="container-fluid px-4">
+        <div class="perfil-container perfil-container-wide">
 
             <div class="perfil-header">
                 <div>
@@ -82,6 +82,8 @@
                     <table class="perfil-table" id="tablaAlumnos">
                         <thead>
                             <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
                                 <th>Alumno</th>
                                 <th>Correo</th>
                                 <th>Teléfono</th>
@@ -93,9 +95,8 @@
                             @if (!Model.Alumnos.Any())
                             {
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">
+                                    <td colspan="7" class="text-center text-muted py-4">
                                         <i class="fa fa-users fa-2x mb-2 d-block"></i>
-
                                         @if (!string.IsNullOrWhiteSpace(Model.FiltroBuscar)
                                             || !string.IsNullOrWhiteSpace(Model.FiltroCurso)
                                             || !string.IsNullOrWhiteSpace(Model.FiltroFecha))
@@ -114,19 +115,16 @@
                                 @foreach (var alumno in Model.Alumnos)
                                 {
                                     <tr>
+                                        <td><strong>@alumno.FechaClase</strong></td>
+                                        <td>@alumno.HoraClase</td>
                                         <td>@alumno.NombreCompleto</td>
                                         <td>@alumno.Correo</td>
                                         <td>@alumno.Telefono</td>
-                                        <td>
-                                            @foreach (var c in alumno.CursosMatriculados)
-                                            {
-                                                <small class="d-block">@c</small>
-                                            }
-                                        </td>
+                                        <td>@alumno.Clase</td>
                                         <td>
                                             @if (alumno.Activo)
                                             {
-                                                <span class="perfil-badge-success">Activo</span>
+                                                <span class="perfil-badge-success">@alumno.EstadoMatricula</span>
                                             }
                                             else
                                             {
@@ -139,8 +137,83 @@
                         </tbody>
                     </table>
                 </div>
-
             </div>
+
+            <div class="perfil-table-block" style="margin-top: 24px;">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Agenda semanal de clases</h2>
+                </div>
+
+                @{
+                    var diasSemana = new[] { "lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo" };
+                    var horas = Enumerable.Range(5, 18).ToList();
+                }
+
+                @if (!Model.Alumnos.Any())
+                {
+                    <div class="text-center text-muted py-4">
+                        <i class="fa fa-calendar fa-2x mb-2 d-block"></i>
+                        <span>No hay clases programadas para mostrar en la agenda.</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="perfil-table agenda-calendar-table">
+                            <thead>
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Lunes</th>
+                                    <th>Martes</th>
+                                    <th>Miércoles</th>
+                                    <th>Jueves</th>
+                                    <th>Viernes</th>
+                                    <th>Sábado</th>
+                                    <th>Domingo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var hora in horas)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@($"{hora:00}:00")</strong>
+                                        </td>
+
+                                        @foreach (var dia in diasSemana)
+                                        {
+                                            var clasesDelDia = Model.Alumnos
+                                                .Where(a => a.DiaSemana.ToLower() == dia && a.HoraInicioEntera == hora)
+                                                .ToList();
+
+                                            <td>
+                                                @if (clasesDelDia.Any())
+                                                {
+                                                    foreach (var clase in clasesDelDia)
+                                                    {
+                                                        <div class="agenda-calendar-card">
+                                                            <strong>@clase.NombreCompleto</strong>
+                                                            <br />
+                                                            <span>@clase.Clase</span>
+                                                            <br />
+                                                            <small>@clase.HoraClase</small>
+                                                        </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+
         </div>
     </div>
 </section>

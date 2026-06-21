@@ -46,7 +46,7 @@ namespace ProyectoGrupalTennis.Controllers
                     Nivel = c.Nivel,
                     CuposDisponibles = c.CuposDisponibles,
                     NombreProfesor = c.Profesor != null
-                        ? $"{c.Profesor.Nombre} {c.Profesor.Apellidos}"
+                        ? $"{c.Profesor.Nombre} {c.Profesor.Apellido}"
                         : "Sin asignar",
                     Horarios = c.Horarios != null
                         ? c.Horarios.Select(h =>
