@@ -2,54 +2,55 @@
 using AcademiaTennisDAL.Entities;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoGrupalTennis.Models;
-using System.Security.Claims;
-using AcademiaTennisDAL.Context;
 
 namespace ProyectoGrupalTennis.Controllers
 {
     public class CursoController : Controller
     {
         private readonly ICursoService _service;
-        private readonly AppDbContext _context;
 
-        public CursoController(
-            ICursoService service,
-            AppDbContext context)
+        public CursoController(ICursoService service)
         {
             _service = service;
-            _context = context;
         }
 
+        // GET: /Curso/Index
         public IActionResult Index(string? buscar, string? nivel, string? estado)
         {
-            var cursos = _service.ObtenerTodos();
+            var Cursos = _service.ObtenerTodos();
 
             if (!string.IsNullOrEmpty(buscar))
-                cursos = cursos
+                Cursos = Cursos
                     .Where(c => c.Nombre.Contains(buscar, StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
             if (!string.IsNullOrEmpty(nivel))
-                cursos = cursos.Where(c => c.Nivel == nivel).ToList();
+                Cursos = Cursos.Where(c => c.Nivel == nivel).ToList();
 
             if (estado == "Activo")
-                cursos = cursos.Where(c => c.Activo).ToList();
+                Cursos = Cursos.Where(c => c.Activo).ToList();
             else if (estado == "Inactivo")
-                cursos = cursos.Where(c => !c.Activo).ToList();
+                Cursos = Cursos.Where(c => !c.Activo).ToList();
 
-            return View("~/Views/Cursos/Index.cshtml", cursos);
+            return View("~/Views/Cursos/Index.cshtml", Cursos);
         }
 
+        // GET: /Curso/Agregar
         public IActionResult Agregar()
         {
             var vm = new CursoFormViewModel
             {
                 Curso = new Curso(),
-                Profesores = _service.ObtenerProfesores()
+                Profesores = _service.ObtenerProfesores(),
+                Horarios = new List<HorarioInputViewModel>
+                {
+                    new HorarioInputViewModel() // un horario vacío por defecto
+                }
             };
             return View("~/Views/Cursos/Agregar.cshtml", vm);
         }
 
+        // POST: /Curso/Agregar
         [HttpPost]
         public IActionResult Agregar(CursoFormViewModel vm)
         {
@@ -59,46 +60,70 @@ namespace ProyectoGrupalTennis.Controllers
                 return View("~/Views/Cursos/Agregar.cshtml", vm);
             }
 
-            _service.Agregar(vm.Curso);
-
-            if (vm.NuevoHorario != null)
+            try
             {
-                vm.NuevoHorario.IdCurso = vm.Curso.IdCurso;
-                _service.AgregarHorario(vm.NuevoHorario);
+                var horarios = MapearHorarios(vm.Horarios);
+                _service.Agregar(vm.Curso, horarios);
+                return RedirectToAction(nameof(Index));
             }
-
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                vm.Profesores = _service.ObtenerProfesores();
+                return View("~/Views/Cursos/Agregar.cshtml", vm);
+            }
         }
 
+        // GET: /Curso/Editar/5
         public IActionResult Editar(int id)
         {
-            var curso = _service.ObtenerPorId(id); // ahora trae Profesor y Horarios
-            if (curso == null) return NotFound();
+            var Curso = _service.ObtenerPorId(id);
+            if (Curso == null) return NotFound();
+
             var vm = new CursoFormViewModel
             {
-                Curso = curso,
+                Curso = Curso,
                 Profesores = _service.ObtenerProfesores(),
-                Horarios = _service.ObtenerHorarios(id)
+                Horarios = Curso.Horarios.Select(h => new HorarioInputViewModel
+                {
+                    IdHorario = h.IdHorario,
+                    DiaSemana = h.DiaSemana,
+                    HoraInicio = h.HoraInicio.ToString(@"hh\:mm"),
+                    HoraFin = h.HoraFin.ToString(@"hh\:mm")
+                }).ToList()
             };
+
+            if (vm.Horarios.Count == 0)
+                vm.Horarios.Add(new HorarioInputViewModel());
+
             return View("~/Views/Cursos/Editar.cshtml", vm);
         }
 
+        // POST: /Curso/Editar
         [HttpPost]
-        public IActionResult AgregarHorario(CursoFormViewModel vm)
+        public IActionResult Editar(CursoFormViewModel vm)
         {
-            vm.NuevoHorario.IdCurso = vm.Curso.IdCurso;
-            try { _service.AgregarHorario(vm.NuevoHorario); }
-            catch (Exception ex) { TempData["MensajeError"] = ex.Message; }
-            return RedirectToAction(nameof(Editar), new { id = vm.Curso.IdCurso });
+            if (!ModelState.IsValid)
+            {
+                vm.Profesores = _service.ObtenerProfesores();
+                return View("~/Views/Cursos/Editar.cshtml", vm);
+            }
+
+            try
+            {
+                var horarios = MapearHorarios(vm.Horarios);
+                _service.Actualizar(vm.Curso, horarios);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                vm.Profesores = _service.ObtenerProfesores();
+                return View("~/Views/Cursos/Editar.cshtml", vm);
+            }
         }
 
-        [HttpPost]
-        public IActionResult EliminarHorario(int idHorario, int idCurso)
-        {
-            _service.EliminarHorario(idHorario);
-            return RedirectToAction(nameof(Editar), new { id = idCurso });
-        }
-
+        // POST: /Curso/CambiarEstado
         [HttpPost]
         public IActionResult CambiarEstado(int id, bool activo)
         {
@@ -106,51 +131,23 @@ namespace ProyectoGrupalTennis.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        public IActionResult ReservarCurso(int idCurso)
+        // Helper: convierte los inputs de horario en entidades Horario
+        private List<Horario> MapearHorarios(List<HorarioInputViewModel> inputs)
         {
-            var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(usuarioId))
-                return RedirectToAction("Login", "Account");
-
-            var curso = _context.Cursos.Find(idCurso);
-
-            if (curso == null)
-                return NotFound();
-
-            if (curso.CuposDisponibles <= 0)
+            var horarios = new List<Horario>();
+            foreach (var h in inputs)
             {
-                TempData["Error"] = "No hay cupos disponibles.";
-                return RedirectToAction(nameof(Index));
+                if (string.IsNullOrWhiteSpace(h.DiaSemana)) continue;
+
+                horarios.Add(new Horario
+                {
+                    IdHorario = h.IdHorario,
+                    DiaSemana = h.DiaSemana,
+                    HoraInicio = TimeSpan.Parse(h.HoraInicio),
+                    HoraFin = TimeSpan.Parse(h.HoraFin)
+                });
             }
-
-            bool yaMatriculado = _context.Matriculas.Any(m =>
-                m.IdCurso == idCurso &&
-                m.IdAlumno == usuarioId &&
-                m.Estado == "Activa");
-
-            if (yaMatriculado)
-            {
-                TempData["Error"] = "Ya estás matriculado en este curso.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            _context.Matriculas.Add(new Matricula
-            {
-                IdAlumno = usuarioId,
-                IdCurso = idCurso,
-                FechaMatricula = DateTime.Now,
-                Estado = "Activa"
-            });
-
-            curso.CuposDisponibles--;
-
-            _context.SaveChanges();
-
-            TempData["Exito"] = "Curso reservado correctamente.";
-
-            return RedirectToAction(nameof(Index));
+            return horarios;
         }
     }
 }

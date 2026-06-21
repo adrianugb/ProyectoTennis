@@ -1,4 +1,5 @@
 ﻿using AcademiaTennisDAL.Context;
+using AcademiaTennisDAL.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,6 @@ namespace ProyectoGrupalTennis.Controllers
         }
 
         // GET: /Usuario/MisCursos
-        // USER-04-002: Alumno visualiza cursos disponibles
         public async Task<IActionResult> MisCursos(string? buscar, string? nivel)
         {
             var query = _context.Cursos
@@ -46,7 +46,7 @@ namespace ProyectoGrupalTennis.Controllers
                     Nivel = c.Nivel,
                     CuposDisponibles = c.CuposDisponibles,
                     NombreProfesor = c.Profesor != null
-                        ? $"{c.Profesor.Nombre} {c.Profesor.Apellido}"
+                        ? $"{c.Profesor.Nombre} {c.Profesor.Apellidos}"
                         : "Sin asignar",
                     Horarios = c.Horarios != null
                         ? c.Horarios.Select(h =>
@@ -59,7 +59,6 @@ namespace ProyectoGrupalTennis.Controllers
         }
 
         // POST: /Usuario/MatricularCurso
-        // USER-04-001: Matricular cursos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MatricularCurso(int idCurso)
@@ -98,7 +97,7 @@ namespace ProyectoGrupalTennis.Controllers
                 return RedirectToAction("MisCursos");
             }
 
-            var matricula = new AcademiaTennisDAL.Entities.Matricula
+            var matricula = new Matricula
             {
                 IdAlumno = userId,
                 IdCurso = idCurso,
@@ -107,18 +106,15 @@ namespace ProyectoGrupalTennis.Controllers
             };
 
             _context.Matriculas.Add(matricula);
-
             curso.CuposDisponibles -= 1;
 
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Matrícula realizada correctamente.";
-
             return RedirectToAction("MisCursos");
         }
 
         // GET: /Usuario/MisHorarios
-        // USER-04-003: Alumno visualiza horarios disponibles
         public async Task<IActionResult> MisHorarios(string? buscar, string? dia)
         {
             var query = _context.Horarios
@@ -136,7 +132,6 @@ namespace ProyectoGrupalTennis.Controllers
                                       .ThenBy(h => h.HoraInicio)
                                       .ToListAsync();
 
-            // Lista de días disponibles para el filtro
             var dias = await _context.Horarios
                 .Select(h => h.DiaSemana)
                 .Distinct()
@@ -164,59 +159,224 @@ namespace ProyectoGrupalTennis.Controllers
         }
 
         // GET: /Usuario/AgendaPersonal
-        // USER-04-007: Consultar agenda personal
-        public async Task<IActionResult> AgendaPersonal(string? fecha)
+        public async Task<IActionResult> AgendaPersonal(string? dia)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-            DateTime? fechaSeleccionada = null;
-
-            if (!string.IsNullOrWhiteSpace(fecha))
-            {
-                fechaSeleccionada = DateTime.Parse(fecha);
-            }
-
-            var query =
-                from m in _context.Matriculas
-                join c in _context.Cursos on m.IdCurso equals c.IdCurso
-                join cp in _context.ClasesProgramadas on c.IdCurso equals cp.IdCurso
-                where m.IdAlumno == userId
-                select new
-                {
-                    Curso = c.Nombre,
-                    Nivel = c.Nivel,
-                    FechaClase = cp.FechaClase,
-                    HoraInicio = cp.HoraInicio,
-                    HoraFin = cp.HoraFin,
-                    EstadoClase = cp.Estado
-                };
-
-            if (fechaSeleccionada.HasValue)
-            {
-                query = query.Where(x => x.FechaClase.Date == fechaSeleccionada.Value.Date);
-            }
-
-            var clases = await query
-                .OrderBy(x => x.FechaClase)
-                .ThenBy(x => x.HoraInicio)
+            // Trae las matrículas activas del usuario logueado, junto con el curso
+            // y sus horarios recurrentes (Curso -> Horarios).
+            var matriculas = await _context.Matriculas
+                .Include(m => m.Curso)
+                    .ThenInclude(c => c.Horarios)
+                .Where(m => m.IdAlumno == userId && m.Estado == "Activa")
                 .ToListAsync();
+
+            var clases = new List<AgendaPersonalItemViewModel>();
+
+            foreach (var m in matriculas)
+            {
+                if (m.Curso == null) continue;
+
+                if (m.Curso.Horarios != null && m.Curso.Horarios.Any())
+                {
+                    // Una fila por cada horario recurrente del curso matriculado
+                    foreach (var h in m.Curso.Horarios)
+                    {
+                        clases.Add(new AgendaPersonalItemViewModel
+                        {
+                            IdMatricula = m.IdMatricula,
+                            IdCurso = m.Curso.IdCurso,
+                            Curso = m.Curso.Nombre,
+                            Nivel = m.Curso.Nivel,
+                            DiaSemana = h.DiaSemana,
+                            FechaClase = string.Empty, // recurrente, no tiene fecha concreta
+                            HoraInicio = h.HoraInicio.ToString(@"hh\:mm"),
+                            HoraFin = h.HoraFin.ToString(@"hh\:mm"),
+                            EstadoMatricula = m.Estado
+                        });
+                    }
+                }
+                else
+                {
+                    // El curso aún no tiene horarios cargados; igual se muestra la matrícula
+                    clases.Add(new AgendaPersonalItemViewModel
+                    {
+                        IdMatricula = m.IdMatricula,
+                        IdCurso = m.Curso.IdCurso,
+                        Curso = m.Curso.Nombre,
+                        Nivel = m.Curso.Nivel,
+                        DiaSemana = "Sin horario asignado",
+                        FechaClase = string.Empty,
+                        HoraInicio = string.Empty,
+                        HoraFin = string.Empty,
+                        EstadoMatricula = m.Estado
+                    });
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(dia))
+            {
+                clases = clases.Where(x => x.DiaSemana == dia).ToList();
+            }
+
+            var diasDisponibles = clases
+                .Select(x => x.DiaSemana)
+                .Where(d => !string.IsNullOrWhiteSpace(d))
+                .Distinct()
+                .OrderBy(d => d)
+                .ToList();
 
             var viewModel = new AgendaPersonalViewModel
             {
-                FiltroFecha = fecha,
-                Clases = clases.Select(x => new AgendaPersonalItemViewModel
-                {
-                    Curso = x.Curso,
-                    Nivel = x.Nivel,
-                    DiaSemana = x.FechaClase.ToString("dddd"),
-                    FechaClase = x.FechaClase.ToString("dd/MM/yyyy"),
-                    HoraInicio = x.HoraInicio.ToString(@"hh\:mm"),
-                    HoraFin = x.HoraFin.ToString(@"hh\:mm"),
-                    EstadoMatricula = x.EstadoClase
-                }).ToList()
+                FiltroDia = dia,
+                DiasDisponibles = diasDisponibles,
+                Clases = clases
+                    .OrderBy(x => x.DiaSemana)
+                    .ThenBy(x => x.HoraInicio)
+                    .ToList()
             };
 
             return View("~/Views/Matricula/_UsuarioAgenda.cshtml", viewModel);
+        }
+        // POST: /Usuario/CancelarMatricula
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelarMatricula(int idMatricula)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var matricula = await _context.Matriculas
+                .FirstOrDefaultAsync(m => m.IdMatricula == idMatricula && m.IdAlumno == userId);
+
+            if (matricula == null)
+            {
+                TempData["Error"] = "No se encontró la matrícula indicada.";
+                return RedirectToAction(nameof(AgendaPersonal));
+            }
+
+            matricula.Estado = "Cancelada";
+
+            var curso = await _context.Cursos.FindAsync(matricula.IdCurso);
+            if (curso != null)
+            {
+                curso.CuposDisponibles += 1;
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Matrícula cancelada correctamente.";
+            return RedirectToAction(nameof(AgendaPersonal));
+        }
+
+        // GET: /Usuario/Reprogramar/5
+        public async Task<IActionResult> Reprogramar(int idMatricula)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var matricula = await _context.Matriculas
+                .FirstOrDefaultAsync(m => m.IdMatricula == idMatricula && m.IdAlumno == userId);
+
+            if (matricula == null)
+            {
+                TempData["Error"] = "No se encontró la matrícula indicada.";
+                return RedirectToAction(nameof(AgendaPersonal));
+            }
+
+            var cursos = await _context.Cursos
+                .Include(c => c.Horarios)
+                .Include(c => c.Profesor)
+                .Where(c => c.Activo && c.IdCurso != matricula.IdCurso)
+                .OrderBy(c => c.Nombre)
+                .ToListAsync();
+
+            var viewModel = new UsuarioCursosViewModel
+            {
+                Cursos = cursos.Select(c => new CursoUsuarioItemViewModel
+                {
+                    IdCurso = c.IdCurso,
+                    Nombre = c.Nombre,
+                    Descripcion = c.Descripcion ?? string.Empty,
+                    Nivel = c.Nivel,
+                    CuposDisponibles = c.CuposDisponibles,
+                    NombreProfesor = c.Profesor != null
+                        ? $"{c.Profesor.Nombre} {c.Profesor.Apellidos}"
+                        : "Sin asignar",
+                    Horarios = c.Horarios != null
+                        ? c.Horarios.Select(h =>
+                            $"{h.DiaSemana} {h.HoraInicio:hh\\:mm} - {h.HoraFin:hh\\:mm}").ToList()
+                        : new List<string>()
+                }).ToList()
+            };
+
+            ViewBag.IdMatriculaOrigen = idMatricula;
+
+            return View("~/Views/Perfiles/Reprogramar.cshtml", viewModel);
+        }
+
+        // POST: /Usuario/ConfirmarReprogramacion
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmarReprogramacion(int idMatriculaOrigen, int idCursoNuevo)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var matriculaOrigen = await _context.Matriculas
+                .FirstOrDefaultAsync(m => m.IdMatricula == idMatriculaOrigen && m.IdAlumno == userId);
+
+            if (matriculaOrigen == null)
+            {
+                TempData["Error"] = "No se encontró la matrícula original.";
+                return RedirectToAction(nameof(AgendaPersonal));
+            }
+
+            var cursoNuevo = await _context.Cursos
+                .FirstOrDefaultAsync(c => c.IdCurso == idCursoNuevo && c.Activo);
+
+            if (cursoNuevo == null)
+            {
+                TempData["Error"] = "El curso seleccionado no existe o no está activo.";
+                return RedirectToAction(nameof(AgendaPersonal));
+            }
+
+            if (cursoNuevo.CuposDisponibles <= 0)
+            {
+                TempData["Error"] = "No hay cupos disponibles en el curso seleccionado.";
+                return RedirectToAction(nameof(AgendaPersonal));
+            }
+
+            var yaMatriculado = await _context.Matriculas
+                .AnyAsync(m => m.IdAlumno == userId &&
+                               m.IdCurso == idCursoNuevo &&
+                               m.Estado == "Activa");
+
+            if (yaMatriculado)
+            {
+                TempData["Error"] = "Ya estás matriculado en ese curso.";
+                return RedirectToAction(nameof(AgendaPersonal));
+            }
+
+            matriculaOrigen.Estado = "Cancelada";
+            var cursoOrigen = await _context.Cursos.FindAsync(matriculaOrigen.IdCurso);
+            if (cursoOrigen != null)
+            {
+                cursoOrigen.CuposDisponibles += 1;
+            }
+
+            var nuevaMatricula = new Matricula
+            {
+                IdAlumno = userId,
+                IdCurso = idCursoNuevo,
+                FechaMatricula = DateTime.Now,
+                Estado = "Activa"
+            };
+            _context.Matriculas.Add(nuevaMatricula);
+
+            cursoNuevo.CuposDisponibles -= 1;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"Te reprogramaste exitosamente al curso '{cursoNuevo.Nombre}'.";
+            return RedirectToAction(nameof(AgendaPersonal));
         }
     }
 }

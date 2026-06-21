@@ -1,10 +1,5 @@
 ﻿using AcademiaTennisDAL.Entities;
 using AcademiaTennisDAL.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AcademiaTennisBLL.Services
 {
@@ -21,44 +16,31 @@ namespace AcademiaTennisBLL.Services
 
         public Curso? ObtenerPorId(int id) => _repo.ObtenerPorId(id);
 
-   
-        public List<Profesor> ObtenerProfesores() => _repo.ObtenerProfesores();
-
-        public void Agregar(Curso curso)
+        public void Agregar(Curso Curso, List<Horario> horarios)
         {
-            if (string.IsNullOrWhiteSpace(curso.Nombre))
+            if (string.IsNullOrWhiteSpace(Curso.Nombre))
                 throw new Exception("El nombre es obligatorio.");
-            if (curso.CuposDisponibles < 0)
+            if (Curso.CuposDisponibles < 0)
                 throw new Exception("Los cupos no pueden ser negativos.");
-            _repo.Agregar(curso);
+            if (horarios == null || horarios.Count == 0)
+                throw new Exception("Debe definir al menos un horario.");
+
+            _repo.Agregar(Curso, horarios);
         }
 
-        public void Actualizar(Curso curso)
+        public void Actualizar(Curso Curso, List<Horario> horarios)
         {
-            if (string.IsNullOrWhiteSpace(curso.Nombre))
+            if (string.IsNullOrWhiteSpace(Curso.Nombre))
                 throw new Exception("El nombre es obligatorio.");
-            _repo.Actualizar(curso);
+            if (horarios == null || horarios.Count == 0)
+                throw new Exception("Debe definir al menos un horario.");
+
+            _repo.Actualizar(Curso, horarios);
         }
 
         public void CambiarEstado(int id, bool activo) =>
             _repo.CambiarEstado(id, activo);
 
-
-        public List<Horario> ObtenerHorarios(int idCurso) =>
-    _repo.ObtenerHorarios(idCurso);
-
-        public void AgregarHorario(Horario horario)
-        {
-            if (string.IsNullOrWhiteSpace(horario.DiaSemana))
-                throw new Exception("El día es obligatorio.");
-            if (horario.HoraFin <= horario.HoraInicio)
-                throw new Exception("La hora de fin debe ser mayor a la hora de inicio.");
-            _repo.AgregarHorario(horario);
-        }
-
-        public void EliminarHorario(int idHorario) =>
-            _repo.EliminarHorario(idHorario);
-
-
+        public List<Profesor> ObtenerProfesores() => _repo.ObtenerProfesores();
     }
 }

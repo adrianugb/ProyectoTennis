@@ -17,7 +17,7 @@ namespace AcademiaTennisDAL.Entities
         [Required]
         public TimeSpan HoraFin { get; set; }
 
-        public int IdCurso { get; set; }
+        public int IdCurso { get; set; }    
 
         [ForeignKey("IdCurso")]
         public Curso? Curso { get; set; }

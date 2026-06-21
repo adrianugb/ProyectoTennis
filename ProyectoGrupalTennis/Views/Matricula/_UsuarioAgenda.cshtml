@@ -13,7 +13,7 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
         <div>
             <h1 class="page-title">Mi Agenda Personal</h1>
-            <p class="page-subtitle">Consulta tus clases programadas y filtra por fecha.</p>
+            <p class="page-subtitle">Consulta tus cursos matriculados y filtra por día.</p>
         </div>
 
         <div class="dashboard-stat-card" style="min-height:auto;padding:14px 18px;text-align:center;">
@@ -25,11 +25,22 @@
     <form method="get" asp-controller="Usuario" asp-action="AgendaPersonal" style="margin:24px 0;">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
 
-            <input type="date"
-                   name="fecha"
-                   class="form-control"
-                   value="@Model.FiltroFecha"
-                   style="max-width:220px;height:46px;" />
+            <select name="dia"
+                    class="form-control"
+                    style="max-width:220px;height:46px;">
+                <option value="">Todos los días</option>
+                @foreach (var d in Model.DiasDisponibles)
+                {
+                    if (Model.FiltroDia == d)
+                    {
+                        <option value="@d" selected>@d</option>
+                    }
+                    else
+                    {
+                        <option value="@d">@d</option>
+                    }
+                }
+            </select>
 
             <button type="submit"
                     class="perfil-btn"
@@ -60,36 +71,65 @@
             {
                 foreach (var clase in Model.Clases)
                 {
-                <div style="position:relative;padding-left:48px;padding-bottom:18px;">
-                    <div style="position:absolute;left:7px;top:8px;width:22px;height:22px;border-radius:50%;background:#a5c422;display:flex;align-items:center;justify-content:center;">
-                        <i class="fa fa-calendar-check-o" style="color:#fff;font-size:10px;"></i>
-                    </div>
+                    <div style="position:relative;padding-left:48px;padding-bottom:18px;">
+                        <div style="position:absolute;left:7px;top:8px;width:22px;height:22px;border-radius:50%;background:#a5c422;display:flex;align-items:center;justify-content:center;">
+                            <i class="fa fa-calendar-check-o" style="color:#fff;font-size:10px;"></i>
+                        </div>
 
-                    <div style="position:absolute;left:17px;top:30px;bottom:0;width:2px;background:#f1f1f1;"></div>
+                        <div style="position:absolute;left:17px;top:30px;bottom:0;width:2px;background:#f1f1f1;"></div>
 
-                    <div style="background:#fff;border:1px solid #f1f1f1;border-radius:12px;padding:16px 18px;box-shadow:0 3px 10px rgba(0,0,0,0.05);">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
-                            <div>
-                                <strong style="font-size:15px;">@clase.Curso</strong>
+                        <div style="background:#fff;border:1px solid #f1f1f1;border-radius:12px;padding:16px 18px;box-shadow:0 3px 10px rgba(0,0,0,0.05);">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+                                <div>
+                                    <strong style="font-size:15px;">@clase.Curso</strong>
 
-                                <p style="margin:4px 0 0;font-size:13px;color:#757575;">
-                                    <i class="fa fa-signal" style="color:#a5c422;"></i>
-                                    @clase.Nivel
-                                    &nbsp; | &nbsp;
-                                    <i class="fa fa-calendar" style="color:#a5c422;"></i>
-                                    @(string.IsNullOrWhiteSpace(clase.FechaClase) ? clase.DiaSemana : clase.FechaClase)
-                                    &nbsp; | &nbsp;
-                                    <i class="fa fa-clock-o" style="color:#a5c422;"></i>
-                                    @clase.HoraInicio - @clase.HoraFin
-                                </p>
+                                    <p style="margin:4px 0 0;font-size:13px;color:#757575;">
+                                        <i class="fa fa-signal" style="color:#a5c422;"></i>
+                                        @clase.Nivel
+                                        &nbsp; | &nbsp;
+                                        <i class="fa fa-calendar" style="color:#a5c422;"></i>
+                                        @clase.DiaSemana
+                                        @if (!string.IsNullOrWhiteSpace(clase.HoraInicio))
+                                        {
+                                            <text>
+                                                &nbsp; | &nbsp;
+                                                <i class="fa fa-clock-o" style="color:#a5c422;"></i>
+                                                @clase.HoraInicio - @clase.HoraFin
+                                            </text>
+                                        }
+                                    </p>
+                                </div>
+
+                                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+                                    <span class="perfil-badge-success">
+                                        @clase.EstadoMatricula
+                                    </span>
+
+                                    <div style="display:flex;gap:10px;">
+                                        <a asp-controller="Usuario"
+                                           asp-action="Reprogramar"
+                                           asp-route-idMatricula="@clase.IdMatricula"
+                                           style="font-size:12px;color:#a5c422;text-decoration:none;font-weight:600;">
+                                            <i class="fa fa-exchange"></i> Reprogramar
+                                        </a>
+
+                                        <form asp-controller="Usuario"
+                                              asp-action="CancelarMatricula"
+                                              method="post"
+                                              style="display:inline;"
+                                              onsubmit="return confirm('¿Cancelar esta matrícula?');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="idMatricula" value="@clase.IdMatricula" />
+                                            <button type="submit"
+                                                    style="background:none;border:none;padding:0;cursor:pointer;font-size:12px;color:#e05656;font-weight:600;">
+                                                <i class="fa fa-times"></i> Cancelar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-
-                            <span class="perfil-badge-success">
-                                @clase.EstadoMatricula
-                            </span>
                         </div>
                     </div>
-                </div>
                 }
             }
         </div>

@@ -14,6 +14,10 @@
 
     public class AgendaPersonalItemViewModel
     {
+        public int IdCurso { get; set; }
+
+        public int IdMatricula { get; set; }
+
         public string Curso { get; set; } = string.Empty;
 
         public string Nivel { get; set; } = string.Empty;
