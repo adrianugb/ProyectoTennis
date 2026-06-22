@@ -310,7 +310,7 @@ namespace ProyectoGrupalTennis.Controllers
 
             ViewBag.IdMatriculaOrigen = idMatricula;
 
-            return View("~/Views/Perfiles/Reprogramar.cshtml", viewModel);
+            return View("~/Views/Cursos/Reprogramar.cshtml", viewModel);
         }
 
         // POST: /Usuario/ConfirmarReprogramacion

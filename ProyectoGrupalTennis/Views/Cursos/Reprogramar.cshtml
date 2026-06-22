@@ -1,0 +1,123 @@
+﻿@model ProyectoGrupalTennis.Models.UsuarioCursosViewModel
+@{
+    ViewData["Title"] = "Reprogramar Curso";
+    var idMatriculaOrigen = ViewBag.IdMatriculaOrigen as int? ?? 0;
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Reprogramar Curso</h1>
+                    <p class="perfil-subtitle">Seleccioná el curso al que querés cambiar tu matrícula.</p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-exchange"></i> Reprogramación
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a asp-controller="Usuario" asp-action="AgendaPersonal" class="btn-volver">
+                    <i class="fa fa-arrow-left"></i> Volver a Mi Agenda
+                </a>
+            </div>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fa fa-exclamation-circle me-2"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            @if (!Model.Cursos.Any())
+            {
+                <div class="alert alert-info mt-3">
+                    No hay otros cursos disponibles para reprogramar.
+                </div>
+            }
+            else
+            {
+                <div class="perfil-table-block">
+                    <div class="perfil-table-header">
+                        <h2 class="perfil-table-title">Cursos disponibles</h2>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="perfil-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Nivel</th>
+                                    <th>Profesor</th>
+                                    <th>Horarios</th>
+                                    <th>Cupos</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var curso in Model.Cursos)
+                                {
+                                    <tr>
+                                        <td><strong>@curso.Nombre</strong></td>
+                                        <td>@curso.Nivel</td>
+                                        <td>@curso.NombreProfesor</td>
+                                        <td>
+                                            @if (curso.Horarios != null && curso.Horarios.Any())
+                                            {
+                                                @foreach (var h in curso.Horarios)
+                                                {
+                                                    <small class="d-block">@h</small>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <small class="text-muted">Sin horario</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (curso.CuposDisponibles > 0)
+                                            {
+                                                <span class="perfil-badge-success">@curso.CuposDisponibles disponibles</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="perfil-badge-warning">Sin cupos</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (curso.CuposDisponibles > 0)
+                                            {
+                                                <form asp-controller="Usuario"
+                                                      asp-action="ConfirmarReprogramacion"
+                                                      method="post"
+                                                      style="display:inline;"
+                                                      onsubmit="return confirm('¿Confirmar reprogramación a @curso.Nombre?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="idMatriculaOrigen" value="@idMatriculaOrigen" />
+                                                    <input type="hidden" name="idCursoNuevo" value="@curso.IdCurso" />
+                                                    <button type="submit" class="perfil-btn" style="padding: 6px 14px;font-size:13px;">
+                                                        <i class="fa fa-check"></i> Seleccionar
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">No disponible</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</section>
