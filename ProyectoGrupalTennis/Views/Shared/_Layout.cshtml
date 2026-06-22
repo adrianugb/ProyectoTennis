@@ -239,7 +239,7 @@
                 background-color: #fff !important;
             }
 
-            label {
+            .form-label {
                 color: #212529 !important;
             }
 
@@ -264,6 +264,37 @@
                     background: #a5c422;
                     color: #fff;
                 }
+            /* ===== FIX MODALES BOOTSTRAP ===== */
+
+            .modal {
+                z-index: 1055 !important;
+            }
+
+            .modal-backdrop {
+                z-index: 1054 !important;
+            }
+
+            .modal-dialog {
+                max-width: 600px;
+                margin: 1.75rem auto;
+            }
+
+            .modal.show .modal-dialog {
+                transform: none !important;
+            }
+
+            .modal-content {
+                border-radius: 12px;
+                border: none;
+            }
+
+            .modal-header {
+                border-bottom: 1px solid #eee;
+            }
+
+            .modal-footer {
+                border-top: 1px solid #eee;
+            }
     </style>
 </head>
 <body id="top" data-spy="scroll" data-target=".navbar-collapse" data-offset="50">

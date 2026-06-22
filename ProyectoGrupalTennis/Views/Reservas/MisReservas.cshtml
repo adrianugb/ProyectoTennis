@@ -1,0 +1,82 @@
+﻿@model ProyectoGrupalTennis.Models.MisReservasProfesorViewModel
+
+@{
+    ViewData["Title"] = "Mis Reservas";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Mis Reservas
+                    </h1>
+                    <p class="perfil-subtitle">
+                        Reservas de canchas realizadas por usted.
+                    </p>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="perfil-table">
+
+                    <thead>
+                        <tr>
+                            <th>Cancha</th>
+                            <th>Fecha</th>
+                            <th>Horario</th>
+                            <th>Alumno</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (!Model.Reservas.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    No tiene reservas registradas.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.Reservas)
+                            {
+                                <tr>
+
+                                    <td>@item.Cancha</td>
+
+                                    <td>
+                                        @item.Fecha.ToString("dd/MM/yyyy")
+                                    </td>
+
+                                    <td>@item.Horario</td>
+
+                                    <td>@item.Alumno</td>
+
+                                    <td>@item.Estado</td>
+
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>

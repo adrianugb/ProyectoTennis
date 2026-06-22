@@ -1,0 +1,108 @@
+﻿@model List<AcademiaTennisDAL.Entities.Reserva>
+
+@{
+    ViewData["Title"] = "Mis Reservas";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Mis Reservas
+                    </h1>
+                    <p class="perfil-subtitle">
+                        Reservas de canchas asignadas a usted.
+                    </p>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="perfil-table">
+
+                    <thead>
+                        <tr>
+                            <th>Cancha</th>
+                            <th>Profesor</th>
+                            <th>Fecha</th>
+                            <th>Horario</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    No tiene reservas registradas.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var reserva in Model)
+                            {
+                                <tr>
+                                    <td>@reserva.Cancha.Nombre</td>
+
+                                    <td>
+                                        @($"{reserva.Profesor.Nombre} {reserva.Profesor.Apellido}")
+                                    </td>
+
+                                    <td>
+                                        @reserva.FechaReserva.ToString("dd/MM/yyyy")
+                                    </td>
+
+                                    <td>
+                                        @($"{reserva.HoraInicio:hh\\:mm} - {reserva.HoraFin:hh\\:mm}")
+                                    </td>
+
+                                    <td>@reserva.Estado</td>
+                                    <td>
+
+                                        @if (reserva.FechaReserva.Date.Add(reserva.HoraInicio)
+                                             > DateTime.Now.AddHours(24))
+                                        {
+                                            <form asp-action="LiberarReserva"
+                                                  method="post">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="idReserva"
+                                                       value="@reserva.IdReserva" />
+
+                                                <button type="submit"
+                                                        class="btn btn-warning btn-sm">
+                                                    Liberar
+                                                </button>
+
+                                            </form>
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>

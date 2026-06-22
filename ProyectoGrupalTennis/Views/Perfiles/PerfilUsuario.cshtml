@@ -162,6 +162,42 @@
                         </div>
                     </div>
 
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-table-tennis"></i>
+                            <h3>Reservar Cancha</h3>
+                            <p>
+                                Consultá las reservas creadas por los profesores y reservá tu espacio.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Reservas"
+                                   asp-action="Disponibles"
+                                   class="perfil-btn">
+                                    Ver Disponibles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="perfil-card">
+                            <i class="fa fa-calendar-check"></i>
+                            <h3>Mis Reservas</h3>
+                            <p>
+                                Revisá las reservas de cancha que tienes asignadas.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Reservas"
+                                   asp-action="MisReservasAlumno"
+                                   class="perfil-btn">
+                                    Ver Reservas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 

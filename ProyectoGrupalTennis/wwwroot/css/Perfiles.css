@@ -667,3 +667,54 @@
     font-size: 12px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 }
+
+.modal .form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal .form-check-input {
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+.modal .form-check-label {
+    margin-bottom: 0;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* MODALES */
+.modal .form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal .form-check-input {
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+.modal .form-check-label {
+    margin: 0;
+    font-weight: 500;
+}
+
+.modal-dialog {
+    max-width: 600px;
+}
+
+.modal-content {
+    border-radius: 14px;
+}
+
+.modal-header {
+    border-bottom: 1px solid #ececec;
+}
+
+.modal-footer {
+    border-top: 1px solid #ececec;
+}

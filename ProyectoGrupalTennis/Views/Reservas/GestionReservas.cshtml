@@ -1,0 +1,285 @@
+﻿@model ProyectoGrupalTennis.Models.AdminReservasViewModel
+
+@{
+    ViewData["Title"] = "Gestión de Reservas";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Gestión de Reservas
+                    </h1>
+                    <p class="perfil-subtitle">
+                        Administre las reservas de canchas registradas en el sistema.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-calendar"></i>
+                    Administración de Reservas
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a asp-controller="Home"
+                   asp-action="PerfilAdmin"
+                   class="btn btn-outline-secondary btn-sm">
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Volver al Panel
+                </a>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.MensajeExito))
+            {
+                <div class="alert alert-success">
+                    @Model.MensajeExito
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.MensajeError))
+            {
+                <div class="alert alert-danger">
+                    @Model.MensajeError
+                </div>
+            }
+
+            <div class="table-responsive">
+
+                <table class="perfil-table">
+
+                    <thead>
+                        <tr>
+                            <th>Cancha</th>
+                            <th>Profesor</th>
+                            <th>Alumno</th>
+                            <th>Fecha</th>
+                            <th>Horario</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (!Model.Reservas.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    No hay reservas registradas.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var reserva in Model.Reservas)
+                            {
+                                <tr>
+
+                                    <td>@reserva.Cancha</td>
+
+                                    <td>@reserva.Profesor</td>
+
+                                    <td>@reserva.Alumno</td>
+
+                                    <td>
+                                        @reserva.Fecha.ToString("dd/MM/yyyy")
+                                    </td>
+
+                                    <td>@reserva.Horario</td>
+
+                                    <td>@reserva.Estado</td>
+
+                                    <td>
+
+                                        <a href="#"
+                                           class="perfil-action-link"
+                                           onclick="abrirModalEditar(@reserva.IdReserva); return false;">
+                                            Editar
+                                        </a>
+
+                                        <span class="perfil-action-separator">|</span>
+
+                                        <form asp-action="EliminarReserva"
+                                              method="post"
+                                              style="display:inline;">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="idReserva"
+                                                   value="@reserva.IdReserva" />
+
+                                            <button type="submit"
+                                                    class="perfil-action-link text-danger"
+                                                    style="background:none;border:none;padding:0;">
+                                                Eliminar
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<div class="modal fade"
+     id="modalEditarReserva"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Editar Reserva
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <form asp-action="EditarReserva"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           id="idReserva"
+                           name="idReserva" />
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Fecha
+                        </label>
+
+                        <input type="date"
+                               id="fechaReserva"
+                               name="fechaReserva"
+                               class="form-control"
+                               required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Hora Inicio
+                        </label>
+
+                        <input type="time"
+                               id="horaInicio"
+                               name="horaInicio"
+                               class="form-control"
+                               required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Hora Fin
+                        </label>
+
+                        <input type="time"
+                               id="horaFin"
+                               name="horaFin"
+                               class="form-control"
+                               required />
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Guardar Cambios
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script>
+
+        async function abrirModalEditar(id)
+        {
+            try
+            {
+                const response =
+                    await fetch(`/Reservas/ObtenerReserva?id=${id}`);
+
+                const data =
+                    await response.json();
+
+                if (!data.exito)
+                {
+                    alert(data.mensaje);
+                    return;
+                }
+
+                document.getElementById('idReserva').value =
+                    data.idReserva;
+
+                document.getElementById('fechaReserva').value =
+                    data.fecha;
+
+                document.getElementById('horaInicio').value =
+                    data.horaInicio;
+
+                document.getElementById('horaFin').value =
+                    data.horaFin;
+
+                const modal =
+                    new bootstrap.Modal(
+                        document.getElementById('modalEditarReserva'));
+
+                modal.show();
+            }
+            catch
+            {
+                alert("Error al cargar la reserva.");
+            }
+        }
+
+    </script>
+}

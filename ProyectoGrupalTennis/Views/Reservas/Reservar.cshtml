@@ -1,0 +1,105 @@
+﻿@model ProyectoGrupalTennis.Models.ReservarCanchaViewModel
+
+@{
+    ViewData["Title"] = "Reservar Cancha";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Reservar Cancha
+                    </h1>
+                    <p class="perfil-subtitle">
+                        Seleccione una cancha y horario.
+                    </p>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.MensajeExito))
+            {
+                <div class="alert alert-success">
+                    @Model.MensajeExito
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.MensajeError))
+            {
+                <div class="alert alert-danger">
+                    @Model.MensajeError
+                </div>
+            }
+
+            <form asp-action="Reservar" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label asp-for="IdCancha" class="form-label"></label>
+
+                    <select asp-for="IdCancha"
+                            asp-items="Model.Canchas"
+                            class="form-select">
+                        <option value="">
+                            Seleccione una cancha
+                        </option>
+                    </select>
+
+                    <span asp-validation-for="IdCancha"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="FechaReserva" class="form-label"></label>
+
+                    <input asp-for="FechaReserva"
+                           type="date"
+                           class="form-control" />
+
+                    <span asp-validation-for="FechaReserva"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="HoraInicio" class="form-label"></label>
+
+                    <input asp-for="HoraInicio"
+                           type="time"
+                           class="form-control" />
+
+                    <span asp-validation-for="HoraInicio"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="HoraFin" class="form-label"></label>
+
+                    <input asp-for="HoraFin"
+                           type="time"
+                           class="form-control" />
+
+                    <span asp-validation-for="HoraFin"
+                          class="text-danger"></span>
+                </div>
+
+                <button type="submit"
+                        class="perfil-btn">
+                    Crear Reserva
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

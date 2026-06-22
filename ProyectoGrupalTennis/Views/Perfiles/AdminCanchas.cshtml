@@ -142,7 +142,7 @@
 @* MODAL 1 — Agregar cancha *@
 <div class="modal fade" id="modalAgregarCancha" tabindex="-1" aria-labelledby="tituloModalAgregar" aria-hidden="true"
      data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="tituloModalAgregar">
@@ -162,8 +162,13 @@
                         </div>
                         <div class="col-12">
                             <div class="form-check">
-                                <input asp-for="NuevaCancha.Disponible" class="form-check-input" type="checkbox" />
-                                <label asp-for="NuevaCancha.Disponible" class="form-check-label">Disponible al registrar</label>
+                                <input asp-for="NuevaCancha.Disponible"
+                                       class="form-check-input" />
+
+                                <label asp-for="NuevaCancha.Disponible"
+                                       class="form-check-label">
+                                    Disponible al registrar
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -185,7 +190,7 @@
 @* MODAL 2 — Editar cancha *@
 <div class="modal fade" id="modalEditarCancha" tabindex="-1" aria-labelledby="tituloModalEditar" aria-hidden="true"
      data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="tituloModalEditar">
@@ -243,7 +248,7 @@
 @* MODAL 3 — Confirmar mantenimiento *@
 <div class="modal fade" id="modalMantenimiento" tabindex="-1" aria-labelledby="tituloModalMant" aria-hidden="true"
      data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-warning bg-opacity-10">
                 <h5 class="modal-title" id="tituloModalMant">

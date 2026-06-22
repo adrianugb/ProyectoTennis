@@ -8,20 +8,20 @@ namespace AcademiaTennisDAL.Entities
         [Key]
         public int IdReserva { get; set; }
 
-        public string IdAlumno { get; set; }
-
-        [ForeignKey("IdAlumno")]
-        public ApplicationUser Alumno { get; set; }
-
         public int IdCancha { get; set; }
 
         [ForeignKey("IdCancha")]
         public Cancha Cancha { get; set; }
 
-        public string? IdProfesor { get; set; }
+        public string IdProfesor { get; set; }
 
         [ForeignKey("IdProfesor")]
         public ApplicationUser Profesor { get; set; }
+
+        public string? IdAlumno { get; set; }
+
+        [ForeignKey("IdAlumno")]
+        public ApplicationUser? Alumno { get; set; }
 
         public DateTime FechaReserva { get; set; }
 
@@ -29,6 +29,6 @@ namespace AcademiaTennisDAL.Entities
 
         public TimeSpan HoraFin { get; set; }
 
-        public string Estado { get; set; } = "Activa";
+        public string Estado { get; set; } = "Disponible";
     }
 }
