@@ -3,7 +3,7 @@ WORKDIR /src
 
 COPY . .
 
-RUN dotnet restore MVC.sln
+RUN dotnet restore ProyectoGrupalTennis/ProyectoGrupalTennis.csproj
 RUN dotnet publish ProyectoGrupalTennis/ProyectoGrupalTennis.csproj -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
