@@ -149,7 +149,7 @@ namespace ProyectoGrupalTennis.Controllers
         }
         public IActionResult UsuarioPagos()
         {
-            return View("~/Views/Perfiles/UsuarioPagos.cshtml");
+            return RedirectToAction("HistorialPagos", "Usuario");
         }
 
         public IActionResult UsuarioHistorialPagos()
