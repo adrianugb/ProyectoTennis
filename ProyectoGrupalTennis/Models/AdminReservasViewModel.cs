@@ -6,8 +6,9 @@
 
         public string? MensajeError { get; set; }
 
-        public List<AdminReservaItemViewModel> Reservas { get; set; }
-            = new();
+        public List<AdminReservaItemViewModel> Reservas { get; set; } = new();
+
+        public List<CursoFiltroViewModel> Cursos { get; set; } = new();
     }
 
     public class AdminReservaItemViewModel
@@ -15,6 +16,8 @@
         public int IdReserva { get; set; }
 
         public string Cancha { get; set; } = string.Empty;
+
+        public string Curso { get; set; } = string.Empty;
 
         public string Profesor { get; set; } = string.Empty;
 
@@ -25,5 +28,12 @@
         public string Horario { get; set; } = string.Empty;
 
         public string Estado { get; set; } = string.Empty;
+    }
+
+    public class CursoFiltroViewModel
+    {
+        public int IdCurso { get; set; }
+
+        public string Nombre { get; set; } = string.Empty;
     }
 }

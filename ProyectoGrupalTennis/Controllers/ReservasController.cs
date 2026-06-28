@@ -359,7 +359,7 @@ namespace ProyectoGrupalTennis.Controllers
 
 
         [Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> GestionReservas()
+        public async Task<IActionResult> GestionReservas(DateTime? fecha, int? idCurso, string? estado)
         {
             var reservas = await _context.Reservas
                 .Include(r => r.Cancha)
@@ -368,23 +368,89 @@ namespace ProyectoGrupalTennis.Controllers
                 .OrderByDescending(r => r.FechaReserva)
                 .ToListAsync();
 
+            var matriculasQuery = _context.Matriculas
+              .Include(m => m.Alumno)
+              .Include(m => m.Curso)
+                  .ThenInclude(c => c.Profesor)
+              .Include(m => m.Curso)
+                  .ThenInclude(c => c.Horarios)
+              .AsQueryable();
+
+            if (fecha.HasValue)
+            {
+                matriculasQuery = matriculasQuery
+                    .Where(m => m.FechaMatricula.Date == fecha.Value.Date);
+            }
+
+            if (idCurso.HasValue)
+            {
+                matriculasQuery = matriculasQuery
+                    .Where(m => m.IdCurso == idCurso.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(estado))
+            {
+                matriculasQuery = matriculasQuery
+                    .Where(m => m.Estado == estado);
+            }
+
+            var matriculas = await matriculasQuery
+                .OrderByDescending(m => m.FechaMatricula)
+                .ToListAsync();
+
+            var cursos = await _context.Cursos
+                .OrderBy(c => c.Nombre)
+                .Select(c => new CursoFiltroViewModel
+                {
+                    IdCurso = c.IdCurso,
+                    Nombre = c.Nombre
+                })
+                .ToListAsync();
+
+            var reservasViewModel = reservas.Select(r => new AdminReservaItemViewModel
+            {
+                IdReserva = r.IdReserva,
+                Alumno = r.Alumno != null ? $"{r.Alumno.Nombre} {r.Alumno.Apellido}" : "Sin alumno",
+                Curso = "Reserva de cancha",
+                Cancha = r.Cancha != null ? r.Cancha.Nombre : "Sin cancha",
+                Fecha = r.FechaReserva,
+                Horario = $"{r.HoraInicio:hh\\:mm} - {r.HoraFin:hh\\:mm}",
+                Profesor = r.Profesor != null ? $"{r.Profesor.Nombre} {r.Profesor.Apellido}" : "Sin profesor",
+                Estado = r.Estado
+            }).ToList();
+
+            var matriculasViewModel = matriculas.Select(m =>
+            {
+                var horario = m.Curso?.Horarios?.FirstOrDefault();
+
+                return new AdminReservaItemViewModel
+                {
+                    IdReserva = m.IdMatricula,
+                    Alumno = m.Alumno != null ? $"{m.Alumno.Nombre} {m.Alumno.Apellido}" : "Sin alumno",
+                    Curso = m.Curso != null ? m.Curso.Nombre : "Sin curso",
+                    Cancha = "No asignada",
+                    Fecha = m.FechaMatricula,
+                    Horario = horario != null
+                        ? $"{horario.DiaSemana} {horario.HoraInicio:hh\\:mm} - {horario.HoraFin:hh\\:mm}"
+                        : "Sin horario",
+                    Profesor = m.Curso?.Profesor != null
+                        ? $"{m.Curso.Profesor.Nombre} {m.Curso.Profesor.Apellidos}"
+                        : "Sin profesor",
+                    Estado = m.Estado
+                };
+            }).ToList();
+
             var model = new AdminReservasViewModel
             {
                 MensajeExito = TempData["MensajeExito"]?.ToString(),
                 MensajeError = TempData["MensajeError"]?.ToString(),
 
-                Reservas = reservas.Select(r => new AdminReservaItemViewModel
-                {
-                    IdReserva = r.IdReserva,
-                    Cancha = r.Cancha.Nombre,
-                    Profesor = $"{r.Profesor.Nombre} {r.Profesor.Apellido}",
-                    Alumno = r.Alumno != null
-                        ? $"{r.Alumno.Nombre} {r.Alumno.Apellido}"
-                        : "Sin alumno",
-                    Fecha = r.FechaReserva,
-                    Horario = $"{r.HoraInicio:hh\\:mm} - {r.HoraFin:hh\\:mm}",
-                    Estado = r.Estado
-                }).ToList()
+                Cursos = cursos,
+
+                Reservas = reservasViewModel
+               .Concat(matriculasViewModel)
+               .OrderByDescending(r => r.Fecha)
+               .ToList()
             };
 
             return View(model);
