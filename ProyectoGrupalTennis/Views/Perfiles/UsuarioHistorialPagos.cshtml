@@ -45,6 +45,26 @@
                     <option value="Rechazado" selected="@(Model.FiltroEstado == "Rechazado")">Rechazado</option>
                 </select>
 
+                <select name="factura" class="form-select">
+                    <option value="">Todas las facturas</option>
+
+                    <option value="Disponible"
+                            selected="@(Model.FiltroFactura == "Disponible")">
+                        Disponible
+                    </option>
+
+                    <option value="Pendiente"
+                            selected="@(Model.FiltroFactura == "Pendiente")">
+                        En proceso
+                    </option>
+
+                    <option value="No disponible"
+                            selected="@(Model.FiltroFactura == "No disponible")">
+                        No disponible
+                    </option>
+                </select>
+
+
                 <button class="btn btn-primary" type="submit">
                     <i class="fa fa-search"></i> Buscar
                 </button>
@@ -59,9 +79,10 @@
                             <th>Método</th>
                             <th>Monto</th>
                             <th>Fecha de pago</th>
-                            <th>Fecha de factura</th>
-                            <th>Estado</th>
-                            <th>Detalle</th>
+                            <th>Estado del pago</th>
+                            <th>Factura</th>
+                            <th>Fecha factura</th>
+                            <th>Comprobante</th>
                         </tr>
                     </thead>
 
@@ -84,17 +105,49 @@
                                     <td>@pago.MetodoPago</td>
                                     <td>₡@pago.Monto.ToString("N0")</td>
                                     <td>@pago.FechaPago.ToString("dd/MM/yyyy")</td>
+
+                                    <td>
+                                        @pago.Estado
+                                    </td>
+
+                                    <td>
+                                        @if (pago.NumeroFactura != null)
+                                        {
+                                            <span class="perfil-badge-success">Disponible</span>
+                                        }
+                                        else if (pago.Estado == "Pagado")
+                                        {
+                                            <span class="perfil-badge-warning">Pendiente</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No disponible</span>
+                                        }
+                                    </td>
+
                                     <td>
                                         @(pago.FechaFactura.HasValue
                                             ? pago.FechaFactura.Value.ToString("dd/MM/yyyy")
-                                            : "Pendiente")
+                                            : "—")
                                     </td>
-                                    <td>@pago.Estado</td>
+                                     <td>
+                                        @if (pago.NumeroFactura != null)
+                                        {
+                                            <a href="#" class="perfil-action-link">
+                                                Descargar
+                                            </a>
+                                        }
+                                        else if (pago.Estado == "Pagado")
+                                        {
+                                            <span class="text-muted">Pendiente de factura</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No disponible</span>
+                                        }
+                                    </td>
                                     <td>
-                                        <a href="#" class="perfil-action-link">
-                                             Comprobante
-                                        </a>
-                                    </td>
+                                   
                                 </tr>
                             }
                         }

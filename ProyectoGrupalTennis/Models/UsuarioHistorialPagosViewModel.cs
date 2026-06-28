@@ -6,6 +6,8 @@
 
         public string? FiltroEstado { get; set; }
 
+        public string? FiltroFactura { get; set; }
+
         public List<UsuarioPagoItemViewModel> Pagos { get; set; } = new();
     }
 

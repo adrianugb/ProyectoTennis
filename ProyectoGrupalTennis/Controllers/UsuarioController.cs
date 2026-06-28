@@ -519,7 +519,10 @@ namespace ProyectoGrupalTennis.Controllers
 
 
         // GET: /Usuario/HistorialPagos USER-05-003 
-        public async Task<IActionResult> HistorialPagos(string? buscar, string? estado)
+        public async Task<IActionResult> HistorialPagos(
+            string? buscar,
+            string? estado,
+            string? factura)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
@@ -540,6 +543,24 @@ namespace ProyectoGrupalTennis.Controllers
                 query = query.Where(p => p.Estado == estado);
             }
 
+            if (!string.IsNullOrWhiteSpace(factura))
+            {
+                query = factura switch
+                {
+                    "Disponible" => query.Where(p => p.Factura != null),
+
+                    "Pendiente" => query.Where(p =>
+                        p.Factura == null &&
+                        p.Estado == "Pagado"),
+
+                    "No disponible" => query.Where(p =>
+                        p.Factura == null &&
+                        p.Estado != "Pagado"),
+
+                    _ => query
+                };
+            }
+
             var pagos = await query
                 .OrderByDescending(p => p.FechaPago)
                 .ToListAsync();
@@ -548,6 +569,8 @@ namespace ProyectoGrupalTennis.Controllers
             {
                 FiltroBuscar = buscar,
                 FiltroEstado = estado,
+                FiltroFactura = factura,
+
                 Pagos = pagos.Select(p => new UsuarioPagoItemViewModel
                 {
                     IdPago = p.IdPago,
