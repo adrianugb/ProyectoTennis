@@ -516,5 +516,53 @@ namespace ProyectoGrupalTennis.Controllers
             return RedirectToAction(nameof(ConfirmacionSolicitud), new { id = solicitud.IdSolicitudCurso });
 
         }
+
+
+        // GET: /Usuario/HistorialPagos USER-05-003 
+        public async Task<IActionResult> HistorialPagos(string? buscar, string? estado)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var query = _context.Pagos
+                .Include(p => p.Factura)
+                .Where(p => p.IdAlumno == userId)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(buscar))
+            {
+                query = query.Where(p =>
+                    p.TipoPago.Contains(buscar) ||
+                    p.MetodoPago.Contains(buscar));
+            }
+
+            if (!string.IsNullOrWhiteSpace(estado))
+            {
+                query = query.Where(p => p.Estado == estado);
+            }
+
+            var pagos = await query
+                .OrderByDescending(p => p.FechaPago)
+                .ToListAsync();
+
+            var model = new UsuarioHistorialPagosViewModel
+            {
+                FiltroBuscar = buscar,
+                FiltroEstado = estado,
+                Pagos = pagos.Select(p => new UsuarioPagoItemViewModel
+                {
+                    IdPago = p.IdPago,
+                    Concepto = p.TipoPago,
+                    MetodoPago = p.MetodoPago,
+                    Monto = p.Monto,
+                    FechaPago = p.FechaPago,
+                    FechaFactura = p.Factura != null ? p.Factura.FechaFactura : null,
+                    NumeroFactura = p.Factura != null ? p.Factura.NumeroFactura : null,
+                    Estado = p.Estado
+                }).ToList()
+            };
+
+            return View("~/Views/Perfiles/UsuarioHistorialPagos.cshtml", model);
+        }
     }
+
 }
