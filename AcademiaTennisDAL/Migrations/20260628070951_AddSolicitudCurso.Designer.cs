@@ -3,6 +3,7 @@ using System;
 using AcademiaTennisDAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AcademiaTennisDAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260628070951_AddSolicitudCurso")]
+    partial class AddSolicitudCurso
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1029,14 +1032,10 @@ namespace AcademiaTennisDAL.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int?>("IdCurso")
+                    b.Property<int>("IdCurso")
                         .HasColumnType("int");
 
                     b.Property<string>("Nivel")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("NombreCurso")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -1584,7 +1583,9 @@ namespace AcademiaTennisDAL.Migrations
 
                     b.HasOne("AcademiaTennisDAL.Entities.Curso", "Curso")
                         .WithMany()
-                        .HasForeignKey("IdCurso");
+                        .HasForeignKey("IdCurso")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Alumno");
 

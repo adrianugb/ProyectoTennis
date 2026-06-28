@@ -1,0 +1,108 @@
+﻿@model ProyectoGrupalTennis.Models.SolicitudCursoViewModel
+
+@{
+    ViewData["Title"] = "Solicitar Curso";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Solicitud de Curso</h1>
+
+                    <p class="perfil-subtitle">
+                        Complete la información para que la academia pueda coordinar el horario más adecuado para usted.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-book"></i>
+                    Nueva Solicitud
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a asp-action="CatalogoCursos"
+                   class="btn btn-outline-secondary btn-sm">
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Volver al catálogo
+                </a>
+            </div>
+
+            <form asp-action="SolicitarCurso" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input asp-for="IdCurso" type="hidden" />
+                <input asp-for="NombreCurso" type="hidden" />
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        Curso seleccionado
+                    </label>
+
+                    <input class="form-control"
+                           value="@Model.NombreCurso"
+                           readonly />
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Nivel" class="form-label"></label>
+
+                    <select asp-for="Nivel" class="form-control">
+                        <option value="">Seleccione...</option>
+                        <option>Principiante</option>
+                        <option>Intermedio</option>
+                        <option>Avanzado</option>
+                    </select>
+
+                    <span asp-validation-for="Nivel"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Disponibilidad"
+                           class="form-label">
+                        Disponibilidad
+                    </label>
+
+                    <textarea asp-for="Disponibilidad"
+                              class="form-control"
+                              rows="4"
+                              placeholder="Ejemplo: Lunes y miércoles después de las 5:00 p.m. o sábados por la mañana."></textarea>
+
+                    <span asp-validation-for="Disponibilidad"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Comentarios"
+                           class="form-label">
+                        Comentarios adicionales
+                    </label>
+
+                    <textarea asp-for="Comentarios"
+                              class="form-control"
+                              rows="3"></textarea>
+                </div>
+
+                <button class="btn btn-success">
+                    <i class="fa fa-paper-plane me-1"></i>
+                    Enviar solicitud
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

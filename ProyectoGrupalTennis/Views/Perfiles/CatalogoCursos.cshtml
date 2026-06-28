@@ -1,0 +1,57 @@
+﻿@model ProyectoGrupalTennis.Models.CatalogoCursosViewModel
+
+@{
+    ViewData["Title"] = "Cursos Disponibles";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container-fluid px-5">
+        <div class="perfil-container" style="max-width: 1280px; margin: 0 auto;">
+
+            <div class="perfil-header mb-5">
+                <div>
+                    <h1 class="perfil-title">Cursos Disponibles</h1>
+                    <p class="perfil-subtitle">
+                        Explore los cursos disponibles bajo solicitud. La academia confirmará posteriormente la disponibilidad de horarios.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-book"></i>
+                    Catálogo de Cursos
+                </div>
+            </div>
+
+            <div class="catalogo-grid">
+                @foreach (var curso in Model.Cursos)
+                {
+                    <div class="catalogo-card-small">
+
+                        <div class="catalogo-info">
+                            <h3>@curso.Nombre</h3>
+
+                            <p>@curso.Descripcion</p>
+
+                            <span>@curso.Detalle</span>
+
+                            <a asp-controller="Usuario"
+                               asp-action="SolicitarCurso"
+                               asp-route-nombreCurso="@curso.Nombre"
+                               class="btn btn-success catalogo-btn">
+                                Solicitar curso
+                            </a>
+                        </div>
+
+                        <img src="@curso.Imagen"
+                             alt="@curso.Nombre"
+                             class="catalogo-img-small" />
+
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+</section>

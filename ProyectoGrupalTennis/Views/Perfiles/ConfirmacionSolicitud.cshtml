@@ -1,0 +1,49 @@
+﻿@model ProyectoGrupalTennis.Models.SolicitudCursoConfirmacionViewModel
+
+@{
+    ViewData["Title"] = "Solicitud enviada";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container text-center">
+
+            <div style="font-size: 56px; color: #95c11f; margin-bottom: 20px;">
+                <i class="fa fa-check-circle"></i>
+            </div>
+
+            <h1 class="perfil-title">Solicitud enviada correctamente</h1>
+
+            <p class="perfil-subtitle">
+                La academia revisará su disponibilidad y le contactará para confirmar el horario.
+            </p>
+
+            <div class="card text-start mt-4 mb-4" style="max-width: 700px; margin: 0 auto;">
+                <div class="card-body">
+                    <p><strong>Curso:</strong> @Model.NombreCurso</p>
+                    <p><strong>Nivel:</strong> @Model.Nivel</p>
+                    <p><strong>Disponibilidad:</strong> @Model.Disponibilidad</p>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Comentarios))
+                    {
+                        <p><strong>Comentarios:</strong> @Model.Comentarios</p>
+                    }
+
+                    <p><strong>Fecha de solicitud:</strong> @Model.FechaSolicitud.ToString("dd/MM/yyyy HH:mm")</p>
+                    <p><strong>Estado:</strong> Pendiente</p>
+                </div>
+            </div>
+
+            <a asp-action="CatalogoCursos" class="btn btn-success">
+                Volver al catálogo
+            </a>
+
+            <a asp-action="AgendaPersonal" class="btn btn-outline-secondary ms-2">
+                Ir a mi agenda
+            </a>
+
+        </div>
+    </div>
+</section>
