@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Services;
 using static System.Net.Mime.MediaTypeNames;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -586,6 +589,106 @@ namespace ProyectoGrupalTennis.Controllers
 
             return View("~/Views/Perfiles/UsuarioHistorialPagos.cshtml", model);
         }
-    }
 
+
+        // GET: /Usuario/DescargarComprobante/ USER-05-004 – Descargar comprobante de pago
+
+        [HttpGet]
+        public async Task<IActionResult> DescargarComprobante(int idPago)
+        {
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var pago = await _context.Pagos
+                .Include(p => p.Alumno)
+                .Include(p => p.Factura)
+                .FirstOrDefaultAsync(p => p.IdPago == idPago && p.IdAlumno == userId);
+
+            if (pago == null)
+            {
+                TempData["Error"] = "No se encontró el pago seleccionado.";
+                return RedirectToAction(nameof(HistorialPagos));
+            }
+
+            var logoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "logo-mmp.png");
+
+            var pdf = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(45);
+                    page.Size(PageSizes.A4);
+
+                    page.Header().Row(row =>
+                    {
+                        if (System.IO.File.Exists(logoPath))
+                        {
+                            row.RelativeItem().Height(70).Image(logoPath).FitHeight();
+                        }
+
+                        row.RelativeItem().AlignRight().Column(col =>
+                        {
+                            col.Item().Text("COMPROBANTE DE PAGO").FontSize(20).Bold();
+                            col.Item().Text($"Pago No. PAG-{pago.IdPago}").FontSize(10);
+                            col.Item().Text($"Fecha de emisión: {DateTime.Now:dd/MM/yyyy}").FontSize(10);
+                        });
+                    });
+
+                    page.Content().PaddingTop(30).Column(col =>
+                    {
+                        col.Spacing(14);
+
+                        col.Item().Text("Datos del alumno").FontSize(14).Bold();
+                        col.Item().Text($"Alumno: {pago.Alumno.Nombre} {pago.Alumno.Apellido}");
+                        col.Item().Text($"Correo: {pago.Alumno.Email}");
+
+                        col.Item().LineHorizontal(1);
+
+                        col.Item().Text("Detalle del pago").FontSize(14).Bold();
+                        col.Item().Text($"Concepto: {pago.TipoPago}");
+                        col.Item().Text($"Método de pago: {pago.MetodoPago}");
+                        col.Item().Text($"Fecha de pago: {pago.FechaPago:dd/MM/yyyy}");
+                        col.Item().Text($"Estado del pago: {pago.Estado}");
+
+                        col.Item().Text($"Monto cancelado: ₡{pago.Monto:N0}")
+                            .FontSize(16)
+                            .Bold();
+
+                        col.Item().LineHorizontal(1);
+
+                        col.Item().Text("Datos de factura").FontSize(14).Bold();
+
+                        if (pago.Factura != null)
+                        {
+                            col.Item().Text($"Número de factura: {pago.Factura.NumeroFactura}");
+                            col.Item().Text($"Fecha de factura: {pago.Factura.FechaFactura:dd/MM/yyyy}");
+                        }
+                        else
+                        {
+                            col.Item().Text("Factura: Pendiente de emisión");
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(pago.Observaciones))
+                        {
+                            col.Item().LineHorizontal(1);
+                            col.Item().Text("Observaciones").FontSize(14).Bold();
+                            col.Item().Text(pago.Observaciones);
+                        }
+
+                        col.Item().PaddingTop(25).Text(
+                            "Este documento corresponde a un comprobante de pago generado por el sistema. No sustituye la factura electrónica emitida mediante el sistema del Ministerio de Hacienda."
+                        ).FontSize(9).Italic();
+                    });
+
+                    page.Footer()
+                        .AlignCenter()
+                        .Text("Academia de Tennis M.M.P. | Comprobante generado automáticamente")
+                        .FontSize(9);
+                });
+            }).GeneratePdf();
+
+            return File(pdf, "application/pdf", $"Comprobante_PAG-{pago.IdPago}.pdf");
+        }
+    }
 }

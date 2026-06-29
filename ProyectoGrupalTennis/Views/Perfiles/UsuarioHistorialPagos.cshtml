@@ -133,7 +133,9 @@
                                      <td>
                                         @if (pago.NumeroFactura != null)
                                         {
-                                            <a href="#" class="perfil-action-link">
+                                            <a asp-action="DescargarComprobante"
+                                               asp-route-idPago="@pago.IdPago"
+                                               class="perfil-action-link">
                                                 Descargar
                                             </a>
                                         }
