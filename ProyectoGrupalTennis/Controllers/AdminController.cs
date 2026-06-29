@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoGrupalTennis.Models.ViewModels;
+using AcademiaTennisDAL.Context;
+using Microsoft.EntityFrameworkCore;
+using ProyectoGrupalTennis.Models;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -11,12 +14,13 @@ namespace ProyectoGrupalTennis.Controllers
     public class AdminController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly AppDbContext _context;
 
-        public AdminController(UserManager<ApplicationUser> userManager)
+        public AdminController(UserManager<ApplicationUser> userManager, AppDbContext context)
         {
             _userManager = userManager;
+            _context = context;
         }
-
         public async Task<IActionResult> Index()
         {
             var usuarios = _userManager.Users.ToList();
@@ -137,5 +141,101 @@ namespace ProyectoGrupalTennis.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: /Admin/AdminPagos
+        public async Task<IActionResult> AdminPagos(
+            string? buscar,
+            string? estado,
+            string? factura,
+            DateTime? fechaDesde,
+            DateTime? fechaHasta)
+        {
+            var query = _context.Pagos
+      .Include(p => p.Alumno)
+      .Include(p => p.Factura)
+      .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(buscar))
+            {
+                query = query.Where(p =>
+                    (p.Alumno != null &&
+                        ((p.Alumno.Nombre + " " + p.Alumno.Apellido).Contains(buscar))) ||
+                    p.TipoPago.Contains(buscar));
+            }
+
+            if (!string.IsNullOrWhiteSpace(estado))
+            {
+                query = query.Where(p => p.Estado == estado);
+            }
+
+            if (!string.IsNullOrWhiteSpace(factura))
+            {
+                query = factura switch
+                {
+                    "Disponible" => query.Where(p => p.Factura != null),
+
+                    "Pendiente" => query.Where(p =>
+                        p.Factura == null &&
+                        p.Estado == "Pagado"),
+
+                    "No disponible" => query.Where(p =>
+                        p.Factura == null &&
+                        p.Estado != "Pagado"),
+
+                    _ => query
+                };
+            }
+
+            if (fechaDesde.HasValue)
+            {
+                query = query.Where(p => p.FechaPago.Date >= fechaDesde.Value.Date);
+            }
+
+            if (fechaHasta.HasValue)
+            {
+                query = query.Where(p => p.FechaPago.Date <= fechaHasta.Value.Date);
+            }
+
+            var pagos = await query
+                .OrderByDescending(p => p.FechaPago)
+                .ToListAsync();
+
+            var model = new AdminHistorialPagosViewModel
+            {
+                FiltroBuscar = buscar,
+                FiltroEstado = estado,
+                FiltroFactura = factura,
+                FechaDesde = fechaDesde,
+                FechaHasta = fechaHasta,
+
+                Pagos = pagos.Select(p => new AdminPagoItemViewModel
+                {
+                    IdPago = p.IdPago,
+                    Alumno = p.Alumno != null
+                        ? $"{p.Alumno.Nombre} {p.Alumno.Apellido}"
+                        : "Sin alumno",
+                    Concepto = p.TipoPago,
+                    MetodoPago = p.MetodoPago,
+                    Monto = p.Monto,
+                    FechaPago = p.FechaPago,
+                    Estado = p.Estado,
+                    FacturaEstado = p.Factura != null
+                        ? "Disponible"
+                        : p.Estado == "Pagado"
+                            ? "Pendiente"
+                            : "No disponible",
+                    FechaFactura = p.Factura != null
+                        ? p.Factura.FechaFactura
+                        : null
+                }).ToList()
+            };
+
+            return View("~/Views/Perfiles/AdminPagos.cshtml", model);
+        }
+
+        // GET: /Admin/AdminFacturas
+        public IActionResult AdminFacturas()
+        {
+            return View("~/Views/Perfiles/AdminFacturas.cshtml");
+        }
     }
 }

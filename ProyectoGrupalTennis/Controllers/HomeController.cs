@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Models;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
+using AcademiaTennisDAL;
+using AcademiaTennisDAL.Context;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -124,9 +127,10 @@ namespace ProyectoGrupalTennis.Controllers
             return View("~/Views/Perfiles/AdminFacturacion.cshtml");
         }
 
+        [Authorize(Roles = "Administrador")]
         public IActionResult AdminPagos()
         {
-            return View("~/Views/Perfiles/AdminPagos.cshtml");
+            return RedirectToAction("AdminPagos", "Admin");
         }
 
         public IActionResult AdminFacturas()

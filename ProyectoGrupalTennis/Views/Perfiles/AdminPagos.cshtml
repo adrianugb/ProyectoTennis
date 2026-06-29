@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ProyectoGrupalTennis.Models.AdminHistorialPagosViewModel
+
+@{
     ViewData["Title"] = "Gestión de Pagos";
 }
 
@@ -12,7 +14,7 @@
                 <div>
                     <h1 class="perfil-title">Gestión de Pagos</h1>
                     <p class="perfil-subtitle">
-                        Registra, confirma, consulta y administra pagos realizados dentro del sistema.
+                        Consulte el historial general de pagos registrados en el sistema.
                     </p>
                 </div>
 
@@ -23,37 +25,73 @@
 
             <div class="perfil-table-block">
                 <div class="perfil-table-header">
-                    <h2 class="perfil-table-title">Listado de pagos</h2>
+                    <h2 class="perfil-table-title">Historial general de pagos</h2>
 
                     <div class="perfil-actions">
                         <a asp-controller="Home" asp-action="AdminFacturacion" class="perfil-btn-outline">
                             <i class="fa fa-arrow-left"></i> Regresar
                         </a>
-
-                        <a href="#" class="perfil-btn">
-                            <i class="fa fa-plus"></i> Registrar pago
-                        </a>
                     </div>
                 </div>
 
-                <div class="perfil-filter-row">
-                    <input type="text" class="form-control" placeholder="Buscar por alumno..." />
+                <form asp-action="AdminPagos" method="get">
 
-                    <select class="form-select">
-                        <option>Filtrar por estado</option>
-                        <option>Pendiente</option>
-                        <option>Pagado</option>
-                        <option>Anulado</option>
-                    </select>
+                    <div class="perfil-filter-row">
+                        <input type="text"
+                               name="buscar"
+                               value="@Model.FiltroBuscar"
+                               class="form-control"
+                               placeholder="Buscar por alumno o concepto..." />
+                    </div>
 
-                    <select class="form-select">
-                        <option>Filtrar por fecha</option>
-                        <option>Hoy</option>
-                        <option>Esta semana</option>
-                        <option>Este mes</option>
-                    </select>
-                </div>
+                    <div class="perfil-filter-row">
 
+                        <select name="estado" class="form-select">
+                            <option value="">Todos los estados</option>
+                            <option value="Pendiente" selected="@(Model.FiltroEstado == "Pendiente")">Pendiente</option>
+                            <option value="Pagado" selected="@(Model.FiltroEstado == "Pagado")">Pagado</option>
+                            <option value="Anulado" selected="@(Model.FiltroEstado == "Anulado")">Anulado</option>
+                            <option value="Rechazado" selected="@(Model.FiltroEstado == "Rechazado")">Rechazado</option>
+                        </select>
+
+                        <select name="factura" class="form-select">
+                            <option value="">Todas las facturas</option>
+                            <option value="Disponible" selected="@(Model.FiltroFactura == "Disponible")">Disponible</option>
+                            <option value="Pendiente" selected="@(Model.FiltroFactura == "Pendiente")">Pendiente</option>
+                            <option value="No disponible" selected="@(Model.FiltroFactura == "No disponible")">No disponible</option>
+                        </select>
+
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Desde</label>
+                            <input type="date"
+                                   name="fechaDesde"
+                                   value="@(Model.FechaDesde?.ToString("yyyy-MM-dd"))"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Hasta</label>
+                            <input type="date"
+                                   name="fechaHasta"
+                                   value="@(Model.FechaHasta?.ToString("yyyy-MM-dd"))"
+                                   class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="perfil-filter-row mt-3">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+
+                        <a asp-action="AdminPagos" class="btn btn-outline-secondary">
+                            Limpiar
+                        </a>
+                    </div>
+
+                </form>
                 <div class="table-responsive">
                     <table class="perfil-table">
                         <thead>
@@ -61,56 +99,64 @@
                                 <th>ID</th>
                                 <th>Alumno</th>
                                 <th>Concepto</th>
+                                <th>Método</th>
                                 <th>Monto</th>
-                                <th>Fecha</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
+                                <th>Fecha de pago</th>
+                                <th>Estado del pago</th>
+                                <th>Factura</th>
+                                <th>Fecha factura</th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            <tr>
-                                <td>PAG-001</td>
-                                <td>María González</td>
-                                <td>Matrícula</td>
-                                <td>₡35,000</td>
-                                <td>10/04/2026</td>
-                                <td><span class="perfil-badge-warning">Pendiente</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Confirmar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Anular</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>PAG-002</td>
-                                <td>Carlos Ramírez</td>
-                                <td>Mensualidad</td>
-                                <td>₡28,000</td>
-                                <td>08/04/2026</td>
-                                <td><span class="perfil-badge-success">Pagado</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Revertir</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>PAG-003</td>
-                                <td>Ana López</td>
-                                <td>Clase especial</td>
-                                <td>₡12,000</td>
-                                <td>06/04/2026</td>
-                                <td><span class="perfil-badge-danger">Anulado</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                </td>
-                            </tr>
+                            @if (!Model.Pagos.Any())
+                            {
+                                <tr>
+                                    <td colspan="9" class="text-center">
+                                        No hay pagos registrados.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var pago in Model.Pagos)
+                                {
+                                    <tr>
+                                        <td>PAG-@pago.IdPago</td>
+                                        <td>@pago.Alumno</td>
+                                        <td>@pago.Concepto</td>
+                                        <td>@pago.MetodoPago</td>
+                                        <td>₡@pago.Monto.ToString("N0")</td>
+                                        <td>@pago.FechaPago.ToString("dd/MM/yyyy")</td>
+                                        <td>@pago.Estado</td>
+
+                                        <td>
+                                            @if (pago.FacturaEstado == "Disponible")
+                                            {
+                                                <span class="perfil-badge-success">Disponible</span>
+                                            }
+                                            else if (pago.FacturaEstado == "Pendiente")
+                                            {
+                                                <span class="perfil-badge-warning">En proceso</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No disponible</span>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            @(pago.FechaFactura.HasValue
+                                                ? pago.FechaFactura.Value.ToString("dd/MM/yyyy")
+                                                : "—")
+                                        </td>
+                                    </tr>
+                                }
+                            }
                         </tbody>
                     </table>
                 </div>
-              
+
             </div>
 
         </div>
