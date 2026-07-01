@@ -2,34 +2,55 @@
     ViewData["Title"] = "Notificaciones";
 }
 
-
-
-
 <div class="container" style="padding: 40px 0;">
     <div class="dashboard-block">
         <h1 class="page-title">Notificaciones Automáticas</h1>
-        <p class="page-subtitle">Panel visual para la gestión de avisos, recordatorios y mensajes del sistema.</p>
+        <p class="page-subtitle">
+            Acceda al panel de notificaciones correspondiente a su perfil.
+        </p>
 
         <div class="action-buttons" style="margin-bottom: 10px; display:flex; flex-wrap:wrap; gap:10px;">
             <a href="/Home/Index" class="dashboard-mini-btn">Volver al inicio</a>
-            <button type="button" class="dashboard-mini-btn" onclick="mostrarVistaNotificaciones('vista-admin')">Administrador</button>
-            <button type="button" class="dashboard-mini-btn" onclick="mostrarVistaNotificaciones('vista-profesor')">Profesor</button>
-            <button type="button" class="dashboard-mini-btn" onclick="mostrarVistaNotificaciones('vista-usuario')">Usuario</button>
+
+            @if (User.IsInRole("Administrador"))
+            {
+                <a asp-controller="Home"
+                   asp-action="Notificaciones"
+                   class="dashboard-mini-btn">
+                    Administrador
+                </a>
+            }
+
+            @if (User.IsInRole("Profesor"))
+            {
+                <a asp-controller="Home"
+                   asp-action="Notificaciones"
+                   class="dashboard-mini-btn">
+                    Profesor
+                </a>
+            }
+
+            @if (User.IsInRole("Usuario"))
+            {
+                <a asp-controller="Usuario"
+                   asp-action="Notificaciones"
+                   class="dashboard-mini-btn">
+                    Usuario
+                </a>
+            }
         </div>
     </div>
 
-    <div id="vista-admin" class="vista-notificaciones" style="margin-top: 30px;">
-        @await Html.PartialAsync("~/Views/Notificaciones/_NotificacionesAdmin.cshtml")
-    </div>
-
-    <div id="vista-profesor" class="vista-notificaciones" style="margin-top: 30px; display:none;">
-        @await Html.PartialAsync("~/Views/Notificaciones/_NotificacionesProfesor.cshtml")
-    </div>
-
-    <div id="vista-usuario" class="vista-notificaciones" style="margin-top: 30px; display:none;">
-        @await Html.PartialAsync("~/Views/Notificaciones/_NotificacionesUsuario.cshtml")
-    </div>
+    @if (User.IsInRole("Administrador"))
+    {
+        <div class="vista-notificaciones" style="margin-top: 30px;">
+            @await Html.PartialAsync("~/Views/Notificaciones/_NotificacionesAdmin.cshtml")
+        </div>
+    }
+    else if (User.IsInRole("Profesor"))
+    {
+        <div class="vista-notificaciones" style="margin-top: 30px;">
+            @await Html.PartialAsync("~/Views/Notificaciones/_NotificacionesProfesor.cshtml")
+        </div>
+    }
 </div>
-@section Scripts {
-    <script src="~/js/Notificaciones.js"></script>
-}

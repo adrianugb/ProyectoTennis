@@ -1,4 +1,6 @@
-﻿<div class="module-block">
+﻿@model ProyectoGrupalTennis.Models.NotificacionesUsuarioViewModel
+
+<div class="module-block">
     <h1 class="module-title">Notificaciones - Alumno</h1>
     <p class="module-subtitle">
         Centro de notificaciones y preferencias de comunicación.
@@ -71,42 +73,60 @@
                     <th style="text-align:center;">Acción</th>
                 </tr>
             </thead>
+
             <tbody>
-                <tr>
-                    <td>Clase confirmada</td>
-                    <td>Tu reserva para el miércoles a las 5:00 p.m. fue confirmada correctamente.</td>
-                    <td><span class="badge-soft-success">Recibida</span></td>
-                    <td style="text-align:center;">
-                        <button type="button" class="module-btn"
-                                onclick="verDetalleAlumno('Clase confirmada', 'Tu reserva para el miércoles a las 5:00 p.m. fue confirmada correctamente.', 'Recibida')">
-                            Ver detalle
-                        </button>
-                    </td>
-                </tr>
+                @if (Model == null || Model.Notificaciones == null || !Model.Notificaciones.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            No tienes notificaciones registradas.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model.Notificaciones)
+                    {
+                        var estadoTexto = item.Leida ? "Leída" : "Nueva";
 
-                <tr>
-                    <td>Pago registrado</td>
-                    <td>Tu pago mensual fue procesado exitosamente.</td>
-                    <td><span class="badge-soft-success">Recibida</span></td>
-                    <td style="text-align:center;">
-                        <button type="button" class="module-btn"
-                                onclick="verDetalleAlumno('Pago registrado', 'Tu pago mensual fue procesado exitosamente.', 'Recibida')">
-                            Ver detalle
-                        </button>
-                    </td>
-                </tr>
+                        <tr class="@(item.Leida ? "" : "fw-bold")">
+                            <td>@item.Titulo</td>
+                            <td>@item.Mensaje</td>
+                            <td>
+                                @if (item.Leida)
+                                {
+                                    <span class="badge-soft-success">Leída</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-soft-warning">Nueva</span>
+                                }
+                            </td>
+                            <td style="text-align:center;">
+                                <button type="button"
+                                        class="module-btn"
+                                        onclick="verDetalleAlumno('@item.Titulo', '@item.Mensaje', '@estadoTexto')">
+                                    Ver detalle
+                                </button>
 
-                <tr>
-                    <td>Avance de nivel</td>
-                    <td>Has alcanzado el nivel Intermedio 2. ¡Sigue así!</td>
-                    <td><span class="badge-soft-warning">Nueva</span></td>
-                    <td style="text-align:center;">
-                        <button type="button" class="module-btn"
-                                onclick="verDetalleAlumno('Avance de nivel', 'Has alcanzado el nivel Intermedio 2. ¡Sigue así!', 'Nueva')">
-                            Ver detalle
-                        </button>
-                    </td>
-                </tr>
+                                @if (!item.Leida)
+                                {
+                                    <form asp-controller="Usuario"
+                                          asp-action="MarcarNotificacionLeida"
+                                          method="post"
+                                          style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="idNotificacion" value="@item.IdNotificacion" />
+
+                                        <button type="submit" class="module-btn">
+                                            Marcar como leída
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
             </tbody>
         </table>
     </div>

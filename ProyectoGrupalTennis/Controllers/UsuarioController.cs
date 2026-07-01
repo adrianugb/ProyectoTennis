@@ -690,5 +690,58 @@ namespace ProyectoGrupalTennis.Controllers
 
             return File(pdf, "application/pdf", $"Comprobante_PAG-{pago.IdPago}.pdf");
         }
+
+        // GET: /Usuario/Notificaciones - USER-09-010 – Marcar notificación como leída
+        public async Task<IActionResult> Notificaciones()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var notificaciones = await _context.Notificaciones
+                .Where(n => n.IdUsuario == userId)
+                .OrderByDescending(n => n.FechaEnvio)
+                .ToListAsync();
+
+            var model = new NotificacionesUsuarioViewModel
+            {
+                Notificaciones = notificaciones.Select(n => new NotificacionUsuarioItemViewModel
+                {
+                    IdNotificacion = n.IdNotificacion,
+                    Tipo = n.Tipo,
+                    Titulo = n.Titulo,
+                    Mensaje = n.Mensaje,
+                    Leida = n.Leida,
+                    FechaEnvio = n.FechaEnvio
+                }).ToList()
+            };
+
+            return View("~/Views/Notificaciones/_NotificacionesUsuario.cshtml", model);
+        }
+
+        // POST: /Usuario/MarcarNotificacionLeida
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarcarNotificacionLeida(int idNotificacion)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var notificacion = await _context.Notificaciones
+                .FirstOrDefaultAsync(n =>
+                    n.IdNotificacion == idNotificacion &&
+                    n.IdUsuario == userId);
+
+            if (notificacion == null)
+            {
+                TempData["Error"] = "No se encontró la notificación seleccionada.";
+                return RedirectToAction(nameof(Notificaciones));
+            }
+
+            notificacion.Leida = true;
+
+            await _context.SaveChangesAsync();
+
+            TempData["MensajeExito"] = "La notificación fue marcada como leída.";
+
+            return RedirectToAction(nameof(Notificaciones));
+        }
     }
 }
