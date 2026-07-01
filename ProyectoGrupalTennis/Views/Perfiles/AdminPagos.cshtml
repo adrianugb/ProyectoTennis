@@ -31,6 +31,17 @@
                         <a asp-controller="Home" asp-action="AdminFacturacion" class="perfil-btn-outline">
                             <i class="fa fa-arrow-left"></i> Regresar
                         </a>
+
+
+                        <a asp-action="ExportarReportePagos"
+                           asp-route-buscar="@Model.FiltroBuscar"
+                           asp-route-estado="@Model.FiltroEstado"
+                           asp-route-factura="@Model.FiltroFactura"
+                           asp-route-fechaDesde="@(Model.FechaDesde?.ToString("yyyy-MM-dd"))"
+                           asp-route-fechaHasta="@(Model.FechaHasta?.ToString("yyyy-MM-dd"))"
+                           class="perfil-btn">
+                            <i class="fa fa-download"></i> Exportar reporte
+                        </a>
                     </div>
                 </div>
 
