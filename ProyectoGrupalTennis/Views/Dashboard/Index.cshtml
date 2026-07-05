@@ -1,4 +1,5 @@
-﻿@{
+﻿@model ProyectoGrupalTennis.Models.DashboardAdminViewModel
+@{
     ViewData["Title"] = "Dashboard y Reportes";
 }
 
@@ -34,7 +35,7 @@
         </div>
 
         <div class="vista active" id="dashboard-admin">
-            @await Html.PartialAsync("~/Views/Dashboard/_DashboardAdmin.cshtml")
+            @await Html.PartialAsync("~/Views/Dashboard/_DashboardAdmin.cshtml", Model)
         </div>
 
         <div class="vista" id="dashboard-admin-dashboard">

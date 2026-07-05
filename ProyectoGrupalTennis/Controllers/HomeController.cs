@@ -1,15 +1,22 @@
+using AcademiaTennisDAL;
+using AcademiaTennisDAL.Context;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Models;
 using System.Diagnostics;
-using AcademiaTennisDAL;
-using AcademiaTennisDAL.Context;
 
 namespace ProyectoGrupalTennis.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly AcademiaTennisDAL.Context.AppDbContext _context;
+
+        public HomeController(AcademiaTennisDAL.Context.AppDbContext context)
+        {
+            _context = context;
+        }
         #region Vistas generales
 
         public IActionResult Index()
@@ -46,9 +53,96 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Dashboard
 
-        public IActionResult Dashboard()
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Dashboard(DateTime? fechaInicio, DateTime? fechaFin)
         {
-            return View("~/Views/Dashboard/Index.cshtml");
+            var model = await ConstruirDashboardAdminAsync(fechaInicio, fechaFin);
+            return View("~/Views/Dashboard/Index.cshtml", model);
+        }
+
+        // ADM-08-004: recarga solo el bloque de administrador vía AJAX al aplicar el filtro de fechas
+        [Authorize(Roles = "Administrador")]
+        [HttpGet]
+        public async Task<IActionResult> FiltrarDashboardAdmin(DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            var model = await ConstruirDashboardAdminAsync(fechaInicio, fechaFin);
+            return PartialView("~/Views/Dashboard/_DashboardAdmin.cshtml", model);
+        }
+
+        private async Task<DashboardAdminViewModel> ConstruirDashboardAdminAsync(DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            // ADM-08-004: si no mandan fechas, usamos el mes actual por defecto
+            var inicio = (fechaInicio ?? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)).Date;
+            var fin = (fechaFin ?? inicio.AddMonths(1).AddDays(-1)).Date;
+
+            // ADM-08-002: alumnos activos = alumnos con al menos una matrícula "Activa"
+            var alumnosActivos = await _context.Matriculas
+                .Where(m => m.Estado == "Activa")
+                .Select(m => m.IdAlumno)
+                .Distinct()
+                .CountAsync();
+
+            var alumnosNuevosEnPeriodo = await _context.Matriculas
+                .Where(m => m.Estado == "Activa"
+                         && m.FechaMatricula.Date >= inicio
+                         && m.FechaMatricula.Date <= fin)
+                .Select(m => m.IdAlumno)
+                .Distinct()
+                .CountAsync();
+
+            // ADM-08-003: clases programadas dentro del rango de fechas seleccionado
+            var clasesDelPeriodo = await _context.ClasesProgramadas
+                .Include(c => c.Curso)
+                    .ThenInclude(c => c.Profesor)
+                .Where(c => c.FechaClase.Date >= inicio && c.FechaClase.Date <= fin)
+                .OrderBy(c => c.FechaClase)
+                .ToListAsync();
+
+            // Profesores activos (indicador general del panel)
+            var profesoresActivos = await _context.Profesores
+                .Where(p => p.Activo)
+                .CountAsync();
+
+            // Ingresos del periodo (pagos con estado "Pagado")
+            var ingresosPeriodo = await _context.Pagos
+                .Where(p => p.Estado == "Pagado"
+                         && p.FechaPago.Date >= inicio
+                         && p.FechaPago.Date <= fin)
+                .SumAsync(p => (decimal?)p.Monto) ?? 0;
+
+            var model = new DashboardAdminViewModel
+            {
+                FechaInicio = inicio,
+                FechaFin = fin,
+                AlumnosActivos = alumnosActivos,
+                AlumnosNuevosEnPeriodo = alumnosNuevosEnPeriodo,
+                ClasesProgramadas = clasesDelPeriodo.Count,
+                ProfesoresActivos = profesoresActivos,
+                IngresosPeriodo = ingresosPeriodo,
+                ClasesDelPeriodo = clasesDelPeriodo.Select(c => new ClaseResumenViewModel
+                {
+                    NombreCurso = c.Curso?.Nombre ?? "Sin curso",
+                    Profesor = c.Curso?.Profesor != null
+                        ? $"{c.Curso.Profesor.Nombre} {c.Curso.Profesor.Apellidos}"
+                        : "Sin asignar",
+                    Fecha = c.FechaClase,
+                    HoraInicio = c.HoraInicio,
+                    CuposOcupados = c.Curso?.Matriculas?.Count(m => m.Estado == "Activa") ?? 0,
+                    CuposTotales = c.Curso?.CuposDisponibles ?? 0,
+                    Estado = c.Estado
+                }).ToList(),
+                Alertas = new List<string>()
+            };
+
+            // Alertas simples (puedes ampliarlas después)
+            var clasesLlenas = model.ClasesDelPeriodo.Count(c => c.CuposOcupados >= c.CuposTotales && c.CuposTotales > 0);
+            if (clasesLlenas > 0)
+                model.Alertas.Add($"{clasesLlenas} clase(s) alcanzaron el límite de cupos.");
+
+            if (alumnosNuevosEnPeriodo > 0)
+                model.Alertas.Add($"{alumnosNuevosEnPeriodo} alumno(s) nuevo(s) se matricularon en este periodo.");
+
+            return model;
         }
 
         #endregion
@@ -101,7 +195,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Perfiles
 
-       
+
         public IActionResult PerfilAdmin()
         {
             return View("~/Views/Perfiles/PerfilAdmin.cshtml");
@@ -146,7 +240,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Perfil Usuario 
 
-        
+
         public IActionResult PerfilUsuario()
         {
             return View("~/Views/Perfiles/PerfilUsuario.cshtml");
@@ -175,7 +269,7 @@ namespace ProyectoGrupalTennis.Controllers
             return View("~/Views/Perfiles/ProfesorAlumnos.cshtml");
         }
 
-       public IActionResult ProfesorCursos()
+        public IActionResult ProfesorCursos()
         {
             return View("~/Views/Perfiles/ProfesorCursos.cshtml");
         }

@@ -1,4 +1,6 @@
-﻿<div class="dashboard-block">
+﻿@model ProyectoGrupalTennis.Models.DashboardAdminViewModel
+
+<div class="dashboard-block">
     <div class="dashboard-header">
         <div>
             <h1 class="page-title">Administrador</h1>
@@ -12,31 +14,31 @@
         </div>
     </div>
 
-    <!-- Filtros -->
+    <!-- Filtros (ADM-08-004) -->
     <div class="dashboard-filter-box">
         <div class="row">
             <div class="col-md-3">
                 <label class="filter-label">Fecha inicial</label>
-                <input type="date" class="form-control" value="2026-04-01">
+                <input type="date" id="filtroFechaInicio" class="form-control" value="@Model.FechaInicio.ToString("yyyy-MM-dd")">
             </div>
 
             <div class="col-md-3">
                 <label class="filter-label">Fecha final</label>
-                <input type="date" class="form-control" value="2026-04-30">
+                <input type="date" id="filtroFechaFin" class="form-control" value="@Model.FechaFin.ToString("yyyy-MM-dd")">
             </div>
 
             <div class="col-md-3">
                 <label class="filter-label">Periodo rápido</label>
-                <select class="form-control">
-                    <option selected>Este mes</option>
-                    <option>Últimos 7 días</option>
-                    <option>Último mes</option>
-                    <option>Último trimestre</option>
+                <select class="form-control" id="filtroPeriodoRapido" onchange="aplicarPeriodoRapido()">
+                    <option value="">Personalizado</option>
+                    <option value="7">Últimos 7 días</option>
+                    <option value="mes">Este mes</option>
+                    <option value="trimestre">Último trimestre</option>
                 </select>
             </div>
 
             <div class="col-md-3 d-flex align-items-end">
-                <button class="dashboard-mini-btn" style="width: 100%;">
+                <button type="button" class="dashboard-mini-btn" style="width: 100%;" onclick="aplicarFiltroDashboardAdmin()">
                     <i class="fa fa-filter"></i> Aplicar filtro
                 </button>
             </div>
@@ -47,29 +49,29 @@
     <div class="dashboard-summary-strip">
         <div class="summary-item">
             <span class="summary-title">Periodo analizado</span>
-            <strong>01 abril 2026 - 30 abril 2026</strong>
+            <strong>@Model.FechaInicio.ToString("dd MMMM yyyy") - @Model.FechaFin.ToString("dd MMMM yyyy")</strong>
         </div>
 
         <div class="summary-item">
             <span class="summary-title">Estado general</span>
-            <strong>Operación estable</strong>
+            <strong>@(Model.ClasesProgramadas > 0 ? "Operación activa" : "Sin actividad en el periodo")</strong>
         </div>
 
         <div class="summary-item">
-            <span class="summary-title">Tendencia</span>
-            <strong>+8% participación</strong>
+            <span class="summary-title">Alumnos nuevos</span>
+            <strong>+@Model.AlumnosNuevosEnPeriodo en el periodo</strong>
         </div>
     </div>
 
-    <!-- KPIs -->
+    <!-- KPIs (ADM-08-001 / ADM-08-002 / ADM-08-003) -->
     <div class="row">
         <div class="col-md-3">
             <div class="dashboard-stat-card">
                 <div class="stat-top">
                     <i class="fa fa-users"></i>
-                    <span class="stat-badge positive">+12</span>
+                    <span class="stat-badge positive">+@Model.AlumnosNuevosEnPeriodo</span>
                 </div>
-                <h3>128</h3>
+                <h3>@Model.AlumnosActivos</h3>
                 <p>Alumnos activos</p>
                 <small>Participación actual en la plataforma</small>
             </div>
@@ -79,9 +81,9 @@
             <div class="dashboard-stat-card">
                 <div class="stat-top">
                     <i class="fa fa-calendar-alt"></i>
-                    <span class="stat-badge neutral">36</span>
+                    <span class="stat-badge neutral">@Model.ClasesProgramadas</span>
                 </div>
-                <h3>36</h3>
+                <h3>@Model.ClasesProgramadas</h3>
                 <p>Clases programadas</p>
                 <small>Carga operativa del periodo seleccionado</small>
             </div>
@@ -93,7 +95,7 @@
                     <i class="fa fa-chalkboard-teacher"></i>
                     <span class="stat-badge positive">Activos</span>
                 </div>
-                <h3>12</h3>
+                <h3>@Model.ProfesoresActivos</h3>
                 <p>Profesores registrados</p>
                 <small>Docentes disponibles para impartir clases</small>
             </div>
@@ -103,9 +105,8 @@
             <div class="dashboard-stat-card">
                 <div class="stat-top">
                     <i class="fa fa-money-bill-wave"></i>
-                    <span class="stat-badge positive">+5%</span>
                 </div>
-                <h3>₡2.4M</h3>
+                <h3>₡@Model.IngresosPeriodo.ToString("N0")</h3>
                 <p>Ingresos del periodo</p>
                 <small>Resumen económico general</small>
             </div>
@@ -134,38 +135,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Tennis infantil</td>
-                                <td>Laura Gómez</td>
-                                <td>08/04/2026</td>
-                                <td>8:00 a.m.</td>
-                                <td>18 / 20</td>
-                                <td><span class="badge-soft badge-soft-success">Programada</span></td>
-                            </tr>
-                            <tr>
-                                <td>Juego juvenil</td>
-                                <td>Carlos Vega</td>
-                                <td>10/04/2026</td>
-                                <td>3:00 p.m.</td>
-                                <td>20 / 20</td>
-                                <td><span class="badge-soft badge-soft-warning">Llena</span></td>
-                            </tr>
-                            <tr>
-                                <td>Postura funcional</td>
-                                <td>Andrea Solano</td>
-                                <td>12/04/2026</td>
-                                <td>5:30 p.m.</td>
-                                <td>12 / 20</td>
-                                <td><span class="badge-soft badge-soft-info">Disponible</span></td>
-                            </tr>
-                            <tr>
-                                <td>Entrenamiento personal</td>
-                                <td>Marco Ramírez</td>
-                                <td>15/04/2026</td>
-                                <td>6:00 p.m.</td>
-                                <td>16 / 20</td>
-                                <td><span class="badge-soft badge-soft-success">Programada</span></td>
-                            </tr>
+                            @if (Model.ClasesDelPeriodo.Any())
+                            {
+                                @foreach (var clase in Model.ClasesDelPeriodo)
+                                {
+                                    var badgeClass = clase.CuposOcupados >= clase.CuposTotales && clase.CuposTotales > 0
+                                        ? "badge-soft-warning"
+                                        : clase.Estado == "Cancelada" ? "badge-soft-danger" : "badge-soft-success";
+
+                                    <tr>
+                                        <td>@clase.NombreCurso</td>
+                                        <td>@clase.Profesor</td>
+                                        <td>@clase.Fecha.ToString("dd/MM/yyyy")</td>
+                                        <td>@clase.HoraInicio.ToString(@"hh\:mm")</td>
+                                        <td>@clase.CuposOcupados / @clase.CuposTotales</td>
+                                        <td><span class="badge-soft @badgeClass">@clase.Estado</span></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center">No hay clases programadas en el periodo seleccionado.</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -179,18 +172,17 @@
                 </div>
 
                 <ul class="dashboard-alert-list">
-                    <li>
-                        <i class="fa fa-exclamation-circle"></i>
-                        2 clases alcanzaron el límite de cupos.
-                    </li>
-                    <li>
-                        <i class="fa fa-user-clock"></i>
-                        5 alumnos nuevos se registraron esta semana.
-                    </li>
-                    <li>
-                        <i class="fa fa-chart-line"></i>
-                        La participación aumentó respecto al periodo anterior.
-                    </li>
+                    @if (Model.Alertas.Any())
+                    {
+                        @foreach (var alerta in Model.Alertas)
+                        {
+                            <li><i class="fa fa-exclamation-circle"></i> @alerta</li>
+                        }
+                    }
+                    else
+                    {
+                        <li><i class="fa fa-check-circle"></i> No hay alertas para este periodo.</li>
+                    }
                 </ul>
             </div>
 

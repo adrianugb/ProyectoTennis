@@ -63,4 +63,52 @@ window.addEventListener('load', function () {
         });
     }
 
+    async function aplicarFiltroDashboardAdmin() {
+        const fechaInicio = document.getElementById('filtroFechaInicio').value;
+        const fechaFin = document.getElementById('filtroFechaFin').value;
+
+        if (!fechaInicio || !fechaFin) {
+            alert('Selecciona ambas fechas antes de aplicar el filtro.');
+            return;
+        }
+
+        try {
+            const resp = await fetch(`/Home/FiltrarDashboardAdmin?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
+            if (!resp.ok) {
+                alert('No se pudo aplicar el filtro. Intenta de nuevo.');
+                return;
+            }
+            const html = await resp.text();
+            document.getElementById('dashboard-admin').innerHTML = html;
+        } catch (err) {
+            console.error(err);
+            alert('Ocurrió un error al filtrar el dashboard.');
+        }
+    }
+
+    function aplicarPeriodoRapido() {
+        const select = document.getElementById('filtroPeriodoRapido');
+        const hoy = new Date();
+        let inicio, fin = hoy;
+
+        switch (select.value) {
+            case '7':
+                inicio = new Date(hoy);
+                inicio.setDate(hoy.getDate() - 7);
+                break;
+            case 'mes':
+                inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+                break;
+            case 'trimestre':
+                inicio = new Date(hoy);
+                inicio.setMonth(hoy.getMonth() - 3);
+                break;
+            default:
+                return;
+        }
+
+        document.getElementById('filtroFechaInicio').value = inicio.toISOString().slice(0, 10);
+        document.getElementById('filtroFechaFin').value = fin.toISOString().slice(0, 10);
+        aplicarFiltroDashboardAdmin();
+    }
 });
