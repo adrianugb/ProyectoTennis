@@ -84,6 +84,7 @@
                 <tr>
                     <th>Notificación</th>
                     <th>Descripción</th>
+                    <th>Fecha</th>
                     <th>Estado</th>
                     <th style="text-align:center;">Acción</th>
                 </tr>
@@ -93,7 +94,7 @@
                 @if (Model == null || Model.Notificaciones == null || !Model.Notificaciones.Any())
                 {
                     <tr>
-                        <td colspan="4" class="text-center text-muted">
+                        <td colspan="5" class="text-center text-muted">
                             No tienes notificaciones registradas.
                         </td>
                     </tr>
@@ -107,6 +108,7 @@
                         <tr class="@(item.Leida ? "" : "fw-bold")">
                             <td>@item.Titulo</td>
                             <td>@item.Mensaje</td>
+                            <td>@item.FechaEnvio.ToString("dd/MM/yyyy HH:mm")</td>
                             <td>
                                 @if (item.Leida)
                                 {
@@ -138,6 +140,19 @@
                                         </button>
                                     </form>
                                 }
+
+                                <form asp-controller="Usuario"
+                                      asp-action="EliminarNotificacion"
+                                      method="post"
+                                      style="display:inline;"
+                                      onsubmit="return confirm('¿Eliminar esta notificación?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="idNotificacion" value="@item.IdNotificacion" />
+
+                                    <button type="submit" class="module-btn" style="background:#c0392b;">
+                                        Eliminar
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     }

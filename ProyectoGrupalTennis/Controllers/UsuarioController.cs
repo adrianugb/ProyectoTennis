@@ -755,5 +755,59 @@ namespace ProyectoGrupalTennis.Controllers
 
             return RedirectToAction(nameof(Notificaciones));
         }
+        // GET: /Usuario/NotificacionesResumen - resumen para la campana del navbar (USER-09-009)
+        [HttpGet]
+        public async Task<IActionResult> NotificacionesResumen()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var noLeidas = await _context.Notificaciones
+                .CountAsync(n => n.IdUsuario == userId && !n.Leida);
+
+            var recientes = await _context.Notificaciones
+                .Where(n => n.IdUsuario == userId)
+                .OrderByDescending(n => n.FechaEnvio)
+                .Take(8)
+                .Select(n => new
+                {
+                    id = n.IdNotificacion,
+                    titulo = n.Titulo,
+                    mensaje = n.Mensaje,
+                    leida = n.Leida,
+                    fecha = n.FechaEnvio.ToString("dd/MM/yyyy HH:mm")
+                })
+                .ToListAsync();
+
+            return Json(new { noLeidas, notificaciones = recientes });
+        }
+
+        // POST: /Usuario/EliminarNotificacion - USER-09-009
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarNotificacion(int idNotificacion)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var notificacion = await _context.Notificaciones
+                .FirstOrDefaultAsync(n => n.IdNotificacion == idNotificacion && n.IdUsuario == userId);
+
+            bool esAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
+            if (notificacion == null)
+            {
+                if (esAjax) return Json(new { success = false, mensaje = "No se encontró la notificación." });
+
+                TempData["Error"] = "No se encontró la notificación seleccionada.";
+                return RedirectToAction(nameof(Notificaciones));
+            }
+
+            _context.Notificaciones.Remove(notificacion);
+            await _context.SaveChangesAsync();
+
+            if (esAjax) return Json(new { success = true });
+
+            TempData["MensajeExito"] = "La notificación fue eliminada.";
+            return RedirectToAction(nameof(Notificaciones));
+        }
     }
 }

@@ -295,9 +295,78 @@
             .modal-footer {
                 border-top: 1px solid #eee;
             }
+
+            /* ===== Campana de notificaciones (USER-09-009) ===== */
+            .campana-notificaciones {
+                position: relative;
+            }
+
+                .campana-notificaciones .badge-campana {
+                    position: absolute;
+                    top: 2px;
+                    right: -6px;
+                    background: #e74c3c;
+                    color: #fff;
+                    border-radius: 50%;
+                    font-size: 10px;
+                    padding: 2px 5px;
+                    line-height: 1;
+                }
+
+            .campana-dropdown {
+                width: 320px;
+                max-height: 380px;
+                overflow-y: auto;
+                padding: 8px;
+            }
+
+            .campana-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 8px 10px;
+                border-bottom: 1px solid #eee;
+            }
+
+                .campana-item.campana-no-leida {
+                    background: #f4f8ff;
+                }
+
+            .campana-item-contenido p {
+                margin: 2px 0;
+                font-size: 12.5px;
+                color: #555;
+            }
+
+            .campana-item-contenido small {
+                color: #999;
+            }
+
+            .campana-eliminar {
+                border: none;
+                background: transparent;
+                color: #c0392b;
+                cursor: pointer;
+            }
+
+            .campana-ver-todas {
+                text-align: center;
+                padding-top: 6px;
+            }
+
+                .campana-ver-todas a {
+                    font-weight: 600;
+                    color: #a5c422;
+                }
     </style>
 </head>
 <body id="top" data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
+
+    <!-- Token de seguridad usado por la campana de notificaciones para eliminar por AJAX -->
+    <form id="antiForgeryForm" style="display:none;">
+        @Html.AntiForgeryToken()
+    </form>
 
     <!-- PRE LOADER -->
     <section class="preloader">
@@ -401,6 +470,20 @@
                             </li>
                         }
 
+                        @* Campana de notificaciones - solo para alumnos (USER-09-009) *@
+                        @if (User.IsInRole("Usuario"))
+                        {
+                            <li class="dropdown campana-notificaciones">
+                                <a href="#" class="dropdown-toggle nav-link text-dark" data-bs-toggle="dropdown">
+                                    <i class="fa fa-bell"></i>
+                                    <span id="campanaBadge" class="badge-campana" style="display:none;">0</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end campana-dropdown" id="campanaLista">
+                                    <li class="campana-item text-muted text-center">Cargando...</li>
+                                </ul>
+                            </li>
+                        }
+
                         <li class="appointment-btn">
                             <form asp-controller="Auth" asp-action="Logout" method="post" style="margin:0;">
                                 <button type="submit"
@@ -495,6 +578,7 @@
     <script src="~/js/smoothscroll.js"></script>
     <script src="~/js/owl.carousel.min.js"></script>
     <script src="~/js/custom.js"></script>
+    <script src="~/js/NavbarCampana.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
