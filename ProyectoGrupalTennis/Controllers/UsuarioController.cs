@@ -117,6 +117,18 @@ namespace ProyectoGrupalTennis.Controllers
             _context.Matriculas.Add(matricula);
             curso.CuposDisponibles -= 1;
 
+            var notificacion = new Notificacion
+            {
+                IdUsuario = userId,
+                Tipo = "Matrícula",
+                Titulo = "Matrícula confirmada",
+                Mensaje = $"Tu matrícula al curso {curso.Nombre} fue confirmada correctamente.",
+                Leida = false,
+                FechaEnvio = DateTime.Now
+            };
+
+            _context.Notificaciones.Add(notificacion);
+
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Matrícula realizada correctamente.";

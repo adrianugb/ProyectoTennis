@@ -167,6 +167,7 @@ namespace ProyectoGrupalTennis.Controllers
 
             return View(reservas);
         }
+
         [HttpPost]
         [Authorize(Roles = "Usuario")]
         public async Task<IActionResult> ReservarEspacio(int idReserva)
@@ -174,6 +175,7 @@ namespace ProyectoGrupalTennis.Controllers
             var alumno = await _userManager.GetUserAsync(User);
 
             var reserva = await _context.Reservas
+                .Include(r => r.Cancha)
                 .FirstOrDefaultAsync(r => r.IdReserva == idReserva);
 
             if (reserva == null)
@@ -181,8 +183,7 @@ namespace ProyectoGrupalTennis.Controllers
 
             if (reserva.IdAlumno != null)
             {
-                TempData["Error"] =
-                    "La reserva ya fue tomada.";
+                TempData["Error"] = "La reserva ya fue tomada.";
                 return RedirectToAction(nameof(Disponibles));
             }
 
@@ -194,29 +195,38 @@ namespace ProyectoGrupalTennis.Controllers
                     reserva.HoraInicio < r.HoraFin &&
                     reserva.HoraFin > r.HoraInicio
                 )
-             );
+            );
 
             if (tieneChoque)
             {
-                TempData["Error"] =
-                    "Ya tiene una reserva en ese horario.";
-
+                TempData["Error"] = "Ya tiene una reserva en ese horario.";
                 return RedirectToAction(nameof(Disponibles));
             }
 
             reserva.IdAlumno = alumno.Id;
             reserva.Estado = "Asignada";
 
+            var nombreCancha = reserva.Cancha != null
+                ? reserva.Cancha.Nombre
+                : "la cancha seleccionada";
+
+            var notificacion = new Notificacion
+            {
+                IdUsuario = alumno.Id,
+                Tipo = "Reserva",
+                Titulo = "Reserva confirmada",
+                Mensaje = $"Tu reserva en {nombreCancha} fue confirmada para el {reserva.FechaReserva:dd/MM/yyyy} de {reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}.",
+                Leida = false,
+                FechaEnvio = DateTime.Now
+            };
+
+            _context.Notificaciones.Add(notificacion);
+
             await _context.SaveChangesAsync();
 
-            TempData["Exito"] =
-                "Reserva realizada correctamente.";
+            TempData["Exito"] = "Reserva realizada correctamente.";
 
             return RedirectToAction(nameof(Disponibles));
-
-
-
-
         }
 
         [Authorize(Roles = "Usuario")]
