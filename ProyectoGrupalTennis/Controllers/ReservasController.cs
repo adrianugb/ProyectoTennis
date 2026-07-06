@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Models;
+using ProyectoGrupalTennis.Helpers;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -29,8 +30,6 @@ namespace ProyectoGrupalTennis.Controllers
             {
                 FechaReserva = DateTime.Today
             };
-
-
 
             model.Canchas = await _context.Canchas
                 .Where(c => c.Disponible && !c.EnMantenimiento)
@@ -210,17 +209,13 @@ namespace ProyectoGrupalTennis.Controllers
                 ? reserva.Cancha.Nombre
                 : "la cancha seleccionada";
 
-            var notificacion = new Notificacion
-            {
-                IdUsuario = alumno.Id,
-                Tipo = "Reserva",
-                Titulo = "Reserva confirmada",
-                Mensaje = $"Tu reserva en {nombreCancha} fue confirmada para el {reserva.FechaReserva:dd/MM/yyyy} de {reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}.",
-                Leida = false,
-                FechaEnvio = DateTime.Now
-            };
-
-            _context.Notificaciones.Add(notificacion);
+            await NotificacionHelper.EnviarNotificacionAsync(
+            _context,
+            alumno.Id,
+            categoria: "Clase",
+            tipo: "Reserva",
+            titulo: "Reserva confirmada",
+            mensaje: $"Tu reserva en {nombreCancha} fue confirmada para el {reserva.FechaReserva:dd/MM/yyyy} de {reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}.");
 
             await _context.SaveChangesAsync();
 

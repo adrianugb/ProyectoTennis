@@ -9,6 +9,7 @@ using static System.Net.Mime.MediaTypeNames;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using ProyectoGrupalTennis.Helpers;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -117,17 +118,13 @@ namespace ProyectoGrupalTennis.Controllers
             _context.Matriculas.Add(matricula);
             curso.CuposDisponibles -= 1;
 
-            var notificacion = new Notificacion
-            {
-                IdUsuario = userId,
-                Tipo = "Matrícula",
-                Titulo = "Matrícula confirmada",
-                Mensaje = $"Tu matrícula al curso {curso.Nombre} fue confirmada correctamente.",
-                Leida = false,
-                FechaEnvio = DateTime.Now
-            };
-
-            _context.Notificaciones.Add(notificacion);
+            await NotificacionHelper.EnviarNotificacionAsync(
+            _context,
+            userId,
+            categoria: "Clase",
+            tipo: "Matrícula",
+            titulo: "Matrícula confirmada",
+            mensaje: $"Tu matrícula al curso {curso.Nombre} fue confirmada correctamente.");
 
             await _context.SaveChangesAsync();
 
@@ -703,7 +700,7 @@ namespace ProyectoGrupalTennis.Controllers
             return File(pdf, "application/pdf", $"Comprobante_PAG-{pago.IdPago}.pdf");
         }
 
-        // GET: /Usuario/Notificaciones - USER-09-010 – Marcar notificación como leída
+        // GET: /Usuario/Notificaciones - USER-09-010, USER-09-008, USER-09-009
         public async Task<IActionResult> Notificaciones()
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -712,6 +709,9 @@ namespace ProyectoGrupalTennis.Controllers
                 .Where(n => n.IdUsuario == userId)
                 .OrderByDescending(n => n.FechaEnvio)
                 .ToListAsync();
+
+            var preferencia = await _context.PreferenciasNotificacion
+                .FirstOrDefaultAsync(p => p.IdUsuario == userId);
 
             var model = new NotificacionesUsuarioViewModel
             {
@@ -723,7 +723,14 @@ namespace ProyectoGrupalTennis.Controllers
                     Mensaje = n.Mensaje,
                     Leida = n.Leida,
                     FechaEnvio = n.FechaEnvio
-                }).ToList()
+                }).ToList(),
+
+                // Si el alumno nunca ha guardado preferencias, se usan los valores por defecto (todo activo, canal Email)
+                CanalPreferido = preferencia?.CanalPreferido ?? "Email",
+                NotificacionesPago = preferencia?.NotificacionesPago ?? true,
+                NotificacionesClase = preferencia?.NotificacionesClase ?? true,
+                NotificacionesRecordatorio = preferencia?.NotificacionesRecordatorio ?? true,
+                NotificacionesCampeonato = preferencia?.NotificacionesCampeonato ?? true
             };
 
             return View("~/Views/Notificaciones/_NotificacionesUsuario.cshtml", model);
@@ -807,6 +814,39 @@ namespace ProyectoGrupalTennis.Controllers
             if (esAjax) return Json(new { success = true });
 
             TempData["MensajeExito"] = "La notificación fue eliminada.";
+            return RedirectToAction(nameof(Notificaciones));
+        }
+
+        // POST: /Usuario/GuardarPreferenciasNotificacion - USER-09-008 y USER-09-009
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GuardarPreferenciasNotificacion(
+            string canalPreferido,
+            bool notificacionesPago,
+            bool notificacionesClase,
+            bool notificacionesRecordatorio,
+            bool notificacionesCampeonato)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var preferencia = await _context.PreferenciasNotificacion
+                .FirstOrDefaultAsync(p => p.IdUsuario == userId);
+
+            if (preferencia == null)
+            {
+                preferencia = new PreferenciaNotificacion { IdUsuario = userId };
+                _context.PreferenciasNotificacion.Add(preferencia);
+            }
+
+            preferencia.CanalPreferido = canalPreferido;
+            preferencia.NotificacionesPago = notificacionesPago;
+            preferencia.NotificacionesClase = notificacionesClase;
+            preferencia.NotificacionesRecordatorio = notificacionesRecordatorio;
+            preferencia.NotificacionesCampeonato = notificacionesCampeonato;
+
+            await _context.SaveChangesAsync();
+
+            TempData["MensajeExito"] = "Tus preferencias de notificaciones fueron actualizadas.";
             return RedirectToAction(nameof(Notificaciones));
         }
     }

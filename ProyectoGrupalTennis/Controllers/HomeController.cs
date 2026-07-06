@@ -103,6 +103,19 @@ namespace ProyectoGrupalTennis.Controllers
                 .Where(p => p.Activo)
                 .CountAsync();
 
+            // ADM-08-001: cursos mas demandados (con mas matriculas) en el periodo
+            var cursosMasDemandados = await _context.Matriculas
+                .Where(m => m.FechaMatricula.Date >= inicio && m.FechaMatricula.Date <= fin)
+                .GroupBy(m => m.Curso.Nombre)
+                .Select(g => new CursoDemandaViewModel
+                {
+                    NombreCurso = g.Key,
+                    TotalMatriculas = g.Count()
+                })
+                .OrderByDescending(c => c.TotalMatriculas)
+                .Take(3)
+                .ToListAsync();
+
             // Ingresos del periodo (pagos con estado "Pagado")
             var ingresosPeriodo = await _context.Pagos
                 .Where(p => p.Estado == "Pagado"
@@ -119,6 +132,7 @@ namespace ProyectoGrupalTennis.Controllers
                 ClasesProgramadas = clasesDelPeriodo.Count,
                 ProfesoresActivos = profesoresActivos,
                 IngresosPeriodo = ingresosPeriodo,
+                CursosMasDemandados = cursosMasDemandados,
                 ClasesDelPeriodo = clasesDelPeriodo.Select(c => new ClaseResumenViewModel
                 {
                     NombreCurso = c.Curso?.Nombre ?? "Sin curso",

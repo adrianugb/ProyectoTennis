@@ -3,6 +3,15 @@
     public class NotificacionesUsuarioViewModel
     {
         public List<NotificacionUsuarioItemViewModel> Notificaciones { get; set; } = new();
+
+        // USER-09-008: canal preferido (Email / SMS / Push / WhatsApp)
+        public string CanalPreferido { get; set; } = "Email";
+
+        // USER-09-009: tipos de notificacion que el alumno quiere recibir
+        public bool NotificacionesPago { get; set; } = true;
+        public bool NotificacionesClase { get; set; } = true;
+        public bool NotificacionesRecordatorio { get; set; } = true;
+        public bool NotificacionesCampeonato { get; set; } = true;
     }
 
     public class NotificacionUsuarioItemViewModel

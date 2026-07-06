@@ -164,7 +164,30 @@
                 </div>
             </div>
         </div>
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-12">
+                <div class="dashboard-card">
+                    <div class="card-header-custom">
+                        <h3><i class="fa fa-star"></i> Cursos más demandados</h3>
+                        <span class="mini-label">Top 3 del periodo</span>
+                    </div>
 
+                    @if (Model.CursosMasDemandados.Any())
+                    {
+                        <ul class="dashboard-alert-list">
+                            @foreach (var curso in Model.CursosMasDemandados)
+                            {
+                                <li><i class="fa fa-trophy"></i> @curso.NombreCurso — @curso.TotalMatriculas matrícula(s)</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted" style="padding: 10px;">No hay matrículas registradas en este periodo.</p>
+                    }
+                </div>
+            </div>
+        </div>
         <div class="col-md-4">
             <div class="dashboard-card" style="margin-bottom: 20px;">
                 <div class="card-header-custom">

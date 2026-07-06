@@ -24,6 +24,9 @@ namespace ProyectoGrupalTennis.Models
 
         // Alertas rápidas
         public List<string> Alertas { get; set; } = new();
+
+        // ADM-08-001: cursos con mas matriculas en el periodo
+        public List<CursoDemandaViewModel> CursosMasDemandados { get; set; } = new();
     }
 
     public class ClaseResumenViewModel
@@ -35,5 +38,11 @@ namespace ProyectoGrupalTennis.Models
         public int CuposOcupados { get; set; }
         public int CuposTotales { get; set; }
         public string Estado { get; set; }
+    }
+
+    public class CursoDemandaViewModel
+    {
+        public string NombreCurso { get; set; }
+        public int TotalMatriculas { get; set; }
     }
 }

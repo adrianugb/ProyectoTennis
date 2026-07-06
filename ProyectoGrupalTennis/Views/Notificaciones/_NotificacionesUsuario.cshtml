@@ -1,10 +1,38 @@
 ﻿@model ProyectoGrupalTennis.Models.NotificacionesUsuarioViewModel
 
+@{
+    var nombreCanal = Model.CanalPreferido switch
+    {
+        "Email" => "Correo electrónico",
+        "SMS" => "SMS",
+        "Push" => "Notificación en la plataforma",
+        "WhatsApp" => "WhatsApp",
+        _ => Model.CanalPreferido
+    };
+
+    var tiposActivos = new[]
+    {
+        Model.NotificacionesClase,
+        Model.NotificacionesPago,
+        Model.NotificacionesRecordatorio,
+        Model.NotificacionesCampeonato
+    }.Count(t => t);
+}
+
 <div class="module-block">
     <h1 class="module-title">Notificaciones - Alumno</h1>
     <p class="module-subtitle">
         Centro de notificaciones y preferencias de comunicación.
     </p>
+
+    @if (TempData["MensajeExito"] != null)
+    {
+        <div class="alert alert-success">@TempData["MensajeExito"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
 
     <script>
             function mostrarPanelAlumno(panel) {
@@ -16,20 +44,6 @@
                 } else if (panel === "tipos") {
                     document.getElementById("panelTiposAlumno").style.display = "block";
                 }
-            }
-
-            function guardarPreferenciasAlumno() {
-                const canal = document.getElementById("canalAlumno").value;
-                const estado = document.getElementById("estadoAlumno").value;
-
-                document.getElementById("textoCanalAlumno").innerText = "Canal principal: " + canal;
-                document.getElementById("textoEstadoAlumno").innerText = "Estado: " + estado;
-
-                alert("Preferencias actualizadas correctamente.");
-            }
-
-            function guardarTiposAlumno() {
-                alert("Tipos de aviso actualizados correctamente.");
             }
 
             function verDetalleAlumno(titulo, descripcion, estado) {
@@ -44,8 +58,6 @@
                 document.getElementById("modalDetalleAlumno").style.display = "none";
             }
     </script>
-
-
 
     <style>
             .modal-card-notificacion {
@@ -64,8 +76,7 @@
             <div class="module-card" onclick="mostrarPanelAlumno('preferencias')" style="cursor:pointer;">
                 <i class="fa fa-sliders"></i>
                 <h3 style="user-select:none;">Preferencias</h3>
-                <p id="textoCanalAlumno">Canal principal: Correo electrónico</p>
-                <p id="textoEstadoAlumno">Estado: Notificaciones activas</p>
+                <p>Canal principal: @nombreCanal</p>
             </div>
         </div>
 
@@ -73,10 +84,62 @@
             <div class="module-card" onclick="mostrarPanelAlumno('tipos')" style="cursor:pointer;">
                 <i class="fa fa-envelope"></i>
                 <h3 style="user-select:none;">Tipos de aviso</h3>
-                <p>Clases, pagos, campeonatos y avance técnico.</p>
+                <p>@tiposActivos de 4 tipos activos</p>
             </div>
         </div>
     </div>
+
+    <!-- USER-09-008 y USER-09-009: un solo formulario guarda canal + tipos de aviso -->
+    <form asp-controller="Usuario" asp-action="GuardarPreferenciasNotificacion" method="post">
+        @Html.AntiForgeryToken()
+
+        <div id="panelPreferenciasAlumno" style="display:none; margin-top: 30px;">
+            <div class="module-card">
+                <h3>Configuración de preferencias</h3>
+
+                <div class="row" style="margin-top: 15px;">
+                    <div class="col-md-6">
+                        <label>Canal principal</label>
+                        <select asp-for="CanalPreferido" class="form-control">
+                            <option value="Email">Correo electrónico</option>
+                            <option value="SMS">SMS</option>
+                            <option value="Push">Notificación en la plataforma</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="module-actions" style="margin-top: 20px;">
+                    <button type="submit" class="module-btn">Guardar preferencias</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="panelTiposAlumno" style="display:none; margin-top: 30px;">
+            <div class="module-card">
+                <h3>Tipos de aviso</h3>
+
+                <div style="margin-top: 15px;">
+                    <label style="display:block; margin-bottom: 10px;">
+                        <input type="checkbox" asp-for="NotificacionesClase" /> Avisos de clases y matrículas
+                    </label>
+                    <label style="display:block; margin-bottom: 10px;">
+                        <input type="checkbox" asp-for="NotificacionesPago" /> Avisos de pagos
+                    </label>
+                    <label style="display:block; margin-bottom: 10px;">
+                        <input type="checkbox" asp-for="NotificacionesRecordatorio" /> Avisos de recordatorios de clase
+                    </label>
+                    <label style="display:block; margin-bottom: 10px;">
+                        <input type="checkbox" asp-for="NotificacionesCampeonato" /> Avisos de campeonatos
+                    </label>
+                </div>
+
+                <div class="module-actions" style="margin-top: 20px;">
+                    <button type="submit" class="module-btn">Guardar tipos de aviso</button>
+                </div>
+            </div>
+        </div>
+    </form>
 
     <div class="table-responsive" style="margin-top: 25px;">
         <table class="table report-table">
@@ -161,60 +224,6 @@
         </table>
     </div>
 
-    <div id="panelPreferenciasAlumno" style="display:none; margin-top: 30px;">
-        <div class="module-card">
-            <h3>Configuración de preferencias</h3>
-
-            <div class="row" style="margin-top: 15px;">
-                <div class="col-md-6">
-                    <label>Canal principal</label>
-                    <select id="canalAlumno" class="form-control">
-                        <option>Correo electrónico</option>
-                        <option>SMS</option>
-                        <option>Notificación en plataforma</option>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Estado</label>
-                    <select id="estadoAlumno" class="form-control">
-                        <option>Notificaciones activas</option>
-                        <option>Solo avisos importantes</option>
-                        <option>Notificaciones desactivadas</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="module-actions" style="margin-top: 20px;">
-                <button type="button" class="module-btn" onclick="guardarPreferenciasAlumno()">Guardar preferencias</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="panelTiposAlumno" style="display:none; margin-top: 30px;">
-        <div class="module-card">
-            <h3>Tipos de aviso</h3>
-
-            <div style="margin-top: 15px;">
-                <label style="display:block; margin-bottom: 10px;">
-                    <input type="checkbox" checked /> Avisos de clases
-                </label>
-                <label style="display:block; margin-bottom: 10px;">
-                    <input type="checkbox" checked /> Avisos de pagos
-                </label>
-                <label style="display:block; margin-bottom: 10px;">
-                    <input type="checkbox" checked /> Avisos de campeonatos
-                </label>
-                <label style="display:block; margin-bottom: 10px;">
-                    <input type="checkbox" checked /> Avisos de avance técnico
-                </label>
-            </div>
-
-            <div class="module-actions" style="margin-top: 20px;">
-                <button type="button" class="module-btn" onclick="guardarTiposAlumno()">Guardar tipos de aviso</button>
-            </div>
-        </div>
-    </div>
     <div id="modalDetalleAlumno"
          onclick="cerrarDetalleAlumno()"
          style="display:none;
