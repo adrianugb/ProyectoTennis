@@ -42,5 +42,9 @@ namespace AcademiaTennisBLL.Services
             _repo.CambiarEstado(id, activo);
 
         public List<Profesor> ObtenerProfesores() => _repo.ObtenerProfesores();
+
+        public List<Horario> ObtenerHorarios(int idCurso) => _repo.ObtenerHorarios(idCurso);
+        public void AgregarHorario(Horario horario) => _repo.AgregarHorario(horario);
+        public void EliminarHorario(int idHorario) => _repo.EliminarHorario(idHorario);
     }
 }

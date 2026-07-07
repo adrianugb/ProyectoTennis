@@ -94,21 +94,13 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Login
 
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             model.Email = model.Email.Trim().ToLower();
 
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
 
             var usuario = await _userManager.FindByEmailAsync(model.Email);
 
@@ -122,11 +114,17 @@ namespace ProyectoGrupalTennis.Controllers
                 model.Email,
                 model.Password,
                 model.Recordarme,
-                lockoutOnFailure: false
-            );
+                lockoutOnFailure: false);
 
             if (resultado.Succeeded)
             {
+                // Redirigir según el rol del usuario
+                if (await _userManager.IsInRoleAsync(usuario!, "Administrador"))
+                    return RedirectToAction("PerfilAdmin", "Home");
+
+                if (await _userManager.IsInRoleAsync(usuario!, "Profesor"))
+                    return RedirectToAction("PerfilProfesor", "Home");
+
                 return RedirectToAction("PerfilUsuario", "Home");
             }
 

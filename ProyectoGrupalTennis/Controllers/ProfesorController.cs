@@ -1,19 +1,22 @@
 using AcademiaTennisBLL.Services;
 using AcademiaTennisDAL.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ProyectoGrupalTennis.Models;
 
 namespace ProyectoGrupalTennis.Controllers
 {
     public class ProfesorController : Controller
     {
         private readonly IProfesorService _service;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProfesorController(IProfesorService service)
+        public ProfesorController(IProfesorService service, UserManager<ApplicationUser> userManager)
         {
             _service = service;
+            _userManager = userManager;
         }
 
-        // Listar
         public IActionResult Index(string? buscar, string? especialidad, string? estado)
         {
             var profesores = _service.ObtenerTodos();
@@ -25,8 +28,7 @@ namespace ProyectoGrupalTennis.Controllers
                     .ToList();
 
             if (!string.IsNullOrEmpty(especialidad))
-                profesores = profesores
-                    .Where(p => p.Especialidad == especialidad).ToList();
+                profesores = profesores.Where(p => p.Especialidad == especialidad).ToList();
 
             if (estado == "Activo")
                 profesores = profesores.Where(p => p.Activo).ToList();
@@ -36,36 +38,48 @@ namespace ProyectoGrupalTennis.Controllers
             return View(profesores);
         }
 
-        // Agregar - GET
-        public IActionResult Agregar() => View(new Profesor());
-
-        // Agregar - POST
-        [HttpPost]
-        public IActionResult Agregar(Profesor profesor)
+        public async Task<IActionResult> Agregar()
         {
-            if (!ModelState.IsValid) return View(profesor);
+            var usuarios = await _userManager.GetUsersInRoleAsync("Profesor");
+            ViewBag.Usuarios = usuarios.Select(u => new { u.Id, Nombre = $"{u.Nombre} {u.Apellido} ({u.Email})" }).ToList();
+            return View(new Profesor());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Agregar(Profesor profesor)
+        {
+            if (!ModelState.IsValid)
+            {
+                var usuarios = await _userManager.GetUsersInRoleAsync("Profesor");
+                ViewBag.Usuarios = usuarios.Select(u => new { u.Id, Nombre = $"{u.Nombre} {u.Apellido} ({u.Email})" }).ToList();
+                return View(profesor);
+            }
             _service.Agregar(profesor);
             return RedirectToAction(nameof(Index));
         }
 
-        // Editar - GET
-        public IActionResult Editar(int id)
+        public async Task<IActionResult> Editar(int id)
         {
             var profesor = _service.ObtenerPorId(id);
             if (profesor == null) return NotFound();
+            var usuarios = await _userManager.GetUsersInRoleAsync("Profesor");
+            ViewBag.Usuarios = usuarios.Select(u => new { u.Id, Nombre = $"{u.Nombre} {u.Apellido} ({u.Email})" }).ToList();
             return View(profesor);
         }
 
-        // Editar - POST
         [HttpPost]
-        public IActionResult Editar(Profesor profesor)
+        public async Task<IActionResult> Editar(Profesor profesor)
         {
-            if (!ModelState.IsValid) return View(profesor);
+            if (!ModelState.IsValid)
+            {
+                var usuarios = await _userManager.GetUsersInRoleAsync("Profesor");
+                ViewBag.Usuarios = usuarios.Select(u => new { u.Id, Nombre = $"{u.Nombre} {u.Apellido} ({u.Email})" }).ToList();
+                return View(profesor);
+            }
             _service.Actualizar(profesor);
             return RedirectToAction(nameof(Index));
         }
 
-        // Activar/Desactivar
         [HttpPost]
         public IActionResult CambiarEstado(int id, bool activo)
         {

@@ -75,5 +75,20 @@ namespace AcademiaTennisDAL.Repositories
                 .Where(p => p.Activo)
                 .OrderBy(p => p.Nombre)
                 .ToList();
+
+        public List<Horario> ObtenerHorarios(int idCurso) =>
+        _context.Horarios.Where(h => h.IdCurso == idCurso).OrderBy(h => h.DiaSemana).ToList();
+
+        public void AgregarHorario(Horario horario)
+        {
+            _context.Horarios.Add(horario);
+            _context.SaveChanges();
+        }
+
+        public void EliminarHorario(int idHorario)
+        {
+            var h = _context.Horarios.Find(idHorario);
+            if (h != null) { _context.Horarios.Remove(h); _context.SaveChanges(); }
+        }
     }
 }

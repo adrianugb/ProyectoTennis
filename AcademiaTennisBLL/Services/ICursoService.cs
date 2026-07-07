@@ -10,5 +10,8 @@ namespace AcademiaTennisBLL.Services
         void Actualizar(Curso clase, List<Horario> horarios);
         void CambiarEstado(int id, bool activo);
         List<Profesor> ObtenerProfesores();
+        List<Horario> ObtenerHorarios(int idCurso);
+        void AgregarHorario(Horario horario);
+        void EliminarHorario(int idHorario);
     }
 }

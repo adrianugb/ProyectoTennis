@@ -60,6 +60,25 @@
                                 <span asp-validation-for="Email" class="text-danger" style="font-size:12px;"></span>
                             </div>
                         </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label>Usuario del sistema</label>
+                                <select name="UserId" class="form-select">
+                                    <option value="">Sin vincular</option>
+                                    @foreach (var u in (dynamic)ViewBag.Usuarios)
+                                    {
+                                        if (Model.UserId == u.Id)
+                                        {
+                                            <option value="@u.Id" selected>@u.Nombre</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@u.Id">@u.Nombre</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="col-md-6">
                             <div class="mb-3">

@@ -45,6 +45,7 @@
         public string DiaSemana { get; set; } = string.Empty;
 
         public int HoraInicioEntera { get; set; }
+        public List<string> CursosMatriculados { get; internal set; }
     }
 
     public class ProfesorAlumnosViewModel

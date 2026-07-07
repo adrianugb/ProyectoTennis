@@ -1,0 +1,198 @@
+﻿<div class="dashboard-block">
+    <div class="dashboard-header">
+        <div>
+            <h1 class="page-title">Reportes Administrativos</h1>
+            <p class="page-subtitle">
+                Consulta de reportes disponibles para el análisis académico, operativo y financiero de la academia.
+            </p>
+        </div>
+
+        <div class="dashboard-status-badge">
+            <i class="fa fa-file-alt"></i> Reportes actualizados
+        </div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="dashboard-summary-strip">
+        <div class="summary-item">
+            <span class="summary-title">Reportes disponibles</span>
+            <strong>9 reportes</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-title">Última actualización</span>
+            <strong>Hoy, 8:30 a.m.</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-title">Más consultado</span>
+            <strong>Alumnos activos</strong>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="dashboard-filter-box">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="filter-label">Buscar reporte</label>
+                <input type="text" class="form-control" placeholder="Ej. alumnos, ingresos, clases">
+            </div>
+
+            <div class="col-md-4">
+                <label class="filter-label">Periodo</label>
+                <select class="form-control">
+                    <option selected>Todos los periodos</option>
+                    <option>Últimos 7 días</option>
+                    <option>Último mes</option>
+                    <option>Último trimestre</option>
+                </select>
+            </div>
+
+            <div class="col-md-4 d-flex align-items-end">
+                <button class="dashboard-mini-btn" style="width: 100%;">
+                    <i class="fa fa-search"></i> Filtrar resultados
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Tabla principal -->
+        <div class="col-md-8">
+            <div class="dashboard-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-table"></i> Reportes disponibles</h3>
+                    <span class="mini-label">Listado general</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table report-table custom-table">
+                        <thead>
+                            <tr>
+                                <th>Reporte</th>
+                                <th>Periodo</th>
+                                <th>Categoría</th>
+                                <th>Estado</th>
+                                <th style="text-align:center;">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="report-info">
+                                        <i class="fa fa-users"></i>
+                                        <span>Alumnos activos</span>
+                                    </div>
+                                </td>
+                                <td>Marzo 2026</td>
+                                <td>Académico</td>
+                                <td><span class="badge-soft badge-soft-success">Disponible</span></td>
+                                <td style="text-align: center; white-space: nowrap;">
+                                    <a href="#" class="action-link">Ver reporte</a>
+                                    <span class="action-separator">|</span>
+                                    <a href="#" class="action-link">Descargar</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="report-info">
+                                        <i class="fa fa-calendar"></i>
+                                        <span>Clases programadas</span>
+                                    </div>
+                                </td>
+                                <td>Marzo 2026</td>
+                                <td>Operativo</td>
+                                <td><span class="badge-soft badge-soft-success">Disponible</span></td>
+                                <td style="text-align: center; white-space: nowrap;">
+                                    <a href="#" class="action-link">Ver reporte</a>
+                                    <span class="action-separator">|</span>
+                                    <a href="#" class="action-link">Descargar</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="report-info">
+                                        <i class="fa fa-money-bill-wave"></i>
+                                        <span>Ingresos por periodo</span>
+                                    </div>
+                                </td>
+                                <td>Q1 2026</td>
+                                <td>Financiero</td>
+                                <td><span class="badge-soft badge-soft-success">Disponible</span></td>
+                                <td style="text-align: center; white-space: nowrap;">
+                                    <a href="#" class="action-link">Ver reporte</a>
+                                    <span class="action-separator">|</span>
+                                    <a href="#" class="action-link">Descargar</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="report-info">
+                                        <i class="fa fa-chart-line"></i>
+                                        <span>Rendimiento mensual</span>
+                                    </div>
+                                </td>
+                                <td>Marzo 2026</td>
+                                <td>Académico</td>
+                                <td><span class="badge-soft badge-soft-warning">Pendiente</span></td>
+                                <td style="text-align: center; white-space: nowrap;">
+                                    <a href="#" class="action-link">Ver reporte</a>
+                                    <span class="action-separator">|</span>
+                                    <a href="#" class="action-link">Descargar</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Panel lateral -->
+        <div class="col-md-4">
+            <div class="dashboard-card" style="margin-bottom: 20px;">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-star"></i> Reportes destacados</h3>
+                </div>
+
+                <ul class="dashboard-alert-list">
+                    <li>
+                        <i class="fa fa-user-check"></i>
+                        El reporte de alumnos activos fue el más consultado esta semana.
+                    </li>
+                    <li>
+                        <i class="fa fa-calendar-check"></i>
+                        El reporte de clases programadas ya está actualizado.
+                    </li>
+                    <li>
+                        <i class="fa fa-coins"></i>
+                        El resumen financiero trimestral está disponible para descarga.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-bolt"></i> Acciones rápidas</h3>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-admin')">
+                        <i class="fa fa-arrow-left"></i> Volver
+                    </button>
+
+                    <button class="dashboard-mini-btn" onclick="mostrarVista('dashboard-admin-reportes')">
+                        <i class="fa fa-file-alt"></i> Ver reportes
+                    </button>
+
+                    <a asp-controller="Home" asp-action="Campeonatos" class="dashboard-mini-btn">
+                        <i class="fa fa-trophy"></i> Campeonatos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

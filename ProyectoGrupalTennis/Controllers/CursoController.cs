@@ -1,6 +1,9 @@
 ﻿using AcademiaTennisBLL.Services;
+using AcademiaTennisDAL.Context;
 using AcademiaTennisDAL.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ProyectoGrupalTennis.Helpers;
 using ProyectoGrupalTennis.Models;
 
 namespace ProyectoGrupalTennis.Controllers
@@ -8,31 +11,33 @@ namespace ProyectoGrupalTennis.Controllers
     public class CursoController : Controller
     {
         private readonly ICursoService _service;
+        private readonly AppDbContext _context;
 
-        public CursoController(ICursoService service)
+        public CursoController(ICursoService service, AppDbContext context)
         {
             _service = service;
+            _context = context;
         }
 
         // GET: /Curso/Index
         public IActionResult Index(string? buscar, string? nivel, string? estado)
         {
-            var Cursos = _service.ObtenerTodos();
+            var cursos = _service.ObtenerTodos();
 
             if (!string.IsNullOrEmpty(buscar))
-                Cursos = Cursos
+                cursos = cursos
                     .Where(c => c.Nombre.Contains(buscar, StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
             if (!string.IsNullOrEmpty(nivel))
-                Cursos = Cursos.Where(c => c.Nivel == nivel).ToList();
+                cursos = cursos.Where(c => c.Nivel == nivel).ToList();
 
             if (estado == "Activo")
-                Cursos = Cursos.Where(c => c.Activo).ToList();
+                cursos = cursos.Where(c => c.Activo).ToList();
             else if (estado == "Inactivo")
-                Cursos = Cursos.Where(c => !c.Activo).ToList();
+                cursos = cursos.Where(c => !c.Activo).ToList();
 
-            return View("~/Views/Cursos/Index.cshtml", Cursos);
+            return View("~/Views/Cursos/Index.cshtml", cursos);
         }
 
         // GET: /Curso/Agregar
@@ -44,7 +49,7 @@ namespace ProyectoGrupalTennis.Controllers
                 Profesores = _service.ObtenerProfesores(),
                 Horarios = new List<HorarioInputViewModel>
                 {
-                    new HorarioInputViewModel() // un horario vacío por defecto
+                    new HorarioInputViewModel()
                 }
             };
             return View("~/Views/Cursos/Agregar.cshtml", vm);
@@ -77,14 +82,14 @@ namespace ProyectoGrupalTennis.Controllers
         // GET: /Curso/Editar/5
         public IActionResult Editar(int id)
         {
-            var Curso = _service.ObtenerPorId(id);
-            if (Curso == null) return NotFound();
+            var curso = _service.ObtenerPorId(id);
+            if (curso == null) return NotFound();
 
             var vm = new CursoFormViewModel
             {
-                Curso = Curso,
+                Curso = curso,
                 Profesores = _service.ObtenerProfesores(),
-                Horarios = Curso.Horarios.Select(h => new HorarioInputViewModel
+                Horarios = curso.Horarios.Select(h => new HorarioInputViewModel
                 {
                     IdHorario = h.IdHorario,
                     DiaSemana = h.DiaSemana,
@@ -113,7 +118,7 @@ namespace ProyectoGrupalTennis.Controllers
             {
                 var horarios = MapearHorarios(vm.Horarios);
                 _service.Actualizar(vm.Curso, horarios);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "AdminCursos");
             }
             catch (Exception ex)
             {
@@ -128,10 +133,99 @@ namespace ProyectoGrupalTennis.Controllers
         public IActionResult CambiarEstado(int id, bool activo)
         {
             _service.CambiarEstado(id, activo);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "AdminCursos");
         }
 
-        // Helper: convierte los inputs de horario en entidades Horario
+        // POST: /Curso/AgregarHorario
+        [HttpPost]
+        public async Task<IActionResult> AgregarHorario(CursoFormViewModel vm)
+        {
+            vm.NuevoHorario.IdCurso = vm.Curso.IdCurso;
+            try
+            {
+                _service.AgregarHorario(vm.NuevoHorario);
+
+                // Notificar alumnos matriculados (USER-09-003)
+                var matriculas = await _context.Matriculas
+                    .Where(m => m.IdCurso == vm.Curso.IdCurso && m.Estado == "Activa")
+                    .ToListAsync();
+
+                var curso = await _context.Cursos
+                    .Include(c => c.Profesor)
+                    .FirstOrDefaultAsync(c => c.IdCurso == vm.Curso.IdCurso);
+
+                foreach (var m in matriculas)
+                {
+                    await NotificacionHelper.EnviarNotificacionAsync(
+                        _context, m.IdAlumno, "Clase", "USER-09-003",
+                        "Cambio de horario",
+                        $"El horario del curso '{curso?.Nombre}' fue actualizado. Revisá tu agenda.");
+                }
+
+                // Notificar al profesor (PROF-09-002)
+                if (curso?.Profesor?.UserId != null)
+                {
+                    await NotificacionHelper.EnviarNotificacionAsync(
+                        _context, curso.Profesor.UserId, "Clase", "PROF-09-002",
+                        "Cambio de horario en tu curso",
+                        $"El horario del curso '{curso.Nombre}' que impartís fue modificado.");
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Editar), new { id = vm.Curso.IdCurso });
+        }
+
+        // POST: /Curso/EliminarHorario
+        [HttpPost]
+        public async Task<IActionResult> EliminarHorario(int idHorario, int idCurso)
+        {
+            try
+            {
+                _service.EliminarHorario(idHorario);
+
+                // Notificar alumnos matriculados (USER-09-003)
+                var matriculas = await _context.Matriculas
+                    .Where(m => m.IdCurso == idCurso && m.Estado == "Activa")
+                    .ToListAsync();
+
+                var curso = await _context.Cursos
+                    .Include(c => c.Profesor)
+                    .FirstOrDefaultAsync(c => c.IdCurso == idCurso);
+
+                foreach (var m in matriculas)
+                {
+                    await NotificacionHelper.EnviarNotificacionAsync(
+                        _context, m.IdAlumno, "Clase", "USER-09-003",
+                        "Cambio de horario",
+                        $"El horario del curso '{curso?.Nombre}' fue actualizado. Revisá tu agenda.");
+                }
+
+                // Notificar al profesor (PROF-09-002)
+                if (curso?.Profesor?.UserId != null)
+                {
+                    await NotificacionHelper.EnviarNotificacionAsync(
+                        _context, curso.Profesor.UserId, "Clase", "PROF-09-002",
+                        "Cambio de horario en tu curso",
+                        $"El horario del curso '{curso.Nombre}' que impartís fue modificado.");
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Editar), new { id = idCurso });
+        }
+
+        // Helper
         private List<Horario> MapearHorarios(List<HorarioInputViewModel> inputs)
         {
             var horarios = new List<Horario>();
