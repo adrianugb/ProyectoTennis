@@ -22,6 +22,9 @@ namespace ProyectoGrupalTennis.Models
         [Display(Name = "Hora Fin")]
         public TimeSpan HoraFin { get; set; }
 
+        [Required]
+        public decimal Monto { get; set; }
+
         public List<SelectListItem> Canchas { get; set; } = new();
 
         public string? MensajeExito { get; set; }

@@ -48,6 +48,7 @@
                             <th>Profesor</th>
                             <th>Fecha</th>
                             <th>Horario</th>
+                            <th>Monto</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -57,7 +58,7 @@
                         @if (!Model.Any())
                         {
                             <tr>
-                                <td colspan="5" class="text-center">
+                                <td colspan="6" class="text-center">
                                     No hay reservas disponibles.
                                 </td>
                             </tr>
@@ -83,24 +84,17 @@
                                     <td>
                                         @($"{reserva.HoraInicio:hh\\:mm} - {reserva.HoraFin:hh\\:mm}")
                                     </td>
-
+                                    <td>
+                                        ₡@reserva.Monto.ToString("N0")
+                                    </td>
                                     <td>
 
-                                        <form asp-action="ReservarEspacio"
-                                              method="post">
-
-                                            @Html.AntiForgeryToken()
-
-                                            <input type="hidden"
-                                                   name="idReserva"
-                                                   value="@reserva.IdReserva" />
-
-                                            <button type="submit"
-                                                    class="perfil-btn">
-                                                Reservar
-                                            </button>
-
-                                        </form>
+                                        <a asp-controller="Reservas"
+                                           asp-action="ConfirmarPagoReserva"
+                                           asp-route-idReserva="@reserva.IdReserva"
+                                           class="perfil-btn">
+                                            Ver monto
+                                        </a>
 
                                     </td>
 

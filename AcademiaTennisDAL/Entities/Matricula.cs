@@ -21,5 +21,7 @@ namespace AcademiaTennisDAL.Entities
         public DateTime FechaMatricula { get; set; } = DateTime.Now;
 
         public string Estado { get; set; } = "Activa";
+
+        public ICollection<Pago> Pagos { get; set; } = new List<Pago>();
     }
 }

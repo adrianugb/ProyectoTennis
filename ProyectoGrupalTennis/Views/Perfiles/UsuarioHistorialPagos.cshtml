@@ -82,7 +82,7 @@
                             <th>Estado del pago</th>
                             <th>Factura</th>
                             <th>Fecha factura</th>
-                            <th>Comprobante</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
 
@@ -90,7 +90,7 @@
                         @if (!Model.Pagos.Any())
                         {
                             <tr>
-                                <td colspan="8" class="text-center">
+                                <td colspan="9" class="text-center">
                                     No hay pagos registrados.
                                 </td>
                             </tr>
@@ -106,9 +106,7 @@
                                     <td>₡@pago.Monto.ToString("N0")</td>
                                     <td>@pago.FechaPago.ToString("dd/MM/yyyy")</td>
 
-                                    <td>
-                                        @pago.Estado
-                                    </td>
+                                    <td>@pago.Estado</td>
 
                                     <td>
                                         @if (pago.NumeroFactura != null)
@@ -130,8 +128,19 @@
                                             ? pago.FechaFactura.Value.ToString("dd/MM/yyyy")
                                             : "—")
                                     </td>
-                                     <td>
-                                        @if (pago.NumeroFactura != null)
+
+                                    <td>
+                                        @if (pago.Estado == "Pendiente")
+                                        {
+                                            <form asp-action="PagarEnLinea" method="post" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="idPago" value="@pago.IdPago" />
+                                                <button type="submit" class="btn btn-success btn-sm">
+                                                    Pagar ahora
+                                                </button>
+                                            </form>
+                                        }
+                                        else if (pago.NumeroFactura != null)
                                         {
                                             <a asp-action="DescargarComprobante"
                                                asp-route-idPago="@pago.IdPago"
@@ -148,8 +157,6 @@
                                             <span class="text-muted">No disponible</span>
                                         }
                                     </td>
-                                    <td>
-                                   
                                 </tr>
                             }
                         }

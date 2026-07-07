@@ -98,6 +98,7 @@ namespace ProyectoGrupalTennis.Controllers
                 FechaReserva = model.FechaReserva,
                 HoraInicio = model.HoraInicio,
                 HoraFin = model.HoraFin,
+                Monto = model.Monto,
                 Estado = "Disponible"
             };
 
@@ -202,8 +203,21 @@ namespace ProyectoGrupalTennis.Controllers
                 return RedirectToAction(nameof(Disponibles));
             }
 
-            reserva.IdAlumno = alumno.Id;
-            reserva.Estado = "Asignada";
+            var pago = new Pago
+            {
+                IdAlumno = alumno.Id,
+                Monto = reserva.Monto,
+                TipoPago = "Reserva",
+                MetodoPago = "Pendiente",
+                Estado = "Pendiente",
+                FechaPago = DateTime.Now,
+                FechaVencimiento = DateTime.Now.AddDays(3),
+                EsManual = false,
+                IdReserva = reserva.IdReserva,
+                Observaciones = "Pago pendiente por reserva de clase especial"
+            };
+
+            _context.Pagos.Add(pago);
 
             var nombreCancha = reserva.Cancha != null
                 ? reserva.Cancha.Nombre
@@ -214,14 +228,14 @@ namespace ProyectoGrupalTennis.Controllers
             alumno.Id,
             categoria: "Clase",
             tipo: "Reserva",
-            titulo: "Reserva confirmada",
-            mensaje: $"Tu reserva en {nombreCancha} fue confirmada para el {reserva.FechaReserva:dd/MM/yyyy} de {reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}.");
+            titulo: "Pago pendiente de reserva",
+            mensaje: $"Se generó un pago pendiente por la reserva en {nombreCancha} para el {reserva.FechaReserva:dd/MM/yyyy} de {reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}. Debes pagar para completar la reserva.");
 
             await _context.SaveChangesAsync();
 
-            TempData["Exito"] = "Reserva realizada correctamente.";
+            TempData["Exito"] = "Se generó el pago pendiente. Debe realizar el pago para completar la reserva.";
 
-            return RedirectToAction(nameof(Disponibles));
+            return RedirectToAction("HistorialPagos", "Usuario");
         }
 
         [Authorize(Roles = "Usuario")]
@@ -485,6 +499,34 @@ namespace ProyectoGrupalTennis.Controllers
                 "Reserva eliminada correctamente.";
 
             return RedirectToAction(nameof(GestionReservas));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Usuario")]
+        public async Task<IActionResult> ConfirmarPagoReserva(int idReserva)
+        {
+            var reserva = await _context.Reservas
+                .Include(r => r.Cancha)
+                .Include(r => r.Profesor)
+                .FirstOrDefaultAsync(r =>
+                    r.IdReserva == idReserva &&
+                    r.IdAlumno == null &&
+                    r.Estado == "Disponible");
+
+            if (reserva == null)
+            {
+                TempData["Error"] = "La reserva no está disponible.";
+                return RedirectToAction(nameof(Disponibles));
+            }
+
+            var model = new ConfirmarPagoViewModel
+            {
+                IdReserva = reserva.IdReserva,
+                Concepto = $"Reserva en {reserva.Cancha.Nombre} - {reserva.FechaReserva:dd/MM/yyyy}",
+                Monto = reserva.Monto
+            };
+
+            return View("~/Views/Pagos/ConfirmarPagoReserva.cshtml", model);
         }
     }
 }

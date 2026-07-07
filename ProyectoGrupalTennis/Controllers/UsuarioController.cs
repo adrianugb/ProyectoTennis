@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Services;
-using static System.Net.Mime.MediaTypeNames;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -55,6 +54,7 @@ namespace ProyectoGrupalTennis.Controllers
                     Descripcion = c.Descripcion ?? string.Empty,
                     Nivel = c.Nivel,
                     CuposDisponibles = c.CuposDisponibles,
+                    Precio = c.Precio,
                     NombreProfesor = c.Profesor != null
                         ? $"{c.Profesor.Nombre} {c.Profesor.Apellidos}"
                         : "Sin asignar",
@@ -66,6 +66,28 @@ namespace ProyectoGrupalTennis.Controllers
             };
 
             return View("~/Views/Perfiles/UsuarioCursos.cshtml", viewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmarPagoMatricula(int idCurso)
+        {
+            var curso = await _context.Cursos
+                .FirstOrDefaultAsync(c => c.IdCurso == idCurso && c.Activo);
+
+            if (curso == null)
+            {
+                TempData["Error"] = "El curso no existe.";
+                return RedirectToAction(nameof(MisCursos));
+            }
+
+            var model = new ConfirmarPagoViewModel
+            {
+                IdCurso = curso.IdCurso,
+                Concepto = curso.Nombre,
+                Monto = curso.Precio
+            };
+
+            return View("~/Views/Pagos/ConfirmarPagoMatricula.cshtml", model);
         }
 
         // POST: /Usuario/MatricularCurso
@@ -115,23 +137,44 @@ namespace ProyectoGrupalTennis.Controllers
                 Estado = "Activa"
             };
 
-            _context.Matriculas.Add(matricula);
-            curso.CuposDisponibles -= 1;
 
-            await NotificacionHelper.EnviarNotificacionAsync(
-            _context,
-            userId,
-            categoria: "Clase",
-            tipo: "Matrícula",
-            titulo: "Matrícula confirmada",
-            mensaje: $"Tu matrícula al curso {curso.Nombre} fue confirmada correctamente.");
+            var pago = new Pago
+            {
+                IdAlumno = userId,
+                IdCurso = curso.IdCurso,
+                Monto = curso.Precio,
+                TipoPago = "Matricula",
+                MetodoPago = "Pendiente",
+                Estado = "Pendiente",
+                FechaPago = DateTime.Now,
+                FechaVencimiento = DateTime.Now.AddDays(3),
+                EsManual = false,
+                Observaciones = $"Pago pendiente por matrícula al curso {curso.Nombre}"
+            };
+
+            _context.Pagos.Add(pago);
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Matrícula realizada correctamente.";
-            return RedirectToAction("MisCursos");
+            TempData["Success"] = $"Se generó el pago pendiente por ₡{curso.Precio:N0}. Debe realizar el pago para completar la matrícula.";
+            return RedirectToAction("HistorialPagos");
         }
+        /*
+                    await NotificacionHelper.EnviarNotificacionAsync(
+                        _context,
+                        userId,
+                        categoria: "Clase",
+                        tipo: "Matrícula",
+                        titulo: "Matrícula confirmada",
+                        mensaje: $"Tu matrícula al curso {curso.Nombre} fue confirmada correctamente."
+                    );
 
+                    await _context.SaveChangesAsync();
+
+                    TempData["Success"] = "Matrícula realizada correctamente.";
+                    return RedirectToAction("MisCursos");
+                }
+                */
         // GET: /Usuario/MisHorarios
         public async Task<IActionResult> MisHorarios(string? buscar, string? dia)
         {
@@ -848,6 +891,103 @@ namespace ProyectoGrupalTennis.Controllers
 
             TempData["MensajeExito"] = "Tus preferencias de notificaciones fueron actualizadas.";
             return RedirectToAction(nameof(Notificaciones));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PagarEnLinea(int idPago)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var pago = await _context.Pagos
+                .Include(p => p.Matricula)
+                .Include(p => p.Reserva)
+                .FirstOrDefaultAsync(p =>
+                    p.IdPago == idPago &&
+                    p.IdAlumno == userId);
+
+            if (pago == null)
+            {
+                TempData["Error"] = "No se encontró el pago seleccionado.";
+                return RedirectToAction(nameof(HistorialPagos));
+            }
+
+            if (pago.Estado != "Pendiente")
+            {
+                TempData["Error"] = "Este pago ya fue procesado.";
+                return RedirectToAction(nameof(HistorialPagos));
+            }
+
+            pago.Estado = "Pagado";
+            pago.MetodoPago = "Tarjeta";
+            pago.FechaPago = DateTime.Now;
+
+            if (pago.TipoPago == "Matricula")
+            {
+                if (!pago.IdMatricula.HasValue)
+                {
+                    var curso = await _context.Cursos
+                        .FirstOrDefaultAsync(c => c.IdCurso == pago.IdCurso);
+
+                    if (curso == null)
+                    {
+                        TempData["Error"] = "El curso relacionado al pago no existe.";
+                        return RedirectToAction(nameof(HistorialPagos));
+                    }
+
+                    if (curso == null)
+                    {
+                        TempData["Error"] = "El curso relacionado al pago no existe.";
+                        return RedirectToAction(nameof(HistorialPagos));
+                    }
+
+                    if (curso.CuposDisponibles <= 0)
+                    {
+                        TempData["Error"] = "Ya no hay cupos disponibles para este curso.";
+                        return RedirectToAction(nameof(HistorialPagos));
+                    }
+
+                    var matricula = new Matricula
+                    {
+                        IdAlumno = userId!,
+                        IdCurso = curso.IdCurso,
+                        FechaMatricula = DateTime.Now,
+                        Estado = "Activa"
+                    };
+
+                    _context.Matriculas.Add(matricula);
+                    curso.CuposDisponibles -= 1;
+
+                    await _context.SaveChangesAsync();
+
+                    pago.IdMatricula = matricula.IdMatricula;
+                }
+            }
+            else if (pago.TipoPago == "Reserva")
+            {
+                var reserva = await _context.Reservas
+                    .FirstOrDefaultAsync(r => r.IdReserva == pago.IdReserva);
+
+                if (reserva == null)
+                {
+                    TempData["Error"] = "La reserva relacionada al pago no existe.";
+                    return RedirectToAction(nameof(HistorialPagos));
+                }
+
+                if (reserva.IdAlumno != null)
+                {
+                    TempData["Error"] = "La reserva ya fue tomada por otro alumno.";
+                    return RedirectToAction(nameof(HistorialPagos));
+                }
+
+                reserva.IdAlumno = userId;
+                reserva.Estado = "Asignada";
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Pago realizado correctamente.";
+            return RedirectToAction(nameof(HistorialPagos));
         }
     }
 }

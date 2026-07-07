@@ -1,0 +1,63 @@
+﻿@model ProyectoGrupalTennis.Models.ConfirmarPagoViewModel
+
+@{
+    ViewData["Title"] = "Confirmar Pago de Reserva";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Confirmar Pago</h1>
+                    <p class="perfil-subtitle">
+                        Revise el monto antes de generar el pago de la reserva.
+                    </p>
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+                <table class="perfil-table">
+                    <tbody>
+                        <tr>
+                            <th>Reserva</th>
+                            <td>@Model.Concepto</td>
+                        </tr>
+
+                        <tr>
+                            <th>Monto</th>
+                            <td><strong>₡@Model.Monto.ToString("N0")</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <form asp-controller="Reservas"
+                      asp-action="ReservarEspacio"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="idReserva"
+                           value="@Model.IdReserva" />
+
+                    <div class="mt-4">
+                        <a asp-controller="Reservas"
+                           asp-action="Disponibles"
+                           class="btn btn-secondary">
+                            Cancelar
+                        </a>
+
+                        <button class="btn btn-success" type="submit">
+                            Generar pago
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>

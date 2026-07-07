@@ -1,0 +1,68 @@
+﻿@model ProyectoGrupalTennis.Models.ConfirmarPagoViewModel
+
+@{
+    ViewData["Title"] = "Confirmar Pago";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Confirmar Pago</h1>
+                    <p class="perfil-subtitle">
+                        Revise el monto antes de generar el pago.
+                    </p>
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+
+                <table class="perfil-table">
+                    <tbody>
+                        <tr>
+                            <th>Curso</th>
+                            <td>@Model.Concepto</td>
+                        </tr>
+
+                        <tr>
+                            <th>Monto</th>
+                            <td>
+                                <strong>₡@Model.Monto.ToString("N0")</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <form asp-action="MatricularCurso" method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="idCurso"
+                           value="@Model.IdCurso" />
+
+                    <div class="mt-4">
+
+                        <a asp-action="MisCursos"
+                           class="btn btn-secondary">
+                            Cancelar
+                        </a>
+
+                        <button class="btn btn-success"
+                                type="submit">
+                            Generar pago
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</section>

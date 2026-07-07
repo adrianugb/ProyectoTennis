@@ -9,6 +9,7 @@
         public string Descripcion { get; set; } = string.Empty;
         public string Nivel { get; set; } = string.Empty;
         public int CuposDisponibles { get; set; }
+        public decimal Precio { get; set; }
         public string? NombreProfesor { get; set; }
         public List<string> Horarios { get; set; } = new();
     }
@@ -49,6 +50,7 @@
         public string Nombre { get; set; } = string.Empty;
         public string Nivel { get; set; } = string.Empty;
         public string? NombreProfesor { get; set; }
+        public decimal Precio { get; set; }
         public bool Activo { get; set; }
         public List<string> Horarios { get; set; } = new();
     }

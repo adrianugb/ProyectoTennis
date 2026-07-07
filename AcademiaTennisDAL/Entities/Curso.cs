@@ -19,6 +19,10 @@ namespace AcademiaTennisDAL.Entities
 
         public int CuposDisponibles { get; set; }
 
+        [Required]
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal Precio { get; set; }
+
         public bool Activo { get; set; } = true;
 
         // FK Profesor
@@ -26,6 +30,8 @@ namespace AcademiaTennisDAL.Entities
 
         [ForeignKey("IdProfesor")]
         public Profesor? Profesor { get; set; }
+
+
 
         public ICollection<Horario> Horarios { get; set; } = new List<Horario>();
         public ICollection<Matricula> Matriculas { get; set; } = new List<Matricula>();

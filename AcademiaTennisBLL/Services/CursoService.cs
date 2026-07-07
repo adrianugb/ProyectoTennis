@@ -22,6 +22,8 @@ namespace AcademiaTennisBLL.Services
                 throw new Exception("El nombre es obligatorio.");
             if (Curso.CuposDisponibles < 0)
                 throw new Exception("Los cupos no pueden ser negativos.");
+            if (Curso.Precio <= 0)
+                throw new Exception("El precio del curso debe ser mayor a cero.");
             if (horarios == null || horarios.Count == 0)
                 throw new Exception("Debe definir al menos un horario.");
 
@@ -32,6 +34,10 @@ namespace AcademiaTennisBLL.Services
         {
             if (string.IsNullOrWhiteSpace(Curso.Nombre))
                 throw new Exception("El nombre es obligatorio.");
+
+            if (Curso.Precio <= 0)
+                throw new Exception("El precio del curso debe ser mayor a cero.");
+
             if (horarios == null || horarios.Count == 0)
                 throw new Exception("Debe definir al menos un horario.");
 

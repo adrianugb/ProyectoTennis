@@ -86,6 +86,7 @@
                                 <th>Nivel</th>
                                 <th>Horarios</th>
                                 <th>Profesor</th>
+                                <th>Precio</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -131,6 +132,7 @@
                                                 <span class="text-muted small">Sin asignar</span>
                                             }
                                         </td>
+                                        <td>₡@curso.Precio.ToString("N0")</td>
                                         <td>
                                             @if (curso.Activo)
                                             {

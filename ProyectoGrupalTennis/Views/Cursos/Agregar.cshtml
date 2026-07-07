@@ -76,6 +76,15 @@
 
                         <div class="col-md-6">
                             <div class="mb-3">
+                                <label asp-for="Curso.Precio">Precio</label>
+                                <input asp-for="Curso.Precio" type="number" min="0" step="0.01"
+                                       class="form-control" placeholder="0" />
+                                <span asp-validation-for="Curso.Precio" class="text-danger" style="font-size:12px;"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
                                 <label asp-for="Curso.IdProfesor">Profesor asignado</label>
                                 <select asp-for="Curso.IdProfesor" class="form-select">
                                     <option value="">Sin profesor asignado</option>

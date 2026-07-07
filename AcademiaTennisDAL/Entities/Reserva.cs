@@ -29,6 +29,12 @@ namespace AcademiaTennisDAL.Entities
 
         public TimeSpan HoraFin { get; set; }
 
+        [Required]
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal Monto { get; set; }
+
         public string Estado { get; set; } = "Disponible";
+
+        public ICollection<Pago> Pagos { get; set; } = new List<Pago>();
     }
 }

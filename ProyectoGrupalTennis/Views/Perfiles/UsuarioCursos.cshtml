@@ -93,6 +93,7 @@
                                 <th>Horarios</th>
                                 <th>Profesor</th>
                                 <th>Cupos</th>
+                                <th>Precio</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
@@ -100,7 +101,7 @@
                             @if (!Model.Cursos.Any())
                             {
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">
+                                    <td colspan="7" class="text-center text-muted py-4">
                                         <i class="fa fa-book fa-2x mb-2 d-block"></i>
                                         @if (!string.IsNullOrWhiteSpace(Model.FiltroBuscar) || !string.IsNullOrWhiteSpace(Model.FiltroNivel))
                                         {
@@ -159,24 +160,19 @@
                                                 <span class="perfil-badge-warning">Sin cupos</span>
                                             }
                                         </td>
-
+                                        <td>
+                                            ₡@curso.Precio.ToString("N0")
+                                        </td>
                                         <td>
                                             @if (curso.CuposDisponibles > 0)
                                             {
-                                                <form asp-controller="Usuario"
-                                                      asp-action="MatricularCurso"
-                                                      method="post">
+                                                <a asp-controller="Usuario"
+                                                   asp-action="ConfirmarPagoMatricula"
+                                                   asp-route-idCurso="@curso.IdCurso"
+                                                   class="btn btn-success btn-sm">
+                                                    Ver monto
+                                                </a>
 
-                                                    @Html.AntiForgeryToken()
-
-                                                    <input type="hidden"
-                                                           name="idCurso"
-                                                           value="@curso.IdCurso" />
-
-                                                    <button type="submit" class="btn btn-success btn-sm">
-                                                        Matricular
-                                                    </button>
-                                                </form>
                                             }
                                             else
                                             {
