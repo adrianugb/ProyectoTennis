@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Services;
+using Hangfire;
+using Hangfire.MySql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,18 @@ builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 builder.Services.AddScoped<ICursoService, CursoService>();
 //----------------------------------------------------------------------------
 
+// HANGFIRE
+builder.Services.AddHangfire(config =>
+{
+    config.UseStorage(new MySqlStorage(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlStorageOptions
+        {
+            TablesPrefix = "Hangfire"
+        }));
+});
+
+builder.Services.AddHangfireServer();
 var app = builder.Build();
 
 // ── CREAR ROLES AUTOMÁTICAMENTE ──────────────────────────────────────────────
@@ -124,6 +138,7 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
+app.UseHangfireDashboard("/hangfire");
 
 app.MapControllerRoute(
     name: "default",
