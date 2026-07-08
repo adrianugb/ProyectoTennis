@@ -15,14 +15,18 @@ namespace ProyectoGrupalTennis.Controllers
     {
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ProyectoGrupalTennis.Services.EmailService _emailService;
 
         public ReservasController(
             AppDbContext context,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ProyectoGrupalTennis.Services.EmailService emailService)
         {
             _context = context;
             _userManager = userManager;
+            _emailService = emailService;
         }
+
         [Authorize(Roles = "Profesor")]
         public async Task<IActionResult> Reservar()
         {
@@ -224,13 +228,13 @@ namespace ProyectoGrupalTennis.Controllers
                 : "la cancha seleccionada";
 
             await NotificacionHelper.EnviarNotificacionAsync(
-            _context,
-            alumno.Id,
-            categoria: "Clase",
-            tipo: "Reserva",
-            titulo: "Pago pendiente de reserva",
-            mensaje: $"Se generó un pago pendiente por la reserva en {nombreCancha} para el {reserva.FechaReserva:dd/MM/yyyy} de {reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}. Debes pagar para completar la reserva.");
-
+                _context,
+                _emailService,
+                alumno.Id,
+                categoria: "Clase",
+                tipo: "Reserva",
+                titulo: "Reserva confirmada",
+                mensaje: $"Tu reserva en {nombreCancha} fue confirmada para el {reserva.FechaReserva:dd/MM/yyyy} de {reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}.");
             await _context.SaveChangesAsync();
 
             TempData["Exito"] = "Se generó el pago pendiente. Debe realizar el pago para completar la reserva.";

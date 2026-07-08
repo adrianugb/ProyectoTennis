@@ -1,17 +1,18 @@
-﻿
+﻿using AcademiaTennisDAL.Context;
 using AcademiaTennisDAL.Entities;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ProyectoGrupalTennis.Models.ViewModels;
-using AcademiaTennisDAL.Context;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using ProyectoGrupalTennis.Helpers;
 using ProyectoGrupalTennis.Models;
+using ProyectoGrupalTennis.Models.ViewModels;
+using ProyectoGrupalTennis.Services;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System.IO;
-using ClosedXML.Excel;
 using System.IO;
 
 namespace ProyectoGrupalTennis.Controllers
@@ -21,12 +22,18 @@ namespace ProyectoGrupalTennis.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppDbContext _context;
+        private readonly EmailService _emailService;
 
-        public AdminController(UserManager<ApplicationUser> userManager, AppDbContext context)
+        public AdminController(
+            UserManager<ApplicationUser> userManager,
+            AppDbContext context,
+            EmailService emailService)
         {
             _userManager = userManager;
             _context = context;
+            _emailService = emailService;
         }
+
         public async Task<IActionResult> Index()
         {
             var usuarios = _userManager.Users.ToList();
@@ -156,9 +163,9 @@ namespace ProyectoGrupalTennis.Controllers
             DateTime? fechaHasta)
         {
             var query = _context.Pagos
-      .Include(p => p.Alumno)
-      .Include(p => p.Factura)
-      .AsQueryable();
+              .Include(p => p.Alumno)
+              .Include(p => p.Factura)
+              .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(buscar))
             {
@@ -376,7 +383,7 @@ namespace ProyectoGrupalTennis.Controllers
 
             worksheet.Columns().AdjustToContents();
 
-            using var stream = new MemoryStream(); 
+            using var stream = new MemoryStream();
 
             workbook.SaveAs(stream);
             stream.Position = 0;
@@ -386,6 +393,90 @@ namespace ProyectoGrupalTennis.Controllers
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"Reporte_Pagos_{DateTime.Now:yyyyMMdd}.xlsx"
             );
+        }
+
+        // GET: /Admin/NotificarAlumnos - ADM-09-002
+        public async Task<IActionResult> NotificarAlumnos()
+        {
+            var model = new NotificarGrupoViewModel
+            {
+                Cursos = await _context.Cursos
+                    .Where(c => c.Activo)
+                    .OrderBy(c => c.Nombre)
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.IdCurso.ToString(),
+                        Text = c.Nombre
+                    })
+                    .ToListAsync()
+            };
+
+            return View("~/Views/Perfiles/AdminNotificarGrupo.cshtml", model);
+        }
+
+        // POST: /Admin/NotificarAlumnos - ADM-09-002
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> NotificarAlumnos(NotificarGrupoViewModel model)
+        {
+            model.Cursos = await _context.Cursos
+                .Where(c => c.Activo)
+                .OrderBy(c => c.Nombre)
+                .Select(c => new SelectListItem
+                {
+                    Value = c.IdCurso.ToString(),
+                    Text = c.Nombre
+                })
+                .ToListAsync();
+
+            if (string.IsNullOrWhiteSpace(model.Titulo) || string.IsNullOrWhiteSpace(model.Mensaje))
+            {
+                TempData["Error"] = "El título y el mensaje son obligatorios.";
+                return View("~/Views/Perfiles/AdminNotificarGrupo.cshtml", model);
+            }
+
+            // Determina el grupo: un curso especifico, o todos los alumnos con matricula activa
+            List<string> idsAlumnos;
+
+            if (model.IdCurso.HasValue)
+            {
+                idsAlumnos = await _context.Matriculas
+                    .Where(m => m.IdCurso == model.IdCurso.Value && m.Estado == "Activa")
+                    .Select(m => m.IdAlumno)
+                    .Distinct()
+                    .ToListAsync();
+            }
+            else
+            {
+                idsAlumnos = await _context.Matriculas
+                    .Where(m => m.Estado == "Activa")
+                    .Select(m => m.IdAlumno)
+                    .Distinct()
+                    .ToListAsync();
+            }
+
+            int enviadas = 0;
+
+            foreach (var idAlumno in idsAlumnos)
+            {
+                var creada = await NotificacionHelper.EnviarNotificacionAsync(
+                    _context,
+                    _emailService,
+                    idAlumno,
+                    categoria: "General",
+                    tipo: "Aviso administrativo",
+                    titulo: model.Titulo,
+                    mensaje: model.Mensaje);
+
+                if (creada) enviadas++;
+            }
+
+            await _context.SaveChangesAsync();
+
+            model.AlumnosNotificados = enviadas;
+            TempData["MensajeExito"] = $"Se envió la notificación a {enviadas} alumno(s).";
+
+            return View("~/Views/Perfiles/AdminNotificarGrupo.cshtml", model);
         }
     }
 }

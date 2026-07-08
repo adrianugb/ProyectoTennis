@@ -1,14 +1,16 @@
 ﻿using AcademiaTennisDAL.Context;
 using AcademiaTennisDAL.Entities;
+using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProyectoGrupalTennis.Helpers;
 using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Services;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using ProyectoGrupalTennis.Helpers;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -129,15 +131,6 @@ namespace ProyectoGrupalTennis.Controllers
                 return RedirectToAction("MisCursos");
             }
 
-            var matricula = new Matricula
-            {
-                IdAlumno = userId,
-                IdCurso = idCurso,
-                FechaMatricula = DateTime.Now,
-                Estado = "Activa"
-            };
-
-
             var pago = new Pago
             {
                 IdAlumno = userId,
@@ -159,22 +152,7 @@ namespace ProyectoGrupalTennis.Controllers
             TempData["Success"] = $"Se generó el pago pendiente por ₡{curso.Precio:N0}. Debe realizar el pago para completar la matrícula.";
             return RedirectToAction("HistorialPagos");
         }
-        /*
-                    await NotificacionHelper.EnviarNotificacionAsync(
-                        _context,
-                        userId,
-                        categoria: "Clase",
-                        tipo: "Matrícula",
-                        titulo: "Matrícula confirmada",
-                        mensaje: $"Tu matrícula al curso {curso.Nombre} fue confirmada correctamente."
-                    );
 
-                    await _context.SaveChangesAsync();
-
-                    TempData["Success"] = "Matrícula realizada correctamente.";
-                    return RedirectToAction("MisCursos");
-                }
-                */
         // GET: /Usuario/MisHorarios
         public async Task<IActionResult> MisHorarios(string? buscar, string? dia)
         {
@@ -935,12 +913,6 @@ namespace ProyectoGrupalTennis.Controllers
                         return RedirectToAction(nameof(HistorialPagos));
                     }
 
-                    if (curso == null)
-                    {
-                        TempData["Error"] = "El curso relacionado al pago no existe.";
-                        return RedirectToAction(nameof(HistorialPagos));
-                    }
-
                     if (curso.CuposDisponibles <= 0)
                     {
                         TempData["Error"] = "Ya no hay cupos disponibles para este curso.";
@@ -961,11 +933,22 @@ namespace ProyectoGrupalTennis.Controllers
                     await _context.SaveChangesAsync();
 
                     pago.IdMatricula = matricula.IdMatricula;
+
+                    // USER-09-008 / USER-09-009: notifica al alumno que su matricula quedo confirmada
+                    await NotificacionHelper.EnviarNotificacionAsync(
+                        _context,
+                        _emailService,
+                        userId!,
+                        categoria: "Clase",
+                        tipo: "Matrícula",
+                        titulo: "Matrícula confirmada",
+                        mensaje: $"Tu matrícula al curso {curso.Nombre} fue confirmada correctamente.");
                 }
             }
             else if (pago.TipoPago == "Reserva")
             {
                 var reserva = await _context.Reservas
+                    .Include(r => r.Cancha)
                     .FirstOrDefaultAsync(r => r.IdReserva == pago.IdReserva);
 
                 if (reserva == null)
@@ -982,6 +965,18 @@ namespace ProyectoGrupalTennis.Controllers
 
                 reserva.IdAlumno = userId;
                 reserva.Estado = "Asignada";
+
+                var nombreCancha = reserva.Cancha != null ? reserva.Cancha.Nombre : "la cancha seleccionada";
+
+                // USER-09-008 / USER-09-009: notifica al alumno que su reserva quedo confirmada
+                await NotificacionHelper.EnviarNotificacionAsync(
+                    _context,
+                    _emailService,
+                    userId!,
+                    categoria: "Clase",
+                    tipo: "Reserva",
+                    titulo: "Reserva confirmada",
+                    mensaje: $"Tu reserva en {nombreCancha} fue confirmada para el {reserva.FechaReserva:dd/MM/yyyy} de {reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}.");
             }
 
             await _context.SaveChangesAsync();

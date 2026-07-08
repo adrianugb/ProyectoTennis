@@ -27,5 +27,11 @@
         public bool Leida { get; set; }
 
         public DateTime FechaEnvio { get; set; }
+
+        // USER-09-008: canal por el que quedó disponible la notificación y si el
+        // canal preferido (correo) falló y se tuvo que usar la plataforma como respaldo.
+        public string CanalUsado { get; set; } = "Plataforma";
+
+        public bool EnvioFallido { get; set; }
     }
 }

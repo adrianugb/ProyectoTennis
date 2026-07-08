@@ -1,0 +1,101 @@
+﻿@model ProyectoGrupalTennis.Models.ViewModels.NotificarGrupoViewModel
+
+@{
+    ViewData["Title"] = "Notificar a grupos de alumnos";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Notificar a grupos de alumnos</h1>
+                    <p class="perfil-subtitle">
+                        Selecciona un grupo de alumnos (un curso específico o todos los alumnos activos)
+                        y redacta un aviso general. El mensaje quedará disponible dentro de la plataforma
+                        y, además, se enviará por correo a quienes tengan ese canal configurado como preferido.
+                    </p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-bullhorn"></i> Comunicación a grupos
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a asp-controller="Home" asp-action="PerfilAdmin" class="btn-volver">
+                    <i class="fa fa-arrow-left"></i> Volver al Panel
+                </a>
+            </div>
+
+            @if (TempData["MensajeExito"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa fa-check-circle me-2"></i> @TempData["MensajeExito"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fa fa-exclamation-circle me-2"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Redactar notificación</h2>
+                </div>
+
+                <form asp-controller="Admin" asp-action="NotificarAlumnos" method="post" class="p-3">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="form-label">Grupo de alumnos</label>
+                        <select asp-for="IdCurso" asp-items="Model.Cursos" class="form-select">
+                            <option value="">-- Todos los alumnos con matrícula activa --</option>
+                        </select>
+                        <small class="text-muted">
+                            Si eliges un curso, el mensaje llegará únicamente a los alumnos matriculados y activos en ese curso.
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Titulo" class="form-label">Título</label>
+                        <input asp-for="Titulo" class="form-control" placeholder="Ej: Cambio de horario del torneo" maxlength="200" />
+                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Mensaje" class="form-label">Mensaje</label>
+                        <textarea asp-for="Mensaje" class="form-control" rows="5" maxlength="1000"
+                                  placeholder="Escribe aquí el contenido del aviso..."></textarea>
+                        <span asp-validation-for="Mensaje" class="text-danger"></span>
+                    </div>
+
+                    @if (Model.AlumnosNotificados.HasValue)
+                    {
+                        <div class="alert alert-info">
+                            <i class="fa fa-info-circle me-2"></i>
+                            La última notificación enviada llegó a <strong>@Model.AlumnosNotificados</strong> alumno(s).
+                        </div>
+                    }
+
+                    <div class="perfil-actions">
+                        <button type="submit" class="perfil-btn">
+                            <i class="fa fa-paper-plane"></i> Enviar notificación
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

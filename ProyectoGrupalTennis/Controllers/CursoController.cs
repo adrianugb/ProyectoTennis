@@ -12,11 +12,13 @@ namespace ProyectoGrupalTennis.Controllers
     {
         private readonly ICursoService _service;
         private readonly AppDbContext _context;
+        private readonly ProyectoGrupalTennis.Services.EmailService _emailService;
 
-        public CursoController(ICursoService service, AppDbContext context)
+        public CursoController(ICursoService service, AppDbContext context, ProyectoGrupalTennis.Services.EmailService emailService)
         {
             _service = service;
             _context = context;
+            _emailService = emailService;
         }
 
         // GET: /Curso/Index
@@ -157,7 +159,7 @@ namespace ProyectoGrupalTennis.Controllers
                 foreach (var m in matriculas)
                 {
                     await NotificacionHelper.EnviarNotificacionAsync(
-                        _context, m.IdAlumno, "Clase", "USER-09-003",
+                        _context, _emailService, m.IdAlumno, "Clase", "USER-09-003",
                         "Cambio de horario",
                         $"El horario del curso '{curso?.Nombre}' fue actualizado. Revisá tu agenda.");
                 }
@@ -166,7 +168,7 @@ namespace ProyectoGrupalTennis.Controllers
                 if (curso?.Profesor?.UserId != null)
                 {
                     await NotificacionHelper.EnviarNotificacionAsync(
-                        _context, curso.Profesor.UserId, "Clase", "PROF-09-002",
+                        _context, _emailService, curso.Profesor.UserId, "Clase", "PROF-09-002",
                         "Cambio de horario en tu curso",
                         $"El horario del curso '{curso.Nombre}' que impartís fue modificado.");
                 }
@@ -201,7 +203,7 @@ namespace ProyectoGrupalTennis.Controllers
                 foreach (var m in matriculas)
                 {
                     await NotificacionHelper.EnviarNotificacionAsync(
-                        _context, m.IdAlumno, "Clase", "USER-09-003",
+                        _context, _emailService, m.IdAlumno, "Clase", "USER-09-003",
                         "Cambio de horario",
                         $"El horario del curso '{curso?.Nombre}' fue actualizado. Revisá tu agenda.");
                 }
@@ -210,7 +212,7 @@ namespace ProyectoGrupalTennis.Controllers
                 if (curso?.Profesor?.UserId != null)
                 {
                     await NotificacionHelper.EnviarNotificacionAsync(
-                        _context, curso.Profesor.UserId, "Clase", "PROF-09-002",
+                        _context, _emailService, curso.Profesor.UserId, "Clase", "PROF-09-002",
                         "Cambio de horario en tu curso",
                         $"El horario del curso '{curso.Nombre}' que impartís fue modificado.");
                 }

@@ -30,5 +30,16 @@ namespace AcademiaTennisDAL.Entities
         public bool Leida { get; set; } = false;
 
         public DateTime FechaEnvio { get; set; } = DateTime.Now;
+
+        // USER-09-008: canal por el que finalmente quedo disponible la notificacion
+        // ("Email" o "Plataforma"). Siempre queda un valor, ya que la notificacion
+        // siempre se guarda dentro de la app como respaldo.
+        [StringLength(50)]
+        public string CanalUsado { get; set; } = "Plataforma";
+
+        // USER-09-008: true cuando el canal preferido del alumno (por ejemplo Email)
+        // no pudo entregarse y el sistema tuvo que dejar constancia del error,
+        // usando la plataforma como medio alterno.
+        public bool EnvioFallido { get; set; } = false;
     }
 }

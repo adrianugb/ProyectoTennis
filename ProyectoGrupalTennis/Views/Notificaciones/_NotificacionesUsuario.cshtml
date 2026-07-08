@@ -4,9 +4,7 @@
     var nombreCanal = Model.CanalPreferido switch
     {
         "Email" => "Correo electrónico",
-        "SMS" => "SMS",
         "Push" => "Notificación en la plataforma",
-        "WhatsApp" => "WhatsApp",
         _ => Model.CanalPreferido
     };
 
@@ -102,10 +100,11 @@
                         <label>Canal principal</label>
                         <select asp-for="CanalPreferido" class="form-control">
                             <option value="Email">Correo electrónico</option>
-                            <option value="SMS">SMS</option>
                             <option value="Push">Notificación en la plataforma</option>
-                            <option value="WhatsApp">WhatsApp</option>
                         </select>
+                        <small class="text-muted">
+                            Por ahora el sistema solo envía avisos por correo electrónico o dentro de la plataforma.
+                        </small>
                     </div>
                 </div>
 
@@ -149,6 +148,7 @@
                     <th>Descripción</th>
                     <th>Fecha</th>
                     <th>Estado</th>
+                    <th>Canal</th>
                     <th style="text-align:center;">Acción</th>
                 </tr>
             </thead>
@@ -157,7 +157,7 @@
                 @if (Model == null || Model.Notificaciones == null || !Model.Notificaciones.Any())
                 {
                     <tr>
-                        <td colspan="5" class="text-center text-muted">
+                        <td colspan="6" class="text-center text-muted">
                             No tienes notificaciones registradas.
                         </td>
                     </tr>
@@ -180,6 +180,18 @@
                                 else
                                 {
                                     <span class="badge-soft-warning">Nueva</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.EnvioFallido)
+                                {
+                                    <span class="badge-soft-warning" title="No se pudo entregar por correo; disponible en la plataforma">
+                                        <i class="fa fa-exclamation-triangle"></i> Correo falló · Plataforma
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span>@(item.CanalUsado == "Email" ? "Correo electrónico" : "Plataforma")</span>
                                 }
                             </td>
                             <td style="text-align:center;">

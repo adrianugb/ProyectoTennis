@@ -1,0 +1,191 @@
+﻿<div class="dashboard-block">
+    <div class="dashboard-header">
+        <div>
+            <h1 class="page-title">Dashboard del Profesor</h1>
+            <p class="page-subtitle">
+                Visualización general de tus clases, asistencia de alumnos y desempeño semanal.
+            </p>
+        </div>
+
+        <div class="dashboard-status-badge">
+            <i class="fa fa-chart-line"></i> Vista analítica
+        </div>
+    </div>
+
+    <!-- Resumen rápido -->
+    <div class="dashboard-summary-strip">
+        <div class="summary-item">
+            <span class="summary-title">Periodo analizado</span>
+            <strong>Julio 2026</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-title">Clases impartidas</span>
+            <strong>18 clases</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-title">Asistencia promedio</span>
+            <strong>87%</strong>
+        </div>
+    </div>
+
+    <!-- Indicadores rápidos -->
+    <div class="row" style="margin-bottom: 30px;">
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-chalkboard-teacher"></i>
+                    <span class="stat-badge positive">+5%</span>
+                </div>
+                <h3>18</h3>
+                <p>Clases impartidas</p>
+                <small>En el periodo actual</small>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-user-check"></i>
+                    <span class="stat-badge positive">+3%</span>
+                </div>
+                <h3>87%</h3>
+                <p>Asistencia promedio</p>
+                <small>De tus alumnos matriculados</small>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-user-graduate"></i>
+                    <span class="stat-badge neutral">42</span>
+                </div>
+                <h3>42</h3>
+                <p>Alumnos activos</p>
+                <small>Distribuidos en tus cursos</small>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="dashboard-stat-card">
+                <div class="stat-top">
+                    <i class="fa fa-star"></i>
+                    <span class="stat-badge positive">Óptimo</span>
+                </div>
+                <h3>4.6/5</h3>
+                <p>Evaluación promedio</p>
+                <small>Según encuestas de satisfacción</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficas -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="dashboard-card chart-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-calendar-check"></i> Clases por día</h3>
+                    <span class="mini-label">Distribución semanal</span>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="graficoClasesProfesor"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="dashboard-card chart-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-chart-line"></i> Asistencia semanal</h3>
+                    <span class="mini-label">Últimas 4 semanas</span>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="graficoAsistenciaProfesor"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel complementario -->
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-md-8">
+            <div class="dashboard-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-table"></i> Resumen de cursos</h3>
+                    <span class="mini-label">Vista del periodo</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table custom-table">
+                        <thead>
+                            <tr>
+                                <th>Curso</th>
+                                <th>Alumnos</th>
+                                <th>Asistencia</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Tennis Nivel Intermedio</td>
+                                <td>16</td>
+                                <td>89%</td>
+                                <td><span class="badge-soft badge-soft-success">Favorable</span></td>
+                            </tr>
+                            <tr>
+                                <td>Tennis Principiantes</td>
+                                <td>14</td>
+                                <td>84%</td>
+                                <td><span class="badge-soft badge-soft-info">Estable</span></td>
+                            </tr>
+                            <tr>
+                                <td>Tennis Avanzado</td>
+                                <td>12</td>
+                                <td>88%</td>
+                                <td><span class="badge-soft badge-soft-success">Favorable</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dashboard-card" style="margin-bottom: 20px;">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-lightbulb"></i> Hallazgos rápidos</h3>
+                </div>
+
+                <ul class="dashboard-alert-list">
+                    <li>
+                        <i class="fa fa-check-circle"></i>
+                        La asistencia mejoró respecto al periodo anterior.
+                    </li>
+                    <li>
+                        <i class="fa fa-arrow-up"></i>
+                        El curso avanzado mantiene la mejor evaluación.
+                    </li>
+                    <li>
+                        <i class="fa fa-exclamation-circle"></i>
+                        Revisa el curso de principiantes: asistencia algo más baja.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header-custom">
+                    <h3><i class="fa fa-bolt"></i> Acciones</h3>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="dashboard-mini-btn"
+                            onclick="mostrarVista('dashboard-profesor')">
+                        <i class="fa fa-arrow-left"></i> Volver
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
