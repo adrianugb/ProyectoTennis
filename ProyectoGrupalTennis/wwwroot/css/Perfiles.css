@@ -772,3 +772,19 @@
         grid-template-columns: 1fr;
     }
 }
+
+.perfil-grid .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+.perfil-grid .col-md-6,
+.perfil-grid .col-sm-6 {
+    display: flex;
+    margin-bottom: 25px;
+}
+
+.perfil-grid .perfil-card {
+    width: 100%;
+}

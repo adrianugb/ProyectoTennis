@@ -1,0 +1,74 @@
+﻿@model ProyectoGrupalTennis.Models.RegistrarPagoManualViewModel
+
+@{
+    ViewData["Title"] = "Registrar Pago Manual";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Registrar Pago Manual</h1>
+                    <p class="perfil-subtitle">
+                        Registre pagos realizados fuera del sistema.
+                    </p>
+                </div>
+            </div>
+
+            <form asp-action="RegistrarPagoManual" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label asp-for="IdAlumno" class="form-label">Alumno</label>
+                    <select asp-for="IdAlumno" asp-items="Model.Alumnos" class="form-select">
+                        <option value="">Seleccione un alumno</option>
+                    </select>
+                    <span asp-validation-for="IdAlumno" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="TipoPago" class="form-label">Tipo de pago</label>
+                    <select asp-for="TipoPago" class="form-select">
+                        <option value="">Seleccione</option>
+                        <option value="Matricula">Matrícula</option>
+                        <option value="Reserva">Reserva</option>
+                    </select>
+                    <span asp-validation-for="TipoPago" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Monto" class="form-label">Monto</label>
+                    <input asp-for="Monto" type="number" min="0" step="0.01" class="form-control" />
+                    <span asp-validation-for="Monto" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="MetodoPago" class="form-label">Método de pago</label>
+                    <select asp-for="MetodoPago" class="form-select">
+                        <option value="">Seleccione</option>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="SINPE">SINPE</option>
+                        <option value="Transferencia">Transferencia</option>
+                    </select>
+                    <span asp-validation-for="MetodoPago" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Observaciones" class="form-label">Observaciones</label>
+                    <textarea asp-for="Observaciones" class="form-control"></textarea>
+                </div>
+
+                <a asp-action="AdminPagos" class="btn btn-secondary">Cancelar</a>
+
+                <button type="submit" class="btn btn-success">
+                    Registrar pago
+                </button>
+            </form>
+
+        </div>
+    </div>
+</section>

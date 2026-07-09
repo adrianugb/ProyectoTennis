@@ -220,6 +220,7 @@ namespace ProyectoGrupalTennis.Controllers
                 FechaDesde = fechaDesde,
                 FechaHasta = fechaHasta,
 
+
                 Pagos = pagos.Select(p => new AdminPagoItemViewModel
                 {
                     IdPago = p.IdPago,
@@ -231,6 +232,8 @@ namespace ProyectoGrupalTennis.Controllers
                     Monto = p.Monto,
                     FechaPago = p.FechaPago,
                     Estado = p.Estado,
+                    ComprobantePago = p.ComprobantePago,
+
                     FacturaEstado = p.Factura != null
                         ? "Disponible"
                         : p.Estado == "Pagado"
@@ -477,6 +480,183 @@ namespace ProyectoGrupalTennis.Controllers
             TempData["MensajeExito"] = $"Se envió la notificación a {enviadas} alumno(s).";
 
             return View("~/Views/Perfiles/AdminNotificarGrupo.cshtml", model);
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> RegistrarPagoManual()
+        {
+            var model = new RegistrarPagoManualViewModel
+            {
+                Alumnos = await _context.Users
+                    .OrderBy(u => u.Nombre)
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.Id,
+                        Text = u.Nombre + " " + u.Apellido + " - " + u.Email
+                    })
+                    .ToListAsync()
+            };
+
+            return View("~/Views/Pagos/RegistrarPagoManual.cshtml", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegistrarPagoManual(RegistrarPagoManualViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Alumnos = await _context.Users
+                    .OrderBy(u => u.Nombre)
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.Id,
+                        Text = u.Nombre + " " + u.Apellido + " - " + u.Email
+                    })
+                    .ToListAsync();
+
+                return View("~/Views/Pagos/RegistrarPagoManual.cshtml", model);
+            }
+
+            var pago = new Pago
+            {
+                IdAlumno = model.IdAlumno,
+                TipoPago = model.TipoPago,
+                Monto = model.Monto,
+                MetodoPago = model.MetodoPago,
+                Estado = "Pagado",
+                FechaPago = DateTime.Now,
+                EsManual = true,
+                Observaciones = model.Observaciones
+            };
+
+            _context.Pagos.Add(pago);
+            await _context.SaveChangesAsync();
+
+            TempData["MensajeExito"] = "Pago manual registrado correctamente.";
+            return RedirectToAction(nameof(AdminPagos));
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmarPago(int idPago)
+        {
+            var pago = await _context.Pagos
+                .Include(p => p.Reserva)
+                    .ThenInclude(r => r.Cancha)
+                .FirstOrDefaultAsync(p => p.IdPago == idPago);
+
+            if (pago == null)
+            {
+                TempData["MensajeError"] = "No se encontró el pago.";
+                return RedirectToAction(nameof(AdminPagos));
+            }
+
+            if (pago.Estado != "En revisión")
+            {
+                TempData["MensajeError"] = "Solo se pueden confirmar pagos en revisión.";
+                return RedirectToAction(nameof(AdminPagos));
+            }
+
+            if (pago.TipoPago == "Matricula")
+            {
+                var curso = await _context.Cursos
+                    .FirstOrDefaultAsync(c => c.IdCurso == pago.IdCurso);
+
+                if (curso == null)
+                {
+                    TempData["MensajeError"] = "El curso relacionado al pago no existe.";
+                    return RedirectToAction(nameof(AdminPagos));
+                }
+
+                if (curso.CuposDisponibles <= 0)
+                {
+                    TempData["MensajeError"] = "Ya no hay cupos disponibles para este curso.";
+                    return RedirectToAction(nameof(AdminPagos));
+                }
+
+                var yaMatriculado = await _context.Matriculas.AnyAsync(m =>
+                    m.IdAlumno == pago.IdAlumno &&
+                    m.IdCurso == curso.IdCurso &&
+                    m.Estado == "Activa");
+
+                if (yaMatriculado)
+                {
+                    TempData["MensajeError"] = "El alumno ya está matriculado en este curso.";
+                    return RedirectToAction(nameof(AdminPagos));
+                }
+
+                var matricula = new Matricula
+                {
+                    IdAlumno = pago.IdAlumno,
+                    IdCurso = curso.IdCurso,
+                    FechaMatricula = DateTime.Now,
+                    Estado = "Activa"
+                };
+
+                _context.Matriculas.Add(matricula);
+                curso.CuposDisponibles -= 1;
+
+                await _context.SaveChangesAsync();
+
+                pago.IdMatricula = matricula.IdMatricula;
+            }
+            else if (pago.TipoPago == "Reserva")
+            {
+                var reserva = await _context.Reservas
+                    .Include(r => r.Cancha)
+                    .FirstOrDefaultAsync(r => r.IdReserva == pago.IdReserva);
+
+                if (reserva == null)
+                {
+                    TempData["MensajeError"] = "La reserva relacionada al pago no existe.";
+                    return RedirectToAction(nameof(AdminPagos));
+                }
+
+                if (reserva.IdAlumno != null)
+                {
+                    TempData["MensajeError"] = "La reserva ya fue tomada por otro alumno.";
+                    return RedirectToAction(nameof(AdminPagos));
+                }
+
+                reserva.IdAlumno = pago.IdAlumno;
+                reserva.Estado = "Asignada";
+            }
+
+            pago.Estado = "Pagado";
+            pago.FechaPago = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            TempData["MensajeExito"] = "Pago confirmado correctamente.";
+            return RedirectToAction(nameof(AdminPagos));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RechazarPago(int idPago)
+        {
+            var pago = await _context.Pagos
+                .FirstOrDefaultAsync(p => p.IdPago == idPago);
+
+            if (pago == null)
+            {
+                TempData["MensajeError"] = "No se encontró el pago.";
+                return RedirectToAction(nameof(AdminPagos));
+            }
+
+            if (pago.Estado != "En revisión")
+            {
+                TempData["MensajeError"] = "Solo se pueden rechazar pagos en revisión.";
+                return RedirectToAction(nameof(AdminPagos));
+            }
+
+            pago.Estado = "Rechazado";
+
+            await _context.SaveChangesAsync();
+
+            TempData["MensajeExito"] = "Pago rechazado correctamente.";
+
+            return RedirectToAction(nameof(AdminPagos));
         }
     }
 }

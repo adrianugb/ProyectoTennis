@@ -41,8 +41,8 @@
                     <option value="">Todos los estados</option>
                     <option value="Pendiente" selected="@(Model.FiltroEstado == "Pendiente")">Pendiente</option>
                     <option value="Pagado" selected="@(Model.FiltroEstado == "Pagado")">Pagado</option>
-                    <option value="Anulado" selected="@(Model.FiltroEstado == "Anulado")">Anulado</option>
                     <option value="Rechazado" selected="@(Model.FiltroEstado == "Rechazado")">Rechazado</option>
+                    <option value="En revisión" selected="@(Model.FiltroEstado == "En revisión")">En revisión</option>
                 </select>
 
                 <select name="factura" class="form-select">
@@ -74,7 +74,6 @@
                 <table class="perfil-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Concepto</th>
                             <th>Método</th>
                             <th>Monto</th>
@@ -100,7 +99,6 @@
                             @foreach (var pago in Model.Pagos)
                             {
                                 <tr>
-                                    <td>PAG-@pago.IdPago</td>
                                     <td>@pago.Concepto</td>
                                     <td>@pago.MetodoPago</td>
                                     <td>₡@pago.Monto.ToString("N0")</td>
@@ -128,35 +126,65 @@
                                             ? pago.FechaFactura.Value.ToString("dd/MM/yyyy")
                                             : "—")
                                     </td>
-
                                     <td>
-                                        @if (pago.Estado == "Pendiente")
+                                        @if (pago.Estado == "Pendiente" || pago.Estado == "Rechazado")
                                         {
-                                            <form asp-action="PagarEnLinea" method="post" style="display:inline;">
+                                            <form asp-action="SubirComprobante"
+                                                  method="post"
+                                                  enctype="multipart/form-data">
+
                                                 @Html.AntiForgeryToken()
+
                                                 <input type="hidden" name="idPago" value="@pago.IdPago" />
+
+                                                <input type="file"
+                                                       name="comprobante"
+                                                       class="form-control mb-2"
+                                                       accept=".jpg,.jpeg,.png,.pdf"
+                                                       required />
+
                                                 <button type="submit" class="btn btn-success btn-sm">
-                                                    Pagar ahora
+                                                    @(pago.Estado == "Pendiente"
+                                                        ? "Adjuntar comprobante"
+                                                        : "Volver a subir comprobante")
                                                 </button>
+
                                             </form>
+                                        }
+                                        else if (pago.Estado == "En revisión")
+                                        {
+                                            <span class="perfil-badge-warning">
+                                                En revisión
+                                            </span>
+
+                                            <br />
+
+                                            <small class="text-muted">
+                                                Esperando validación del administrador.
+                                            </small>
                                         }
                                         else if (pago.NumeroFactura != null)
                                         {
                                             <a asp-action="DescargarComprobante"
                                                asp-route-idPago="@pago.IdPago"
                                                class="perfil-action-link">
-                                                Descargar
+                                                Descargar factura
                                             </a>
                                         }
                                         else if (pago.Estado == "Pagado")
                                         {
-                                            <span class="text-muted">Pendiente de factura</span>
+                                            <span class="perfil-badge-success">
+                                                Pago confirmado
+                                            </span>
                                         }
                                         else
                                         {
-                                            <span class="text-muted">No disponible</span>
+                                            <span class="text-muted">
+                                                No disponible
+                                            </span>
                                         }
                                     </td>
+                                   
                                 </tr>
                             }
                         }
