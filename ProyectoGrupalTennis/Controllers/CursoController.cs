@@ -94,9 +94,15 @@ namespace ProyectoGrupalTennis.Controllers
                 Horarios = curso.Horarios.Select(h => new HorarioInputViewModel
                 {
                     IdHorario = h.IdHorario,
-                    Fecha = h.Fecha.ToString("yyyy-MM-dd"), // ← formato que espera input type="date"
-                    HoraInicio = h.HoraInicio.ToString(@"HH\:mm"),
-                    HoraFin = h.HoraFin.ToString(@"HH\:mm")
+                    Fecha = h.Fecha != DateTime.MinValue
+                        ? h.Fecha.ToString("yyyy-MM-dd")
+                        : string.Empty,
+                    HoraInicio = h.HoraInicio != TimeSpan.Zero
+                        ? h.HoraInicio.ToString(@"hh\:mm")
+                        : string.Empty,
+                    HoraFin = h.HoraFin != TimeSpan.Zero
+                        ? h.HoraFin.ToString(@"hh\:mm")
+                        : string.Empty
                 }).ToList()
             };
 
@@ -120,7 +126,7 @@ namespace ProyectoGrupalTennis.Controllers
             {
                 var horarios = MapearHorarios(vm.Horarios);
                 _service.Actualizar(vm.Curso, horarios);
-                return RedirectToAction("Index", "AdminCursos");
+                return RedirectToAction(nameof(Index)); 
             }
             catch (Exception ex)
             {
@@ -135,7 +141,7 @@ namespace ProyectoGrupalTennis.Controllers
         public IActionResult CambiarEstado(int id, bool activo)
         {
             _service.CambiarEstado(id, activo);
-            return RedirectToAction("Index", "AdminCursos");
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: /Curso/AgregarHorario
