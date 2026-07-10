@@ -12,7 +12,7 @@
             <div class="perfil-header">
                 <div>
                     <h1 class="perfil-title">Crear Curso</h1>
-                    <p class="perfil-subtitle">Define nombre, nivel, horario, cupos y profesor de la nueva Curso.</p>
+                    <p class="perfil-subtitle">Define nombre, nivel, horario, cupos y profesor del nuevo curso.</p>
                 </div>
                 <div class="perfil-badge">
                     <i class="fa fa-plus-circle"></i> Nuevo Curso
@@ -23,7 +23,7 @@
                 <div class="perfil-table-header">
                     <h2 class="perfil-table-title">Datos del Curso</h2>
                     <div class="perfil-actions">
-                        <a asp-controller="Curso" asp-action="Index" class="perfil-btn-outline">
+                        <a asp-controller="AdminCursos" asp-action="Index" class="perfil-btn-outline">
                             <i class="fa fa-arrow-left"></i> Regresar
                         </a>
                     </div>
@@ -47,7 +47,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label asp-for="Curso.Nombre">Nombre</label>
-                                <input asp-for="Curso.Nombre" class="form-control" placeholder="Nombre de la Curso" />
+                                <input asp-for="Curso.Nombre" class="form-control" placeholder="Nombre del curso" />
                                 <span asp-validation-for="Curso.Nombre" class="text-danger" style="font-size:12px;"></span>
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                             <div class="mb-3">
                                 <label asp-for="Curso.Precio">Precio</label>
                                 <input asp-for="Curso.Precio" type="number" min="0" step="0.01"
-                                       class="form-control" placeholder="0" />
+                                       class="form-control" placeholder="0.00" />
                                 <span asp-validation-for="Curso.Precio" class="text-danger" style="font-size:12px;"></span>
                             </div>
                         </div>
@@ -100,34 +100,37 @@
                             <div class="mb-3">
                                 <label asp-for="Curso.Descripcion">Descripción</label>
                                 <textarea asp-for="Curso.Descripcion" class="form-control"
-                                          placeholder="Descripción de la Curso"></textarea>
+                                          placeholder="Descripción del curso"></textarea>
                             </div>
                         </div>
 
-                        <!-- HORARIOS -->
+                       
                         <div class="col-md-12">
-                            <label style="margin-bottom: 10px;">Horarios</label>
+                            <label style="margin-bottom:10px;font-weight:600;">Horarios</label>
                             <div id="horariosContainer">
                                 @for (int i = 0; i < Model.Horarios.Count; i++)
                                 {
-                                    <div class="row horario-row" style="margin-bottom: 10px;">
+                                    <div class="row horario-row align-items-end" style="margin-bottom:10px;">
                                         <div class="col-md-4">
-                                            <select name="Horarios[@i].DiaSemana" class="form-select">
-                                                <option value="">Día</option>
-                                                <option value="Lunes">Lunes</option>
-                                                <option value="Martes">Martes</option>
-                                                <option value="Miércoles">Miércoles</option>
-                                                <option value="Jueves">Jueves</option>
-                                                <option value="Viernes">Viernes</option>
-                                                <option value="Sábado">Sábado</option>
-                                                <option value="Domingo">Domingo</option>
-                                            </select>
+                                            <label class="form-label small">Fecha</label>
+                                            <input type="date"
+                                                   name="Horarios[@i].Fecha"
+                                                   class="form-control"
+                                                   value="@Model.Horarios[i].Fecha" />
                                         </div>
                                         <div class="col-md-3">
-                                            <input type="time" name="Horarios[@i].HoraInicio" class="form-control" />
+                                            <label class="form-label small">Hora inicio</label>
+                                            <input type="time"
+                                                   name="Horarios[@i].HoraInicio"
+                                                   class="form-control"
+                                                   value="@Model.Horarios[i].HoraInicio" />
                                         </div>
                                         <div class="col-md-3">
-                                            <input type="time" name="Horarios[@i].HoraFin" class="form-control" />
+                                            <label class="form-label small">Hora fin</label>
+                                            <input type="time"
+                                                   name="Horarios[@i].HoraFin"
+                                                   class="form-control"
+                                                   value="@Model.Horarios[i].HoraFin" />
                                         </div>
                                         <div class="col-md-2">
                                             <button type="button" class="btn btn-outline-danger btn-eliminar-horario">
@@ -137,15 +140,15 @@
                                     </div>
                                 }
                             </div>
-                            <button type="button" id="btnAgregarHorario" class="perfil-btn-outline" style="margin-top: 10px;">
+                            <button type="button" id="btnAgregarHorario" class="perfil-btn-outline" style="margin-top:10px;">
                                 <i class="fa fa-plus"></i> Agregar horario
                             </button>
                         </div>
 
                     </div>
 
-                    <div class="perfil-actions" style="padding-bottom: 10px;">
-                        <a asp-controller="Curso" asp-action="Index" class="perfil-btn-outline">Cancelar</a>
+                    <div class="perfil-actions" style="padding-bottom:10px;">
+                        <a asp-controller="AdminCursos" asp-action="Index" class="perfil-btn-outline">Cancelar</a>
                         <button type="submit" class="perfil-btn">
                             <i class="fa fa-save"></i> Guardar Curso
                         </button>
@@ -161,31 +164,26 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
     <script>
         let horarioIndex = @Model.Horarios.Count;
 
         document.getElementById('btnAgregarHorario').addEventListener('click', function () {
             const container = document.getElementById('horariosContainer');
             const div = document.createElement('div');
-            div.className = 'row horario-row';
+            div.className = 'row horario-row align-items-end';
             div.style.marginBottom = '10px';
             div.innerHTML = `
                 <div class="col-md-4">
-                    <select name="Horarios[${horarioIndex}].DiaSemana" class="form-select">
-                        <option value="">Día</option>
-                        <option value="Lunes">Lunes</option>
-                        <option value="Martes">Martes</option>
-                        <option value="Miércoles">Miércoles</option>
-                        <option value="Jueves">Jueves</option>
-                        <option value="Viernes">Viernes</option>
-                        <option value="Sábado">Sábado</option>
-                        <option value="Domingo">Domingo</option>
-                    </select>
+                    <label class="form-label small">Fecha</label>
+                    <input type="date" name="Horarios[${horarioIndex}].Fecha" class="form-control" />
                 </div>
                 <div class="col-md-3">
+                    <label class="form-label small">Hora inicio</label>
                     <input type="time" name="Horarios[${horarioIndex}].HoraInicio" class="form-control" />
                 </div>
                 <div class="col-md-3">
+                    <label class="form-label small">Hora fin</label>
                     <input type="time" name="Horarios[${horarioIndex}].HoraFin" class="form-control" />
                 </div>
                 <div class="col-md-2">
@@ -204,6 +202,4 @@
             }
         });
     </script>
-}
-}
-}
+            }

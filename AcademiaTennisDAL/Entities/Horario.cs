@@ -8,8 +8,13 @@ namespace AcademiaTennisDAL.Entities
         [Key]
         public int IdHorario { get; set; }
 
+        // Fecha exacta de la clase 
         [Required]
-        public string DiaSemana { get; set; }
+        public DateTime Fecha { get; set; }
+
+        // DiaSemana se calcula desde Fecha, no se guarda por separado
+        [NotMapped]
+        public string DiaSemana => Fecha.ToString("dddd", new System.Globalization.CultureInfo("es-ES"));
 
         [Required]
         public TimeSpan HoraInicio { get; set; }
@@ -17,7 +22,7 @@ namespace AcademiaTennisDAL.Entities
         [Required]
         public TimeSpan HoraFin { get; set; }
 
-        public int IdCurso { get; set; }    
+        public int IdCurso { get; set; }
 
         [ForeignKey("IdCurso")]
         public Curso? Curso { get; set; }

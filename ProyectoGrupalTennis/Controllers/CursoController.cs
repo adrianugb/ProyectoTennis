@@ -94,9 +94,9 @@ namespace ProyectoGrupalTennis.Controllers
                 Horarios = curso.Horarios.Select(h => new HorarioInputViewModel
                 {
                     IdHorario = h.IdHorario,
-                    DiaSemana = h.DiaSemana,
-                    HoraInicio = h.HoraInicio.ToString(@"hh\:mm"),
-                    HoraFin = h.HoraFin.ToString(@"hh\:mm")
+                    Fecha = h.Fecha.ToString("yyyy-MM-dd"), // ← formato que espera input type="date"
+                    HoraInicio = h.HoraInicio.ToString(@"HH\:mm"),
+                    HoraFin = h.HoraFin.ToString(@"HH\:mm")
                 }).ToList()
             };
 
@@ -228,17 +228,20 @@ namespace ProyectoGrupalTennis.Controllers
         }
 
         // Helper
+        
         private List<Horario> MapearHorarios(List<HorarioInputViewModel> inputs)
         {
             var horarios = new List<Horario>();
             foreach (var h in inputs)
             {
-                if (string.IsNullOrWhiteSpace(h.DiaSemana)) continue;
+                if (string.IsNullOrWhiteSpace(h.Fecha)) continue;
+                if (string.IsNullOrWhiteSpace(h.HoraInicio)) continue;
+                if (string.IsNullOrWhiteSpace(h.HoraFin)) continue;
 
                 horarios.Add(new Horario
                 {
                     IdHorario = h.IdHorario,
-                    DiaSemana = h.DiaSemana,
+                    Fecha = DateTime.Parse(h.Fecha),
                     HoraInicio = TimeSpan.Parse(h.HoraInicio),
                     HoraFin = TimeSpan.Parse(h.HoraFin)
                 });

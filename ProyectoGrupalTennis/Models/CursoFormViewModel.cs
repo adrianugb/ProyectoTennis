@@ -13,8 +13,13 @@ namespace ProyectoGrupalTennis.Models
     public class HorarioInputViewModel
     {
         public int IdHorario { get; set; }
-        public string DiaSemana { get; set; } = string.Empty;
-        public string HoraInicio { get; set; } = string.Empty;
-        public string HoraFin { get; set; } = string.Empty;
+        public string Fecha { get; set; } = string.Empty;      // "yyyy-MM-dd"
+        public string HoraInicio { get; set; } = string.Empty; // "HH:mm"
+        public string HoraFin { get; set; } = string.Empty;    // "HH:mm"
+
+        // Para mostrar en tabla
+        public string DiaSemana => string.IsNullOrWhiteSpace(Fecha)
+            ? string.Empty
+            : DateTime.Parse(Fecha).ToString("dddd", new System.Globalization.CultureInfo("es-ES"));
     }
 }
