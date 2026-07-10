@@ -54,5 +54,10 @@ namespace AcademiaTennisDAL.Entities
 
         [ForeignKey(nameof(IdCurso))]
         public Curso? Curso { get; set; }
+
+        [StringLength(300)]
+        public string? ComprobantePago { get; set; }
+
+        public DateTime? FechaComprobante { get; set; }
     }
 }

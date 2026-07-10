@@ -13,6 +13,8 @@
 
         public DateTime? FechaHasta { get; set; }
         public List<AdminPagoItemViewModel> Pagos { get; set; } = new();
+
+        
     }
 
     public class AdminPagoItemViewModel
@@ -34,5 +36,7 @@
         public string FacturaEstado { get; set; } = string.Empty;
 
         public DateTime? FechaFactura { get; set; }
+
+        public string? ComprobantePago { get; set; }
     }
 }

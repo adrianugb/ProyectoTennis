@@ -873,115 +873,47 @@ namespace ProyectoGrupalTennis.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PagarEnLinea(int idPago)
+        public async Task<IActionResult> SubirComprobante(int idPago, IFormFile comprobante)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
             var pago = await _context.Pagos
-                .Include(p => p.Matricula)
-                .Include(p => p.Reserva)
-                .FirstOrDefaultAsync(p =>
-                    p.IdPago == idPago &&
-                    p.IdAlumno == userId);
+                .FirstOrDefaultAsync(p => p.IdPago == idPago && p.IdAlumno == userId);
 
             if (pago == null)
             {
-                TempData["Error"] = "No se encontró el pago seleccionado.";
+                TempData["Error"] = "No se encontró el pago.";
                 return RedirectToAction(nameof(HistorialPagos));
             }
 
-            if (pago.Estado != "Pendiente")
+            if (comprobante == null || comprobante.Length == 0)
             {
-                TempData["Error"] = "Este pago ya fue procesado.";
+                TempData["Error"] = "Debe adjuntar un comprobante.";
                 return RedirectToAction(nameof(HistorialPagos));
             }
 
-            pago.Estado = "Pagado";
-            pago.MetodoPago = "Tarjeta";
-            pago.FechaPago = DateTime.Now;
+            var carpeta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "comprobantes");
 
-            if (pago.TipoPago == "Matricula")
+            if (!Directory.Exists(carpeta))
+                Directory.CreateDirectory(carpeta);
+
+            var extension = Path.GetExtension(comprobante.FileName);
+            var nombreArchivo = $"PAG-{pago.IdPago}-{Guid.NewGuid()}{extension}";
+            var rutaCompleta = Path.Combine(carpeta, nombreArchivo);
+
+            using (var stream = new FileStream(rutaCompleta, FileMode.Create))
             {
-                if (!pago.IdMatricula.HasValue)
-                {
-                    var curso = await _context.Cursos
-                        .FirstOrDefaultAsync(c => c.IdCurso == pago.IdCurso);
-
-                    if (curso == null)
-                    {
-                        TempData["Error"] = "El curso relacionado al pago no existe.";
-                        return RedirectToAction(nameof(HistorialPagos));
-                    }
-
-                    if (curso.CuposDisponibles <= 0)
-                    {
-                        TempData["Error"] = "Ya no hay cupos disponibles para este curso.";
-                        return RedirectToAction(nameof(HistorialPagos));
-                    }
-
-                    var matricula = new Matricula
-                    {
-                        IdAlumno = userId!,
-                        IdCurso = curso.IdCurso,
-                        FechaMatricula = DateTime.Now,
-                        Estado = "Activa"
-                    };
-
-                    _context.Matriculas.Add(matricula);
-                    curso.CuposDisponibles -= 1;
-
-                    await _context.SaveChangesAsync();
-
-                    pago.IdMatricula = matricula.IdMatricula;
-
-                    // USER-09-008 / USER-09-009: notifica al alumno que su matricula quedo confirmada
-                    await NotificacionHelper.EnviarNotificacionAsync(
-                        _context,
-                        _emailService,
-                        userId!,
-                        categoria: "Clase",
-                        tipo: "Matrícula",
-                        titulo: "Matrícula confirmada",
-                        mensaje: $"Tu matrícula al curso {curso.Nombre} fue confirmada correctamente.");
-                }
+                await comprobante.CopyToAsync(stream);
             }
-            else if (pago.TipoPago == "Reserva")
-            {
-                var reserva = await _context.Reservas
-                    .Include(r => r.Cancha)
-                    .FirstOrDefaultAsync(r => r.IdReserva == pago.IdReserva);
 
-                if (reserva == null)
-                {
-                    TempData["Error"] = "La reserva relacionada al pago no existe.";
-                    return RedirectToAction(nameof(HistorialPagos));
-                }
-
-                if (reserva.IdAlumno != null)
-                {
-                    TempData["Error"] = "La reserva ya fue tomada por otro alumno.";
-                    return RedirectToAction(nameof(HistorialPagos));
-                }
-
-                reserva.IdAlumno = userId;
-                reserva.Estado = "Asignada";
-
-                var nombreCancha = reserva.Cancha != null ? reserva.Cancha.Nombre : "la cancha seleccionada";
-
-                // USER-09-008 / USER-09-009: notifica al alumno que su reserva quedo confirmada
-                await NotificacionHelper.EnviarNotificacionAsync(
-                    _context,
-                    _emailService,
-                    userId!,
-                    categoria: "Clase",
-                    tipo: "Reserva",
-                    titulo: "Reserva confirmada",
-                    mensaje: $"Tu reserva en {nombreCancha} fue confirmada para el {reserva.FechaReserva:dd/MM/yyyy} de {reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}.");
-            }
+            pago.ComprobantePago = "/comprobantes/" + nombreArchivo;
+            pago.FechaComprobante = DateTime.Now;
+            pago.Estado = "En revisión";
+            pago.MetodoPago = "Comprobante adjunto";
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Pago realizado correctamente.";
+            TempData["Success"] = "Comprobante adjuntado correctamente. Queda pendiente de revisión.";
             return RedirectToAction(nameof(HistorialPagos));
         }
     }

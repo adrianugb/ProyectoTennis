@@ -3,6 +3,7 @@ using System;
 using AcademiaTennisDAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AcademiaTennisDAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260708005311_notificacion")]
+    partial class notificacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -517,8 +520,9 @@ namespace AcademiaTennisDAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("DiaSemana")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<TimeSpan>("HoraFin")
                         .HasColumnType("time(6)");
@@ -713,10 +717,6 @@ namespace AcademiaTennisDAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("ComprobantePago")
-                        .HasMaxLength(300)
-                        .HasColumnType("varchar(300)");
-
                     b.Property<bool>("EsManual")
                         .HasColumnType("tinyint(1)");
 
@@ -724,9 +724,6 @@ namespace AcademiaTennisDAL.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime?>("FechaComprobante")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("FechaPago")
                         .HasColumnType("datetime(6)");

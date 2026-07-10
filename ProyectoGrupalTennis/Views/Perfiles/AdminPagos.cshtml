@@ -32,6 +32,10 @@
                             <i class="fa fa-arrow-left"></i> Regresar
                         </a>
 
+                        <a asp-action="RegistrarPagoManual"
+                           class="perfil-btn">
+                            <i class="fa fa-plus"></i> Registrar pago manual
+                        </a>
 
                         <a asp-action="ExportarReportePagos"
                            asp-route-buscar="@Model.FiltroBuscar"
@@ -61,8 +65,8 @@
                             <option value="">Todos los estados</option>
                             <option value="Pendiente" selected="@(Model.FiltroEstado == "Pendiente")">Pendiente</option>
                             <option value="Pagado" selected="@(Model.FiltroEstado == "Pagado")">Pagado</option>
-                            <option value="Anulado" selected="@(Model.FiltroEstado == "Anulado")">Anulado</option>
                             <option value="Rechazado" selected="@(Model.FiltroEstado == "Rechazado")">Rechazado</option>
+                            <option value="En revisión" selected="@(Model.FiltroEstado == "En revisión")">En revisión</option>
                         </select>
 
                         <select name="factura" class="form-select">
@@ -107,7 +111,6 @@
                     <table class="perfil-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Alumno</th>
                                 <th>Concepto</th>
                                 <th>Método</th>
@@ -116,6 +119,8 @@
                                 <th>Estado del pago</th>
                                 <th>Factura</th>
                                 <th>Fecha factura</th>
+                                <th>Comprobante</th>
+                                <th>Acción</th>
                             </tr>
                         </thead>
 
@@ -123,7 +128,7 @@
                             @if (!Model.Pagos.Any())
                             {
                                 <tr>
-                                    <td colspan="9" class="text-center">
+                                    <td colspan="10" class="text-center">
                                         No hay pagos registrados.
                                     </td>
                                 </tr>
@@ -133,7 +138,6 @@
                                 @foreach (var pago in Model.Pagos)
                                 {
                                     <tr>
-                                        <td>PAG-@pago.IdPago</td>
                                         <td>@pago.Alumno</td>
                                         <td>@pago.Concepto</td>
                                         <td>@pago.MetodoPago</td>
@@ -160,6 +164,50 @@
                                             @(pago.FechaFactura.HasValue
                                                 ? pago.FechaFactura.Value.ToString("dd/MM/yyyy")
                                                 : "—")
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(pago.ComprobantePago))
+                                            {
+                                                <a href="@pago.ComprobantePago"
+                                                   target="_blank"
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    <i class="fa fa-eye"></i> Ver
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No adjunto</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (pago.Estado == "En revisión")
+                                            {
+                                                <form asp-action="ConfirmarPago"
+                                                      method="post"
+                                                      style="display:inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="idPago" value="@pago.IdPago" />
+
+                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                        Confirmar
+                                                    </button>
+                                                </form>
+
+                                                <form asp-action="RechazarPago"
+                                                      method="post"
+                                                      style="display:inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="idPago" value="@pago.IdPago" />
+
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        Rechazar
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">—</span>
+                                            }
                                         </td>
                                     </tr>
                                 }
