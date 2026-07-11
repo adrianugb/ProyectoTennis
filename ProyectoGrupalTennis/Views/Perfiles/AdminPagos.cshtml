@@ -182,31 +182,48 @@
                                         <td>
                                             @if (pago.Estado == "En revisión")
                                             {
-                                                <form asp-action="ConfirmarPago"
-                                                      method="post"
-                                                      style="display:inline;">
+                                                <form asp-action="ConfirmarPago" method="post" style="display:inline;">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="idPago" value="@pago.IdPago" />
-
-                                                    <button type="submit" class="btn btn-success btn-sm">
-                                                        Confirmar
-                                                    </button>
+                                                    <button type="submit" class="btn btn-success btn-sm">Confirmar</button>
                                                 </form>
 
-                                                <form asp-action="RechazarPago"
-                                                      method="post"
-                                                      style="display:inline;">
+                                                <form asp-action="RechazarPago" method="post" style="display:inline;">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="idPago" value="@pago.IdPago" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">Rechazar</button>
+                                                </form>
+                                            }
 
-                                                    <button type="submit" class="btn btn-danger btn-sm">
-                                                        Rechazar
+                                            @if (pago.Estado == "Pagado" && pago.FacturaEstado == "Pendiente")
+                                            {
+                                                <form asp-action="GenerarFactura" method="post" style="display:inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="idPago" value="@pago.IdPago" />
+                                                    <button type="submit" class="btn btn-primary btn-sm">
+                                                        <i class="fa fa-file-text"></i> Generar factura
                                                     </button>
                                                 </form>
                                             }
-                                            else
+
+                                            @if (pago.FacturaEstado == "Disponible")
                                             {
-                                                <span class="text-muted">—</span>
+                                                <a asp-action="DescargarFactura" asp-route-idPago="@pago.IdPago"
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    <i class="fa fa-download"></i> Factura
+                                                </a>
+                                            }
+
+                                            @if (pago.Estado != "Rechazado")
+                                            {
+                                                <form asp-action="AnularPago" method="post" style="display:inline;"
+                                                      onsubmit="return confirm('¿Seguro que deseas anular este pago? Esta acción también cancelará la matrícula si existe.');">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="idPago" value="@pago.IdPago" />
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                        <i class="fa fa-ban"></i> Anular
+                                                    </button>
+                                                </form>
                                             }
                                         </td>
                                     </tr>

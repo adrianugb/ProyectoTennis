@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<ProyectoGrupalTennis.Models.AdminFacturaItemViewModel>
+@{
     ViewData["Title"] = "Facturación";
 }
 
@@ -11,11 +12,8 @@
             <div class="perfil-header">
                 <div>
                     <h1 class="perfil-title">Facturación</h1>
-                    <p class="perfil-subtitle">
-                        Genera facturas, consulta comprobantes y administra la información de facturación.
-                    </p>
+                    <p class="perfil-subtitle">Consulta y descarga las facturas generadas.</p>
                 </div>
-
                 <div class="perfil-badge">
                     <i class="fa fa-file-text"></i> Facturación
                 </div>
@@ -23,33 +21,25 @@
 
             <div class="perfil-table-block">
                 <div class="perfil-table-header">
-
-                    <a asp-controller="Home" asp-action="AdminFacturacion" class="perfil-btn-outline">
-                        <i class="fa fa-arrow-left"></i> Regresar
-                    </a>
                     <h2 class="perfil-table-title">Listado de facturas</h2>
-
                     <div class="perfil-actions">
-                        <a href="#" class="perfil-btn">
-                            <i class="fa fa-file-text"></i> Generar factura
-                        </a>
-
-                        <a href="#" class="perfil-btn-outline">
-                            <i class="fa fa-download"></i> Exportar reporte
+                        <a asp-controller="Home" asp-action="AdminFacturacion" class="perfil-btn-outline">
+                            <i class="fa fa-arrow-left"></i> Regresar
                         </a>
                     </div>
                 </div>
 
-                <div class="perfil-filter-row">
-                    <input type="text" class="form-control" placeholder="Buscar por alumno o factura..." />
-
-                    <select class="form-select">
-                        <option>Filtrar por estado</option>
-                        <option>Emitida</option>
-                        <option>Pendiente</option>
-                        <option>Anulada</option>
-                    </select>
-                </div>
+                <form method="get" asp-action="AdminFacturas">
+                    <div class="perfil-filter-row">
+                        <input type="text" name="buscar" class="form-control"
+                               placeholder="Buscar por alumno o número de factura..."
+                               value="@ViewBag.FiltroBuscar" />
+                        <button type="submit" class="perfil-btn">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <a asp-action="AdminFacturas" class="perfil-btn-outline">Limpiar</a>
+                    </div>
+                </form>
 
                 <div class="table-responsive">
                     <table class="perfil-table">
@@ -60,53 +50,43 @@
                                 <th>Concepto</th>
                                 <th>Monto</th>
                                 <th>Fecha</th>
-                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>FAC-001</td>
-                                <td>María González</td>
-                                <td>Matrícula anual</td>
-                                <td>₡35,000</td>
-                                <td>10/04/2026</td>
-                                <td><span class="perfil-badge-success">Emitida</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Descargar</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>FAC-002</td>
-                                <td>Carlos Ramírez</td>
-                                <td>Mensualidad</td>
-                                <td>₡28,000</td>
-                                <td>08/04/2026</td>
-                                <td><span class="perfil-badge-warning">Pendiente</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Generar</a>
-                                    <span class="perfil-action-separator">|</span>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>FAC-003</td>
-                                <td>Ana López</td>
-                                <td>Clase especial</td>
-                                <td>₡12,000</td>
-                                <td>06/04/2026</td>
-                                <td><span class="perfil-badge-danger">Anulada</span></td>
-                                <td>
-                                    <a href="#" class="perfil-action-link">Ver</a>
-                                </td>
-                            </tr>
+                            @if (!Model.Any())
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        No hay facturas generadas.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var f in Model)
+                                {
+                                    <tr>
+                                        <td><strong>@f.NumeroFactura</strong></td>
+                                        <td>@f.Alumno</td>
+                                        <td>@f.Concepto</td>
+                                        <td>₡@f.Monto.ToString("N0")</td>
+                                        <td>@f.FechaFactura.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            <a asp-controller="Admin"
+                                               asp-action="DescargarFactura"
+                                               asp-route-idPago="@f.IdPago"
+                                               class="perfil-action-link">
+                                                <i class="fa fa-download"></i> Descargar
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
                         </tbody>
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 </section>

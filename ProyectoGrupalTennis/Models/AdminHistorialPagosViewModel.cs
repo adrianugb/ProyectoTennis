@@ -39,4 +39,16 @@
 
         public string? ComprobantePago { get; set; }
     }
+
+  
+    public class AdminFacturaItemViewModel
+    {
+        public int IdFactura { get; set; }
+        public int IdPago { get; set; }
+        public string NumeroFactura { get; set; } = string.Empty;
+        public string Alumno { get; set; } = string.Empty;
+        public string Concepto { get; set; } = string.Empty;
+        public decimal Monto { get; set; }
+        public DateTime FechaFactura { get; set; }
+    }
 }

@@ -248,11 +248,7 @@ namespace ProyectoGrupalTennis.Controllers
             return View("~/Views/Perfiles/AdminPagos.cshtml", model);
         }
 
-        // GET: /Admin/AdminFacturas
-        public IActionResult AdminFacturas()
-        {
-            return View("~/Views/Perfiles/AdminFacturas.cshtml");
-        }
+      
 
         // GET: /Admin/ ADMIN-05-007 – Exportar reporte de pago
 
@@ -738,5 +734,276 @@ namespace ProyectoGrupalTennis.Controllers
 
             return RedirectToAction(nameof(AdminPagos));
         }
+
+        // POST: /Admin/GenerarFactura
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GenerarFactura(int idPago)
+        {
+            var pago = await _context.Pagos
+                .Include(p => p.Alumno)
+                .Include(p => p.Factura)
+                .FirstOrDefaultAsync(p => p.IdPago == idPago);
+
+            if (pago == null)
+            {
+                TempData["MensajeError"] = "No se encontró el pago.";
+                return RedirectToAction(nameof(AdminPagos));
+            }
+
+            if (pago.Estado != "Pagado")
+            {
+                TempData["MensajeError"] = "Solo se pueden generar facturas para pagos confirmados.";
+                return RedirectToAction(nameof(AdminPagos));
+            }
+
+            if (pago.Factura != null)
+            {
+                TempData["MensajeError"] = "Este pago ya tiene una factura generada.";
+                return RedirectToAction(nameof(AdminPagos));
+            }
+
+            var numeroFactura = $"FAC-{DateTime.Now:yyyyMMdd}-{idPago:D4}";
+
+            var factura = new Factura
+            {
+                IdPago = idPago,
+                NumeroFactura = numeroFactura,
+                FechaFactura = DateTime.Now
+            };
+
+            _context.Facturas.Add(factura);
+
+            await NotificacionHelper.EnviarNotificacionAsync(
+                _context,
+                _emailService,
+                pago.IdAlumno,
+                categoria: "Pago",
+                tipo: "Factura generada",
+                titulo: "Factura disponible",
+                mensaje: $"Tu factura {numeroFactura} por ₡{pago.Monto:N0} " +
+                         $"correspondiente a {pago.TipoPago} está disponible."
+            );
+
+            await _context.SaveChangesAsync();
+
+            TempData["MensajeExito"] = $"Factura {numeroFactura} generada correctamente.";
+            return RedirectToAction(nameof(AdminPagos));
+        }
+
+        // POST: /Admin/AnularPago
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AnularPago(int idPago)
+        {
+            var pago = await _context.Pagos
+                .Include(p => p.Factura)
+                .Include(p => p.Matricula)
+                .FirstOrDefaultAsync(p => p.IdPago == idPago);
+
+            if (pago == null)
+            {
+                TempData["MensajeError"] = "No se encontró el pago.";
+                return RedirectToAction(nameof(AdminPagos));
+            }
+
+            if (pago.Estado == "Rechazado")
+            {
+                TempData["MensajeError"] = "Este pago ya está anulado/rechazado.";
+                return RedirectToAction(nameof(AdminPagos));
+            }
+
+            await using var transaccion = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // Si tiene matrícula activa, cancelarla y devolver cupo
+                if (pago.IdMatricula.HasValue && pago.Matricula != null)
+                {
+                    pago.Matricula.Estado = "Cancelada";
+
+                    var curso = await _context.Cursos
+                        .FirstOrDefaultAsync(c => c.IdCurso == pago.Matricula.IdCurso);
+
+                    if (curso != null)
+                        curso.CuposDisponibles += 1;
+                }
+
+                // Si tiene factura, eliminarla
+                if (pago.Factura != null)
+                {
+                    _context.Facturas.Remove(pago.Factura);
+                }
+
+                pago.Estado = "Rechazado";
+
+                await NotificacionHelper.EnviarNotificacionAsync(
+                    _context,
+                    _emailService,
+                    pago.IdAlumno,
+                    categoria: "Pago",
+                    tipo: "Pago anulado",
+                    titulo: "Pago anulado",
+                    mensaje: $"El pago PAG-{pago.IdPago} por ₡{pago.Monto:N0} " +
+                             $"correspondiente a {pago.TipoPago} fue anulado por la administración. " +
+                             "Contactá a la academia si tenés dudas."
+                );
+
+                await _context.SaveChangesAsync();
+                await transaccion.CommitAsync();
+
+                TempData["MensajeExito"] = "Pago anulado correctamente.";
+            }
+            catch
+            {
+                await transaccion.RollbackAsync();
+                TempData["MensajeError"] = "Ocurrió un error al anular el pago.";
+            }
+
+            return RedirectToAction(nameof(AdminPagos));
+        }
+
+        // GET: /Admin/DescargarFactura/5
+        public async Task<IActionResult> DescargarFactura(int idPago)
+        {
+            var pago = await _context.Pagos
+                .Include(p => p.Alumno)
+                .Include(p => p.Factura)
+                .FirstOrDefaultAsync(p => p.IdPago == idPago);
+
+            if (pago?.Factura == null)
+            {
+                TempData["MensajeError"] = "Factura no encontrada.";
+                return RedirectToAction(nameof(AdminPagos));
+            }
+
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            var pdf = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(40);
+
+                    page.Header().Column(col =>
+                    {
+                        col.Item().Text("ACADEMIA DE TENIS M.M.P")
+                            .FontSize(20).Bold().FontColor("#a5c422");
+                        col.Item().Text("Factura Electrónica")
+                            .FontSize(14).FontColor("#555555");
+                        col.Item().PaddingTop(5).LineHorizontal(1).LineColor("#a5c422");
+                    });
+
+                    page.Content().PaddingTop(20).Column(col =>
+                    {
+                        col.Item().Row(row =>
+                        {
+                            row.RelativeItem().Column(c =>
+                            {
+                                c.Item().Text($"No. Factura: {pago.Factura.NumeroFactura}").Bold();
+                                c.Item().Text($"Fecha: {pago.Factura.FechaFactura:dd/MM/yyyy}");
+                            });
+                            row.RelativeItem().Column(c =>
+                            {
+                                c.Item().Text($"ID Pago: PAG-{pago.IdPago}").Bold();
+                                c.Item().Text($"Estado: {pago.Estado}");
+                            });
+                        });
+
+                        col.Item().PaddingTop(20).Text("DATOS DEL CLIENTE").Bold().FontSize(12);
+                        col.Item().LineHorizontal(0.5f).LineColor("#cccccc");
+                        col.Item().PaddingTop(5).Text(
+                            $"{pago.Alumno?.Nombre} {pago.Alumno?.Apellido}");
+                        col.Item().Text($"Email: {pago.Alumno?.Email}");
+
+                        col.Item().PaddingTop(20).Text("DETALLE DEL PAGO").Bold().FontSize(12);
+                        col.Item().LineHorizontal(0.5f).LineColor("#cccccc");
+
+                        col.Item().PaddingTop(10).Table(table =>
+                        {
+                            table.ColumnsDefinition(cols =>
+                            {
+                                cols.RelativeColumn(3);
+                                cols.RelativeColumn(1);
+                                cols.RelativeColumn(1);
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().Background("#a5c422").Padding(5)
+                                    .Text("Concepto").FontColor("#ffffff").Bold();
+                                header.Cell().Background("#a5c422").Padding(5)
+                                    .Text("Método").FontColor("#ffffff").Bold();
+                                header.Cell().Background("#a5c422").Padding(5)
+                                    .Text("Monto").FontColor("#ffffff").Bold();
+                            });
+
+                            table.Cell().BorderBottom(0.5f).BorderColor("#eeeeee").Padding(5)
+                                .Text(pago.TipoPago);
+                            table.Cell().BorderBottom(0.5f).BorderColor("#eeeeee").Padding(5)
+                                .Text(pago.MetodoPago);
+                            table.Cell().BorderBottom(0.5f).BorderColor("#eeeeee").Padding(5)
+                                .Text($"₡{pago.Monto:N0}");
+                        });
+
+                        col.Item().PaddingTop(15).AlignRight()
+                            .Text($"TOTAL: ₡{pago.Monto:N0}").Bold().FontSize(14);
+
+                        if (!string.IsNullOrEmpty(pago.Observaciones))
+                        {
+                            col.Item().PaddingTop(20).Text("Observaciones:").Bold();
+                            col.Item().Text(pago.Observaciones).FontColor("#555555");
+                        }
+                    });
+
+                    page.Footer().AlignCenter()
+                        .Text($"Documento generado el {DateTime.Now:dd/MM/yyyy HH:mm} — Academia de Tenis M.M.P")
+                        .FontSize(9).FontColor("#aaaaaa");
+                });
+            });
+
+            var bytes = pdf.GeneratePdf();
+            return File(bytes, "application/pdf",
+                $"Factura_{pago.Factura.NumeroFactura}.pdf");
+        }
+
+        // GET: /Admin/AdminFacturas 
+        public async Task<IActionResult> AdminFacturas(string? buscar)
+        {
+            var query = _context.Facturas
+                .Include(f => f.Pago)
+                .ThenInclude(p => p.Alumno)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(buscar))
+            {
+                query = query.Where(f =>
+                    f.NumeroFactura.Contains(buscar) ||
+                    (f.Pago.Alumno != null &&
+                     (f.Pago.Alumno.Nombre + " " + f.Pago.Alumno.Apellido).Contains(buscar)));
+            }
+
+            var facturas = await query
+                .OrderByDescending(f => f.FechaFactura)
+                .ToListAsync();
+
+            var vm = facturas.Select(f => new AdminFacturaItemViewModel
+            {
+                IdFactura = f.IdFactura,
+                IdPago = f.IdPago,
+                NumeroFactura = f.NumeroFactura,
+                Alumno = f.Pago.Alumno != null
+                    ? $"{f.Pago.Alumno.Nombre} {f.Pago.Alumno.Apellido}"
+                    : "Sin alumno",
+                Concepto = f.Pago.TipoPago,
+                Monto = f.Pago.Monto,
+                FechaFactura = f.FechaFactura
+            }).ToList();
+
+            ViewBag.FiltroBuscar = buscar;
+            return View("~/Views/Perfiles/AdminFacturas.cshtml", vm);
+        }
     }
+
 }
