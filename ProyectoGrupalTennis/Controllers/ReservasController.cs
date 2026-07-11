@@ -231,10 +231,16 @@ namespace ProyectoGrupalTennis.Controllers
                 _context,
                 _emailService,
                 alumno.Id,
-                categoria: "Clase",
-                tipo: "Reserva",
-                titulo: "Reserva confirmada",
-                mensaje: $"Tu reserva en {nombreCancha} fue confirmada para el {reserva.FechaReserva:dd/MM/yyyy} de {reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}.");
+                categoria: "Pago",
+                tipo: "Pago pendiente",
+                titulo: "Pago pendiente de reserva",
+                mensaje:
+                    $"Se generó un pago pendiente de ₡{reserva.Monto:N0} " +
+                    $"para la reserva en {nombreCancha}, programada para el " +
+                    $"{reserva.FechaReserva:dd/MM/yyyy} de " +
+                    $"{reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}. " +
+                    "Adjunta el comprobante para completar la reserva."
+            );
             await _context.SaveChangesAsync();
 
             TempData["Exito"] = "Se generó el pago pendiente. Debe realizar el pago para completar la reserva.";

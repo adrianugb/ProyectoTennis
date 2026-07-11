@@ -531,18 +531,29 @@ namespace ProyectoGrupalTennis.Controllers
             };
 
             _context.Pagos.Add(pago);
+
+            await NotificacionHelper.EnviarNotificacionAsync(
+                _context,
+                _emailService,
+                pago.IdAlumno,
+                categoria: "Pago",
+                tipo: "Pago registrado",
+                titulo: "Pago registrado por la administración",
+                mensaje:
+                    $"La administración registró un pago de ₡{pago.Monto:N0} " +
+                    $"correspondiente a {pago.TipoPago}, mediante {pago.MetodoPago}."
+            );
             await _context.SaveChangesAsync();
 
             TempData["MensajeExito"] = "Pago manual registrado correctamente.";
             return RedirectToAction(nameof(AdminPagos));
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmarPago(int idPago)
         {
             var pago = await _context.Pagos
-                .Include(p => p.Reserva)
-                    .ThenInclude(r => r.Cancha)
                 .FirstOrDefaultAsync(p => p.IdPago == idPago);
 
             if (pago == null)
@@ -557,77 +568,133 @@ namespace ProyectoGrupalTennis.Controllers
                 return RedirectToAction(nameof(AdminPagos));
             }
 
-            if (pago.TipoPago == "Matricula")
+            await using var transaccion = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                var curso = await _context.Cursos
-                    .FirstOrDefaultAsync(c => c.IdCurso == pago.IdCurso);
-
-                if (curso == null)
+                if (pago.TipoPago == "Matricula")
                 {
-                    TempData["MensajeError"] = "El curso relacionado al pago no existe.";
+                    if (!pago.IdCurso.HasValue)
+                    {
+                        TempData["MensajeError"] = "El pago no tiene un curso relacionado.";
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    var curso = await _context.Cursos
+                        .FirstOrDefaultAsync(c => c.IdCurso == pago.IdCurso.Value);
+
+                    if (curso == null)
+                    {
+                        TempData["MensajeError"] = "El curso relacionado al pago no existe.";
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    if (curso.CuposDisponibles <= 0)
+                    {
+                        TempData["MensajeError"] = "Ya no hay cupos disponibles para este curso.";
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    var yaMatriculado = await _context.Matriculas.AnyAsync(m =>
+                        m.IdAlumno == pago.IdAlumno &&
+                        m.IdCurso == curso.IdCurso &&
+                        m.Estado == "Activa");
+
+                    if (yaMatriculado)
+                    {
+                        TempData["MensajeError"] = "El alumno ya está matriculado en este curso.";
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    var matricula = new Matricula
+                    {
+                        IdAlumno = pago.IdAlumno,
+                        IdCurso = curso.IdCurso,
+                        FechaMatricula = DateTime.Now,
+                        Estado = "Activa"
+                    };
+
+                    _context.Matriculas.Add(matricula);
+                    curso.CuposDisponibles -= 1;
+
+                    await _context.SaveChangesAsync();
+
+                    pago.IdMatricula = matricula.IdMatricula;
+
+                    await NotificacionHelper.EnviarNotificacionAsync(
+                        _context,
+                        _emailService,
+                        pago.IdAlumno,
+                        categoria: "Clase",
+                        tipo: "Matrícula",
+                        titulo: "Matrícula confirmada",
+                        mensaje: $"Tu matrícula al curso {curso.Nombre} fue confirmada correctamente."
+                    );
+                }
+                else if (pago.TipoPago == "Reserva")
+                {
+                    if (!pago.IdReserva.HasValue)
+                    {
+                        TempData["MensajeError"] = "El pago no tiene una reserva relacionada.";
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    var reserva = await _context.Reservas
+                        .Include(r => r.Cancha)
+                        .FirstOrDefaultAsync(r => r.IdReserva == pago.IdReserva.Value);
+
+                    if (reserva == null)
+                    {
+                        TempData["MensajeError"] = "La reserva relacionada al pago no existe.";
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    if (reserva.IdAlumno != null)
+                    {
+                        TempData["MensajeError"] = "La reserva ya fue tomada por otro alumno.";
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    reserva.IdAlumno = pago.IdAlumno;
+                    reserva.Estado = "Asignada";
+
+                    var nombreCancha = reserva.Cancha?.Nombre ?? "la cancha seleccionada";
+
+                    await NotificacionHelper.EnviarNotificacionAsync(
+                        _context,
+                        _emailService,
+                        pago.IdAlumno,
+                        categoria: "Clase",
+                        tipo: "Reserva",
+                        titulo: "Reserva confirmada",
+                        mensaje:
+                            $"Tu reserva en {nombreCancha} fue confirmada para el " +
+                            $"{reserva.FechaReserva:dd/MM/yyyy} de " +
+                            $"{reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}."
+                    );
+                }
+                else
+                {
+                    TempData["MensajeError"] = "El tipo de pago no es válido.";
                     return RedirectToAction(nameof(AdminPagos));
                 }
 
-                if (curso.CuposDisponibles <= 0)
-                {
-                    TempData["MensajeError"] = "Ya no hay cupos disponibles para este curso.";
-                    return RedirectToAction(nameof(AdminPagos));
-                }
-
-                var yaMatriculado = await _context.Matriculas.AnyAsync(m =>
-                    m.IdAlumno == pago.IdAlumno &&
-                    m.IdCurso == curso.IdCurso &&
-                    m.Estado == "Activa");
-
-                if (yaMatriculado)
-                {
-                    TempData["MensajeError"] = "El alumno ya está matriculado en este curso.";
-                    return RedirectToAction(nameof(AdminPagos));
-                }
-
-                var matricula = new Matricula
-                {
-                    IdAlumno = pago.IdAlumno,
-                    IdCurso = curso.IdCurso,
-                    FechaMatricula = DateTime.Now,
-                    Estado = "Activa"
-                };
-
-                _context.Matriculas.Add(matricula);
-                curso.CuposDisponibles -= 1;
+                pago.Estado = "Pagado";
+                pago.FechaPago = DateTime.Now;
 
                 await _context.SaveChangesAsync();
+                await transaccion.CommitAsync();
 
-                pago.IdMatricula = matricula.IdMatricula;
+                TempData["MensajeExito"] = "Pago confirmado correctamente.";
             }
-            else if (pago.TipoPago == "Reserva")
+            catch
             {
-                var reserva = await _context.Reservas
-                    .Include(r => r.Cancha)
-                    .FirstOrDefaultAsync(r => r.IdReserva == pago.IdReserva);
+                await transaccion.RollbackAsync();
 
-                if (reserva == null)
-                {
-                    TempData["MensajeError"] = "La reserva relacionada al pago no existe.";
-                    return RedirectToAction(nameof(AdminPagos));
-                }
-
-                if (reserva.IdAlumno != null)
-                {
-                    TempData["MensajeError"] = "La reserva ya fue tomada por otro alumno.";
-                    return RedirectToAction(nameof(AdminPagos));
-                }
-
-                reserva.IdAlumno = pago.IdAlumno;
-                reserva.Estado = "Asignada";
+                TempData["MensajeError"] =
+                    "Ocurrió un error al confirmar el pago. No se realizaron cambios.";
             }
 
-            pago.Estado = "Pagado";
-            pago.FechaPago = DateTime.Now;
-
-            await _context.SaveChangesAsync();
-
-            TempData["MensajeExito"] = "Pago confirmado correctamente.";
             return RedirectToAction(nameof(AdminPagos));
         }
 
@@ -652,9 +719,22 @@ namespace ProyectoGrupalTennis.Controllers
 
             pago.Estado = "Rechazado";
 
+            await NotificacionHelper.EnviarNotificacionAsync(
+                _context,
+                _emailService,
+                pago.IdAlumno,
+                categoria: "Pago",
+                tipo: "Pago rechazado",
+                titulo: "Comprobante de pago rechazado",
+                mensaje:
+                    $"El comprobante correspondiente al pago PAG-{pago.IdPago} fue rechazado. " +
+                    "Revisa que el monto y los datos sean correctos y vuelve a adjuntar el comprobante."
+            );
+
             await _context.SaveChangesAsync();
 
-            TempData["MensajeExito"] = "Pago rechazado correctamente.";
+            TempData["MensajeExito"] =
+                "El pago fue rechazado y el alumno recibió una notificación.";
 
             return RedirectToAction(nameof(AdminPagos));
         }
