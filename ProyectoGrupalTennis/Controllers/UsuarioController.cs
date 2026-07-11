@@ -146,7 +146,18 @@ namespace ProyectoGrupalTennis.Controllers
             };
 
             _context.Pagos.Add(pago);
-
+            await NotificacionHelper.EnviarNotificacionAsync(
+                _context,
+                _emailService,
+                userId,
+                categoria: "Pago",
+                tipo: "Pago pendiente",
+                titulo: "Pago pendiente de matrícula",
+                mensaje:
+                    $"Se generó un pago pendiente de ₡{curso.Precio:N0} " +
+                    $"para matricularte en el curso {curso.Nombre}. " +
+                    "Adjunta el comprobante para que el administrador pueda revisarlo."
+                );
             await _context.SaveChangesAsync();
 
             TempData["Success"] = $"Se generó el pago pendiente por ₡{curso.Precio:N0}. Debe realizar el pago para completar la matrícula.";
@@ -910,6 +921,18 @@ namespace ProyectoGrupalTennis.Controllers
             pago.FechaComprobante = DateTime.Now;
             pago.Estado = "En revisión";
             pago.MetodoPago = "Comprobante adjunto";
+
+            await NotificacionHelper.EnviarNotificacionAsync(
+                _context,
+                _emailService,
+                pago.IdAlumno,
+                categoria: "Pago",
+                tipo: "Comprobante recibido",
+                titulo: "Comprobante recibido",
+                mensaje:
+                    $"Recibimos el comprobante correspondiente al pago PAG-{pago.IdPago}. " +
+                    "El pago quedó en revisión y será validado por un administrador."
+            );
 
             await _context.SaveChangesAsync();
 
