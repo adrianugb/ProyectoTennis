@@ -285,7 +285,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         public IActionResult ProfesorCursos()
         {
-            return View("~/Views/Perfiles/ProfesorCursos.cshtml");
+            return RedirectToAction("MisCursos", "PerfilProfesor");
         }
         #endregion
 

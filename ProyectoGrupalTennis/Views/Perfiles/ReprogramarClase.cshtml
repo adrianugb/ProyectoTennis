@@ -1,0 +1,89 @@
+@model ProyectoGrupalTennis.Models.ReprogramarClaseViewModel
+@{
+    ViewData["Title"] = "Reprogramar Clase";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Reprogramar Clase</h1>
+                    <p class="perfil-subtitle">Cambiá la fecha y hora de la clase. Los alumnos serán notificados.</p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-calendar"></i> Reprogramar
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a asp-controller="PerfilProfesor" asp-action="MisCursos" class="btn-volver">
+                    <i class="fa fa-arrow-left"></i> Volver a Mis Cursos
+                </a>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div>@error.ErrorMessage</div>
+                    }
+                </div>
+            }
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">@Model.NombreCurso</h2>
+                </div>
+
+                <form asp-controller="PerfilProfesor" asp-action="ReprogramarClase" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="IdHorario" value="@Model.IdHorario" />
+                    <input type="hidden" name="IdCurso"   value="@Model.IdCurso" />
+                    <input type="hidden" name="NombreCurso" value="@Model.NombreCurso" />
+
+                    <div class="row" style="padding: 20px 0;">
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Nueva fecha</label>
+                                <input type="date" name="Fecha" class="form-control"
+                                       value="@Model.Fecha" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Hora inicio</label>
+                                <input type="time" name="HoraInicio" class="form-control"
+                                       value="@Model.HoraInicio" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Hora fin</label>
+                                <input type="time" name="HoraFin" class="form-control"
+                                       value="@Model.HoraFin" required />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="perfil-actions" style="padding-bottom:10px;">
+                        <a asp-controller="PerfilProfesor" asp-action="MisCursos" class="perfil-btn-outline">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="perfil-btn">
+                            <i class="fa fa-save"></i> Guardar cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
