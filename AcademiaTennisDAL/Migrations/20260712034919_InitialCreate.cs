@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-
 #nullable disable
 
 namespace AcademiaTennisDAL.Migrations
@@ -197,31 +196,6 @@ namespace AcademiaTennisDAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Productos", x => x.IdProducto);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Profesores",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nombre = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Apellidos = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Email = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Telefono = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Especialidad = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    FechaCreacion = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Activo = table.Column<bool>(type: "tinyint(1)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Profesores", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -465,7 +439,10 @@ namespace AcademiaTennisDAL.Migrations
                     Mensaje = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Leida = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    FechaEnvio = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    FechaEnvio = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CanalUsado = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EnvioFallido = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -473,38 +450,6 @@ namespace AcademiaTennisDAL.Migrations
                     table.ForeignKey(
                         name: "FK_Notificaciones_AspNetUsers_IdUsuario",
                         column: x => x.IdUsuario,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Pagos",
-                columns: table => new
-                {
-                    IdPago = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    IdAlumno = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Monto = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    TipoPago = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    MetodoPago = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Estado = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    FechaPago = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    EsManual = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Observaciones = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Pagos", x => x.IdPago);
-                    table.ForeignKey(
-                        name: "FK_Pagos_AspNetUsers_IdAlumno",
-                        column: x => x.IdAlumno,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -535,6 +480,38 @@ namespace AcademiaTennisDAL.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Profesores",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Nombre = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Apellidos = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Telefono = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Especialidad = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Activo = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Profesores", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Profesores_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -697,6 +674,7 @@ namespace AcademiaTennisDAL.Migrations
                     FechaReserva = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     HoraInicio = table.Column<TimeSpan>(type: "time(6)", nullable: false),
                     HoraFin = table.Column<TimeSpan>(type: "time(6)", nullable: false),
+                    Monto = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Estado = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
@@ -751,33 +729,6 @@ namespace AcademiaTennisDAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Cursos",
-                columns: table => new
-                {
-                    IdCurso = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nombre = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Descripcion = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Nivel = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CuposDisponibles = table.Column<int>(type: "int", nullable: false),
-                    Activo = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    IdProfesor = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Cursos", x => x.IdCurso);
-                    table.ForeignKey(
-                        name: "FK_Cursos_Profesores_IdProfesor",
-                        column: x => x.IdProfesor,
-                        principalTable: "Profesores",
-                        principalColumn: "Id");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "UbicacionesAlumno",
                 columns: table => new
                 {
@@ -810,65 +761,30 @@ namespace AcademiaTennisDAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Facturas",
+                name: "Cursos",
                 columns: table => new
                 {
-                    IdFactura = table.Column<int>(type: "int", nullable: false)
+                    IdCurso = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    IdPago = table.Column<int>(type: "int", nullable: false),
-                    NumeroFactura = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                    Nombre = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    FechaFactura = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    Descripcion = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Nivel = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CuposDisponibles = table.Column<int>(type: "int", nullable: false),
+                    Precio = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Activo = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IdProfesor = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Facturas", x => x.IdFactura);
+                    table.PrimaryKey("PK_Cursos", x => x.IdCurso);
                     table.ForeignKey(
-                        name: "FK_Facturas_Pagos_IdPago",
-                        column: x => x.IdPago,
-                        principalTable: "Pagos",
-                        principalColumn: "IdPago",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "TransaccionesProducto",
-                columns: table => new
-                {
-                    IdTransaccion = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    IdProducto = table.Column<int>(type: "int", nullable: false),
-                    IdAlumno = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Tipo = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Cantidad = table.Column<int>(type: "int", nullable: false),
-                    MontoTotal = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    FechaDevolucion = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    IdPago = table.Column<int>(type: "int", nullable: true),
-                    FechaTransaccion = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TransaccionesProducto", x => x.IdTransaccion);
-                    table.ForeignKey(
-                        name: "FK_TransaccionesProducto_AspNetUsers_IdAlumno",
-                        column: x => x.IdAlumno,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TransaccionesProducto_Pagos_IdPago",
-                        column: x => x.IdPago,
-                        principalTable: "Pagos",
-                        principalColumn: "IdPago");
-                    table.ForeignKey(
-                        name: "FK_TransaccionesProducto_Productos_IdProducto",
-                        column: x => x.IdProducto,
-                        principalTable: "Productos",
-                        principalColumn: "IdProducto",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Cursos_Profesores_IdProfesor",
+                        column: x => x.IdProfesor,
+                        principalTable: "Profesores",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -989,8 +905,7 @@ namespace AcademiaTennisDAL.Migrations
                 {
                     IdHorario = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    DiaSemana = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Fecha = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     HoraInicio = table.Column<TimeSpan>(type: "time(6)", nullable: false),
                     HoraFin = table.Column<TimeSpan>(type: "time(6)", nullable: false),
                     IdCurso = table.Column<int>(type: "int", nullable: false)
@@ -1034,6 +949,161 @@ namespace AcademiaTennisDAL.Migrations
                         column: x => x.IdCurso,
                         principalTable: "Cursos",
                         principalColumn: "IdCurso",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "SolicitudesCurso",
+                columns: table => new
+                {
+                    IdSolicitudCurso = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    IdAlumno = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IdCurso = table.Column<int>(type: "int", nullable: true),
+                    NombreCurso = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Nivel = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Disponibilidad = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Comentarios = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FechaSolicitud = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Estado = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SolicitudesCurso", x => x.IdSolicitudCurso);
+                    table.ForeignKey(
+                        name: "FK_SolicitudesCurso_AspNetUsers_IdAlumno",
+                        column: x => x.IdAlumno,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SolicitudesCurso_Cursos_IdCurso",
+                        column: x => x.IdCurso,
+                        principalTable: "Cursos",
+                        principalColumn: "IdCurso");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Pagos",
+                columns: table => new
+                {
+                    IdPago = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    IdAlumno = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Monto = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TipoPago = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MetodoPago = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Estado = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FechaPago = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    FechaVencimiento = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    EsManual = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Observaciones = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IdMatricula = table.Column<int>(type: "int", nullable: true),
+                    IdReserva = table.Column<int>(type: "int", nullable: true),
+                    IdCurso = table.Column<int>(type: "int", nullable: true),
+                    ComprobantePago = table.Column<string>(type: "varchar(300)", maxLength: 300, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FechaComprobante = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pagos", x => x.IdPago);
+                    table.ForeignKey(
+                        name: "FK_Pagos_AspNetUsers_IdAlumno",
+                        column: x => x.IdAlumno,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Pagos_Cursos_IdCurso",
+                        column: x => x.IdCurso,
+                        principalTable: "Cursos",
+                        principalColumn: "IdCurso");
+                    table.ForeignKey(
+                        name: "FK_Pagos_Matriculas_IdMatricula",
+                        column: x => x.IdMatricula,
+                        principalTable: "Matriculas",
+                        principalColumn: "IdMatricula");
+                    table.ForeignKey(
+                        name: "FK_Pagos_Reservas_IdReserva",
+                        column: x => x.IdReserva,
+                        principalTable: "Reservas",
+                        principalColumn: "IdReserva");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Facturas",
+                columns: table => new
+                {
+                    IdFactura = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    IdPago = table.Column<int>(type: "int", nullable: false),
+                    NumeroFactura = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FechaFactura = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Facturas", x => x.IdFactura);
+                    table.ForeignKey(
+                        name: "FK_Facturas_Pagos_IdPago",
+                        column: x => x.IdPago,
+                        principalTable: "Pagos",
+                        principalColumn: "IdPago",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "TransaccionesProducto",
+                columns: table => new
+                {
+                    IdTransaccion = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    IdProducto = table.Column<int>(type: "int", nullable: false),
+                    IdAlumno = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Tipo = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    MontoTotal = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    FechaDevolucion = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    IdPago = table.Column<int>(type: "int", nullable: true),
+                    FechaTransaccion = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransaccionesProducto", x => x.IdTransaccion);
+                    table.ForeignKey(
+                        name: "FK_TransaccionesProducto_AspNetUsers_IdAlumno",
+                        column: x => x.IdAlumno,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TransaccionesProducto_Pagos_IdPago",
+                        column: x => x.IdPago,
+                        principalTable: "Pagos",
+                        principalColumn: "IdPago");
+                    table.ForeignKey(
+                        name: "FK_TransaccionesProducto_Productos_IdProducto",
+                        column: x => x.IdProducto,
+                        principalTable: "Productos",
+                        principalColumn: "IdProducto",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -1197,9 +1267,29 @@ namespace AcademiaTennisDAL.Migrations
                 column: "IdAlumno");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Pagos_IdCurso",
+                table: "Pagos",
+                column: "IdCurso");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pagos_IdMatricula",
+                table: "Pagos",
+                column: "IdMatricula");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pagos_IdReserva",
+                table: "Pagos",
+                column: "IdReserva");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PreferenciasNotificacion_IdUsuario",
                 table: "PreferenciasNotificacion",
                 column: "IdUsuario");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Profesores_UserId",
+                table: "Profesores",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProgresosAlumno_IdAlumno",
@@ -1230,6 +1320,16 @@ namespace AcademiaTennisDAL.Migrations
                 name: "IX_Reservas_IdProfesor",
                 table: "Reservas",
                 column: "IdProfesor");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SolicitudesCurso_IdAlumno",
+                table: "SolicitudesCurso",
+                column: "IdAlumno");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SolicitudesCurso_IdCurso",
+                table: "SolicitudesCurso",
+                column: "IdCurso");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransaccionesProducto_IdAlumno",
@@ -1312,9 +1412,6 @@ namespace AcademiaTennisDAL.Migrations
                 name: "LogrosAlumno");
 
             migrationBuilder.DropTable(
-                name: "Matriculas");
-
-            migrationBuilder.DropTable(
                 name: "Notificaciones");
 
             migrationBuilder.DropTable(
@@ -1330,6 +1427,9 @@ namespace AcademiaTennisDAL.Migrations
                 name: "RachasAsistencia");
 
             migrationBuilder.DropTable(
+                name: "SolicitudesCurso");
+
+            migrationBuilder.DropTable(
                 name: "TransaccionesProducto");
 
             migrationBuilder.DropTable(
@@ -1342,13 +1442,7 @@ namespace AcademiaTennisDAL.Migrations
                 name: "Cupones");
 
             migrationBuilder.DropTable(
-                name: "Reservas");
-
-            migrationBuilder.DropTable(
                 name: "Campeonatos");
-
-            migrationBuilder.DropTable(
-                name: "Cursos");
 
             migrationBuilder.DropTable(
                 name: "Pagos");
@@ -1361,6 +1455,15 @@ namespace AcademiaTennisDAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Ofertas");
+
+            migrationBuilder.DropTable(
+                name: "Matriculas");
+
+            migrationBuilder.DropTable(
+                name: "Reservas");
+
+            migrationBuilder.DropTable(
+                name: "Cursos");
 
             migrationBuilder.DropTable(
                 name: "Canchas");
