@@ -1,0 +1,975 @@
+﻿/* =========================================
+   PERFILES - CSS OPTIMIZADO Y RESPONSIVE
+   Perfil Administrativo / Usuario / Profesor
+   ========================================= */
+
+:root {
+    --perfil-primary: #a5c422;
+    --perfil-primary-dark: #7f9919;
+    --perfil-primary-soft: #eef6d3;
+    --perfil-text: #252525;
+    --perfil-text-muted: #757575;
+    --perfil-border: #ececec;
+    --perfil-white: #ffffff;
+    --perfil-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.05);
+    --perfil-shadow-md: 0 8px 22px rgba(0, 0, 0, 0.08);
+    --perfil-shadow-lg: 0 14px 30px rgba(0, 0, 0, 0.12);
+    --perfil-radius-sm: 8px;
+    --perfil-radius-md: 14px;
+    --perfil-radius-lg: 18px;
+}
+
+/* =========================================
+   BASE
+   ========================================= */
+
+.perfil-page {
+    width: 100%;
+    padding: 30px 0 40px;
+    overflow-x: hidden;
+}
+
+.perfil-container {
+    width: 100%;
+    padding: 28px;
+    border: 1px solid #f1f1f1;
+    border-radius: var(--perfil-radius-lg);
+    background: var(--perfil-white);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.perfil-page *,
+.perfil-page *::before,
+.perfil-page *::after {
+    box-sizing: border-box;
+}
+
+.perfil-page img,
+.perfil-page svg,
+.perfil-page canvas,
+.perfil-page video,
+.perfil-page iframe {
+    max-width: 100%;
+}
+
+/* =========================================
+   HEADER DEL PERFIL
+   ========================================= */
+
+.perfil-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+    .perfil-header > div {
+        min-width: 0;
+    }
+
+.perfil-title {
+    margin: 0 0 8px;
+    color: var(--perfil-text);
+    font-size: clamp(1.5rem, 4vw, 2.125rem);
+    font-weight: 700;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.perfil-subtitle {
+    margin: 0;
+    color: var(--perfil-text-muted);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.perfil-badge {
+    max-width: 100%;
+    padding: 10px 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 30px;
+    background: var(--perfil-primary-soft);
+    color: #6f8f12;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: normal;
+    text-align: center;
+}
+
+/* =========================================
+   GRID Y TARJETAS
+   ========================================= */
+
+.perfil-grid .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+    .perfil-grid .row > div,
+    .perfil-grid .col-md-6,
+    .perfil-grid .col-sm-6 {
+        display: flex;
+        margin-bottom: 25px;
+    }
+
+.perfil-card {
+    width: 100%;
+    min-width: 0;
+    min-height: 250px;
+    height: 100%;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid #f3f3f3;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
+    box-shadow: var(--perfil-shadow-md);
+    text-align: center;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+    .perfil-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--perfil-shadow-lg);
+    }
+
+    .perfil-card i {
+        margin-bottom: 14px;
+        display: inline-block;
+        color: var(--perfil-primary);
+        font-size: 34px;
+    }
+
+    .perfil-card h3 {
+        margin-bottom: 12px;
+        color: var(--perfil-text);
+        font-size: clamp(1.15rem, 3vw, 1.5rem);
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .perfil-card p {
+        margin-bottom: 18px;
+        color: var(--perfil-text-muted);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+/* =========================================
+   BOTONES
+   ========================================= */
+
+.perfil-actions {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.perfil-btn,
+.perfil-btn-outline,
+.agenda-btn {
+    max-width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    border-radius: var(--perfil-radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.perfil-btn {
+    padding: 11px 20px;
+    border: none;
+    background: linear-gradient(135deg, var(--perfil-primary) 0%, #8eab1d 100%);
+    color: var(--perfil-white) !important;
+    box-shadow: 0 6px 14px rgba(165, 196, 34, 0.25);
+}
+
+    .perfil-btn:hover {
+        background: linear-gradient(135deg, #93b11f 0%, var(--perfil-primary-dark) 100%);
+        color: var(--perfil-white) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 18px rgba(165, 196, 34, 0.35);
+    }
+
+.perfil-btn-outline {
+    padding: 9px 18px;
+    border: 2px solid var(--perfil-primary);
+    background: transparent;
+    color: var(--perfil-primary-dark) !important;
+}
+
+    .perfil-btn-outline:hover {
+        background: var(--perfil-primary);
+        color: var(--perfil-white) !important;
+    }
+
+    .perfil-btn:focus,
+    .perfil-btn-outline:focus,
+    .agenda-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(165, 196, 34, 0.25);
+    }
+
+/* =========================================
+   RESUMEN
+   ========================================= */
+
+.perfil-summary-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.perfil-summary-item {
+    min-width: 0;
+    padding: 16px;
+    border-left: 5px solid var(--perfil-primary);
+    border-radius: var(--perfil-radius-md);
+    background: linear-gradient(135deg, #f8fbec, #ffffff);
+    box-shadow: var(--perfil-shadow-sm);
+}
+
+    .perfil-summary-item strong {
+        margin-bottom: 4px;
+        display: block;
+        color: var(--perfil-text);
+        font-size: 24px;
+    }
+
+    .perfil-summary-item span {
+        display: block;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+/* =========================================
+   TABLAS, FILTROS Y ACCIONES
+   ========================================= */
+
+.perfil-table-block {
+    width: 100%;
+    margin-bottom: 24px;
+    padding: 24px;
+    border: 1px solid #f3f3f3;
+    border-radius: 16px;
+    background: var(--perfil-white);
+    box-shadow: var(--perfil-shadow-md);
+}
+
+.perfil-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.perfil-table-title {
+    margin: 0;
+    color: var(--perfil-text);
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    font-weight: 700;
+}
+
+.perfil-filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+    .perfil-filter-row .form-control,
+    .perfil-filter-row .form-select {
+        min-width: 200px;
+        min-height: 46px;
+        padding: 10px 14px;
+        border: 1px solid #e4e4e4;
+        border-radius: 10px;
+        background-color: var(--perfil-white);
+        color: #444;
+        font-size: 14px;
+        box-shadow: none;
+    }
+
+        .perfil-filter-row .form-control:focus,
+        .perfil-filter-row .form-select:focus {
+            border-color: var(--perfil-primary);
+            box-shadow: 0 0 0 0.15rem rgba(165, 196, 34, 0.20);
+        }
+
+.table-responsive,
+.perfil-table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 12px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.perfil-table {
+    width: 100%;
+    min-width: 650px;
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--perfil-white);
+}
+
+    .perfil-table thead th {
+        padding: 14px;
+        vertical-align: middle;
+        white-space: nowrap;
+        border-bottom: 1px solid var(--perfil-border);
+        background: #f8f9fa;
+        color: var(--perfil-text);
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .perfil-table tbody td {
+        padding: 14px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f1f1;
+        color: #555;
+        font-size: 14px;
+    }
+
+    .perfil-table tbody tr:hover {
+        background: #fafdf2;
+    }
+
+.perfil-badge-success,
+.perfil-badge-warning,
+.perfil-badge-danger {
+    padding: 6px 14px;
+    display: inline-block;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.perfil-badge-success {
+    background: #eaf7df;
+    color: #5f7f16;
+}
+
+.perfil-badge-warning {
+    background: #fff4db;
+    color: #b78103;
+}
+
+.perfil-badge-danger {
+    background: #fde8e8;
+    color: #c0392b;
+}
+
+.perfil-action-link {
+    color: #6f42c1;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .perfil-action-link:hover {
+        text-decoration: underline;
+    }
+
+.perfil-action-separator {
+    margin: 0 6px;
+    color: #999;
+}
+
+/* =========================================
+   MODO COMPACTO
+   ========================================= */
+
+.perfil-page.compact .perfil-container {
+    padding: 22px;
+}
+
+.perfil-page.compact .perfil-title {
+    font-size: clamp(1.45rem, 4vw, 1.875rem);
+}
+
+.perfil-page.compact .perfil-subtitle {
+    margin-bottom: 0;
+}
+
+.perfil-page.compact .perfil-card {
+    min-height: 220px;
+    padding: 22px 18px;
+}
+
+    .perfil-page.compact .perfil-card i {
+        margin-bottom: 10px;
+        font-size: 30px;
+    }
+
+    .perfil-page.compact .perfil-card h3 {
+        margin-bottom: 10px;
+        font-size: 21px;
+    }
+
+    .perfil-page.compact .perfil-card p {
+        margin-bottom: 14px;
+        font-size: 13px;
+    }
+
+/* =========================================
+   AGENDA SEMANAL
+   ========================================= */
+
+.perfil-agenda {
+    margin-top: 35px;
+}
+
+.agenda-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.agenda-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.agenda-btn {
+    padding: 8px 14px;
+    border: 1px solid #d9e5b3;
+    background: var(--perfil-white);
+    color: var(--perfil-primary-dark);
+    cursor: pointer;
+}
+
+    .agenda-btn:hover {
+        background: var(--perfil-primary-soft);
+    }
+
+.agenda-view-label {
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: var(--perfil-primary-soft);
+    color: #6f8f12;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.agenda-week-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.agenda-week-day {
+    min-width: 0;
+    min-height: 220px;
+    padding: 14px;
+    border: 1px solid #eef1f5;
+    border-radius: var(--perfil-radius-md);
+    background: var(--perfil-white);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.agenda-week-header {
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.agenda-day-name {
+    color: var(--perfil-text);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.agenda-day-number {
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #f8fbec;
+    color: var(--perfil-primary-dark);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.agenda-event,
+.agenda-calendar-card {
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    border-left: 4px solid var(--perfil-primary);
+    border-radius: 10px;
+    background: #f8f9fa;
+    overflow-wrap: anywhere;
+}
+
+    .agenda-event strong {
+        margin-bottom: 3px;
+        display: block;
+        color: var(--perfil-text);
+        font-size: 14px;
+    }
+
+    .agenda-event small {
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+.agenda-time {
+    margin-bottom: 5px;
+    display: inline-block;
+    color: var(--perfil-primary-dark);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.agenda-calendar-table {
+    width: 100%;
+    min-width: 700px;
+    table-layout: fixed;
+}
+
+    .agenda-calendar-table th,
+    .agenda-calendar-table td {
+        min-height: 85px;
+        height: 85px;
+        padding: 12px;
+        vertical-align: top;
+    }
+
+.agenda-calendar-card {
+    margin-bottom: 6px;
+    padding: 10px;
+    background: #eef8d8;
+    font-size: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================================
+   MODALES
+   ========================================= */
+
+.modal-dialog {
+    width: auto;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.modal-content {
+    border-radius: var(--perfil-radius-md);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--perfil-border);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--perfil-border);
+}
+
+.modal .form-check {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal .form-check-input {
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+.modal .form-check-label {
+    margin: 0;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* =========================================
+   CATÁLOGO
+   ========================================= */
+
+.catalogo-grid {
+    margin-top: 35px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 30px;
+}
+
+.catalogo-card-small {
+    min-width: 0;
+    min-height: 260px;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    background: var(--perfil-white);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.catalogo-info {
+    width: 58%;
+    min-width: 0;
+    padding: 28px;
+}
+
+    .catalogo-info h3 {
+        margin-bottom: 12px;
+        font-size: clamp(1.4rem, 3vw, 1.75rem);
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .catalogo-info p {
+        color: #555;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .catalogo-info span {
+        margin-bottom: 18px;
+        display: block;
+        color: #777;
+        font-size: 13px;
+    }
+
+.catalogo-img-small {
+    width: 42%;
+    min-width: 0;
+    object-fit: cover;
+}
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 1100px) {
+    .agenda-week-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 991.98px) {
+    .perfil-container {
+        padding: 22px;
+    }
+
+    .perfil-card {
+        min-height: 220px;
+    }
+
+    .catalogo-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================
+   CELULARES
+   ========================================= */
+
+@media (max-width: 767.98px) {
+    .perfil-page {
+        padding: 20px 0 30px;
+    }
+
+        .perfil-container,
+        .perfil-page.compact .perfil-container {
+            padding: 18px;
+            border-radius: 14px;
+        }
+
+    .perfil-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .perfil-badge {
+        width: fit-content;
+    }
+
+    .perfil-card,
+    .perfil-page.compact .perfil-card {
+        min-height: auto;
+        padding: 20px 16px;
+    }
+
+    .perfil-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .perfil-actions .perfil-btn,
+        .perfil-actions .perfil-btn-outline,
+        .perfil-actions .btn {
+            width: 100%;
+        }
+
+    .perfil-summary-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-table-block {
+        padding: 18px 15px;
+    }
+
+    .perfil-table-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .perfil-filter-row {
+        flex-direction: column;
+    }
+
+        .perfil-filter-row .form-control,
+        .perfil-filter-row .form-select,
+        .perfil-filter-row .btn {
+            width: 100%;
+            min-width: 100%;
+        }
+
+    .perfil-table {
+        min-width: 620px;
+    }
+
+        .perfil-table thead th,
+        .perfil-table tbody td {
+            padding: 12px 10px;
+            font-size: 13px;
+        }
+
+    .perfil-badge-success,
+    .perfil-badge-warning,
+    .perfil-badge-danger {
+        white-space: normal;
+        text-align: center;
+    }
+
+    .agenda-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .agenda-nav {
+        width: 100%;
+    }
+
+        .agenda-nav .agenda-btn {
+            flex: 1;
+        }
+
+    .agenda-view-label {
+        width: fit-content;
+    }
+
+    .agenda-week-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .agenda-week-day {
+        min-height: auto;
+    }
+
+    .catalogo-card-small {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .catalogo-info,
+    .catalogo-img-small {
+        width: 100%;
+    }
+
+    .catalogo-info {
+        padding: 22px 18px;
+    }
+
+    .catalogo-img-small {
+        height: 220px;
+    }
+
+    .modal-dialog {
+        max-width: calc(100% - 24px);
+        margin: 12px auto;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+        .modal-footer .btn {
+            width: 100%;
+            margin: 0;
+        }
+}
+
+/* =========================================
+   CELULARES PEQUEÑOS
+   ========================================= */
+
+@media (max-width: 575.98px) {
+    .perfil-page .container,
+    .perfil-page .container-fluid {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .perfil-container,
+    .perfil-page.compact .perfil-container {
+        padding: 15px;
+    }
+
+    .perfil-title {
+        font-size: 1.45rem;
+    }
+
+    .perfil-subtitle {
+        font-size: 14px;
+    }
+
+    .perfil-card i {
+        font-size: 30px;
+    }
+
+    .perfil-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .perfil-table-block {
+        padding: 15px 12px;
+    }
+
+    .agenda-nav {
+        flex-direction: column;
+    }
+
+        .agenda-nav .agenda-btn {
+            width: 100%;
+        }
+
+    .catalogo-grid {
+        gap: 20px;
+    }
+
+    .catalogo-img-small {
+        height: 190px;
+    }
+}
+
+/* =========================================
+   ACCESIBILIDAD
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .perfil-page *,
+    .perfil-page *::before,
+    .perfil-page *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* Ancho general del panel */
+.perfil-width {
+    width: 100%;
+    max-width: 1450px;
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+/* Contenedor principal */
+.perfil-container {
+    width: 100%;
+    padding: 26px;
+}
+
+/* Tarjetas menos altas */
+.perfil-page.compact .perfil-card {
+    min-height: 190px;
+    padding: 20px 18px;
+}
+
+    /* Reducir los espacios internos */
+    .perfil-page.compact .perfil-card i {
+        margin-bottom: 8px;
+        font-size: 28px;
+    }
+
+    .perfil-page.compact .perfil-card h3 {
+        margin-bottom: 7px;
+        font-size: 20px;
+    }
+
+    .perfil-page.compact .perfil-card p {
+        max-width: 520px;
+        margin: 0 auto 12px;
+        font-size: 13px;
+    }
+
+/* Separación entre tarjetas */
+.perfil-grid .row > div,
+.perfil-grid .col-md-6,
+.perfil-grid .col-sm-6 {
+    margin-bottom: 18px;
+}
+
+/* Pantallas grandes */
+@media (min-width: 1600px) {
+    .perfil-width {
+        max-width: 1500px;
+    }
+}
+
+/* Tablet */
+@media (max-width: 991.98px) {
+    .perfil-width {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+}
+
+/* Celular */
+@media (max-width: 767.98px) {
+    .perfil-width {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .perfil-container {
+        padding: 18px;
+    }
+
+    .perfil-page.compact .perfil-card {
+        min-height: auto;
+    }
+}

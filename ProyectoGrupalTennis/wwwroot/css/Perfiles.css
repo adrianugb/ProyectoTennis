@@ -1,61 +1,22 @@
 ﻿/* =========================================
-   PERFILES - CSS OPTIMIZADO Y RESPONSIVE
+   PERFILES
    Perfil Administrativo / Usuario / Profesor
    ========================================= */
 
-:root {
-    --perfil-primary: #a5c422;
-    --perfil-primary-dark: #7f9919;
-    --perfil-primary-soft: #eef6d3;
-    --perfil-text: #252525;
-    --perfil-text-muted: #757575;
-    --perfil-border: #ececec;
-    --perfil-white: #ffffff;
-    --perfil-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.05);
-    --perfil-shadow-md: 0 8px 22px rgba(0, 0, 0, 0.08);
-    --perfil-shadow-lg: 0 14px 30px rgba(0, 0, 0, 0.12);
-    --perfil-radius-sm: 8px;
-    --perfil-radius-md: 14px;
-    --perfil-radius-lg: 18px;
-}
-
-/* =========================================
-   BASE
-   ========================================= */
-
+/* CONTENEDOR PRINCIPAL */
 .perfil-page {
-    width: 100%;
     padding: 30px 0 40px;
-    overflow-x: hidden;
 }
 
 .perfil-container {
-    width: 100%;
+    background: #ffffff;
+    border-radius: 18px;
     padding: 28px;
-    border: 1px solid #f1f1f1;
-    border-radius: var(--perfil-radius-lg);
-    background: var(--perfil-white);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f1f1;
 }
 
-.perfil-page *,
-.perfil-page *::before,
-.perfil-page *::after {
-    box-sizing: border-box;
-}
-
-.perfil-page img,
-.perfil-page svg,
-.perfil-page canvas,
-.perfil-page video,
-.perfil-page iframe {
-    max-width: 100%;
-}
-
-/* =========================================
-   HEADER DEL PERFIL
-   ========================================= */
-
+/* HEADER DEL PERFIL */
 .perfil-header {
     display: flex;
     justify-content: space-between;
@@ -65,106 +26,82 @@
     margin-bottom: 24px;
 }
 
-    .perfil-header > div {
-        min-width: 0;
-    }
-
 .perfil-title {
-    margin: 0 0 8px;
-    color: var(--perfil-text);
-    font-size: clamp(1.5rem, 4vw, 2.125rem);
+    font-size: 34px;
     font-weight: 700;
-    line-height: 1.2;
-    overflow-wrap: anywhere;
+    color: #252525;
+    margin: 0 0 8px;
 }
 
 .perfil-subtitle {
-    margin: 0;
-    color: var(--perfil-text-muted);
     font-size: 15px;
+    color: #757575;
+    margin: 0;
     line-height: 1.6;
 }
 
+/* BADGE DE PERFIL */
 .perfil-badge {
-    max-width: 100%;
-    padding: 10px 16px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    border-radius: 30px;
-    background: var(--perfil-primary-soft);
+    background: #eef6d3;
     color: #6f8f12;
+    border-radius: 30px;
+    padding: 10px 16px;
     font-size: 13px;
     font-weight: 600;
-    white-space: normal;
-    text-align: center;
+    white-space: nowrap;
 }
 
-/* =========================================
-   GRID Y TARJETAS
-   ========================================= */
-
-.perfil-grid .row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
+/* GRID DE TARJETAS */
+.perfil-grid .row > div {
+    margin-bottom: 18px;
 }
 
-    .perfil-grid .row > div,
-    .perfil-grid .col-md-6,
-    .perfil-grid .col-sm-6 {
-        display: flex;
-        margin-bottom: 25px;
-    }
-
+/* TARJETAS DE MÓDULOS */
 .perfil-card {
-    width: 100%;
-    min-width: 0;
-    min-height: 250px;
-    height: 100%;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
+    border-radius: 16px;
     padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f3f3f3;
+    transition: all 0.3s ease;
+    height: 100%;
+    min-height: 250px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border: 1px solid #f3f3f3;
-    border-radius: 16px;
-    background: linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
-    box-shadow: var(--perfil-shadow-md);
-    text-align: center;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
     .perfil-card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--perfil-shadow-lg);
+        transform: translateY(-6px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
     }
 
     .perfil-card i {
+        font-size: 34px;
+        color: #a5c422;
         margin-bottom: 14px;
         display: inline-block;
-        color: var(--perfil-primary);
-        font-size: 34px;
     }
 
     .perfil-card h3 {
-        margin-bottom: 12px;
-        color: var(--perfil-text);
-        font-size: clamp(1.15rem, 3vw, 1.5rem);
+        font-size: 24px;
         font-weight: 700;
-        overflow-wrap: anywhere;
+        color: #252525;
+        margin-bottom: 12px;
     }
 
     .perfil-card p {
-        margin-bottom: 18px;
-        color: var(--perfil-text-muted);
         font-size: 14px;
+        color: #757575;
         line-height: 1.6;
+        margin-bottom: 18px;
     }
 
-/* =========================================
-   BOTONES
-   ========================================= */
-
+/* BOTONES */
 .perfil-actions {
     margin-top: auto;
     display: flex;
@@ -173,60 +110,51 @@
     flex-wrap: wrap;
 }
 
-.perfil-btn,
-.perfil-btn-outline,
-.agenda-btn {
-    max-width: 100%;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    gap: 7px;
-    border-radius: var(--perfil-radius-sm);
+.perfil-btn {
+    background: linear-gradient(135deg, #a5c422 0%, #8eab1d 100%);
+    border: none;
+    border-radius: 8px;
+    color: #ffffff !important;
     font-size: 14px;
     font-weight: 600;
-    text-align: center;
-    text-decoration: none !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.perfil-btn {
     padding: 11px 20px;
-    border: none;
-    background: linear-gradient(135deg, var(--perfil-primary) 0%, #8eab1d 100%);
-    color: var(--perfil-white) !important;
+    display: inline-block;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
     box-shadow: 0 6px 14px rgba(165, 196, 34, 0.25);
 }
 
     .perfil-btn:hover {
-        background: linear-gradient(135deg, #93b11f 0%, var(--perfil-primary-dark) 100%);
-        color: var(--perfil-white) !important;
+        background: linear-gradient(135deg, #93b11f 0%, #7f9919 100%);
+        color: #ffffff !important;
         transform: translateY(-2px);
         box-shadow: 0 10px 18px rgba(165, 196, 34, 0.35);
     }
+.perfil-page .container-fluid {
+    max-width: none;
+    padding-left: 30px;
+    padding-right: 30px;
+}
 
 .perfil-btn-outline {
-    padding: 9px 18px;
-    border: 2px solid var(--perfil-primary);
     background: transparent;
-    color: var(--perfil-primary-dark) !important;
+    border: 2px solid #a5c422;
+    border-radius: 8px;
+    color: #7f9919 !important;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 18px;
+    display: inline-block;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
 }
 
     .perfil-btn-outline:hover {
-        background: var(--perfil-primary);
-        color: var(--perfil-white) !important;
+        background: #a5c422;
+        color: #ffffff !important;
     }
 
-    .perfil-btn:focus,
-    .perfil-btn-outline:focus,
-    .agenda-btn:focus {
-        outline: none;
-        box-shadow: 0 0 0 0.2rem rgba(165, 196, 34, 0.25);
-    }
-
-/* =========================================
-   RESUMEN
-   ========================================= */
-
+/* RESUMEN / MINI BLOQUES OPCIONALES */
 .perfil-summary-strip {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -235,39 +163,34 @@
 }
 
 .perfil-summary-item {
-    min-width: 0;
-    padding: 16px;
-    border-left: 5px solid var(--perfil-primary);
-    border-radius: var(--perfil-radius-md);
     background: linear-gradient(135deg, #f8fbec, #ffffff);
-    box-shadow: var(--perfil-shadow-sm);
+    border-left: 5px solid #a5c422;
+    padding: 16px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
 }
 
     .perfil-summary-item strong {
-        margin-bottom: 4px;
         display: block;
-        color: var(--perfil-text);
         font-size: 24px;
+        color: #252525;
+        margin-bottom: 4px;
     }
 
     .perfil-summary-item span {
         display: block;
-        color: #6b7280;
         font-size: 13px;
+        color: #6b7280;
     }
 
-/* =========================================
-   TABLAS, FILTROS Y ACCIONES
-   ========================================= */
-
+/* TABLAS DE VISTAS INTERNAS */
 .perfil-table-block {
-    width: 100%;
-    margin-bottom: 24px;
-    padding: 24px;
-    border: 1px solid #f3f3f3;
+    background: #ffffff;
     border-radius: 16px;
-    background: var(--perfil-white);
-    box-shadow: var(--perfil-shadow-md);
+    padding: 24px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+    border: 1px solid #f3f3f3;
+    margin-bottom: 24px;
 }
 
 .perfil-table-header {
@@ -280,10 +203,10 @@
 }
 
 .perfil-table-title {
-    margin: 0;
-    color: var(--perfil-text);
-    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    font-size: 24px;
     font-weight: 700;
+    color: #252525;
+    margin: 0;
 }
 
 .perfil-filter-row {
@@ -296,93 +219,88 @@
     .perfil-filter-row .form-control,
     .perfil-filter-row .form-select {
         min-width: 200px;
-        min-height: 46px;
-        padding: 10px 14px;
-        border: 1px solid #e4e4e4;
         border-radius: 10px;
-        background-color: var(--perfil-white);
-        color: #444;
+        border: 1px solid #e4e4e4;
+        padding: 10px 14px;
         font-size: 14px;
+        color: #444;
+        background-color: #fff;
         box-shadow: none;
     }
 
         .perfil-filter-row .form-control:focus,
         .perfil-filter-row .form-select:focus {
-            border-color: var(--perfil-primary);
+            border-color: #a5c422;
             box-shadow: 0 0 0 0.15rem rgba(165, 196, 34, 0.20);
         }
 
-.table-responsive,
-.perfil-table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    border-radius: 12px;
-    -webkit-overflow-scrolling: touch;
-}
-
 .perfil-table {
-    width: 100%;
-    min-width: 650px;
     margin-bottom: 0;
+    background: #fff;
     border-collapse: separate;
     border-spacing: 0;
-    background: var(--perfil-white);
+    width: 100%;
 }
 
     .perfil-table thead th {
-        padding: 14px;
-        vertical-align: middle;
-        white-space: nowrap;
-        border-bottom: 1px solid var(--perfil-border);
         background: #f8f9fa;
-        color: var(--perfil-text);
+        color: #252525;
         font-size: 14px;
         font-weight: 700;
+        border-bottom: 1px solid #ececec;
+        padding: 14px;
+        vertical-align: middle;
     }
 
     .perfil-table tbody td {
         padding: 14px;
         vertical-align: middle;
-        border-bottom: 1px solid #f1f1f1;
         color: #555;
+        border-bottom: 1px solid #f1f1f1;
         font-size: 14px;
     }
 
     .perfil-table tbody tr:hover {
         background: #fafdf2;
+        transition: 0.3s;
     }
 
-.perfil-badge-success,
-.perfil-badge-warning,
-.perfil-badge-danger {
-    padding: 6px 14px;
+/* BADGES DE ESTADO */
+.perfil-badge-success {
     display: inline-block;
+    background: #eaf7df;
+    color: #5f7f16;
+    padding: 6px 14px;
     border-radius: 30px;
     font-size: 13px;
     font-weight: 600;
-    white-space: nowrap;
-}
-
-.perfil-badge-success {
-    background: #eaf7df;
-    color: #5f7f16;
 }
 
 .perfil-badge-warning {
+    display: inline-block;
     background: #fff4db;
     color: #b78103;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
 }
 
 .perfil-badge-danger {
+    display: inline-block;
     background: #fde8e8;
     color: #c0392b;
-}
-
-.perfil-action-link {
-    color: #6f42c1;
+    padding: 6px 14px;
+    border-radius: 30px;
     font-size: 13px;
     font-weight: 600;
+}
+
+/* LINKS DE ACCIÓN EN TABLAS */
+.perfil-action-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6f42c1;
     text-decoration: none;
 }
 
@@ -395,16 +313,13 @@
     color: #999;
 }
 
-/* =========================================
-   MODO COMPACTO
-   ========================================= */
-
+/* VISTA COMPACTA PARA QUE NO SE HAGA ENORME */
 .perfil-page.compact .perfil-container {
     padding: 22px;
 }
 
 .perfil-page.compact .perfil-title {
-    font-size: clamp(1.45rem, 4vw, 1.875rem);
+    font-size: 30px;
 }
 
 .perfil-page.compact .perfil-subtitle {
@@ -417,19 +332,198 @@
 }
 
     .perfil-page.compact .perfil-card i {
-        margin-bottom: 10px;
         font-size: 30px;
+        margin-bottom: 10px;
     }
 
     .perfil-page.compact .perfil-card h3 {
-        margin-bottom: 10px;
         font-size: 21px;
+        margin-bottom: 10px;
     }
 
     .perfil-page.compact .perfil-card p {
-        margin-bottom: 14px;
         font-size: 13px;
+        margin-bottom: 14px;
     }
+
+/* RESPONSIVE */
+@media (max-width: 991px) {
+    .perfil-title {
+        font-size: 28px;
+    }
+
+    .perfil-container {
+        padding: 22px;
+    }
+
+    .perfil-card {
+        min-height: auto;
+    }
+
+    .perfil-actions {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .perfil-page {
+        padding: 20px 0 30px;
+    }
+
+    .perfil-title {
+        font-size: 24px;
+    }
+
+    .perfil-subtitle {
+        font-size: 14px;
+    }
+
+    .perfil-table-header {
+        align-items: flex-start;
+    }
+
+    .perfil-filter-row {
+        flex-direction: column;
+    }
+
+        .perfil-filter-row .form-control,
+        .perfil-filter-row .form-select {
+            width: 100%;
+            min-width: 100%;
+        }
+    
+}
+/* =========================================
+   ADMIN / CURSOS
+   Gestión de Cursos
+   ========================================= */
+
+.perfil-table-block {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+    border: 1px solid #f3f3f3;
+    margin-bottom: 24px;
+}
+
+.perfil-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.perfil-table-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #252525;
+    margin: 0;
+}
+
+.perfil-filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+    .perfil-filter-row .form-control,
+    .perfil-filter-row .form-select {
+        min-width: 200px;
+        border-radius: 10px;
+        border: 1px solid #e4e4e4;
+        padding: 10px 14px;
+        font-size: 14px;
+        color: #444;
+        background-color: #fff;
+        box-shadow: none;
+    }
+
+        .perfil-filter-row .form-control:focus,
+        .perfil-filter-row .form-select:focus {
+            border-color: #a5c422;
+            box-shadow: 0 0 0 0.15rem rgba(165, 196, 34, 0.20);
+        }
+
+.perfil-table {
+    width: 100%;
+    margin-bottom: 0;
+    background: #fff;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+    .perfil-table thead th {
+        background: #f8f9fa;
+        color: #252525;
+        font-size: 14px;
+        font-weight: 700;
+        border-bottom: 1px solid #ececec;
+        padding: 14px;
+        vertical-align: middle;
+    }
+
+    .perfil-table tbody td {
+        padding: 14px;
+        vertical-align: middle;
+        color: #555;
+        border-bottom: 1px solid #f1f1f1;
+        font-size: 14px;
+    }
+
+    .perfil-table tbody tr:hover {
+        background: #fafdf2;
+        transition: 0.3s;
+    }
+
+.perfil-badge-success {
+    display: inline-block;
+    background: #eaf7df;
+    color: #5f7f16;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.perfil-badge-warning {
+    display: inline-block;
+    background: #fff4db;
+    color: #b78103;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.perfil-badge-danger {
+    display: inline-block;
+    background: #fde8e8;
+    color: #c0392b;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.perfil-action-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6f42c1;
+    text-decoration: none;
+}
+
+    .perfil-action-link:hover {
+        text-decoration: underline;
+    }
+
+.perfil-action-separator {
+    margin: 0 6px;
+    color: #999;
+}
 
 /* =========================================
    AGENDA SEMANAL
@@ -450,88 +544,86 @@
 
 .agenda-nav {
     display: flex;
-    align-items: center;
     gap: 8px;
-    flex-wrap: wrap;
+    align-items: center;
 }
 
 .agenda-btn {
-    padding: 8px 14px;
     border: 1px solid #d9e5b3;
-    background: var(--perfil-white);
-    color: var(--perfil-primary-dark);
+    background: #fff;
+    color: #7f9919;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-weight: 600;
     cursor: pointer;
+    transition: 0.2s ease;
 }
 
     .agenda-btn:hover {
-        background: var(--perfil-primary-soft);
+        background: #eef6d3;
     }
 
 .agenda-view-label {
+    background: #eef6d3;
+    color: #6f8f12;
     padding: 8px 14px;
     border-radius: 20px;
-    background: var(--perfil-primary-soft);
-    color: #6f8f12;
     font-size: 13px;
     font-weight: 600;
 }
 
 .agenda-week-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     gap: 14px;
 }
 
 .agenda-week-day {
-    min-width: 0;
-    min-height: 220px;
-    padding: 14px;
+    background: #ffffff;
+    border-radius: 14px;
     border: 1px solid #eef1f5;
-    border-radius: var(--perfil-radius-md);
-    background: var(--perfil-white);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 14px;
+    min-height: 220px;
 }
 
 .agenda-week-header {
-    margin-bottom: 14px;
-    padding-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #f1f1f1;
 }
 
 .agenda-day-name {
-    color: var(--perfil-text);
     font-size: 15px;
     font-weight: 700;
+    color: #252525;
 }
 
 .agenda-day-number {
-    padding: 6px 10px;
-    border-radius: 20px;
-    background: #f8fbec;
-    color: var(--perfil-primary-dark);
     font-size: 13px;
     font-weight: 600;
+    color: #7f9919;
+    background: #f8fbec;
+    padding: 6px 10px;
+    border-radius: 20px;
 }
 
-.agenda-event,
-.agenda-calendar-card {
-    margin-bottom: 10px;
-    padding: 10px 12px;
-    border-left: 4px solid var(--perfil-primary);
-    border-radius: 10px;
+.agenda-event {
     background: #f8f9fa;
-    overflow-wrap: anywhere;
+    border-left: 4px solid #a5c422;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
 }
 
     .agenda-event strong {
-        margin-bottom: 3px;
         display: block;
-        color: var(--perfil-text);
+        color: #252525;
         font-size: 14px;
+        margin-bottom: 3px;
     }
 
     .agenda-event small {
@@ -540,60 +632,68 @@
     }
 
 .agenda-time {
-    margin-bottom: 5px;
     display: inline-block;
-    color: var(--perfil-primary-dark);
     font-size: 12px;
     font-weight: 700;
+    color: #7f9919;
+    margin-bottom: 5px;
+}
+
+@media (max-width: 1100px) {
+    .agenda-week-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .agenda-week-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .agenda-calendar-table {
     width: 100%;
-    min-width: 700px;
     table-layout: fixed;
 }
 
     .agenda-calendar-table th,
     .agenda-calendar-table td {
+        vertical-align: top;
         min-height: 85px;
         height: 85px;
         padding: 12px;
-        vertical-align: top;
     }
 
 .agenda-calendar-card {
-    margin-bottom: 6px;
-    padding: 10px;
     background: #eef8d8;
+    border-left: 4px solid #a5c422;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 6px;
     font-size: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-/* =========================================
-   MODALES
-   ========================================= */
-
-.modal-dialog {
-    width: auto;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.modal-content {
-    border-radius: var(--perfil-radius-md);
-}
-
-.modal-header {
-    border-bottom: 1px solid var(--perfil-border);
-}
-
-.modal-footer {
-    border-top: 1px solid var(--perfil-border);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 }
 
 .modal .form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-top: 10px;
+}
+
+.modal .form-check-input {
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+.modal .form-check-label {
+    margin-bottom: 0;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* MODALES */
+.modal .form-check {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -607,369 +707,90 @@
 .modal .form-check-label {
     margin: 0;
     font-weight: 500;
-    cursor: pointer;
 }
 
-/* =========================================
-   CATÁLOGO
-   ========================================= */
+.modal-dialog {
+    max-width: 600px;
+}
 
+.modal-content {
+    border-radius: 14px;
+}
+
+.modal-header {
+    border-bottom: 1px solid #ececec;
+}
+
+.modal-footer {
+    border-top: 1px solid #ececec;
+}
+
+/*Catalogo*/
 .catalogo-grid {
-    margin-top: 35px;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 30px;
+    margin-top: 35px;
 }
 
 .catalogo-card-small {
-    min-width: 0;
-    min-height: 260px;
     display: flex;
     align-items: stretch;
-    overflow: hidden;
+    background: #fff;
     border: 1px solid #eee;
     border-radius: 20px;
-    background: var(--perfil-white);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    box-shadow: 0 12px 28px rgba(0,0,0,.08);
+    min-height: 260px;
 }
 
 .catalogo-info {
     width: 58%;
-    min-width: 0;
     padding: 28px;
 }
 
     .catalogo-info h3 {
-        margin-bottom: 12px;
-        font-size: clamp(1.4rem, 3vw, 1.75rem);
+        font-size: 28px;
         font-weight: 800;
-        overflow-wrap: anywhere;
+        margin-bottom: 12px;
     }
 
     .catalogo-info p {
-        color: #555;
         font-size: 14px;
         line-height: 1.6;
+        color: #555;
     }
 
     .catalogo-info span {
-        margin-bottom: 18px;
         display: block;
-        color: #777;
         font-size: 13px;
+        color: #777;
+        margin-bottom: 18px;
     }
 
 .catalogo-img-small {
     width: 42%;
-    min-width: 0;
     object-fit: cover;
 }
 
-/* =========================================
-   TABLET
-   ========================================= */
-
-@media (max-width: 1100px) {
-    .agenda-week-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 991.98px) {
-    .perfil-container {
-        padding: 22px;
-    }
-
-    .perfil-card {
-        min-height: 220px;
-    }
-
+@media (max-width: 992px) {
     .catalogo-grid {
         grid-template-columns: 1fr;
     }
 }
 
-/* =========================================
-   CELULARES
-   ========================================= */
-
-@media (max-width: 767.98px) {
-    .perfil-page {
-        padding: 20px 0 30px;
-    }
-
-        .perfil-container,
-        .perfil-page.compact .perfil-container {
-            padding: 18px;
-            border-radius: 14px;
-        }
-
-    .perfil-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 14px;
-    }
-
-    .perfil-badge {
-        width: fit-content;
-    }
-
-    .perfil-card,
-    .perfil-page.compact .perfil-card {
-        min-height: auto;
-        padding: 20px 16px;
-    }
-
-    .perfil-actions {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-        .perfil-actions .perfil-btn,
-        .perfil-actions .perfil-btn-outline,
-        .perfil-actions .btn {
-            width: 100%;
-        }
-
-    .perfil-summary-strip {
-        grid-template-columns: 1fr;
-    }
-
-    .perfil-table-block {
-        padding: 18px 15px;
-    }
-
-    .perfil-table-header {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .perfil-filter-row {
-        flex-direction: column;
-    }
-
-        .perfil-filter-row .form-control,
-        .perfil-filter-row .form-select,
-        .perfil-filter-row .btn {
-            width: 100%;
-            min-width: 100%;
-        }
-
-    .perfil-table {
-        min-width: 620px;
-    }
-
-        .perfil-table thead th,
-        .perfil-table tbody td {
-            padding: 12px 10px;
-            font-size: 13px;
-        }
-
-    .perfil-badge-success,
-    .perfil-badge-warning,
-    .perfil-badge-danger {
-        white-space: normal;
-        text-align: center;
-    }
-
-    .agenda-toolbar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .agenda-nav {
-        width: 100%;
-    }
-
-        .agenda-nav .agenda-btn {
-            flex: 1;
-        }
-
-    .agenda-view-label {
-        width: fit-content;
-    }
-
-    .agenda-week-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .agenda-week-day {
-        min-height: auto;
-    }
-
-    .catalogo-card-small {
-        flex-direction: column;
-        min-height: auto;
-    }
-
-    .catalogo-info,
-    .catalogo-img-small {
-        width: 100%;
-    }
-
-    .catalogo-info {
-        padding: 22px 18px;
-    }
-
-    .catalogo-img-small {
-        height: 220px;
-    }
-
-    .modal-dialog {
-        max-width: calc(100% - 24px);
-        margin: 12px auto;
-    }
-
-    .modal-footer {
-        flex-direction: column;
-    }
-
-        .modal-footer .btn {
-            width: 100%;
-            margin: 0;
-        }
+.perfil-grid .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
 }
 
-/* =========================================
-   CELULARES PEQUEÑOS
-   ========================================= */
-
-@media (max-width: 575.98px) {
-    .perfil-page .container,
-    .perfil-page .container-fluid {
-        padding-left: 12px;
-        padding-right: 12px;
-    }
-
-    .perfil-container,
-    .perfil-page.compact .perfil-container {
-        padding: 15px;
-    }
-
-    .perfil-title {
-        font-size: 1.45rem;
-    }
-
-    .perfil-subtitle {
-        font-size: 14px;
-    }
-
-    .perfil-card i {
-        font-size: 30px;
-    }
-
-    .perfil-card h3 {
-        font-size: 1.2rem;
-    }
-
-    .perfil-table-block {
-        padding: 15px 12px;
-    }
-
-    .agenda-nav {
-        flex-direction: column;
-    }
-
-        .agenda-nav .agenda-btn {
-            width: 100%;
-        }
-
-    .catalogo-grid {
-        gap: 20px;
-    }
-
-    .catalogo-img-small {
-        height: 190px;
-    }
-}
-
-/* =========================================
-   ACCESIBILIDAD
-   ========================================= */
-
-@media (prefers-reduced-motion: reduce) {
-    .perfil-page *,
-    .perfil-page *::before,
-    .perfil-page *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-    }
-}
-
-/* Ancho general del panel */
-.perfil-width {
-    width: 100%;
-    max-width: 1450px;
-    margin: 0 auto;
-    padding-left: 24px;
-    padding-right: 24px;
-}
-
-/* Contenedor principal */
-.perfil-container {
-    width: 100%;
-    padding: 26px;
-}
-
-/* Tarjetas menos altas */
-.perfil-page.compact .perfil-card {
-    min-height: 190px;
-    padding: 20px 18px;
-}
-
-    /* Reducir los espacios internos */
-    .perfil-page.compact .perfil-card i {
-        margin-bottom: 8px;
-        font-size: 28px;
-    }
-
-    .perfil-page.compact .perfil-card h3 {
-        margin-bottom: 7px;
-        font-size: 20px;
-    }
-
-    .perfil-page.compact .perfil-card p {
-        max-width: 520px;
-        margin: 0 auto 12px;
-        font-size: 13px;
-    }
-
-/* Separación entre tarjetas */
-.perfil-grid .row > div,
 .perfil-grid .col-md-6,
 .perfil-grid .col-sm-6 {
-    margin-bottom: 18px;
+    display: flex;
+    margin-bottom: 25px;
 }
 
-/* Pantallas grandes */
-@media (min-width: 1600px) {
-    .perfil-width {
-        max-width: 1500px;
-    }
-}
-
-/* Tablet */
-@media (max-width: 991.98px) {
-    .perfil-width {
-        padding-left: 18px;
-        padding-right: 18px;
-    }
-}
-
-/* Celular */
-@media (max-width: 767.98px) {
-    .perfil-width {
-        padding-left: 12px;
-        padding-right: 12px;
-    }
-
-    .perfil-container {
-        padding: 18px;
-    }
-
-    .perfil-page.compact .perfil-card {
-        min-height: auto;
-    }
+.perfil-grid .perfil-card {
+    width: 100%;
 }
