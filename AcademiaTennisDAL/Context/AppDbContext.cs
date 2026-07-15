@@ -78,6 +78,8 @@ namespace AcademiaTennisDAL.Context
         // Nueva entidad: SolicitudCursos
         public DbSet<SolicitudCurso> SolicitudesCurso { get; set; }
 
+        public DbSet<DisponibilidadSolicitud> DisponibilidadesSolicitud { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
