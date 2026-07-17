@@ -3,6 +3,7 @@ using System;
 using AcademiaTennisDAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AcademiaTennisDAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260717012059_AgregarTarifaClaseYCondicionServicio")]
+    partial class AgregarTarifaClaseYCondicionServicio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1221,9 +1224,6 @@ namespace AcademiaTennisDAL.Migrations
                     b.Property<DateTime>("FechaActualizacion")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("IdTipoClase")
-                        .HasColumnType("int");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -1235,37 +1235,14 @@ namespace AcademiaTennisDAL.Migrations
                     b.Property<bool>("PrecioPorPersona")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("TipoClase")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
                     b.HasKey("IdTarifaClase");
 
-                    b.HasIndex("IdTipoClase");
-
                     b.ToTable("TarifasClase");
-                });
-
-            modelBuilder.Entity("AcademiaTennisDAL.Entities.TipoClase", b =>
-                {
-                    b.Property<int>("IdTipoClase")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Descripcion")
-                        .HasMaxLength(300)
-                        .HasColumnType("varchar(300)");
-
-                    b.Property<DateTime>("FechaActualizacion")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.HasKey("IdTipoClase");
-
-                    b.ToTable("TiposClase");
                 });
 
             modelBuilder.Entity("AcademiaTennisDAL.Entities.TransaccionProducto", b =>
@@ -1860,17 +1837,6 @@ namespace AcademiaTennisDAL.Migrations
                     b.Navigation("ProfesorPropuesto");
                 });
 
-            modelBuilder.Entity("AcademiaTennisDAL.Entities.TarifaClase", b =>
-                {
-                    b.HasOne("AcademiaTennisDAL.Entities.TipoClase", "TipoClase")
-                        .WithMany("TarifasClase")
-                        .HasForeignKey("IdTipoClase")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TipoClase");
-                });
-
             modelBuilder.Entity("AcademiaTennisDAL.Entities.TransaccionProducto", b =>
                 {
                     b.HasOne("AcademiaTennisDAL.Entities.ApplicationUser", "Alumno")
@@ -2011,11 +1977,6 @@ namespace AcademiaTennisDAL.Migrations
             modelBuilder.Entity("AcademiaTennisDAL.Entities.SolicitudCurso", b =>
                 {
                     b.Navigation("Disponibilidades");
-                });
-
-            modelBuilder.Entity("AcademiaTennisDAL.Entities.TipoClase", b =>
-                {
-                    b.Navigation("TarifasClase");
                 });
 
             modelBuilder.Entity("AcademiaTennisDAL.Entities.ZonaCobertura", b =>

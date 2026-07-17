@@ -80,6 +80,13 @@ namespace AcademiaTennisDAL.Context
 
         public DbSet<DisponibilidadSolicitud> DisponibilidadesSolicitud { get; set; }
 
+
+        public DbSet<TarifaClase> TarifasClase { get; set; }
+
+        public DbSet<CondicionServicio> CondicionesServicio { get; set; }
+
+        public DbSet<TipoClase> TiposClase { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -109,6 +116,11 @@ namespace AcademiaTennisDAL.Context
                 .WithMany()
                 .HasForeignKey(e => e.IdGanador)
                 .OnDelete(DeleteBehavior.NoAction);
+
+     
+
+
+        
         }
     }
 }

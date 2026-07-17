@@ -38,6 +38,10 @@ namespace ProyectoGrupalTennis.Models
         [StringLength(500)]
         public string? DireccionDomicilio { get; set; }
 
+        [Required(ErrorMessage = "Debe indicar su disponibilidad.")]
+        [StringLength(500)]
+        public string Disponibilidad { get; set; } = string.Empty;
+
         [StringLength(1000)]
         public string? Comentarios { get; set; }
 
