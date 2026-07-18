@@ -60,11 +60,8 @@ namespace ProyectoGrupalTennis.Controllers
             );
 
             var tarifas = await query
-                .OrderBy(t => t.TipoClase.Nombre)
-                .ThenBy(t => t.CantidadLecciones)
-                .ThenBy(t => t.Precio)
-                .ToListAsync();
-
+     .OrderBy(t => t.IdTarifaClase)
+     .ToListAsync();
             return View(tarifas);
         }
 
@@ -86,6 +83,8 @@ namespace ProyectoGrupalTennis.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Agregar(TarifaClase tarifa)
         {
+            ModelState.Remove(nameof(tarifa.TipoClase));
+
             if (!await _context.TiposClase
                     .AnyAsync(t =>
                         t.IdTipoClase == tarifa.IdTipoClase &&
@@ -103,7 +102,6 @@ namespace ProyectoGrupalTennis.Controllers
             }
 
             tarifa.IdTarifaClase = 0;
-            tarifa.TipoClase = null!;
             tarifa.FechaActualizacion = DateTime.Now;
 
             _context.TarifasClase.Add(tarifa);
@@ -114,7 +112,6 @@ namespace ProyectoGrupalTennis.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
         // GET: /AdminTarifas/Editar/5
         [HttpGet]
         public async Task<IActionResult> Editar(int id)
@@ -140,6 +137,9 @@ namespace ProyectoGrupalTennis.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(TarifaClase tarifa)
         {
+
+            ModelState.Remove(nameof(tarifa.TipoClase));
+
             var tipoValido = await _context.TiposClase
                 .AnyAsync(t =>
                     t.IdTipoClase == tarifa.IdTipoClase &&
@@ -196,28 +196,24 @@ namespace ProyectoGrupalTennis.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: /AdminTarifas/CambiarEstado
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CambiarEstado(
-            int id,
-            bool activa)
+        public async Task<IActionResult> CambiarEstado(int id)
         {
             var tarifa = await _context.TarifasClase
-                .FirstOrDefaultAsync(t =>
-                    t.IdTarifaClase == id);
+                .FirstOrDefaultAsync(t => t.IdTarifaClase == id);
 
             if (tarifa == null)
             {
                 return NotFound();
             }
 
-            tarifa.Activa = activa;
+            tarifa.Activa = !tarifa.Activa;
             tarifa.FechaActualizacion = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = activa
+            TempData["Success"] = tarifa.Activa
                 ? "La tarifa fue activada correctamente."
                 : "La tarifa fue desactivada correctamente.";
 

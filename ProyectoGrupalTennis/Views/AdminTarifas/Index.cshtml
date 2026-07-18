@@ -87,9 +87,9 @@
                                 <th>Nombre</th>
                                 <th>Tipo de clase</th>
                                 <th>Matrícula</th>
-                                <th>Lecciones</th>
+                                <th>Sesiones</th>
                                 <th>Precio</th>
-                                <th>Modalidad de precio</th>
+                                <th>Modalidad</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -126,13 +126,20 @@
                                         </td>
 
                                         <td>
-                                            @if (tarifa.PrecioPorPersona)
+                                            @if (tarifa.CantidadLecciones == 1)
                                             {
-                                                <span>Por persona</span>
+                                                <span>Por sesión</span>
                                             }
                                             else
                                             {
-                                                <span>Precio total</span>
+                                                <span>Paquete</span>
+                                            }
+
+                                            @if (tarifa.PrecioPorPersona)
+                                            {
+                                                <small class="d-block text-muted">
+                                                    Por persona
+                                                </small>
                                             }
                                         </td>
 
@@ -170,9 +177,6 @@
 
                                                 @Html.AntiForgeryToken()
 
-                                                <input type="hidden"
-                                                       name="id"
-                                                       value="@tarifa.IdTarifaClase" />
 
                                                 <input type="hidden"
                                                        name="activa"

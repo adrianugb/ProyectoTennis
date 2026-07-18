@@ -1,0 +1,142 @@
+﻿@model AcademiaTennisDAL.Entities.CondicionServicio
+
+@{
+    ViewData["Title"] = "Editar Condición del Servicio";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Editar Condición del Servicio
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Modifica la información de la condición seleccionada.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-pen"></i>
+                    Actualizar Condición
+                </div>
+            </div>
+
+            <div class="perfil-table-block">
+
+                <form asp-action="EditarCondicionServicio"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input asp-for="IdCondicionServicio" type="hidden" />
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3">
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-8">
+                            <label asp-for="Titulo"
+                                   class="form-label">
+                                Título
+                            </label>
+
+                            <input asp-for="Titulo"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Titulo"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Orden"
+                                   class="form-label">
+                                Orden
+                            </label>
+
+                            <input asp-for="Orden"
+                                   class="form-control"
+                                   min="1" />
+
+                            <span asp-validation-for="Orden"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Descripcion"
+                                   class="form-label">
+                                Descripción
+                            </label>
+
+                            <textarea asp-for="Descripcion"
+                                      rows="5"
+                                      class="form-control">
+                            </textarea>
+
+                            <span asp-validation-for="Descripcion"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-12">
+
+                            <div class="form-check">
+
+                                <input asp-for="Activa"
+                                       class="form-check-input" />
+
+                                <label asp-for="Activa"
+                                       class="form-check-label">
+                                    Condición activa
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="perfil-actions mt-4">
+
+                        <a asp-action="Index"
+                           class="perfil-btn-outline">
+
+                            <i class="fa fa-arrow-left"></i>
+
+                            Cancelar
+
+                        </a>
+
+                        <button type="submit"
+                                class="perfil-btn">
+
+                            <i class="fa fa-save"></i>
+
+                            Guardar Cambios
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

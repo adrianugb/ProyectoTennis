@@ -1,0 +1,706 @@
+﻿@using AcademiaTennisDAL.Entities
+
+@{
+    ViewData["Title"] = "Administración del Catálogo";
+
+    var tiposClase =
+        ViewBag.TiposClase as List<TipoClase>
+        ?? new List<TipoClase>();
+
+    var tarifas =
+        ViewBag.Tarifas as List<TarifaClase>
+        ?? new List<TarifaClase>();
+
+    var condiciones =
+        ViewBag.CondicionesServicio as List<CondicionServicio>
+        ?? new List<CondicionServicio>();
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container-fluid px-5">
+        <div class="perfil-container"
+             style="max-width: 1400px; margin: 0 auto;">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Administración del Catálogo
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Administra los tipos de clase, tarifas,
+                        paquetes y condiciones que utilizará la academia.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-book"></i>
+                    Catálogo Administrativo
+                </div>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Success"]
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["Error"]
+                </div>
+            }
+
+            <!-- TIPOS DE CLASE -->
+            <div class="perfil-table-block mb-4">
+                <div class="perfil-table-header">
+                    <div>
+                        <h2 class="perfil-table-title">
+                            Tipos de Clase
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            Define las modalidades disponibles,
+                            como individual, pareja o grupo.
+                        </p>
+                    </div>
+
+                    <div class="perfil-actions">
+                        <a asp-controller="Home"
+                           asp-action="PerfilAdmin"
+                           class="perfil-btn-outline">
+                            <i class="fa fa-arrow-left"></i>
+                            Regresar
+                        </a>
+
+                        <a asp-controller="AdminCatalogoCursos"
+                           asp-action="AgregarTipoClase"
+                           class="perfil-btn">
+                            <i class="fa fa-plus"></i>
+                            Crear Tipo
+                        </a>
+                    </div>
+                </div>
+
+                <form method="get"
+                      asp-controller="AdminCatalogoCursos"
+                      asp-action="Index">
+
+                    <div class="perfil-filter-row">
+                        <input type="text"
+                               name="buscarTipo"
+                               class="form-control"
+                               placeholder="Buscar tipo de clase..."
+                               value="@Context.Request.Query["buscarTipo"]" />
+
+                        <select name="estadoTipo"
+                                class="form-select">
+                            <option value="">
+                                Filtrar por estado
+                            </option>
+                            <option value="Activo">
+                                Activo
+                            </option>
+                            <option value="Inactivo">
+                                Inactivo
+                            </option>
+                        </select>
+
+                        <button type="submit"
+                                class="perfil-btn">
+                            Buscar
+                        </button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (tiposClase.Any())
+                            {
+                                @foreach (var tipo in tiposClase)
+                                {
+                                    <tr>
+                                        <td>
+                                            TIPO-@tipo.IdTipoClase.ToString("D3")
+                                        </td>
+
+                                        <td>@tipo.Nombre</td>
+
+                                        <td>
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                tipo.Descripcion))
+                                            {
+                                                @tipo.Descripcion
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">
+                                                    Sin descripción
+                                                </span>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            @if (tipo.Activo)
+                                            {
+                                                <span class="perfil-badge-success">
+                                                    Activo
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="perfil-badge-warning">
+                                                    Inactivo
+                                                </span>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            <a asp-controller="AdminCatalogoCursos"
+                                               asp-action="EditarTipoClase"
+                                               asp-route-id="@tipo.IdTipoClase"
+                                               class="perfil-action-link">
+                                                Editar
+                                            </a>
+
+                                            <span class="perfil-action-separator">
+                                                |
+                                            </span>
+
+                                            <form asp-controller="AdminCatalogoCursos"
+                                                  asp-action="CambiarEstadoTipoClase"
+                                                  method="post"
+                                                  style="display:inline">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@tipo.IdTipoClase" />
+
+                                                <button type="submit"
+                                                        class="perfil-action-link"
+                                                        style="background:none;
+                                                    border:none;
+                                                    padding:0;
+                                                    cursor:pointer;">
+                                                    @(tipo.Activo ? "Desactivar" : "Activar")
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5"
+                                        class="text-center">
+                                        No hay tipos de clase registrados.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TARIFAS -->
+            <div class="perfil-table-block mb-4">
+                <div class="perfil-table-header">
+                    <div>
+                        <h2 class="perfil-table-title">
+                            Tarifas y Paquetes
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            Administra precios, cantidades de lecciones
+                            y condiciones de matrícula.
+                        </p>
+                    </div>
+
+                    <div class="perfil-actions">
+                        <a asp-controller="AdminTarifas"
+                           asp-action="Agregar"
+                           class="perfil-btn">
+                            <i class="fa fa-plus"></i>
+                            Crear Tarifa
+                        </a>
+
+                        <a asp-controller="AdminTarifas"
+                           asp-action="Index"
+                           class="perfil-btn-outline">
+                            Ver Gestión Completa
+                        </a>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Matrícula</th>
+                                <th>Lecciones</th>
+                                <th>Precio / Modalidad</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (tarifas.Any())
+                            {
+                                @foreach (var tarifa in tarifas)
+                                {
+                                    <tr>
+                                        <td>@tarifa.Nombre</td>
+
+                                        <td>@tarifa.TipoClase.Nombre</td>
+
+                                        <td>@tarifa.CondicionMatricula</td>
+
+                                        <td>@tarifa.CantidadLecciones</td>
+
+                                        <td>
+                                            $@tarifa.Precio.ToString("N2")
+
+                                            <small class="d-block text-muted">
+                                                @(tarifa.CantidadLecciones == 1
+                                                    ? "Por sesión"
+                                                    : "Paquete")
+                                            </small>
+
+                                            @if (tarifa.PrecioPorPersona)
+                                            {
+                                                <small class="d-block text-muted">
+                                                    Por persona
+                                                </small>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            @if (tarifa.Activa)
+                                            {
+                                                <span class="perfil-badge-success">
+                                                    Activa
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="perfil-badge-warning">
+                                                    Inactiva
+                                                </span>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            <a asp-controller="AdminTarifas"
+                                               asp-action="Editar"
+                                               asp-route-id="@tarifa.IdTarifaClase"
+                                               class="perfil-action-link">
+                                                Editar
+                                            </a>
+
+                                            <span class="perfil-action-separator">
+                                                |
+                                            </span>
+
+                                            <form asp-controller="AdminTarifas"
+                                                  asp-action="CambiarEstado"
+                                                  method="post"
+                                                  style="display:inline">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@tarifa.IdTarifaClase" />
+
+                                              
+
+                                                <button type="submit"
+                                                        class="perfil-action-link"
+                                                        style="background:none;
+                                                    border:none;
+                                                    padding:0;
+                                                    cursor:pointer;">
+                                                    @(tarifa.Activa
+                                                        ? "Desactivar"
+                                                        : "Activar")
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7"
+                                        class="text-center">
+                                        No hay tarifas registradas.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CONDICIONES DEL SERVICIO -->
+            <div class="perfil-table-block">
+
+                <div class="perfil-table-header">
+
+                    <div>
+                        <h2 class="perfil-table-title">
+                            Condiciones del Servicio
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            Administra las reglas generales que visualizarán los alumnos.
+                        </p>
+                    </div>
+
+                    <div class="perfil-actions">
+
+                        <a asp-action="AgregarCondicionServicio"
+                           class="perfil-btn">
+
+                            <i class="fa fa-plus"></i>
+
+                            Crear Condición
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="table-responsive">
+
+                    <div id="token-reordenar-condiciones">
+                        @Html.AntiForgeryToken()
+                    </div>
+
+                    <table class="perfil-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th style="width:90px;">Orden</th>
+                                <th>Título</th>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="condiciones-sortable">
+
+                            @if (condiciones.Any())
+                            {
+                                @foreach (var condicion in condiciones)
+                                {
+                                    <tr data-id="@condicion.IdCondicionServicio"
+                                        draggable="true"
+                                        class="condicion-fila">
+
+                                        <td>
+
+                                            <span class="condicion-drag-handle"
+                                                  title="Arrastre para cambiar el orden">
+
+                                                <i class="fa fa-grip-vertical"></i>
+
+                                            </span>
+
+                                            <span class="condicion-numero-orden">
+
+                                                @condicion.Orden
+
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+
+                                            @condicion.Titulo
+
+                                        </td>
+
+                                        <td>
+
+                                            @condicion.Descripcion
+
+                                        </td>
+
+                                        <td>
+
+                                            @if (condicion.Activa)
+                                            {
+                                                <span class="perfil-badge-success">
+                                                    Activa
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="perfil-badge-warning">
+                                                    Inactiva
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                        <td>
+
+                                            <a asp-action="EditarCondicionServicio"
+                                               asp-route-id="@condicion.IdCondicionServicio"
+                                               class="perfil-action-link">
+
+                                                Editar
+
+                                            </a>
+
+                                            <span class="perfil-action-separator">
+                                                |
+                                            </span>
+
+                                            <form asp-action="CambiarEstadoCondicionServicio"
+                                                  method="post"
+                                                  style="display:inline">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@condicion.IdCondicionServicio" />
+
+                                                <button type="submit"
+                                                        class="perfil-action-link"
+                                                        style="background:none;
+                                                    border:none;
+                                                    padding:0;
+                                                    cursor:pointer;">
+
+                                                    @(condicion.Activa
+                                                        ? "Desactivar"
+                                                        : "Activar")
+
+                                                </button>
+
+                                            </form>
+
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+
+                                    <td colspan="5"
+                                        class="text-center">
+
+                                        No hay condiciones registradas.
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const tbody = document.getElementById("condiciones-sortable");
+
+            if (!tbody) {
+                return;
+            }
+
+            let filaArrastrada = null;
+            let ordenOriginal = [];
+
+            const obtenerFilas = () =>
+                Array.from(tbody.querySelectorAll("tr[data-id]"));
+
+            const actualizarNumeros = () => {
+                obtenerFilas().forEach((fila, indice) => {
+                    const numero = fila.querySelector(
+                        ".condicion-numero-orden"
+                    );
+
+                    if (numero) {
+                        numero.textContent = indice + 1;
+                    }
+                });
+            };
+
+            const guardarOrden = async () => {
+                const token = document.querySelector(
+                    "#token-reordenar-condiciones " +
+                    "input[name='__RequestVerificationToken']"
+                )?.value;
+
+                const datos = new URLSearchParams();
+
+                obtenerFilas().forEach(fila => {
+                    datos.append("ordenIds", fila.dataset.id);
+                });
+
+                datos.append(
+                    "__RequestVerificationToken",
+                    token ?? ""
+                );
+
+                const respuesta = await fetch(
+                    '@Url.Action(
+                                                    "ReordenarCondiciones",
+                                                    "AdminCatalogoCursos"
+                                                    )',
+                            {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/x-www-form-urlencoded; charset=UTF-8"
+                        },
+                        body: datos.toString()
+                    }
+                );
+
+                if (!respuesta.ok) {
+                    throw new Error(
+                        "No se pudo guardar el nuevo orden."
+                    );
+                }
+            };
+
+            obtenerFilas().forEach(fila => {
+                fila.addEventListener("dragstart", function(evento) {
+                    filaArrastrada = fila;
+
+                    ordenOriginal = obtenerFilas().map(
+                        elemento => elemento.dataset.id
+                    );
+
+                    fila.classList.add("condicion-arrastrando");
+
+                    evento.dataTransfer.effectAllowed = "move";
+                    evento.dataTransfer.setData(
+                        "text/plain",
+                        fila.dataset.id
+                    );
+                });
+
+                fila.addEventListener("dragend", function() {
+                    fila.classList.remove(
+                        "condicion-arrastrando"
+                    );
+
+                    filaArrastrada = null;
+                });
+            });
+
+            tbody.addEventListener("dragover", function(evento) {
+                evento.preventDefault();
+
+                if (!filaArrastrada) {
+                    return;
+                }
+
+                const filaDestino = evento.target.closest(
+                    "tr[data-id]"
+                );
+
+                if (!filaDestino ||
+                    filaDestino === filaArrastrada) {
+                    return;
+                }
+
+                const rect = filaDestino.getBoundingClientRect();
+
+                const insertarDespues =
+                    evento.clientY >
+                    rect.top + rect.height / 2;
+
+                if (insertarDespues) {
+                    filaDestino.after(filaArrastrada);
+                }
+                else {
+                    filaDestino.before(filaArrastrada);
+                }
+
+                actualizarNumeros();
+            });
+
+            tbody.addEventListener("drop", async function(evento) {
+                evento.preventDefault();
+
+                if (!filaArrastrada) {
+                    return;
+                }
+
+                const nuevoOrden = obtenerFilas().map(
+                    elemento => elemento.dataset.id
+                );
+
+                filaArrastrada.classList.remove(
+                    "condicion-arrastrando"
+                );
+
+                filaArrastrada = null;
+
+                if (nuevoOrden.join(",") ===
+                    ordenOriginal.join(",")) {
+                    return;
+                }
+
+                try {
+                    await guardarOrden();
+                }
+                catch (error) {
+                    alert(
+                        "No se pudo guardar el nuevo orden. " +
+                        "La página se recargará."
+                    );
+
+                    window.location.reload();
+                }
+            });
+        });
+    </script>
+}
+}
