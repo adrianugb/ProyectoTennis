@@ -19,6 +19,15 @@ namespace AcademiaTennisDAL.Entities
         [ForeignKey(nameof(IdCurso))]
         public Curso? Curso { get; set; }
 
+        // NUEVO
+        public int? IdTarifaClase { get; set; }
+
+        [ForeignKey(nameof(IdTarifaClase))]
+        public TarifaClase? TarifaClase { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal? PrecioSolicitado { get; set; }
+
         [Required]
         [StringLength(100)]
         public string NombreCurso { get; set; } = string.Empty;

@@ -6,7 +6,8 @@ namespace ProyectoGrupalTennis.Models
     {
         public int? IdCurso { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Debe seleccionar una tarifa o paquete.")]
+        public int? IdTarifaClase { get; set; }
         public string NombreCurso { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Debe seleccionar un nivel.")]

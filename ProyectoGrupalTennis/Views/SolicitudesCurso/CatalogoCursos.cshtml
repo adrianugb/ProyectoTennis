@@ -1,0 +1,150 @@
+﻿@using AcademiaTennisDAL.Entities
+
+@{
+    ViewData["Title"] = "Cursos Disponibles";
+
+    var tarifas =
+        ViewBag.Tarifas as List<TarifaClase>
+        ?? new List<TarifaClase>();
+
+    var condiciones =
+        ViewBag.CondicionesServicio as List<CondicionServicio>
+        ?? new List<CondicionServicio>();
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container-fluid px-5">
+        <div class="perfil-container"
+             style="max-width: 1280px; margin: 0 auto;">
+
+            <div class="perfil-header mb-4">
+                <div>
+                    <h1 class="perfil-title">
+                        Clases y Paquetes Disponibles
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Selecciona una tarifa o paquete e indica tu disponibilidad.
+                        La academia revisará la solicitud y posteriormente propondrá
+                        un horario.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-book"></i>
+                    Catálogo de Clases
+                </div>
+            </div>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["Error"]
+                </div>
+            }
+
+            @if (tarifas.Any())
+            {
+                <div class="catalogo-grid">
+
+                    @foreach (var tarifa in tarifas)
+                    {
+                        <div class="catalogo-card-small">
+
+                            <div class="catalogo-info">
+
+                                <h3>@tarifa.Nombre</h3>
+
+                                <p>
+                                    @(string.IsNullOrWhiteSpace(tarifa.Descripcion)
+                                        ? "Clase o paquete disponible bajo solicitud."
+                                        : tarifa.Descripcion)
+                                </p>
+
+                                <span class="d-block mb-1">
+                                    <strong>Tipo:</strong>
+                                    @tarifa.TipoClase.Nombre
+                                </span>
+
+                                <span class="d-block mb-1">
+                                    <strong>Matrícula:</strong>
+                                    @tarifa.CondicionMatricula
+                                </span>
+
+                                <span class="d-block mb-1">
+                                    <strong>Sesiones:</strong>
+                                    @tarifa.CantidadLecciones
+                                </span>
+
+                                <span class="d-block mb-3">
+                                    <strong>Precio:</strong>
+                                    $@tarifa.Precio.ToString("N2")
+
+                                    @if (tarifa.PrecioPorPersona)
+                                    {
+                                        <small> por persona</small>
+                                    }
+                                </span>
+
+                                <a asp-controller="SolicitudesCurso"
+                                   asp-action="Crear"
+                                   asp-route-idTarifaClase="@tarifa.IdTarifaClase"
+                                   class="btn btn-success catalogo-btn">
+
+                                    Solicitar clase
+
+                                </a>
+
+                            </div>
+
+                            <div class="catalogo-icon">
+                                <i class="fa fa-table-tennis"></i>
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="perfil-table-block text-center">
+                    <p class="mb-0">
+                        Actualmente no hay clases o paquetes disponibles
+                        bajo solicitud.
+                    </p>
+                </div>
+            }
+
+            @if (condiciones.Any())
+            {
+                <div class="perfil-table-block mt-4">
+
+                    <h2 class="perfil-table-title">
+                        Condiciones del Servicio
+                    </h2>
+
+                    <p class="text-muted">
+                        Revisa estas condiciones antes de enviar tu solicitud.
+                    </p>
+
+                    <ol class="mb-0">
+                        @foreach (var condicion in condiciones)
+                        {
+                            <li class="mb-2">
+                                <strong>@condicion.Titulo:</strong>
+                                @condicion.Descripcion
+                            </li>
+                        }
+                    </ol>
+
+                </div>
+            }
+
+        </div>
+    </div>
+</section>

@@ -27,14 +27,17 @@
             </div>
 
             <div class="mb-3">
-                <a asp-action="CatalogoCursos"
+                <a asp-controller="SolicitudesCurso"
+                   asp-action="Catalogo"
                    class="btn btn-outline-secondary btn-sm">
                     <i class="fa fa-arrow-left me-1"></i>
                     Volver al catálogo
                 </a>
             </div>
 
-            <form asp-action="SolicitarCurso" method="post">
+            <form asp-controller="SolicitudesCurso"
+                  asp-action="Crear"
+                  method="post">
 
                 @Html.AntiForgeryToken()
 

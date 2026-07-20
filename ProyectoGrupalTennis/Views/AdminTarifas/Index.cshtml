@@ -177,10 +177,9 @@
 
                                                 @Html.AntiForgeryToken()
 
-
                                                 <input type="hidden"
-                                                       name="activa"
-                                                       value="@(!tarifa.Activa)" />
+                                                       name="id"
+                                                       value="@tarifa.IdTarifaClase" />
 
                                                 <button type="submit"
                                                         class="perfil-action-link"
@@ -188,9 +187,7 @@
                                                     border:none;
                                                     padding:0;
                                                     cursor:pointer;">
-                                                    @(tarifa.Activa
-                                                        ? "Desactivar"
-                                                        : "Activar")
+                                                    @(tarifa.Activa ? "Desactivar" : "Activar")
                                                 </button>
                                             </form>
                                         </td>

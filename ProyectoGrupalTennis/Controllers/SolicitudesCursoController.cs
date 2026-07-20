@@ -28,88 +28,60 @@ namespace ProyectoGrupalTennis.Controllers
 
         // GET: /SolicitudesCurso/Catalogo
         [HttpGet]
-        public IActionResult Catalogo()
+        public async Task<IActionResult> Catalogo()
         {
-            var model = new CatalogoCursosViewModel
-            {
-                Cursos = new List<CatalogoCursoItemViewModel>
-                {
-                    new()
-                    {
-                        Nombre = "Clases Esporádicas",
-                        Descripcion = "Clases para alumnos que desean asistir de forma ocasional con reservación previa.",
-                        Detalle = "Horario a convenir según disponibilidad de la academia.",
-                        Imagen = "/images/clases-esporadicas.jpg"
-                    },
-                    new()
-                    {
-                        Nombre = "Curso Intensivo",
-                        Descripcion = "Paquete de 10 lecciones impartidas en un máximo de 2 semanas.",
-                        Detalle = "Ideal para avanzar rápidamente. Los horarios se coordinan con la academia.",
-                        Imagen = "/images/curso-intensivo.jpg"
-                    },
-                    new()
-                    {
-                        Nombre = "Clases Específicas",
-                        Descripcion = "Clases enfocadas en mejorar una técnica o tema específico.",
-                        Detalle = "El alumno indica sus necesidades y disponibilidad.",
-                        Imagen = "/images/clases-especificas.jpg"
-                    },
-                    new()
-                    {
-                        Nombre = "Clases a Domicilio",
-                        Descripcion = "Clases en el lugar de residencia si el alumno cuenta con cancha.",
-                        Detalle = "Modalidad sujeta a coordinación previa.",
-                        Imagen = "/images/clases-domicilio.jpg"
-                    },
-                    new()
-                    {
-                        Nombre = "Paquete Empresarial",
-                        Descripcion = "Paquete especial para empresas y colaboradores.",
-                        Detalle = "Requiere coordinación con la academia.",
-                        Imagen = "/images/paquete-empresarial.jpg"
-                    },
-                    new()
-                    {
-                        Nombre = "Clases para Jubilados",
-                        Descripcion = "Clases especializadas para personas jubiladas y de la tercera edad.",
-                        Detalle = "Puede ser individual, pareja o grupo.",
-                        Imagen = "/images/clases-jubilados.jpg"
-                    }
-                }
-            };
+            await CargarCatalogoAsync();
 
-            return View("~/Views/Perfiles/CatalogoCursos.cshtml", model);
+            return View(
+    "~/Views/SolicitudesCurso/CatalogoCursos.cshtml"
+);
         }
 
         // GET: /SolicitudesCurso/Crear
         [HttpGet]
-        public IActionResult Crear(string nombreCurso)
+        public async Task<IActionResult> Crear(string? nombreCurso)
         {
-            if (string.IsNullOrWhiteSpace(nombreCurso))
-            {
-                TempData["Error"] = "Debe seleccionar un tipo de clase.";
-                return RedirectToAction(nameof(Catalogo));
-            }
+            await CargarCatalogoAsync();
 
             var model = new SolicitudCursoViewModel
             {
-                NombreCurso = nombreCurso,
-                Disponibilidades = new List<DisponibilidadSolicitudViewModel>
-                {
-                    new()
-                }
+                NombreCurso = nombreCurso ?? string.Empty,
+
+                Disponibilidades =
+                    new List<DisponibilidadSolicitudViewModel>
+                    {
+                        new DisponibilidadSolicitudViewModel()
+                    }
             };
 
-            return View("~/Views/Perfiles/SolicitarCurso.cshtml", model);
+            return View(
+                "~/Views/SolicitudesCurso/SolicitarCurso.cshtml",
+                model
+            );
         }
 
         // POST: /SolicitudesCurso/Crear
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear(SolicitudCursoViewModel model)
+        public async Task<IActionResult> Crear(
+            SolicitudCursoViewModel model)
         {
-            model.Disponibilidades ??= new List<DisponibilidadSolicitudViewModel>();
+            model.Disponibilidades ??=
+                new List<DisponibilidadSolicitudViewModel>();
+
+            var tarifa = await _context.TarifasClase
+                .Include(t => t.TipoClase)
+                .FirstOrDefaultAsync(t =>
+                    t.IdTarifaClase == model.IdTarifaClase &&
+                    t.Activa &&
+                    t.TipoClase.Activo);
+
+            if (tarifa == null)
+            {
+                ModelState.AddModelError(
+                    nameof(model.IdTarifaClase),
+                    "La tarifa o paquete seleccionado no está disponible.");
+            }
 
             if (model.EsADomicilio &&
                 string.IsNullOrWhiteSpace(model.DireccionDomicilio))
@@ -123,125 +95,226 @@ namespace ProyectoGrupalTennis.Controllers
             {
                 ModelState.AddModelError(
                     nameof(model.Disponibilidades),
-                    "Debe agregar al menos un horario disponible.");
+                    "Debe indicar al menos una disponibilidad.");
             }
-
-            foreach (var disponibilidad in model.Disponibilidades)
+            else
             {
-                if (disponibilidad.HoraHasta <= disponibilidad.HoraDesde)
+                for (var i = 0;
+                     i < model.Disponibilidades.Count;
+                     i++)
                 {
-                    ModelState.AddModelError(
-                        nameof(model.Disponibilidades),
-                        "La hora final debe ser posterior a la hora inicial.");
-                    break;
+                    var disponibilidad =
+                        model.Disponibilidades[i];
+
+                    if (disponibilidad.HoraHasta <=
+                        disponibilidad.HoraDesde)
+                    {
+                        ModelState.AddModelError(
+                            $"Disponibilidades[{i}].HoraHasta",
+                            "La hora final debe ser posterior a la hora inicial.");
+                    }
                 }
             }
 
             if (!ModelState.IsValid)
             {
-                return View("~/Views/Perfiles/SolicitarCurso.cshtml", model);
+                await CargarCatalogoAsync();
+
+                return View(
+                    "~/Views/SolicitudesCurso/SolicitarCurso.cshtml",
+                    model
+                );
             }
 
-            var idAlumno = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var idAlumno =
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier);
 
             if (string.IsNullOrWhiteSpace(idAlumno))
             {
-                return RedirectToAction("Login", "Auth");
+                return Challenge();
             }
 
-            // Se conserva el campo anterior para compatibilidad con las vistas existentes.
-            var disponibilidadResumen = string.Join(
+            var resumenDisponibilidad = string.Join(
                 "; ",
                 model.Disponibilidades.Select(d =>
-                    $"{d.DiaSemana}: {d.HoraDesde:hh\\:mm} - {d.HoraHasta:hh\\:mm}"));
+                    $"{d.DiaSemana}: " +
+                    $"{d.HoraDesde:hh\\:mm} - " +
+                    $"{d.HoraHasta:hh\\:mm}")
+            );
 
             var solicitud = new SolicitudCurso
             {
                 IdAlumno = idAlumno,
+
                 IdCurso = model.IdCurso,
-                NombreCurso = model.NombreCurso,
+
+                IdTarifaClase = tarifa!.IdTarifaClase,
+
+                PrecioSolicitado = tarifa.Precio,
+
+                // La oferta seleccionada se conserva en la solicitud.
+                NombreCurso = tarifa.Nombre,
+
                 Nivel = model.Nivel,
-                Modalidad = model.Modalidad,
-                CantidadLecciones = model.CantidadLecciones,
-                RequiereEquipo = model.RequiereEquipo,
-                EsADomicilio = model.EsADomicilio,
-                DireccionDomicilio = model.EsADomicilio
-                    ? model.DireccionDomicilio
-                    : null,
-                Disponibilidad = disponibilidadResumen,
-                Comentarios = model.Comentarios,
+
+                Modalidad = tarifa.TipoClase.Nombre,
+
+                CantidadLecciones =
+                    tarifa.CantidadLecciones,
+
+                Disponibilidad =
+                    resumenDisponibilidad,
+
+                RequiereEquipo =
+                    model.RequiereEquipo,
+
+                EsADomicilio =
+                    model.EsADomicilio,
+
+                DireccionDomicilio =
+                    model.EsADomicilio
+                        ? model.DireccionDomicilio?.Trim()
+                        : null,
+
+                Comentarios =
+                    model.Comentarios?.Trim(),
+
                 Estado = "Pendiente",
-                FechaSolicitud = DateTime.Now,
-                Disponibilidades = model.Disponibilidades
-                    .Select(d => new DisponibilidadSolicitud
-                    {
-                        DiaSemana = d.DiaSemana,
-                        HoraDesde = d.HoraDesde,
-                        HoraHasta = d.HoraHasta
-                    })
-                    .ToList()
+
+                FechaSolicitud = DateTime.Now
             };
 
+            foreach (var disponibilidad
+                     in model.Disponibilidades)
+            {
+                solicitud.Disponibilidades.Add(
+                    new DisponibilidadSolicitud
+                    {
+                        DiaSemana =
+                            disponibilidad.DiaSemana,
+
+                        HoraDesde =
+                            disponibilidad.HoraDesde,
+
+                        HoraHasta =
+                            disponibilidad.HoraHasta
+                    });
+            }
+
             _context.SolicitudesCurso.Add(solicitud);
+
             await _context.SaveChangesAsync();
 
-            var correoDestino =
-                _configuration["AcademiaSettings:CorreoSolicitudes"];
-
-            if (!string.IsNullOrWhiteSpace(correoDestino))
-            {
-                await _emailService.EnviarCorreoAsync(
-                    correoDestino,
-                    $"Nueva solicitud SOL-{solicitud.IdSolicitudCurso}",
-                    $"""
-                    <strong>Solicitud:</strong> SOL-{solicitud.IdSolicitudCurso}<br>
-                    <strong>Clase:</strong> {solicitud.NombreCurso}<br>
-                    <strong>Nivel:</strong> {solicitud.Nivel}<br>
-                    <strong>Modalidad:</strong> {solicitud.Modalidad}<br>
-                    <strong>Lecciones:</strong> {solicitud.CantidadLecciones}<br>
-                    <strong>Requiere equipo:</strong> {(solicitud.RequiereEquipo ? "Sí" : "No")}<br>
-                    <strong>A domicilio:</strong> {(solicitud.EsADomicilio ? "Sí" : "No")}<br>
-                    <strong>Dirección:</strong> {solicitud.DireccionDomicilio}<br>
-                    <strong>Disponibilidad:</strong> {solicitud.Disponibilidad}<br>
-                    <strong>Comentarios:</strong> {solicitud.Comentarios}
-                    """
-                );
-            }
+            await EnviarCorreoSolicitudAsync(
+                solicitud,
+                tarifa,
+                resumenDisponibilidad);
 
             return RedirectToAction(
                 nameof(Confirmacion),
-                new { id = solicitud.IdSolicitudCurso });
+                new
+                {
+                    id = solicitud.IdSolicitudCurso
+                });
         }
 
         // GET: /SolicitudesCurso/Confirmacion/5
         [HttpGet]
         public async Task<IActionResult> Confirmacion(int id)
         {
-            var idAlumno = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var idAlumno =
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier);
 
-            var solicitud = await _context.SolicitudesCurso
-                .Include(s => s.Disponibilidades)
-                .FirstOrDefaultAsync(s =>
-                    s.IdSolicitudCurso == id &&
-                    s.IdAlumno == idAlumno);
+            var solicitud =
+                await _context.SolicitudesCurso
+                    .Include(s => s.Disponibilidades)
+                    .Include(s => s.TarifaClase)
+                        .ThenInclude(t => t.TipoClase)
+                    .FirstOrDefaultAsync(s =>
+                        s.IdSolicitudCurso == id &&
+                        s.IdAlumno == idAlumno);
 
             if (solicitud == null)
             {
                 return NotFound();
             }
 
-            var model = new SolicitudCursoConfirmacionViewModel
-            {
-                NombreCurso = solicitud.NombreCurso,
-                Nivel = solicitud.Nivel,
-                Disponibilidad = solicitud.Disponibilidad,
-                Comentarios = solicitud.Comentarios,
-                FechaSolicitud = solicitud.FechaSolicitud
-            };
+            var model =
+                new SolicitudCursoConfirmacionViewModel
+                {
+                    NombreCurso =
+                        solicitud.NombreCurso,
 
+                    Nivel =
+                        solicitud.Nivel,
+
+                    Disponibilidad =
+                        solicitud.Disponibilidad,
+
+                    Comentarios =
+                        solicitud.Comentarios,
+
+                    FechaSolicitud =
+                        solicitud.FechaSolicitud
+                };
             return View(
-                "~/Views/Perfiles/ConfirmacionSolicitud.cshtml",
-                model);
+                "~/Views/SolicitudesCurso/ConfirmacionSolicitud.cshtml",
+                model
+            );
+        }
+
+        private async Task CargarCatalogoAsync()
+        {
+            ViewBag.Tarifas =
+                await _context.TarifasClase
+                    .Include(t => t.TipoClase)
+                    .Where(t =>
+                        t.Activa &&
+                        t.TipoClase.Activo)
+                    .OrderBy(t => t.IdTarifaClase)
+                    .ToListAsync();
+
+            ViewBag.CondicionesServicio =
+                await _context.CondicionesServicio
+                    .Where(c => c.Activa)
+                    .OrderBy(c => c.Orden)
+                    .ToListAsync();
+        }
+
+        private async Task EnviarCorreoSolicitudAsync(
+            SolicitudCurso solicitud,
+            TarifaClase tarifa,
+            string resumenDisponibilidad)
+        {
+            var correoDestino =
+                _configuration[
+                    "AcademiaSettings:CorreoSolicitudes"];
+
+            if (string.IsNullOrWhiteSpace(
+                correoDestino))
+            {
+                return;
+            }
+
+            await _emailService.EnviarCorreoAsync(
+                correoDestino,
+                $"Nueva solicitud SOL-{solicitud.IdSolicitudCurso}",
+                $"""
+                <strong>Solicitud:</strong> SOL-{solicitud.IdSolicitudCurso}<br>
+                <strong>Tarifa o paquete:</strong> {tarifa.Nombre}<br>
+                <strong>Tipo de clase:</strong> {tarifa.TipoClase.Nombre}<br>
+                <strong>Nivel:</strong> {solicitud.Nivel}<br>
+                <strong>Lecciones:</strong> {tarifa.CantidadLecciones}<br>
+                <strong>Precio:</strong> ${tarifa.Precio:N2}<br>
+                <strong>Requiere equipo:</strong> {(solicitud.RequiereEquipo ? "Sí" : "No")}<br>
+                <strong>A domicilio:</strong> {(solicitud.EsADomicilio ? "Sí" : "No")}<br>
+                <strong>Dirección:</strong> {solicitud.DireccionDomicilio}<br>
+                <strong>Disponibilidad:</strong> {resumenDisponibilidad}<br>
+                <strong>Comentarios:</strong> {solicitud.Comentarios}
+                """
+            );
         }
     }
 }
