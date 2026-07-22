@@ -7,9 +7,20 @@
         ViewBag.Tarifas as List<TarifaClase>
         ?? new List<TarifaClase>();
 
+    var tiposClase =
+        ViewBag.TiposClase as List<TipoClase>
+        ?? new List<TipoClase>();
+
     var condiciones =
         ViewBag.CondicionesServicio as List<CondicionServicio>
         ?? new List<CondicionServicio>();
+
+    string filtroBuscar =
+        ViewBag.FiltroBuscar as string
+        ?? string.Empty;
+
+    int? filtroTipoClase =
+        ViewBag.FiltroTipoClase as int?;
 }
 
 <link rel="stylesheet"
@@ -18,19 +29,23 @@
 
 <section class="perfil-page compact">
     <div class="container-fluid px-5">
+
         <div class="perfil-container"
              style="max-width: 1280px; margin: 0 auto;">
 
+            <!-- ENCABEZADO -->
             <div class="perfil-header mb-4">
+
                 <div>
                     <h1 class="perfil-title">
                         Clases y Paquetes Disponibles
                     </h1>
 
                     <p class="perfil-subtitle">
-                        Selecciona una tarifa o paquete e indica tu disponibilidad.
-                        La academia revisará la solicitud y posteriormente propondrá
-                        un horario.
+                        Selecciona la clase o paquete que mejor se adapte
+                        a tus necesidades. La academia revisará tu solicitud
+                        y propondrá un horario según la disponibilidad de
+                        profesores y canchas.
                     </p>
                 </div>
 
@@ -38,62 +53,193 @@
                     <i class="fa fa-book"></i>
                     Catálogo de Clases
                 </div>
+
             </div>
 
+            <!-- FILTROS -->
+            <div class="catalogo-filtros">
+
+                <form asp-controller="SolicitudesCurso"
+                      asp-action="Catalogo"
+                      method="get"
+                      class="catalogo-filtros-form">
+
+                    <div class="catalogo-busqueda">
+
+                        <label for="buscar"
+                               class="form-label fw-bold">
+                            Buscar
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                <i class="fa fa-search"></i>
+                            </span>
+
+                            <input type="text"
+                                   id="buscar"
+                                   name="buscar"
+                                   value="@filtroBuscar"
+                                   class="form-control"
+                                   placeholder="Buscar clase, paquete o modalidad..." />
+
+                        </div>
+
+                    </div>
+
+                    <div class="catalogo-filtro-tipo">
+
+                        <label for="idTipoClase"
+                               class="form-label fw-bold">
+                            Tipo de clase
+                        </label>
+
+                        <select id="idTipoClase"
+                                name="idTipoClase"
+                                class="form-select">
+
+                            <option value="">
+                                Todos los tipos
+                            </option>
+
+                            @foreach (var tipo in tiposClase)
+                            {
+                                if (filtroTipoClase == tipo.IdTipoClase)
+                                {
+                                    <option value="@tipo.IdTipoClase"
+                                            selected>
+                                        @tipo.Nombre
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@tipo.IdTipoClase">
+                                        @tipo.Nombre
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <div class="catalogo-filtros-acciones">
+
+                        <button type="submit"
+                                class="perfil-btn">
+
+                            <i class="fa fa-filter"></i>
+                            Filtrar
+
+                        </button>
+
+                        @if (!string.IsNullOrWhiteSpace(filtroBuscar) ||
+                             filtroTipoClase.HasValue)
+                        {
+                            <a asp-controller="SolicitudesCurso"
+                               asp-action="Catalogo"
+                               class="perfil-btn-outline">
+
+                                <i class="fa fa-rotate-left"></i>
+                                Limpiar
+
+                            </a>
+                        }
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- MENSAJES -->
             @if (TempData["Error"] != null)
             {
-                <div class="alert alert-danger">
+                <div class="alert alert-danger mt-3">
                     @TempData["Error"]
                 </div>
             }
 
+            <!-- TARIFAS -->
             @if (tarifas.Any())
             {
-                <div class="catalogo-grid">
+                <div class="catalogo-lista">
 
                     @foreach (var tarifa in tarifas)
                     {
-                        <div class="catalogo-card-small">
+                        <article class="catalogo-tarifa-card">
 
-                            <div class="catalogo-info">
+                            <div class="catalogo-tarifa-main">
 
-                                <h3>@tarifa.Nombre</h3>
+                                <div class="catalogo-tarifa-top">
 
-                                <p>
+                                    <div>
+                                        <span class="catalogo-tipo-badge">
+                                            @tarifa.TipoClase.Nombre
+                                        </span>
+
+                                        <h3 class="catalogo-tarifa-title">
+                                            @tarifa.Nombre
+                                        </h3>
+                                    </div>
+
+                                    <div class="catalogo-precio">
+
+                                        <span class="catalogo-precio-valor">
+                                            $@tarifa.Precio.ToString("N2")
+                                        </span>
+
+                                        <small>
+                                            @(tarifa.PrecioPorPersona
+                                                ? "por persona"
+                                                : tarifa.CantidadLecciones == 1
+                                                    ? "por sesión"
+                                                    : "precio total")
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                                <p class="catalogo-tarifa-descripcion">
                                     @(string.IsNullOrWhiteSpace(tarifa.Descripcion)
                                         ? "Clase o paquete disponible bajo solicitud."
                                         : tarifa.Descripcion)
                                 </p>
 
-                                <span class="d-block mb-1">
-                                    <strong>Tipo:</strong>
-                                    @tarifa.TipoClase.Nombre
-                                </span>
+                                <div class="catalogo-tarifa-meta">
 
-                                <span class="d-block mb-1">
-                                    <strong>Matrícula:</strong>
-                                    @tarifa.CondicionMatricula
-                                </span>
+                                    <span>
+                                        <i class="fa fa-id-card"></i>
+                                        @tarifa.CondicionMatricula
+                                    </span>
 
-                                <span class="d-block mb-1">
-                                    <strong>Sesiones:</strong>
-                                    @tarifa.CantidadLecciones
-                                </span>
+                                    <span>
+                                        <i class="fa fa-calendar-check"></i>
 
-                                <span class="d-block mb-3">
-                                    <strong>Precio:</strong>
-                                    $@tarifa.Precio.ToString("N2")
+                                        @tarifa.CantidadLecciones
 
-                                    @if (tarifa.PrecioPorPersona)
-                                    {
-                                        <small> por persona</small>
-                                    }
+                                        @(tarifa.CantidadLecciones == 1
+                                            ? "sesión"
+                                            : "sesiones")
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="catalogo-tarifa-footer">
+
+                                <span class="catalogo-disponibilidad-texto">
+                                    La academia confirmará profesor,
+                                    cancha y horario.
                                 </span>
 
                                 <a asp-controller="SolicitudesCurso"
                                    asp-action="Crear"
                                    asp-route-idTarifaClase="@tarifa.IdTarifaClase"
-                                   class="btn btn-success catalogo-btn">
+                                   class="perfil-btn catalogo-tarifa-btn">
 
                                     Solicitar clase
 
@@ -101,25 +247,38 @@
 
                             </div>
 
-                            <div class="catalogo-icon">
-                                <i class="fa fa-table-tennis"></i>
-                            </div>
-
-                        </div>
+                        </article>
                     }
 
                 </div>
             }
             else
             {
-                <div class="perfil-table-block text-center">
-                    <p class="mb-0">
-                        Actualmente no hay clases o paquetes disponibles
-                        bajo solicitud.
+                <div class="perfil-table-block text-center catalogo-sin-resultados">
+
+                    <i class="fa fa-search catalogo-sin-resultados-icono"></i>
+
+                    <h3>
+                        No encontramos opciones
+                    </h3>
+
+                    <p class="text-muted">
+                        No hay clases o paquetes que coincidan
+                        con los filtros seleccionados.
                     </p>
+
+                    <a asp-controller="SolicitudesCurso"
+                       asp-action="Catalogo"
+                       class="perfil-btn-outline">
+
+                        Ver todo el catálogo
+
+                    </a>
+
                 </div>
             }
 
+            <!-- CONDICIONES DEL SERVICIO -->
             @if (condiciones.Any())
             {
                 <div class="perfil-table-block mt-4">
@@ -133,18 +292,26 @@
                     </p>
 
                     <ol class="mb-0">
+
                         @foreach (var condicion in condiciones)
                         {
                             <li class="mb-2">
-                                <strong>@condicion.Titulo:</strong>
+
+                                <strong>
+                                    @condicion.Titulo:
+                                </strong>
+
                                 @condicion.Descripcion
+
                             </li>
                         }
+
                     </ol>
 
                 </div>
             }
 
         </div>
+
     </div>
 </section>

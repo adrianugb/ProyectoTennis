@@ -1,103 +1,515 @@
 ﻿@model ProyectoGrupalTennis.Models.SolicitudCursoViewModel
+@using AcademiaTennisDAL.Entities
 
 @{
-    ViewData["Title"] = "Solicitar Curso";
+    ViewData["Title"] = "Solicitar clase";
+
+    var condiciones =
+        ViewBag.CondicionesServicio as List<CondicionServicio>
+        ?? new List<CondicionServicio>();
 }
 
-<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
 
 <section class="perfil-page compact">
-    <div class="container">
+    <div class="container-fluid px-4 px-lg-5">
 
-        <div class="perfil-container">
+        <div class="perfil-container"
+             style="max-width: 1200px; margin: 0 auto;">
 
-            <div class="perfil-header">
+            <!-- ENCABEZADO -->
+            <div class="perfil-header mb-4">
                 <div>
-                    <h1 class="perfil-title">Solicitud de Curso</h1>
+                    <h1 class="perfil-title">
+                        Solicitud de Clase
+                    </h1>
 
                     <p class="perfil-subtitle">
-                        Complete la información para que la academia pueda coordinar el horario más adecuado para usted.
+                        Indica tu nivel y los horarios en los que tienes
+                        disponibilidad. La academia revisará la solicitud
+                        y posteriormente te propondrá un horario.
                     </p>
                 </div>
 
                 <div class="perfil-badge">
-                    <i class="fa fa-book"></i>
+                    <i class="fa fa-calendar-check"></i>
                     Nueva Solicitud
                 </div>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-4">
                 <a asp-controller="SolicitudesCurso"
                    asp-action="Catalogo"
-                   class="btn btn-outline-secondary btn-sm">
-                    <i class="fa fa-arrow-left me-1"></i>
+                   class="perfil-btn-outline">
+
+                    <i class="fa fa-arrow-left"></i>
                     Volver al catálogo
+
                 </a>
             </div>
 
             <form asp-controller="SolicitudesCurso"
                   asp-action="Crear"
-                  method="post">
+                  method="post"
+                  id="form-solicitud">
 
                 @Html.AntiForgeryToken()
 
-                <input asp-for="IdCurso" type="hidden" />
-                <input asp-for="NombreCurso" type="hidden" />
+                <input asp-for="IdCurso"
+                       type="hidden" />
 
-                <div class="mb-4">
-                    <label class="form-label fw-bold">
-                        Curso seleccionado
-                    </label>
+                <input asp-for="IdTarifaClase"
+                       type="hidden" />
 
-                    <input class="form-control"
-                           value="@Model.NombreCurso"
-                           readonly />
+                <input asp-for="NombreCurso"
+                       type="hidden" />
+
+                <input asp-for="TipoClase"
+                       type="hidden" />
+
+                <input asp-for="CondicionMatricula"
+                       type="hidden" />
+
+                <input asp-for="CantidadLecciones"
+                       type="hidden" />
+
+                <input asp-for="PrecioPorPersona"
+                       type="hidden" />
+
+                <input asp-for="PrecioEstimado"
+                       type="hidden" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger"
+                     role="alert">
                 </div>
 
-                <div class="mb-4">
-                    <label asp-for="Nivel" class="form-label"></label>
+                <!-- TARIFA SELECCIONADA -->
+                <div class="perfil-table-block mb-4">
 
-                    <select asp-for="Nivel" class="form-control">
-                        <option value="">Seleccione...</option>
-                        <option>Principiante</option>
-                        <option>Intermedio</option>
-                        <option>Avanzado</option>
-                    </select>
+                    <div class="perfil-table-header">
+                        <div>
+                            <h2 class="perfil-table-title">
+                                Clase o paquete seleccionado
+                            </h2>
 
-                    <span asp-validation-for="Nivel"
-                          class="text-danger"></span>
+                            <p class="text-muted mb-0">
+                                Revisa la información antes de enviar
+                                tu solicitud.
+                            </p>
+                        </div>
+
+                        <div class="perfil-badge">
+                            <i class="fa fa-tag"></i>
+                            Selección actual
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-lg-6">
+                            <div class="border rounded p-3 h-100">
+                                <span class="text-muted d-block mb-1">
+                                    Tarifa o paquete
+                                </span>
+
+                                <strong class="fs-5">
+                                    @Model.NombreCurso
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-3">
+                            <div class="border rounded p-3 h-100">
+                                <span class="text-muted d-block mb-1">
+                                    Tipo de clase
+                                </span>
+
+                                <strong>
+                                    @Model.TipoClase
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-3">
+                            <div class="border rounded p-3 h-100">
+                                <span class="text-muted d-block mb-1">
+                                    Matrícula
+                                </span>
+
+                                <strong>
+                                    @Model.CondicionMatricula
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 h-100">
+                                <span class="text-muted d-block mb-1">
+                                    Cantidad de sesiones
+                                </span>
+
+                                <strong>
+                                    @Model.CantidadLecciones
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 h-100">
+                                <span class="text-muted d-block mb-1">
+                                    Precio
+                                </span>
+
+                                <strong class="fs-5">
+                                    $@Model.PrecioEstimado?.ToString("N2")
+                                </strong>
+
+                                @if (Model.PrecioPorPersona)
+                                {
+                                    <small class="d-block text-muted">
+                                        Precio por persona
+                                    </small>
+                                }
+                                else
+                                {
+                                    <small class="d-block text-muted">
+                                        Precio total
+                                    </small>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <span asp-validation-for="IdTarifaClase"
+                          class="text-danger d-block mt-2">
+                    </span>
+
                 </div>
 
-                <div class="mb-4">
-                    <label asp-for="Disponibilidad"
-                           class="form-label">
-                        Disponibilidad
-                    </label>
+                <!-- INFORMACIÓN DEL ALUMNO -->
+                <div class="perfil-table-block mb-4">
 
-                    <textarea asp-for="Disponibilidad"
-                              class="form-control"
-                              rows="4"
-                              placeholder="Ejemplo: Lunes y miércoles después de las 5:00 p.m. o sábados por la mañana."></textarea>
+                    <div class="perfil-table-header">
+                        <div>
+                            <h2 class="perfil-table-title">
+                                Información de la solicitud
+                            </h2>
 
-                    <span asp-validation-for="Disponibilidad"
-                          class="text-danger"></span>
+                            <p class="text-muted mb-0">
+                                Selecciona tu nivel y las características
+                                que necesitas para la clase.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+
+                        <div class="col-md-6">
+                            <label asp-for="Nivel"
+                                   class="form-label fw-bold">
+
+                                Nivel del alumno
+
+                            </label>
+
+                            <select asp-for="Nivel"
+                                    class="form-select">
+
+                                <option value="">
+                                    Seleccione un nivel
+                                </option>
+
+                                <option value="Principiante">
+                                    Principiante
+                                </option>
+
+                                <option value="Intermedio">
+                                    Intermedio
+                                </option>
+
+                                <option value="Avanzado">
+                                    Avanzado
+                                </option>
+
+                            </select>
+
+                            <span asp-validation-for="Nivel"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">
+                                Requerimientos adicionales
+                            </label>
+
+                            <div class="border rounded p-3">
+
+                                <div class="form-check mb-3">
+                                    <input asp-for="RequiereEquipo"
+                                           class="form-check-input" />
+
+                                    <label asp-for="RequiereEquipo"
+                                           class="form-check-label">
+
+                                        Requiero equipo de la academia
+
+                                    </label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input asp-for="EsADomicilio"
+                                           class="form-check-input"
+                                           id="check-domicilio" />
+
+                                    <label asp-for="EsADomicilio"
+                                           class="form-check-label">
+
+                                        Solicito la clase a domicilio
+
+                                    </label>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-12"
+                             id="contenedor-direccion"
+                             style="display:none;">
+
+                            <label asp-for="DireccionDomicilio"
+                                   class="form-label fw-bold">
+
+                                Dirección de la clase a domicilio
+
+                            </label>
+
+                            <textarea asp-for="DireccionDomicilio"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Indica la dirección completa y cualquier referencia necesaria.">
+                            </textarea>
+
+                            <span asp-validation-for="DireccionDomicilio"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                    </div>
+
                 </div>
 
-                <div class="mb-4">
-                    <label asp-for="Comentarios"
-                           class="form-label">
-                        Comentarios adicionales
-                    </label>
+                <!-- DISPONIBILIDADES -->
+                <div class="perfil-table-block mb-4">
+
+                    <div class="perfil-table-header">
+                        <div>
+                            <h2 class="perfil-table-title">
+                                Disponibilidad de horarios
+                            </h2>
+
+                            <p class="text-muted mb-0">
+                                Puedes indicar uno o varios rangos de disponibilidad.
+                                La academia seleccionará un horario dentro de esos rangos, según la duración del paquete, la disponibilidad de profesores y canchas, y las condiciones del servicio.
+                            </p>
+                        </div>
+
+                        <button type="button"
+                                id="btn-agregar-disponibilidad"
+                                class="perfil-btn">
+
+                            <i class="fa fa-plus"></i>
+                            Agregar otro horario disponible
+
+                        </button>
+                    </div>
+
+                    <div id="lista-disponibilidades">
+
+                        @for (var i = 0;
+                              i < Model.Disponibilidades.Count;
+                              i++)
+                        {
+                            <div class="disponibilidad-item border rounded p-3 mb-3">
+
+                                <div class="row g-3 align-items-end">
+
+                                    <div class="col-md-4">
+
+                                        <label class="form-label fw-bold">
+                                            Día
+                                        </label>
+
+                                        <select asp-for="Disponibilidades[i].DiaSemana"
+                                                class="form-select">
+
+                                            <option value="">
+                                                Seleccione un día
+                                            </option>
+
+                                            <option value="Lunes">Lunes</option>
+                                            <option value="Martes">Martes</option>
+                                            <option value="Miércoles">Miércoles</option>
+                                            <option value="Jueves">Jueves</option>
+                                            <option value="Viernes">Viernes</option>
+                                            <option value="Sábado">Sábado</option>
+                                            <option value="Domingo">Domingo</option>
+
+                                        </select>
+
+                                        <span asp-validation-for="Disponibilidades[i].DiaSemana"
+                                              class="text-danger">
+                                        </span>
+
+                                    </div>
+
+                                    <div class="col-md-3">
+
+                                        <label class="form-label fw-bold">
+                                            Disponible desde
+
+                                        </label>
+
+                                        <input asp-for="Disponibilidades[i].HoraDesde"
+                                               type="time"
+                                               class="form-control" />
+
+                                        <span asp-validation-for="Disponibilidades[i].HoraDesde"
+                                              class="text-danger">
+                                        </span>
+
+                                    </div>
+
+                                    <div class="col-md-3">
+
+                                        <label class="form-label fw-bold">
+                                          Disponible  Hasta
+                                        </label>
+
+                                        <input asp-for="Disponibilidades[i].HoraHasta"
+                                               type="time"
+                                               class="form-control" />
+
+                                        <span asp-validation-for="Disponibilidades[i].HoraHasta"
+                                              class="text-danger">
+                                        </span>
+
+                                    </div>
+
+                                    <div class="col-md-2">
+
+                                        <button type="button"
+                                                class="btn btn-outline-danger w-100 btn-eliminar-disponibilidad">
+
+                                            <i class="fa fa-trash"></i>
+                                            Eliminar
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+
+                    <span asp-validation-for="Disponibilidades"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <!-- COMENTARIOS -->
+                <div class="perfil-table-block mb-4">
+
+                    <div class="perfil-table-header">
+                        <div>
+                            <h2 class="perfil-table-title">
+                                Comentarios adicionales
+                            </h2>
+
+                            <p class="text-muted mb-0">
+                                Agrega cualquier detalle que la academia
+                                deba considerar.
+                            </p>
+                        </div>
+                    </div>
 
                     <textarea asp-for="Comentarios"
                               class="form-control"
-                              rows="3"></textarea>
+                              rows="4"
+                              placeholder="Ejemplo: objetivos de la clase, experiencia previa, restricciones de horario u otra información relevante.">
+                    </textarea>
+
+                    <span asp-validation-for="Comentarios"
+                          class="text-danger">
+                    </span>
+
                 </div>
 
-                <button class="btn btn-success">
-                    <i class="fa fa-paper-plane me-1"></i>
-                    Enviar solicitud
-                </button>
+                <!-- CONDICIONES -->
+                @if (condiciones.Any())
+                {
+                    <div class="perfil-table-block mb-4">
+
+                        <div class="perfil-table-header">
+                            <div>
+                                <h2 class="perfil-table-title">
+                                    Condiciones del Servicio
+                                </h2>
+
+                                <p class="text-muted mb-0">
+                                    Estas condiciones aplican a la solicitud.
+                                </p>
+                            </div>
+                        </div>
+
+                        <ol class="mb-0">
+                            @foreach (var condicion in condiciones)
+                            {
+                                <li class="mb-3">
+
+                                    <strong>
+                                        @condicion.Titulo
+                                    </strong>
+
+                                    <div class="text-muted">
+                                        @condicion.Descripcion
+                                    </div>
+
+                                </li>
+                            }
+                        </ol>
+
+                    </div>
+                }
+
+                <!-- ACCIONES -->
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a asp-controller="SolicitudesCurso"
+                       asp-action="Catalogo"
+                       class="perfil-btn-outline">
+
+                        Cancelar
+
+                    </a>
+
+                    <button type="submit"
+                            class="perfil-btn">
+
+                        <i class="fa fa-paper-plane"></i>
+                        Enviar solicitud
+
+                    </button>
+
+                </div>
 
             </form>
 
@@ -107,5 +519,209 @@
 </section>
 
 @section Scripts {
+
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const lista = document.getElementById(
+                "lista-disponibilidades"
+            );
+
+            const botonAgregar = document.getElementById(
+                "btn-agregar-disponibilidad"
+            );
+
+            const checkDomicilio = document.getElementById(
+                "check-domicilio"
+            );
+
+            const contenedorDireccion = document.getElementById(
+                "contenedor-direccion"
+            );
+
+            function actualizarDireccion() {
+                if (!checkDomicilio || !contenedorDireccion) {
+                    return;
+                }
+
+                contenedorDireccion.style.display =
+                    checkDomicilio.checked
+                        ? "block"
+                        : "none";
+            }
+
+            function reindexarDisponibilidades() {
+                const items = lista.querySelectorAll(
+                    ".disponibilidad-item"
+                );
+
+                items.forEach(function (item, indice) {
+                    const controles =
+                        item.querySelectorAll(
+                            "input, select, span[data-valmsg-for]"
+                        );
+
+                    controles.forEach(function (control) {
+                        if (control.name) {
+                            control.name =
+                                control.name.replace(
+                                    /Disponibilidades\[\d+\]/g,
+                                    `Disponibilidades[${indice}]`
+                                );
+                        }
+
+                        if (control.id) {
+                            control.id =
+                                control.id.replace(
+                                    /Disponibilidades_\d+__/g,
+                                    `Disponibilidades_${indice}__`
+                                );
+                        }
+
+                        const campoValidacion =
+                            control.getAttribute(
+                                "data-valmsg-for"
+                            );
+
+                        if (campoValidacion) {
+                            control.setAttribute(
+                                "data-valmsg-for",
+                                campoValidacion.replace(
+                                    /Disponibilidades\[\d+\]/g,
+                                    `Disponibilidades[${indice}]`
+                                )
+                            );
+                        }
+                    });
+                });
+            }
+
+            function configurarBotonesEliminar() {
+                const botones =
+                    lista.querySelectorAll(
+                        ".btn-eliminar-disponibilidad"
+                    );
+
+                botones.forEach(function (boton) {
+                    boton.onclick = function () {
+                        const items =
+                            lista.querySelectorAll(
+                                ".disponibilidad-item"
+                            );
+
+                        if (items.length === 1) {
+                            alert(
+                                "Debe mantener al menos un horario disponible."
+                            );
+
+                            return;
+                        }
+
+                        boton.closest(
+                            ".disponibilidad-item"
+                        ).remove();
+
+                        reindexarDisponibilidades();
+                    };
+                });
+            }
+
+            botonAgregar.addEventListener(
+                "click",
+                function () {
+                    const indice =
+                        lista.querySelectorAll(
+                            ".disponibilidad-item"
+                        ).length;
+
+                    const nuevoItem =
+                        document.createElement("div");
+
+                    nuevoItem.className =
+                        "disponibilidad-item border rounded p-3 mb-3";
+
+                    nuevoItem.innerHTML = `
+                        <div class="row g-3 align-items-end">
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">
+                                    Día
+                                </label>
+
+                                <select
+                                    name="Disponibilidades[${indice}].DiaSemana"
+                                    id="Disponibilidades_${indice}__DiaSemana"
+                                    class="form-select"
+                                    required>
+
+                                    <option value="">
+                                        Seleccione un día
+                                    </option>
+
+                                    <option value="Lunes">Lunes</option>
+                                    <option value="Martes">Martes</option>
+                                    <option value="Miércoles">Miércoles</option>
+                                    <option value="Jueves">Jueves</option>
+                                    <option value="Viernes">Viernes</option>
+                                    <option value="Sábado">Sábado</option>
+                                    <option value="Domingo">Domingo</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">
+                                    Desde
+                                </label>
+
+                                <input
+                                    name="Disponibilidades[${indice}].HoraDesde"
+                                    id="Disponibilidades_${indice}__HoraDesde"
+                                    type="time"
+                                    class="form-control"
+                                    required />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">
+                                    Hasta
+                                </label>
+
+                                <input
+                                    name="Disponibilidades[${indice}].HoraHasta"
+                                    id="Disponibilidades_${indice}__HoraHasta"
+                                    type="time"
+                                    class="form-control"
+                                    required />
+                            </div>
+
+                            <div class="col-md-2">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-danger w-100 btn-eliminar-disponibilidad">
+
+                                    <i class="fa fa-trash"></i>
+                                    Eliminar
+                                </button>
+                            </div>
+
+                        </div>
+                    `;
+
+                    lista.appendChild(nuevoItem);
+
+                    configurarBotonesEliminar();
+                }
+            );
+
+            checkDomicilio.addEventListener(
+                "change",
+                actualizarDireccion
+            );
+
+            actualizarDireccion();
+            configurarBotonesEliminar();
+        });
+    </script>
+} 
 }

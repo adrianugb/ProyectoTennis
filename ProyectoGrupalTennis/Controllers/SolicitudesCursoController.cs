@@ -1,5 +1,6 @@
 ﻿using AcademiaTennisDAL.Context;
 using AcademiaTennisDAL.Entities;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,29 +29,101 @@ namespace ProyectoGrupalTennis.Controllers
 
         // GET: /SolicitudesCurso/Catalogo
         [HttpGet]
-        public async Task<IActionResult> Catalogo()
+        public async Task<IActionResult> Catalogo(
+            string? buscar,
+            int? idTipoClase)
         {
-            await CargarCatalogoAsync();
+            var query = _context.TarifasClase
+                .Include(t => t.TipoClase)
+                .Where(t =>
+                    t.Activa &&
+                    t.TipoClase.Activo)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(buscar))
+            {
+                buscar = buscar.Trim();
+
+                query = query.Where(t =>
+                    t.Nombre.Contains(buscar) ||
+                    t.Descripcion.Contains(buscar) ||
+                    t.TipoClase.Nombre.Contains(buscar));
+            }
+
+            if (idTipoClase.HasValue)
+            {
+                query = query.Where(t =>
+                    t.IdTipoClase == idTipoClase.Value);
+            }
+
+            ViewBag.Tarifas = await query
+                .OrderBy(t => t.TipoClase.Nombre)
+                .ThenBy(t => t.CantidadLecciones)
+                .ThenBy(t => t.Nombre)
+                .ToListAsync();
+
+            ViewBag.TiposClase = await _context.TiposClase
+                .Where(t => t.Activo)
+                .OrderBy(t => t.Nombre)
+                .ToListAsync();
+
+            ViewBag.CondicionesServicio =
+                await _context.CondicionesServicio
+                    .Where(c => c.Activa)
+                    .OrderBy(c => c.Orden)
+                    .ToListAsync();
+
+            ViewBag.FiltroBuscar = buscar;
+            ViewBag.FiltroTipoClase = idTipoClase;
 
             return View(
-    "~/Views/SolicitudesCurso/CatalogoCursos.cshtml"
-);
+                "~/Views/SolicitudesCurso/CatalogoCursos.cshtml"
+            );
         }
 
         // GET: /SolicitudesCurso/Crear
         [HttpGet]
-        public async Task<IActionResult> Crear(string? nombreCurso)
+        public async Task<IActionResult> Crear(int? idTarifaClase)
         {
+            if (!idTarifaClase.HasValue)
+            {
+                TempData["Error"] =
+                    "Debe seleccionar una tarifa o paquete.";
+
+                return RedirectToAction(nameof(Catalogo));
+            }
+
+            var tarifa = await _context.TarifasClase
+                .Include(t => t.TipoClase)
+                .FirstOrDefaultAsync(t =>
+                    t.IdTarifaClase == idTarifaClase.Value &&
+                    t.Activa &&
+                    t.TipoClase.Activo);
+
+            if (tarifa == null)
+            {
+                TempData["Error"] =
+                    "La tarifa seleccionada no está disponible.";
+
+                return RedirectToAction(nameof(Catalogo));
+            }
+
             await CargarCatalogoAsync();
 
             var model = new SolicitudCursoViewModel
             {
-                NombreCurso = nombreCurso ?? string.Empty,
+                IdTarifaClase = tarifa.IdTarifaClase,
+                NombreCurso = tarifa.Nombre,
+                TipoClase = tarifa.TipoClase.Nombre,
+                CondicionMatricula = tarifa.CondicionMatricula,
+                CantidadLecciones = tarifa.CantidadLecciones,
+                PrecioPorPersona = tarifa.PrecioPorPersona,
+                PrecioEstimado = tarifa.Precio,
 
                 Disponibilidades =
                     new List<DisponibilidadSolicitudViewModel>
                     {
-                        new DisponibilidadSolicitudViewModel()
+                new DisponibilidadSolicitudViewModel()
                     }
             };
 
@@ -185,32 +258,39 @@ namespace ProyectoGrupalTennis.Controllers
                 FechaSolicitud = DateTime.Now
             };
 
-            foreach (var disponibilidad
-                     in model.Disponibilidades)
+            foreach (var disponibilidad in model.Disponibilidades)
             {
                 solicitud.Disponibilidades.Add(
                     new DisponibilidadSolicitud
                     {
-                        DiaSemana =
-                            disponibilidad.DiaSemana,
-
-                        HoraDesde =
-                            disponibilidad.HoraDesde,
-
-                        HoraHasta =
-                            disponibilidad.HoraHasta
+                        DiaSemana = disponibilidad.DiaSemana,
+                        HoraDesde = disponibilidad.HoraDesde,
+                        HoraHasta = disponibilidad.HoraHasta
                     });
             }
 
+            // 1. Agregar la solicitud al contexto
             _context.SolicitudesCurso.Add(solicitud);
 
+            // 2. Guardar para que MySQL genere IdSolicitudCurso
             await _context.SaveChangesAsync();
 
-            await EnviarCorreoSolicitudAsync(
-                solicitud,
-                tarifa,
-                resumenDisponibilidad);
+            // 3. Intentar enviar correo sin romper el flujo
+            try
+            {
+                await EnviarCorreoSolicitudAsync(
+                    solicitud,
+                    tarifa,
+                    resumenDisponibilidad);
+            }
+            catch (Exception)
+            {
+                TempData["AdvertenciaCorreo"] =
+                    "La solicitud fue guardada correctamente, " +
+                    "pero no se pudo enviar la notificación por correo.";
+            }
 
+            // 4. Redirigir usando el ID ya generado
             return RedirectToAction(
                 nameof(Confirmacion),
                 new
@@ -241,9 +321,42 @@ namespace ProyectoGrupalTennis.Controllers
                 return NotFound();
             }
 
+            var numeroWhatsapp =
+        _configuration["AcademiaSettings:WhatsappSolicitudes"];
+
+            var identificador =
+                $"SOL-{solicitud.IdSolicitudCurso:D4}";
+
+            var mensajeWhatsapp =
+                  $"🎾 *Academia de Tennis*\n\n" +
+                  $"*Nueva solicitud de clase*\n\n" +
+                  $"Hola, deseo dar seguimiento a mi solicitud.\n\n" +
+                  $"*Código de solicitud:* {identificador}\n" +
+                  $"*Clase o paquete:* {solicitud.NombreCurso}\n" +
+                  $"*Nivel:* {solicitud.Nivel}\n" +
+                  $"*Disponibilidad:* {solicitud.Disponibilidad}";
+
+            if (!string.IsNullOrWhiteSpace(solicitud.Comentarios))
+            {
+                mensajeWhatsapp +=
+                    $"\n*Comentarios:* {solicitud.Comentarios}";
+            }
+
+            mensajeWhatsapp +=
+                "\n\nGracias. Quedo atento(a) a la confirmación.";
+
+            var whatsappUrl =
+                string.IsNullOrWhiteSpace(numeroWhatsapp)
+                    ? null
+                    : $"https://wa.me/{numeroWhatsapp}" +
+                      $"?text={Uri.EscapeDataString(mensajeWhatsapp)}";
+
             var model =
                 new SolicitudCursoConfirmacionViewModel
                 {
+                    IdSolicitudCurso =
+                        solicitud.IdSolicitudCurso,
+
                     NombreCurso =
                         solicitud.NombreCurso,
 
@@ -257,8 +370,12 @@ namespace ProyectoGrupalTennis.Controllers
                         solicitud.Comentarios,
 
                     FechaSolicitud =
-                        solicitud.FechaSolicitud
+                        solicitud.FechaSolicitud,
+
+                    WhatsappUrl =
+                        whatsappUrl
                 };
+
             return View(
                 "~/Views/SolicitudesCurso/ConfirmacionSolicitud.cshtml",
                 model
@@ -283,37 +400,35 @@ namespace ProyectoGrupalTennis.Controllers
                     .ToListAsync();
         }
 
+
+
+
         private async Task EnviarCorreoSolicitudAsync(
-            SolicitudCurso solicitud,
-            TarifaClase tarifa,
-            string resumenDisponibilidad)
+        SolicitudCurso solicitud,
+        TarifaClase tarifa,
+        string resumenDisponibilidad)
         {
             var correoDestino =
-                _configuration[
-                    "AcademiaSettings:CorreoSolicitudes"];
+                _configuration["AcademiaSettings:CorreoSolicitudes"];
 
-            if (string.IsNullOrWhiteSpace(
-                correoDestino))
+            if (string.IsNullOrWhiteSpace(correoDestino))
             {
                 return;
             }
 
             await _emailService.EnviarCorreoAsync(
                 correoDestino,
-                $"Nueva solicitud SOL-{solicitud.IdSolicitudCurso}",
+                $"Nueva solicitud SOL-{solicitud.IdSolicitudCurso:D4}",
                 $"""
-                <strong>Solicitud:</strong> SOL-{solicitud.IdSolicitudCurso}<br>
-                <strong>Tarifa o paquete:</strong> {tarifa.Nombre}<br>
-                <strong>Tipo de clase:</strong> {tarifa.TipoClase.Nombre}<br>
-                <strong>Nivel:</strong> {solicitud.Nivel}<br>
-                <strong>Lecciones:</strong> {tarifa.CantidadLecciones}<br>
-                <strong>Precio:</strong> ${tarifa.Precio:N2}<br>
-                <strong>Requiere equipo:</strong> {(solicitud.RequiereEquipo ? "Sí" : "No")}<br>
-                <strong>A domicilio:</strong> {(solicitud.EsADomicilio ? "Sí" : "No")}<br>
-                <strong>Dirección:</strong> {solicitud.DireccionDomicilio}<br>
-                <strong>Disponibilidad:</strong> {resumenDisponibilidad}<br>
-                <strong>Comentarios:</strong> {solicitud.Comentarios}
-                """
+        <h2>Nueva solicitud de clase</h2>
+
+        <strong>Solicitud:</strong> SOL-{solicitud.IdSolicitudCurso:D4}<br>
+        <strong>Clase:</strong> {tarifa.Nombre}<br>
+        <strong>Tipo:</strong> {tarifa.TipoClase.Nombre}<br>
+        <strong>Nivel:</strong> {solicitud.Nivel}<br>
+        <strong>Disponibilidad:</strong> {resumenDisponibilidad}<br>
+        <strong>Comentarios:</strong> {solicitud.Comentarios}
+        """
             );
         }
     }

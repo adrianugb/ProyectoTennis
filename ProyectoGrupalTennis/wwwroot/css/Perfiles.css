@@ -725,59 +725,7 @@
     border-top: 1px solid #ececec;
 }
 
-/*Catalogo*/
-.catalogo-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-    margin-top: 35px;
-}
 
-.catalogo-card-small {
-    display: flex;
-    align-items: stretch;
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 12px 28px rgba(0,0,0,.08);
-    min-height: 260px;
-}
-
-.catalogo-info {
-    width: 58%;
-    padding: 28px;
-}
-
-    .catalogo-info h3 {
-        font-size: 28px;
-        font-weight: 800;
-        margin-bottom: 12px;
-    }
-
-    .catalogo-info p {
-        font-size: 14px;
-        line-height: 1.6;
-        color: #555;
-    }
-
-    .catalogo-info span {
-        display: block;
-        font-size: 13px;
-        color: #777;
-        margin-bottom: 18px;
-    }
-
-.catalogo-img-small {
-    width: 42%;
-    object-fit: cover;
-}
-
-@media (max-width: 992px) {
-    .catalogo-grid {
-        grid-template-columns: 1fr;
-    }
-}
 
 .perfil-grid .row {
     display: flex;
@@ -793,4 +741,237 @@
 
 .perfil-grid .perfil-card {
     width: 100%;
+}
+
+/* Catálogo de tarifas para alumnos */
+
+.catalogo-lista {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+    margin-top: 28px;
+}
+
+.catalogo-tarifa-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid #e8ecef;
+    border-radius: 18px;
+    padding: 24px;
+    min-height: 250px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+    .catalogo-tarifa-card:hover {
+        transform: translateY(-3px);
+        border-color: #b7d85a;
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.09);
+    }
+
+.catalogo-tarifa-main {
+    flex: 1;
+}
+
+.catalogo-tarifa-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.catalogo-tipo-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    border-radius: 999px;
+    background: #edf6cf;
+    color: #668400;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.catalogo-tarifa-title {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.25;
+    color: #171717;
+}
+
+.catalogo-precio {
+    min-width: 125px;
+    text-align: right;
+}
+
+.catalogo-precio-valor {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: #7da900;
+}
+
+.catalogo-precio small {
+    display: block;
+    margin-top: 2px;
+    color: #7c7c7c;
+    font-size: 12px;
+}
+
+.catalogo-tarifa-descripcion {
+    margin: 18px 0;
+    color: #5d6368;
+    line-height: 1.55;
+}
+
+.catalogo-tarifa-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+    .catalogo-tarifa-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 11px;
+        border-radius: 10px;
+        background: #f7f8f9;
+        color: #4d555a;
+        font-size: 13px;
+    }
+
+    .catalogo-tarifa-meta i {
+        color: #8fb400;
+    }
+
+.catalogo-tarifa-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid #edf0f2;
+}
+
+.catalogo-disponibilidad-texto {
+    color: #777f84;
+    font-size: 12px;
+}
+
+.catalogo-tarifa-btn {
+    white-space: nowrap;
+}
+
+@media (max-width: 992px) {
+    .catalogo-lista {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .catalogo-tarifa-card {
+        padding: 18px;
+    }
+
+    .catalogo-tarifa-top,
+    .catalogo-tarifa-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .catalogo-precio {
+        text-align: left;
+    }
+
+    .catalogo-tarifa-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+/* Filtros del catálogo de clases */
+
+.catalogo-filtros {
+    margin-top: 26px;
+    padding: 20px;
+    background: #f8faf6;
+    border: 1px solid #e7ecd9;
+    border-radius: 16px;
+}
+
+.catalogo-filtros-form {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(210px, 280px) auto;
+    gap: 16px;
+    align-items: end;
+}
+
+.catalogo-busqueda,
+.catalogo-filtro-tipo {
+    min-width: 0;
+}
+
+.catalogo-filtros-acciones {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.catalogo-precio-valor {
+    font-size: 30px;
+    line-height: 1;
+}
+
+.catalogo-tarifa-footer {
+    margin-top: 28px;
+    padding-top: 20px;
+}
+
+.catalogo-sin-resultados {
+    margin-top: 28px;
+    padding: 45px 25px;
+}
+
+.catalogo-sin-resultados-icono {
+    display: block;
+    margin-bottom: 14px;
+    font-size: 34px;
+    color: #95c11f;
+}
+
+.catalogo-sin-resultados h3 {
+    margin-bottom: 8px;
+    font-size: 21px;
+}
+
+@media (max-width: 992px) {
+    .catalogo-filtros-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .catalogo-filtros-acciones {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 576px) {
+    .catalogo-filtros-form {
+        grid-template-columns: 1fr;
+    }
+
+    .catalogo-filtros-acciones {
+        grid-column: auto;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .catalogo-filtros-acciones .perfil-btn,
+        .catalogo-filtros-acciones .perfil-btn-outline {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+        }
 }
