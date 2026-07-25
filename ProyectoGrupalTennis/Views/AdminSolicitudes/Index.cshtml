@@ -1,0 +1,132 @@
+﻿@model List<AcademiaTennisDAL.Entities.SolicitudCurso>
+
+@{
+    ViewData["Title"] = "Gestionar solicitudes";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+
+    <div class="container-fluid px-4">
+
+        <div class="perfil-container"
+             style="max-width:1600px; margin:0 auto;">
+
+            <div class="perfil-header">
+
+                <div>
+
+                    <h1 class="perfil-title">
+                        Gestión de solicitudes
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Revisa las solicitudes enviadas por los alumnos y administra la asignación de horarios, profesores y canchas.
+                    </p>
+
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-calendar-check"></i>
+                    Solicitudes
+                </div>
+
+            </div>
+
+            <div class="perfil-table-block">
+
+                <h2 class="perfil-table-title">
+                    Solicitudes registradas
+                </h2>
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped mt-3">
+
+                        <thead>
+                            <tr>
+                                <th>Solicitud</th>
+                                <th>Alumno</th>
+                                <th>Clase</th>
+                                <th>Nivel</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @if (Model.Any())
+                            {
+                                @foreach (var solicitud in Model)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            SOL-@solicitud.IdSolicitudCurso.ToString("D4")
+                                        </td>
+
+                                        <td>
+                                            @solicitud.Alumno.Nombre
+                                            @solicitud.Alumno.Apellido
+                                        </td>
+
+                                        <td>
+                                            @solicitud.NombreCurso
+                                        </td>
+
+                                        <td>
+                                            @solicitud.Nivel
+                                        </td>
+
+                                        <td>
+                                            @solicitud.Estado
+                                        </td>
+
+                                        <td>
+                                            @solicitud.FechaSolicitud.ToString("dd/MM/yyyy")
+                                        </td>
+
+                                        <td>
+                                            <a asp-controller="AdminSolicitudes"
+                                               asp-action="Detalle"
+                                               asp-route-id="@solicitud.IdSolicitudCurso"
+                                               class="btn btn-success btn-sm">
+
+                                                Ver detalle
+
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7"
+                                        class="text-center text-muted py-4">
+
+                                        No hay solicitudes registradas.
+
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

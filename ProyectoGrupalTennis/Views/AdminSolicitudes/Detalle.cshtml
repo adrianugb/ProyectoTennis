@@ -1,0 +1,170 @@
+﻿@model AcademiaTennisDAL.Entities.SolicitudCurso
+
+@{
+    ViewData["Title"] = "Detalle de solicitud";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container-fluid px-4">
+
+        <div class="perfil-container"
+             style="max-width:1400px; margin:0 auto;">
+
+            <div class="perfil-header">
+
+                <div>
+                    <h1 class="perfil-title">
+                        Detalle de solicitud
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Revisa la información enviada por el alumno antes de proponer un horario.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    SOL-@Model.IdSolicitudCurso.ToString("D4")
+                </div>
+
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Success"]
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["Error"]
+                </div>
+            }
+
+            <div class="perfil-table-block">
+
+                <p>
+                    <strong>Alumno:</strong>
+                    @Model.Alumno.Nombre @Model.Alumno.Apellido
+                </p>
+
+                <p>
+                    <strong>Clase o paquete:</strong>
+                    @Model.NombreCurso
+                </p>
+
+                <p>
+                    <strong>Tipo de clase:</strong>
+                    @Model.Modalidad
+                </p>
+
+                <p>
+                    <strong>Nivel:</strong>
+                    @Model.Nivel
+                </p>
+
+                <p>
+                    <strong>Precio:</strong>
+                    $@Model.PrecioSolicitado?.ToString("N2")
+                </p>
+
+                <p>
+                    <strong>Estado:</strong>
+                    @Model.Estado
+                </p>
+
+                <p>
+                    <strong>Requiere equipo:</strong>
+                    @(Model.RequiereEquipo ? "Sí" : "No")
+                </p>
+
+                <p>
+                    <strong>Clase a domicilio:</strong>
+                    @(Model.EsADomicilio ? "Sí" : "No")
+                </p>
+
+                @if (Model.EsADomicilio &&
+                     !string.IsNullOrWhiteSpace(Model.DireccionDomicilio))
+                {
+                    <p>
+                        <strong>Dirección:</strong>
+                        @Model.DireccionDomicilio
+                    </p>
+                }
+
+                <p>
+                    <strong>Comentarios:</strong>
+                    @(string.IsNullOrWhiteSpace(Model.Comentarios)
+                        ? "Sin comentarios"
+                        : Model.Comentarios)
+                </p>
+
+                <h2 class="perfil-table-title mt-4">
+                    Disponibilidad del alumno
+                </h2>
+
+                @if (Model.Disponibilidades.Any())
+                {
+                    <ul>
+                        @foreach (var disponibilidad in Model.Disponibilidades)
+                        {
+                            <li>
+                                @disponibilidad.DiaSemana:
+                                @disponibilidad.HoraDesde.ToString(@"hh\:mm")
+                                -
+                                @disponibilidad.HoraHasta.ToString(@"hh\:mm")
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No hay disponibilidades registradas.</p>
+                }
+
+              <div class="perfil-actions mt-4">
+
+                    <a asp-controller="AdminSolicitudes"
+                       asp-action="Index"
+                       class="perfil-btn-outline">
+                        Volver
+                    </a>
+
+                    @if (Model.Estado == "Pendiente")
+                    {
+                        <form asp-controller="AdminSolicitudes"
+                              asp-action="MarcarEnRevision"
+                              method="post"
+                              style="display:inline;">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@Model.IdSolicitudCurso" />
+
+                            <button type="submit"
+                                    class="perfil-btn">
+
+                                Marcar como En revisión
+
+                            </button>
+
+                        </form>
+                    }
+
+                </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
