@@ -416,19 +416,202 @@ namespace ProyectoGrupalTennis.Controllers
                 return;
             }
 
+            var baseUrl =
+     _configuration["AcademiaSettings:BaseUrl"];
+
+            var urlGestion =
+                string.IsNullOrWhiteSpace(baseUrl)
+                    ? "#"
+                    : $"{baseUrl.TrimEnd('/')}/AdminSolicitudesCurso/Detalle/{solicitud.IdSolicitudCurso}";
+
+            var cuerpoCorreo = $"""
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="margin:0; padding:0; background-color:#f4f6f8; font-family:Arial, Helvetica, sans-serif; color:#222222;">
+
+    <table role="presentation"
+           width="100%"
+           cellspacing="0"
+           cellpadding="0"
+           style="background-color:#f4f6f8; padding:30px 15px;">
+
+        <tr>
+            <td align="center">
+
+                <table role="presentation"
+                       width="100%"
+                       cellspacing="0"
+                       cellpadding="0"
+                       style="max-width:650px; background:#ffffff; border-radius:14px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
+
+                    <tr>
+                        <td style="background:#95c11f; padding:24px 30px; color:#ffffff;">
+                            <h1 style="margin:0; font-size:24px;">
+                                Nueva solicitud de clase
+                            </h1>
+
+                            <p style="margin:8px 0 0; font-size:14px;">
+                                Se registró una nueva solicitud en el sistema.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding:30px;">
+
+                            <p style="margin-top:0; font-size:15px; line-height:1.6;">
+                                Hola,
+                            </p>
+
+                            <p style="font-size:15px; line-height:1.6;">
+                                Un alumno registró una nueva solicitud de clase.
+                                Revisa la información y continúa con la asignación de
+                                horario, profesor y cancha.
+                            </p>
+
+                            <table role="presentation"
+                                   width="100%"
+                                   cellspacing="0"
+                                   cellpadding="0"
+                                   style="margin-top:24px; border-collapse:collapse;">
+
+                                <tr>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee; width:38%; font-weight:bold;">
+                                        Código de solicitud
+                                    </td>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
+                                        SOL-{solicitud.IdSolicitudCurso:D4}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee; font-weight:bold;">
+                                        Clase o paquete
+                                    </td>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
+                                        {tarifa.Nombre}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee; font-weight:bold;">
+                                        Tipo de clase
+                                    </td>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
+                                        {tarifa.TipoClase.Nombre}
+                                    </td>
+                                </tr>
+
+                                   <tr>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee; font-weight:bold;">
+                                        Cantidad de sesiones
+                                    </td>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
+                                    {tarifa.CantidadLecciones}
+                                    {(tarifa.CantidadLecciones == 1 ? "sesión" : "sesiones")}    
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee; font-weight:bold;">
+                                        Precio
+                                    </td>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
+                                       ${tarifa.Precio:N2}
+                                        {(tarifa.PrecioPorPersona
+                                            ? " por persona"
+                                            : tarifa.CantidadLecciones == 1
+                                                ? " por sesión"
+                                                : " precio total")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee; font-weight:bold;">
+                                        Nivel
+                                    </td>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
+                                        {solicitud.Nivel}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee; font-weight:bold;">
+                                        Disponibilidad
+                                    </td>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
+                                        {resumenDisponibilidad}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee; font-weight:bold;">
+                                        Requiere equipo
+                                    </td>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
+                                        {(solicitud.RequiereEquipo ? "Sí" : "No")}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee; font-weight:bold;">
+                                        Clase a domicilio
+                                    </td>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
+                                        {(solicitud.EsADomicilio ? "Sí" : "No")}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee; font-weight:bold;">
+                                        Comentarios
+                                    </td>
+                                    <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
+                                        {(string.IsNullOrWhiteSpace(solicitud.Comentarios)
+                                                        ? "Sin comentarios"
+                                                        : solicitud.Comentarios)}
+                                    </td>
+                                </tr>
+
+                            </table>
+
+
+                           <p style="margin:28px 0 0; font-size:13px; color:#666666; line-height:1.5;">
+                            Inicia sesión en el sistema para revisar la solicitud,
+                            asignar un profesor, definir el horario y contactar al alumno.
+
+                            <br><br>
+
+                            Código de referencia:
+                            <strong>SOL-{solicitud.IdSolicitudCurso:D4}</strong>
+                        </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="background:#f7f8f9; padding:18px 30px; text-align:center; font-size:12px; color:#777777;">
+                            Academia de Tennis<br>
+                            Notificación automática del sistema
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+
+    </table>
+
+</body>
+</html>
+""";
+
             await _emailService.EnviarCorreoAsync(
                 correoDestino,
                 $"Nueva solicitud SOL-{solicitud.IdSolicitudCurso:D4}",
-                $"""
-        <h2>Nueva solicitud de clase</h2>
-
-        <strong>Solicitud:</strong> SOL-{solicitud.IdSolicitudCurso:D4}<br>
-        <strong>Clase:</strong> {tarifa.Nombre}<br>
-        <strong>Tipo:</strong> {tarifa.TipoClase.Nombre}<br>
-        <strong>Nivel:</strong> {solicitud.Nivel}<br>
-        <strong>Disponibilidad:</strong> {resumenDisponibilidad}<br>
-        <strong>Comentarios:</strong> {solicitud.Comentarios}
-        """
+                cuerpoCorreo
             );
         }
     }
