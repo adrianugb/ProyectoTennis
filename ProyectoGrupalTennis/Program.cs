@@ -54,6 +54,7 @@ builder.Services.AddScoped<IProfesorRepository, ProfesorRepository>();
 builder.Services.AddScoped<IProfesorService, ProfesorService>();
 builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 builder.Services.AddScoped<ICursoService, CursoService>();
+builder.Services.AddScoped<ProyectoGrupalTennis.Services.ChatbotService>(); // Módulo 6 - Asistente Virtual
 //----------------------------------------------------------------------------
 
 // HANGFIRE
@@ -159,6 +160,81 @@ using (var scope = app.Services.CreateScope())
         {
             await userManager.AddToRoleAsync(alumno, "Usuario");
         }
+    }
+}
+
+// ── SEED DE PREGUNTAS FRECUENTES DEL ASISTENTE VIRTUAL (Módulo 6) ────────────
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    if (!await context.PreguntasFrecuentes.AnyAsync())
+    {
+        context.PreguntasFrecuentes.AddRange(
+            new AcademiaTennisDAL.Entities.PreguntaFrecuente
+            {
+                Pregunta = "¿Cuál es el horario de la academia?",
+                Categoria = "Horarios",
+                Respuesta = "Nuestro horario es de 6:00 a.m. a 10:00 p.m., todos los días. " +
+                             "Puedes acomodar tus lecciones dentro de ese horario según tu disponibilidad."
+            },
+            new AcademiaTennisDAL.Entities.PreguntaFrecuente
+            {
+                Pregunta = "¿Dónde están ubicados?",
+                Categoria = "Ubicación",
+                Respuesta = "Estamos ubicados en el OTA Center, San Antonio de Desamparados, contiguo a la " +
+                             "Escuela Panamá (San José, CR-SJ, 10305). Puedes ver el mapa en la parte de abajo " +
+                             "de esta página o visitar http://www.tenismmp.com/"
+            },
+            new AcademiaTennisDAL.Entities.PreguntaFrecuente
+            {
+                Pregunta = "¿Cuánto cuestan las clases?",
+                Categoria = "Precios",
+                Respuesta = "Los precios varían según el paquete (2, 4, 6 o 10 lecciones de 55 minutos) y si la " +
+                             "clase es individual, en pareja o grupal (en pareja/grupo el precio es por persona). " +
+                             "Entre más grande el paquete, mayor el descuento. Puedes ver el catálogo completo y " +
+                             "los precios actualizados en la sección de \"Clases y paquetes\" antes de solicitar tu clase."
+            },
+            new AcademiaTennisDAL.Entities.PreguntaFrecuente
+            {
+                Pregunta = "¿Qué tipos de clases ofrecen?",
+                Categoria = "General",
+                Respuesta = "Ofrecemos clases para todos los niveles (principiantes, intermedios y avanzados), " +
+                             "de forma individual, en pareja o en grupo, con o sin matrícula. También tenemos " +
+                             "clases específicas de fin de semana. Cada clase sigue una ficha técnica para " +
+                             "asegurar tu progreso paso a paso."
+            },
+            new AcademiaTennisDAL.Entities.PreguntaFrecuente
+            {
+                Pregunta = "¿Necesito llevar mi propio equipo?",
+                Categoria = "General",
+                Respuesta = "No es obligatorio. Si no tienes raqueta u otro equipo, nosotros te lo prestamos sin costo adicional."
+            },
+            new AcademiaTennisDAL.Entities.PreguntaFrecuente
+            {
+                Pregunta = "¿Qué instalaciones tiene el OTA Center?",
+                Categoria = "General",
+                Respuesta = "El OTA Center cuenta con 5 canchas de tenis (2 bajo techo y 3 al aire libre), " +
+                             "3 canchas de pádel, 1 cancha de pickleball, 3 mesas de pool, además de seguridad y parqueo."
+            },
+            new AcademiaTennisDAL.Entities.PreguntaFrecuente
+            {
+                Pregunta = "¿Los profesores están certificados?",
+                Categoria = "General",
+                Respuesta = "Sí, todos nuestros profesores están certificados por la I.T.F. (International Tennis " +
+                             "Federation) y la P.T.R. (Professional Tennis Registry)."
+            },
+            new AcademiaTennisDAL.Entities.PreguntaFrecuente
+            {
+                Pregunta = "¿Cómo solicito una clase?",
+                Categoria = "General",
+                Respuesta = "Puedes elegir el paquete que prefieras desde la sección \"Clases y paquetes\", indicar " +
+                             "tu disponibilidad de horario y enviar la solicitud. La academia se pondrá en contacto " +
+                             "contigo para confirmar el horario definitivo."
+            }
+        );
+
+        await context.SaveChangesAsync();
     }
 }
 

@@ -1,53 +1,37 @@
-
-
+ï»¿
 <div class="virtual-assistant" aria-hidden="false">
-    <button class="va-toggle" aria-label="Abrir asistente">
+    <button class="va-toggle" id="vaToggle" aria-label="Abrir asistente">
         <i class="fa fa-robot"></i>
     </button>
 
-    <aside class="va-panel" role="dialog" aria-label="Asistente Virtual">
+    <aside class="va-panel" id="vaPanel" role="dialog" aria-label="Asistente Virtual" style="display:none;">
         <header class="va-header">
             <div>
                 <h4>Asistente Virtual</h4>
-                <small>Ayuda rápida y promociones</small>
+                <small>Academia Tenis M.M.P. â€¢ en lÃ­nea</small>
             </div>
-            <button class="va-close" aria-label="Cerrar asistente"><i class="fa fa-times"></i></button>
+            <button class="va-close" id="vaClose" aria-label="Cerrar asistente"><i class="fa fa-times"></i></button>
         </header>
 
         <section class="va-body">
-            <div class="va-messages" tabindex="0" aria-live="polite">
+            <div class="va-messages" id="vaMessages" tabindex="0" aria-live="polite">
                 <div class="va-message incoming">
                     <div class="va-bubble">
-                        ¡Hola! ¿En qué puedo ayudarte hoy?
-                        <div class="va-meta">Asistente • ahora</div>
-                    </div>
-                </div>
-
-                <div class="va-message outgoing">
-                    <div class="va-bubble">
-                        Quiero ver raquetas recomendadas.
-                        <div class="va-meta">Tú • ahora</div>
-                    </div>
-                </div>
-
-                <div class="va-message incoming">
-                    <div class="va-bubble">
-                        Te recomiendo la "Raqueta Pro 300" para control y potencia.
-                        <div class="va-meta">Asistente • ahora</div>
+                        Â¡Hola! Soy el asistente virtual de la academia. Puedo ayudarte con horarios, precios,
+                        ubicaciÃ³n y disponibilidad de canchas. Â¿En quÃ© puedo ayudarte hoy?
+                        <div class="va-meta">Asistente â€¢ ahora</div>
                     </div>
                 </div>
             </div>
 
-            <div class="va-quick-replies" role="list">
-                <button class="va-quick">Ofertas actuales</button>
-                <button class="va-quick">Métodos de pago</button>
-                <button class="va-quick">Soporte</button>
+            <div class="va-quick-replies" id="vaQuickReplies" role="list">
+                <span class="va-quick-loading">Cargando preguntas frecuentes...</span>
             </div>
         </section>
 
         <footer class="va-footer">
-            <input type="text" class="va-input" placeholder="Escribe tu mensaje..." disabled />
-            <button class="va-send" disabled><i class="fa fa-paper-plane"></i></button>
+            <input type="text" id="vaInput" class="va-input" placeholder="Escribe tu mensaje..." maxlength="500" />
+            <button class="va-send" id="vaSend" aria-label="Enviar mensaje"><i class="fa fa-paper-plane"></i></button>
         </footer>
     </aside>
 </div>
@@ -67,19 +51,19 @@
     align-items: center;
     justify-content: center;
     font-size: 20px;
-    cursor: default; /* mockup: sin interacción */
+    cursor: pointer;
 }
 
 .va-panel {
     width: 320px;
     max-width: calc(100vw - 40px);
-    height: 440px;
+    height: 460px;
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 18px 50px rgba(0,0,0,0.15);
     margin-bottom: 12px;
     overflow: hidden;
-    display: block; /* visible para mockup */
+    display: block;
 }
 
 .va-header {
@@ -99,7 +83,7 @@
     border: none;
     color: #666;
     font-size: 14px;
-    cursor: default;
+    cursor: pointer;
 }
 
 .va-body {
@@ -123,15 +107,16 @@
 .va-message.outgoing { justify-content: flex-end; }
 
 .va-bubble {
-    max-width: 78%;
+    max-width: 82%;
     padding: 10px 12px;
     border-radius: 12px;
     font-size: 13px;
-    line-height: 1.3;
+    line-height: 1.4;
     background: #f6f6f6;
     color: #222;
     position: relative;
     box-shadow: 0 6px 18px rgba(0,0,0,0.03);
+    white-space: pre-line;
 }
 
 .va-message.outgoing .va-bubble { background: #eaf7df; color: #222; }
@@ -145,6 +130,8 @@
     flex-wrap: wrap;
 }
 
+.va-quick-loading { font-size: 12px; color: #999; }
+
 .va-quick {
     background: #fff;
     border: 1px solid #e6e6e6;
@@ -152,9 +139,29 @@
     border-radius: 18px;
     font-size: 12px;
     color: #444;
-    cursor: default;
+    cursor: pointer;
     box-shadow: 0 4px 12px rgba(0,0,0,0.02);
 }
+
+.va-quick:hover { background: #f2f7e5; border-color: var(--primary-color, #a5c422); }
+
+.va-whatsapp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    background: #25D366;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.va-whatsapp-btn:hover { opacity: 0.9; color: #fff; }
+
+.va-typing { font-size: 12px; color: #999; font-style: italic; }
 
 .va-footer {
     border-top: 1px solid #f0f0f0;
@@ -170,7 +177,7 @@
     border-radius: 8px;
     border: 1px solid #e8e8e8;
     background: #fafafa;
-    color: #888;
+    color: #222;
 }
 
 .va-send {
@@ -183,7 +190,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    cursor: default;
+    cursor: pointer;
+}
+
+@@media (max-width: 480px) {
+    .va-panel { 
+        height: 70vh; 
+    }
 }
 
 </style>

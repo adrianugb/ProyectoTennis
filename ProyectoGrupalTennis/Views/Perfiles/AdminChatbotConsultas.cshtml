@@ -1,0 +1,125 @@
+@model ProyectoGrupalTennis.Models.ViewModels.AdminConsultasFallidasIndexViewModel
+@{
+    ViewData["Title"] = "Mejora del Bot - Consultas sin respuesta";
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Mejora del Bot</h1>
+                    <p class="perfil-subtitle">
+                        Consultas que el asistente virtual no pudo responder. Úsalas para crear o mejorar preguntas frecuentes.
+                    </p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-comment-slash"></i> Consultas sin respuesta
+                </div>
+            </div>
+
+            <div class="mb-3 d-flex gap-2 flex-wrap">
+                <a asp-controller="Chatbot" asp-action="AdminFaqs" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa fa-arrow-left me-1"></i> Volver a preguntas frecuentes
+                </a>
+                <a asp-controller="Chatbot" asp-action="ExportarConsultasFallidas" class="btn btn-outline-success btn-sm">
+                    <i class="fa fa-file-excel me-1"></i> Exportar a Excel
+                </a>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <div class="perfil-card text-center">
+                        <i class="fa fa-comments"></i>
+                        <h3>@Model.TotalConsultas</h3>
+                        <p>Consultas totales al bot</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="perfil-card text-center">
+                        <i class="fa fa-comment-slash"></i>
+                        <h3>@Model.TotalNoResueltas</h3>
+                        <p>Sin respuesta</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="perfil-card text-center">
+                        <i class="fab fa-whatsapp"></i>
+                        <h3>@Model.TotalRedirigidasWhatsapp</h3>
+                        <p>Redirigidas a WhatsApp</p>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.RankingFrasesSinRespuesta.Any())
+            {
+                <div class="perfil-table-block mb-4">
+                    <div class="perfil-table-header">
+                        <h2 class="perfil-table-title">Ranking de frases más repetidas sin respuesta</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="perfil-table">
+                            <thead>
+                                <tr>
+                                    <th>Frase</th>
+                                    <th>Veces repetida</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var frase in Model.RankingFrasesSinRespuesta)
+                                {
+                                    <tr>
+                                        <td>@frase.Frase</td>
+                                        <td>@frase.Cantidad</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Historial de consultas sin respuesta</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="perfil-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Usuario</th>
+                                <th>Consulta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.Consultas.Any())
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-4">
+                                        <i class="fa fa-check-circle fa-2x mb-2 d-block"></i>
+                                        No hay consultas sin resolver. ¡El bot está respondiendo bien!
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var consulta in Model.Consultas)
+                                {
+                                    <tr>
+                                        <td>@consulta.FechaConsulta.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td>@consulta.Usuario</td>
+                                        <td>@consulta.MensajeUsuario</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

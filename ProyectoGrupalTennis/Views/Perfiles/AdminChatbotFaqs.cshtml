@@ -1,0 +1,271 @@
+@model ProyectoGrupalTennis.Models.ViewModels.AdminFaqIndexViewModel
+@{
+    ViewData["Title"] = "Preguntas Frecuentes del Asistente Virtual";
+    var categorias = new[] { "Horarios", "Precios", "Ubicación", "Reservas", "Pagos", "General" };
+}
+
+<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Preguntas Frecuentes del Asistente Virtual</h1>
+                    <p class="perfil-subtitle">
+                        Administra las respuestas automáticas que el chatbot ofrece a los usuarios.
+                    </p>
+                </div>
+                <div class="perfil-badge">
+                    <i class="fa fa-robot"></i> Asistente Virtual
+                </div>
+            </div>
+
+            <div class="mb-3 d-flex gap-2 flex-wrap">
+                <a asp-controller="Home" asp-action="PerfilAdmin" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa fa-arrow-left me-1"></i> Volver al Panel
+                </a>
+                <a asp-controller="Chatbot" asp-action="AdminConsultasFallidas" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa fa-comment-slash me-1"></i> Ver consultas sin respuesta
+                </a>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.MensajeExito))
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa fa-check-circle me-2"></i> @Model.MensajeExito
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.MensajeError))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fa fa-exclamation-circle me-2"></i> @Model.MensajeError
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            <div class="perfil-table-block">
+                <div class="perfil-table-header">
+                    <h2 class="perfil-table-title">Listado de preguntas frecuentes</h2>
+                    <button type="button" class="perfil-btn" onclick="abrirModalAgregar()">
+                        <i class="fa fa-plus"></i> Agregar pregunta
+                    </button>
+                </div>
+
+                <div class="perfil-filter-row">
+                    <input type="text" id="filtroPregunta" class="form-control"
+                           placeholder="Buscar pregunta..." oninput="filtrarTabla()" />
+                    <select id="filtroCategoria" class="form-select" onchange="filtrarTabla()">
+                        <option value="">Todas las categorías</option>
+                        @foreach (var cat in categorias)
+                        {
+                            <option value="@cat">@cat</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="perfil-table" id="tablaFaqs">
+                        <thead>
+                            <tr>
+                                <th>Pregunta</th>
+                                <th>Categoría</th>
+                                <th>Consultas</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.Preguntas.Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="fa fa-robot fa-2x mb-2 d-block"></i>
+                                        No hay preguntas frecuentes registradas todavía.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var faq in Model.Preguntas)
+                                {
+                                    <tr>
+                                        <td><strong>@faq.Pregunta</strong></td>
+                                        <td>@faq.Categoria</td>
+                                        <td>@faq.VecesConsultada</td>
+                                        <td>
+                                            @if (faq.Activa)
+                                            {
+                                                <span class="perfil-badge-success">Activa</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Inactiva</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="#" class="perfil-action-link"
+                                               onclick="abrirModalEditar(@faq.IdPregunta); return false;">
+                                                Editar
+                                            </a>
+                                            <span class="perfil-action-separator">|</span>
+                                            <form asp-controller="Chatbot" asp-action="CambiarEstadoFaq"
+                                                  method="post" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="idPregunta" value="@faq.IdPregunta" />
+                                                <button type="submit" class="perfil-action-link"
+                                                        style="background:none;border:none;padding:0;cursor:pointer;">
+                                                    @(faq.Activa ? "Desactivar" : "Activar")
+                                                </button>
+                                            </form>
+                                            <span class="perfil-action-separator">|</span>
+                                            <a href="#" class="perfil-action-link text-danger"
+                                               onclick="confirmarEliminar(@faq.IdPregunta, '@Html.Raw(faq.Pregunta.Replace("'", "\\'"))'); return false;">
+                                                Eliminar
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* MODAL — Agregar / Editar pregunta frecuente *@
+<div class="modal fade" id="modalFaq" tabindex="-1" aria-labelledby="tituloModalFaq" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tituloModalFaq">
+                    <i class="fa fa-plus me-2"></i> Agregar Pregunta Frecuente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancelar"></button>
+            </div>
+            <form asp-controller="Chatbot" asp-action="GuardarFaq" method="post" id="formFaq">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" id="faqId" name="IdPregunta" value="0" />
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="faqPregunta" class="form-label fw-semibold">Pregunta</label>
+                            <input type="text" id="faqPregunta" name="Pregunta" class="form-control"
+                                   placeholder="Ej: ¿Cuánto cuestan las clases?" required maxlength="300" />
+                        </div>
+                        <div class="col-12">
+                            <label for="faqCategoria" class="form-label fw-semibold">Categoría</label>
+                            <select id="faqCategoria" name="Categoria" class="form-select" required>
+                                @foreach (var cat in categorias)
+                                {
+                                    <option value="@cat">@cat</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="faqRespuesta" class="form-label fw-semibold">Respuesta</label>
+                            <textarea id="faqRespuesta" name="Respuesta" class="form-control" rows="5"
+                                      placeholder="Escribe la respuesta que dará el asistente..."
+                                      required maxlength="2000"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fa fa-times me-1"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save me-1"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* MODAL — Confirmar eliminación *@
+<div class="modal fade" id="modalEliminarFaq" tabindex="-1" aria-labelledby="tituloModalEliminar" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger bg-opacity-10">
+                <h5 class="modal-title" id="tituloModalEliminar">
+                    <i class="fa fa-trash me-2 text-danger"></i> Eliminar Pregunta Frecuente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancelar"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro que desea eliminar la pregunta <strong id="nombreEliminarFaq"></strong>?</p>
+                <p class="text-muted small">El bot dejará de responder sobre este tema de inmediato.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa fa-times me-1"></i> Cancelar
+                </button>
+                <form asp-controller="Chatbot" asp-action="EliminarFaq" method="post" id="formEliminarFaq">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="idEliminarFaq" name="idPregunta" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fa fa-trash me-1"></i> Sí, eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Datos de las FAQ ya cargadas en la página, para llenar el modal de edición sin llamadas extra
+        const faqsData = @Html.Raw(Json.Serialize(Model.Preguntas.Select(f => new {
+                     f.IdPregunta, f.Pregunta, f.Categoria, f.Respuesta
+                 })));
+
+        function abrirModalAgregar() {
+            document.getElementById('tituloModalFaq').innerHTML = '<i class="fa fa-plus me-2"></i> Agregar Pregunta Frecuente';
+            document.getElementById('formFaq').reset();
+            document.getElementById('faqId').value = 0;
+            const modal = new bootstrap.Modal(document.getElementById('modalFaq'));
+            modal.show();
+        }
+
+        function abrirModalEditar(id) {
+            const faq = faqsData.find(f => f.idPregunta === id);
+            if (!faq) return;
+
+            document.getElementById('tituloModalFaq').innerHTML = '<i class="fa fa-edit me-2"></i> Editar Pregunta Frecuente';
+            document.getElementById('faqId').value = faq.idPregunta;
+            document.getElementById('faqPregunta').value = faq.pregunta;
+            document.getElementById('faqCategoria').value = faq.categoria;
+            document.getElementById('faqRespuesta').value = faq.respuesta;
+
+            const modal = new bootstrap.Modal(document.getElementById('modalFaq'));
+            modal.show();
+        }
+
+        function confirmarEliminar(id, nombre) {
+            document.getElementById('idEliminarFaq').value = id;
+            document.getElementById('nombreEliminarFaq').textContent = nombre;
+            const modal = new bootstrap.Modal(document.getElementById('modalEliminarFaq'));
+            modal.show();
+        }
+
+        function filtrarTabla() {
+            const textoBuscar = document.getElementById('filtroPregunta').value.toLowerCase();
+            const categoriaFiltro = document.getElementById('filtroCategoria').value;
+            const filas = document.querySelectorAll('#tablaFaqs tbody tr');
+            filas.forEach(fila => {
+                const pregunta = fila.cells[0]?.textContent.toLowerCase() ?? '';
+                const categoria = fila.cells[1]?.textContent.trim() ?? '';
+                const coincidePregunta = pregunta.includes(textoBuscar);
+                const coincideCategoria = !categoriaFiltro || categoria === categoriaFiltro;
+                fila.style.display = coincidePregunta && coincideCategoria ? '' : 'none';
+            });
+        }
+    </script>
+}
