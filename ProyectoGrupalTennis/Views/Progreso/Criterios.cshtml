@@ -1,0 +1,150 @@
+﻿@{
+    ViewData["Title"] = "Criterios Técnicos";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Criterios Técnicos
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Habilidades utilizadas para evaluar el progreso
+                        técnico de los alumnos.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-list-alt"></i>
+                    Criterios
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a asp-controller="Progreso"
+                   asp-action="AdminIndex"
+                   class="btn btn-outline-secondary btn-sm">
+
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Volver
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+
+                            <thead>
+                                <tr>
+                                    <th>Habilidad</th>
+                                    <th>Descripción</th>
+                                    <th>Escala</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>Saque</td>
+                                    <td>
+                                        Precisión, potencia y consistencia
+                                        al iniciar el punto.
+                                    </td>
+                                    <td>1 a 10</td>
+                                    <td>
+                                        <span class="badge bg-success">
+                                            Activo
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Revés</td>
+                                    <td>
+                                        Control y técnica al golpear la bola
+                                        con el lado contrario.
+                                    </td>
+                                    <td>1 a 10</td>
+                                    <td>
+                                        <span class="badge bg-success">
+                                            Activo
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Derecha</td>
+                                    <td>
+                                        Control, fuerza y precisión en el
+                                        golpe de derecha.
+                                    </td>
+                                    <td>1 a 10</td>
+                                    <td>
+                                        <span class="badge bg-success">
+                                            Activo
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Volea</td>
+                                    <td>
+                                        Capacidad para responder cerca
+                                        de la red.
+                                    </td>
+                                    <td>1 a 10</td>
+                                    <td>
+                                        <span class="badge bg-success">
+                                            Activo
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Movimiento</td>
+                                    <td>
+                                        Desplazamiento, velocidad y posición
+                                        dentro de la cancha.
+                                    </td>
+                                    <td>1 a 10</td>
+                                    <td>
+                                        <span class="badge bg-success">
+                                            Activo
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Táctica</td>
+                                    <td>
+                                        Toma de decisiones y estrategia
+                                        durante el juego.
+                                    </td>
+                                    <td>1 a 10</td>
+                                    <td>
+                                        <span class="badge bg-success">
+                                            Activo
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

@@ -1,0 +1,197 @@
+﻿@model List<AcademiaTennisDAL.Entities.ProgresoAlumno>
+
+@{
+    ViewData["Title"] = "Administración de Progreso";
+
+    int totalEvaluaciones = ViewBag.TotalEvaluaciones ?? 0;
+    int totalAlumnos = ViewBag.TotalAlumnosEvaluados ?? 0;
+    int totalProfesores = ViewBag.TotalProfesoresEvaluadores ?? 0;
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Administración del Progreso Técnico
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Consulta las evaluaciones registradas y administra
+                        los niveles y criterios técnicos.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-cog"></i>
+                    Administrador
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a asp-controller="Home"
+                   asp-action="PerfilAdmin"
+                   class="btn btn-outline-secondary btn-sm">
+
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Volver al panel
+                </a>
+            </div>
+
+            <div class="row g-4 mb-4">
+
+                <div class="col-md-4">
+                    <div class="perfil-card">
+                        <i class="fa fa-clipboard-check"></i>
+                        <h3>@totalEvaluaciones</h3>
+                        <p>Evaluaciones registradas</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="perfil-card">
+                        <i class="fa fa-users"></i>
+                        <h3>@totalAlumnos</h3>
+                        <p>Alumnos evaluados</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="perfil-card">
+                        <i class="fa fa-user"></i>
+                        <h3>@totalProfesores</h3>
+                        <p>Profesores evaluadores</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row g-4 mb-4">
+
+                <div class="col-md-6">
+                    <a asp-controller="Progreso"
+                       asp-action="Criterios"
+                       class="text-decoration-none">
+
+                        <div class="perfil-card">
+                            <i class="fa fa-list-alt"></i>
+
+                            <h3>Criterios técnicos</h3>
+
+                            <p>
+                                Consulta los aspectos utilizados para
+                                evaluar a los alumnos.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6">
+                    <a asp-controller="Progreso"
+                       asp-action="Niveles"
+                       class="text-decoration-none">
+
+                        <div class="perfil-card">
+                            <i class="fa fa-signal"></i>
+
+                            <h3>Niveles técnicos</h3>
+
+                            <p>
+                                Consulta la clasificación de principiante,
+                                intermedio y avanzado.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h5 class="mb-3">
+                        Evaluaciones recientes
+                    </h5>
+
+                    @if (Model == null || !Model.Any())
+                    {
+                        <div class="alert alert-info mb-0">
+                            No existen evaluaciones registradas.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Alumno</th>
+                                        <th>Profesor</th>
+                                        <th>Curso</th>
+                                        <th>Fecha</th>
+                                        <th>Nivel</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var progreso in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @progreso.Alumno?.Nombre
+                                                @progreso.Alumno?.Apellido
+                                            </td>
+
+                                            <td>
+                                                @progreso.Profesor?.Nombre
+                                                @progreso.Profesor?.Apellido
+                                            </td>
+
+                                            <td>
+                                                @(progreso.Curso?.Nombre
+                                                    ?? "Sin curso")
+                                            </td>
+
+                                            <td>
+                                                @(progreso.FechaEvaluacion.ToString("dd/MM/yyyy"))
+                                            </td>
+
+                                            <td>
+                                                @progreso.NivelGeneral
+                                            </td>
+
+                                            <td>
+
+                                                <a asp-controller="Progreso"
+                                                   asp-action="VerDetalle"
+                                                   asp-route-id="@progreso.IdProgreso"
+                                                   class="btn btn-primary btn-sm">
+
+                                                    <i class="fa fa-eye me-1"></i>
+                                                    Ver detalle
+
+                                                </a>
+
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

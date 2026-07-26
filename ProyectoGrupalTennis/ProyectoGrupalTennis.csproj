@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\back up\**" />
+    <Content Remove="wwwroot\back up\**" />
+    <EmbeddedResource Remove="wwwroot\back up\**" />
+    <None Remove="wwwroot\back up\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="Views\Shared\GestionReservas.cshtml" />
   </ItemGroup>
 
@@ -32,10 +39,6 @@
   <ItemGroup>
     <ProjectReference Include="..\AcademiaTennisBLL\AcademiaTennisBLL.csproj" />
     <ProjectReference Include="..\AcademiaTennisDAL\AcademiaTennisDAL.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\back up\" />
   </ItemGroup>
 
 </Project>

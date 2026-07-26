@@ -1,0 +1,115 @@
+﻿@{
+    ViewData["Title"] = "Niveles Técnicos";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Niveles Técnicos
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Clasificación utilizada según el promedio obtenido
+                        en la evaluación técnica.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-signal"></i>
+                    Niveles
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a asp-controller="Progreso"
+                   asp-action="AdminIndex"
+                   class="btn btn-outline-secondary btn-sm">
+
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Volver
+                </a>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+
+                            <i class="fa fa-seedling fa-3x mb-3"></i>
+
+                            <h3>Principiante</h3>
+
+                            <p class="text-muted">
+                                Promedio menor a 5 puntos.
+                            </p>
+
+                            <p>
+                                El alumno está desarrollando las habilidades
+                                básicas y requiere mayor práctica.
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+
+                            <i class="fa fa-chart-line fa-3x mb-3"></i>
+
+                            <h3>Intermedio</h3>
+
+                            <p class="text-muted">
+                                Promedio entre 5 y 7.9 puntos.
+                            </p>
+
+                            <p>
+                                El alumno domina varias habilidades, pero
+                                todavía tiene aspectos que debe mejorar.
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+
+                            <i class="fa fa-trophy fa-3x mb-3"></i>
+
+                            <h3>Avanzado</h3>
+
+                            <p class="text-muted">
+                                Promedio igual o mayor a 8 puntos.
+                            </p>
+
+                            <p>
+                                El alumno demuestra un alto dominio técnico
+                                y un rendimiento consistente.
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="alert alert-info mt-4">
+                El nivel general se calcula automáticamente utilizando
+                el promedio de las seis métricas técnicas.
+            </div>
+
+        </div>
+    </div>
+</section>

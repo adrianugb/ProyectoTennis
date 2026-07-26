@@ -1,0 +1,127 @@
+﻿@{
+    ViewData["Title"] = "Progreso Técnico";
+
+    int totalEvaluaciones = ViewBag.TotalEvaluaciones ?? 0;
+    int totalAlumnos = ViewBag.TotalAlumnosEvaluados ?? 0;
+    DateTime? ultimaEvaluacion = ViewBag.UltimaEvaluacion;
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Progreso Técnico</h1>
+
+                    <p class="perfil-subtitle">
+                        Registra evaluaciones y consulta el avance técnico
+                        de tus alumnos.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-chart-line"></i>
+                    Profesor
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a asp-controller="Home"
+                   asp-action="PerfilProfesor"
+                   class="btn btn-outline-secondary btn-sm">
+
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Volver al panel
+                </a>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    <i class="fa fa-check-circle me-1"></i>
+                    @TempData["Success"]
+                </div>
+            }
+
+            <div class="row g-4 mb-4">
+
+                <div class="col-md-4">
+                    <div class="perfil-card">
+                        <i class="fa fa-clipboard-check"></i>
+                        <h3>@totalEvaluaciones</h3>
+                        <p>Evaluaciones registradas</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="perfil-card">
+                        <i class="fa fa-users"></i>
+                        <h3>@totalAlumnos</h3>
+                        <p>Alumnos evaluados</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="perfil-card">
+                        <i class="fa fa-calendar"></i>
+
+                        <h3>
+                            @(ultimaEvaluacion.HasValue
+                                ? ultimaEvaluacion.Value.ToString("dd/MM/yyyy")
+                                : "Sin registros")
+                        </h3>
+
+                        <p>Última evaluación</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+                    <a asp-controller="Progreso"
+                       asp-action="Registrar"
+                       class="text-decoration-none">
+
+                        <div class="perfil-card">
+                            <i class="fa fa-plus-circle"></i>
+
+                            <h3>Registrar evaluación</h3>
+
+                            <p>
+                                Registra las métricas técnicas y observaciones
+                                de un alumno.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6">
+                    <a asp-controller="Progreso"
+                       asp-action="ProfesorHistorial"
+                       class="text-decoration-none">
+
+                        <div class="perfil-card">
+                            <i class="fa fa-history"></i>
+
+                            <h3>Historial de evaluaciones</h3>
+
+                            <p>
+                                Consulta y modifica las evaluaciones
+                                registradas anteriormente.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>

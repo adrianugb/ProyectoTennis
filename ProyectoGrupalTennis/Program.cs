@@ -98,10 +98,8 @@ using (var scope = app.Services.CreateScope())
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
     string adminEmail = "admin@tennis.com";
-    string adminPassword = "Admin123";
 
-    var adminExistente = await userManager.FindByEmailAsync(adminEmail);
-    if (adminExistente == null)
+    if (await userManager.FindByEmailAsync(adminEmail) == null)
     {
         var admin = new ApplicationUser
         {
@@ -113,10 +111,53 @@ using (var scope = app.Services.CreateScope())
             Bloqueado = false
         };
 
-        var resultado = await userManager.CreateAsync(admin, adminPassword);
+        var resultado = await userManager.CreateAsync(admin, "Admin123");
+
         if (resultado.Succeeded)
         {
             await userManager.AddToRoleAsync(admin, "Administrador");
+        }
+    }
+    string profesorEmail = "profesor@tennis.com";
+
+    if (await userManager.FindByEmailAsync(profesorEmail) == null)
+    {
+        var profesor = new ApplicationUser
+        {
+            Nombre = "Profesor",
+            Apellido = "Sistema",
+            UserName = profesorEmail,
+            Email = profesorEmail,
+            FechaRegistro = DateTime.Now,
+            Bloqueado = false
+        };
+
+        var resultado = await userManager.CreateAsync(profesor, "Profesor123");
+
+        if (resultado.Succeeded)
+        {
+            await userManager.AddToRoleAsync(profesor, "Profesor");
+        }
+    }
+    string alumnoEmail = "alumno@tennis.com";
+
+    if (await userManager.FindByEmailAsync(alumnoEmail) == null)
+    {
+        var alumno = new ApplicationUser
+        {
+            Nombre = "Alumno",
+            Apellido = "Sistema",
+            UserName = alumnoEmail,
+            Email = alumnoEmail,
+            FechaRegistro = DateTime.Now,
+            Bloqueado = false
+        };
+
+        var resultado = await userManager.CreateAsync(alumno, "Alumno123");
+
+        if (resultado.Succeeded)
+        {
+            await userManager.AddToRoleAsync(alumno, "Usuario");
         }
     }
 }

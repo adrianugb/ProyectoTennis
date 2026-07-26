@@ -1,0 +1,288 @@
+﻿@model ProyectoGrupalTennis.Models.RegistrarProgresoViewModel
+
+@{
+    ViewData["Title"] = "Registrar Evaluación";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Registrar Evaluación Técnica
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Asigna una calificación del 1 al 10 para cada
+                        habilidad técnica del alumno.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-clipboard-check"></i>
+                    Nueva evaluación
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a asp-controller="Progreso"
+                   asp-action="ProfesorIndex"
+                   class="btn btn-outline-secondary btn-sm">
+
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Volver
+                </a>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    <i class="fa fa-check-circle me-1"></i>
+                    @TempData["Success"]
+                </div>
+            }
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <form asp-controller="Progreso"
+                          asp-action="Registrar"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <h5 class="mb-3">Información general</h5>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="IdAlumno"
+                                       class="form-label">
+                                    Alumno
+                                </label>
+
+                                <select asp-for="IdAlumno"
+                                        asp-items="Model.Alumnos"
+                                        class="form-select">
+
+                                    <option value="">
+                                        Seleccione un alumno
+                                    </option>
+                                </select>
+
+                                <span asp-validation-for="IdAlumno"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="IdCurso"
+                                       class="form-label">
+                                    Curso
+                                </label>
+
+                                <select asp-for="IdCurso"
+                                        asp-items="Model.Cursos"
+                                        class="form-select">
+
+                                    <option value="">
+                                        Seleccione un curso
+                                    </option>
+                                </select>
+
+                                <span asp-validation-for="IdCurso"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <hr />
+
+                        <h5 class="mb-2">Métricas técnicas</h5>
+
+                        <p class="text-muted">
+                            Utiliza una escala del 1 al 10.
+                        </p>
+
+                        <div class="row">
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="NivelSaque"
+                                       class="form-label">
+                                    Saque
+                                </label>
+
+                                <input asp-for="NivelSaque"
+                                       class="form-control"
+                                       type="number"
+                                       min="1"
+                                       max="10" />
+
+                                <span asp-validation-for="NivelSaque"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="NivelReves"
+                                       class="form-label">
+                                    Revés
+                                </label>
+
+                                <input asp-for="NivelReves"
+                                       class="form-control"
+                                       type="number"
+                                       min="1"
+                                       max="10" />
+
+                                <span asp-validation-for="NivelReves"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="NivelDerecha"
+                                       class="form-label">
+                                    Derecha
+                                </label>
+
+                                <input asp-for="NivelDerecha"
+                                       class="form-control"
+                                       type="number"
+                                       min="1"
+                                       max="10" />
+
+                                <span asp-validation-for="NivelDerecha"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="NivelVolea"
+                                       class="form-label">
+                                    Volea
+                                </label>
+
+                                <input asp-for="NivelVolea"
+                                       class="form-control"
+                                       type="number"
+                                       min="1"
+                                       max="10" />
+
+                                <span asp-validation-for="NivelVolea"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="NivelMovimiento"
+                                       class="form-label">
+                                    Movimiento
+                                </label>
+
+                                <input asp-for="NivelMovimiento"
+                                       class="form-control"
+                                       type="number"
+                                       min="1"
+                                       max="10" />
+
+                                <span asp-validation-for="NivelMovimiento"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="NivelTactica"
+                                       class="form-label">
+                                    Táctica
+                                </label>
+
+                                <input asp-for="NivelTactica"
+                                       class="form-control"
+                                       type="number"
+                                       min="1"
+                                       max="10" />
+
+                                <span asp-validation-for="NivelTactica"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <hr />
+
+                        <div class="mb-3">
+                            <label asp-for="AreasMejora"
+                                   class="form-label">
+                                Áreas de mejora
+                            </label>
+
+                            <textarea asp-for="AreasMejora"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Indique las habilidades que el alumno debe mejorar.">
+                            </textarea>
+
+                            <span asp-validation-for="AreasMejora"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Observaciones"
+                                   class="form-label">
+                                Observaciones
+                            </label>
+
+                            <textarea asp-for="Observaciones"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Escriba una observación general sobre el desempeño del alumno.">
+                            </textarea>
+
+                            <span asp-validation-for="Observaciones"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+
+                            <a asp-controller="Progreso"
+                               asp-action="ProfesorIndex"
+                               class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+
+                                <i class="fa fa-save me-1"></i>
+                                Guardar evaluación
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

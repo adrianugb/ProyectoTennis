@@ -1,4 +1,14 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using AcademiaTennisDAL.Entities
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var usuario = User.Identity?.IsAuthenticated == true
+        ? await UserManager.GetUserAsync(User)
+        : null;
+}
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
@@ -13,353 +23,10 @@
     <link rel="stylesheet" href="~/css/owl.theme.default.min.css" />
     <link rel="stylesheet" href="~/css/tooplate-style.css" />
     <link rel="stylesheet" href="~/css/site.css?v=2" />
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <style>
-            :root {
-                --primary-color: #a5c422;
-                --dark-bg: #121212;
-                --card-bg: #1e1e1e;
-                --text-main: #ffffff;
-                --text-muted: #b0b0b0;
-            }
-
-            .main-footer {
-                background-color: var(--dark-bg);
-                color: var(--text-main);
-                padding: 60px 0 30px 0;
-                font-family: 'Montserrat', 'Segoe UI', Roboto, sans-serif;
-            }
-
-            .footer-thumb {
-                margin-bottom: 30px;
-            }
-
-                .footer-thumb h4 {
-                    color: var(--primary-color);
-                    text-transform: uppercase;
-                    font-size: 15px;
-                    font-weight: 700;
-                    letter-spacing: 1.5px;
-                    margin-bottom: 25px;
-                    text-align: left;
-                }
-
-            .footer-info-text {
-                color: var(--text-muted);
-                font-size: 14px;
-                line-height: 1.6;
-                text-align: left;
-            }
-
-            /* Contacto Unificado */
-            .contact-list {
-                list-style: none;
-                padding: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .contact-item {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                color: var(--text-muted);
-                text-decoration: none;
-                font-size: 14px;
-                transition: 0.3s;
-            }
-
-                .contact-item:hover {
-                    color: var(--primary-color);
-                }
-
-            .icon-circle {
-                width: 35px;
-                height: 35px;
-                background: var(--card-bg);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: var(--primary-color);
-                font-size: 14px;
-                border: 1px solid #333;
-            }
-
-            /* Horarios */
-            .hours-box {
-                text-align: left;
-                margin-top: 20px;
-                font-size: 13px;
-                color: var(--text-muted);
-                border-top: 1px solid #2a2a2a;
-                padding-top: 15px;
-            }
-
-                .hours-box span {
-                    color: #fff;
-                    font-weight: 600;
-                }
-
-            /* Redes Sociales Integradas en la columna */
-            .social-container {
-                display: flex;
-                justify-content: flex-start;
-                gap: 12px;
-                margin-top: 20px;
-            }
-
-            .social-btn {
-                width: 40px;
-                height: 40px;
-                background: var(--card-bg);
-                color: #fff;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 16px;
-                transition: 0.3s;
-                text-decoration: none;
-                border: 1px solid #333;
-            }
-
-                .social-btn:hover {
-                    background: var(--primary-color);
-                    color: #000;
-                    transform: translateY(-3px);
-                }
-
-            /* Mapa */
-            .map-wrapper {
-                border-radius: 12px;
-                overflow: hidden;
-                filter: grayscale(0.2);
-                transition: 0.5s;
-                border: 1px solid #333;
-            }
-
-                .map-wrapper:hover {
-                    filter: grayscale(0);
-                }
-
-            /* Footer Bottom Centrado y Balanceado */
-            .footer-bottom {
-                border-top: 1px solid #2a2a2a;
-                padding-top: 25px;
-                margin-top: 10px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                flex-wrap: wrap;
-            }
-
-            .copyright {
-                font-size: 13px;
-                color: #777;
-                margin: 0;
-            }
-
-            .btn-scroll-top {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                width: 40px;
-                height: 40px;
-                background: #222;
-                color: var(--primary-color);
-                border-radius: 50%;
-                text-decoration: none;
-                transition: 0.3s;
-            }
-
-                .btn-scroll-top:hover {
-                    background: var(--primary-color);
-                    color: #000;
-                }
-
-            html {
-                height: 100%;
-            }
-
-            body {
-                min-height: 100%;
-                margin: 0 !important;
-                padding: 0 !important;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .main-content {
-                flex: 1;
-            }
-
-            .main-footer {
-                margin: 0 !important;
-                padding-bottom: 0 !important;
-                flex-shrink: 0;
-            }
-
-            /* Fix modales Bootstrap 5 */
-            .modal.fade.show {
-                opacity: 1 !important;
-            }
-
-            .modal.fade {
-                opacity: 0;
-                transition: opacity 0.15s linear;
-            }
-
-            .modal {
-                z-index: 1055 !important;
-            }
-
-            .modal-backdrop {
-                z-index: 1054 !important;
-            }
-
-            .modal-content {
-                color: #212529 !important;
-                background-color: #fff !important;
-            }
-
-            .modal-body {
-                color: #212529 !important;
-            }
-
-            .modal-header {
-                color: #212529 !important;
-            }
-
-            .form-control {
-                color: #212529 !important;
-                background-color: #fff !important;
-            }
-
-            .form-label {
-                color: #212529 !important;
-            }
-
-            /* Botón regresar */
-            .btn-volver {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                padding: 8px 16px;
-                background: transparent;
-                border: 2px solid #a5c422;
-                color: #a5c422;
-                border-radius: 8px;
-                font-size: 14px;
-                font-weight: 600;
-                text-decoration: none;
-                transition: all 0.2s;
-                margin-bottom: 16px;
-            }
-
-                .btn-volver:hover {
-                    background: #a5c422;
-                    color: #fff;
-                }
-            /* ===== FIX MODALES BOOTSTRAP ===== */
-
-            .modal {
-                z-index: 1055 !important;
-            }
-
-            .modal-backdrop {
-                z-index: 1054 !important;
-            }
-
-            .modal-dialog {
-                max-width: 600px;
-                margin: 1.75rem auto;
-            }
-
-            .modal.show .modal-dialog {
-                transform: none !important;
-            }
-
-            .modal-content {
-                border-radius: 12px;
-                border: none;
-            }
-
-            .modal-header {
-                border-bottom: 1px solid #eee;
-            }
-
-            .modal-footer {
-                border-top: 1px solid #eee;
-            }
-
-            /* ===== Campana de notificaciones (USER-09-009) ===== */
-            .campana-notificaciones {
-                position: relative;
-            }
-
-                .campana-notificaciones .badge-campana {
-                    position: absolute;
-                    top: 2px;
-                    right: -6px;
-                    background: #e74c3c;
-                    color: #fff;
-                    border-radius: 50%;
-                    font-size: 10px;
-                    padding: 2px 5px;
-                    line-height: 1;
-                }
-
-            .campana-dropdown {
-                width: 320px;
-                max-height: 380px;
-                overflow-y: auto;
-                padding: 8px;
-            }
-
-            .campana-item {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                gap: 8px;
-                padding: 8px 10px;
-                border-bottom: 1px solid #eee;
-            }
-
-                .campana-item.campana-no-leida {
-                    background: #f4f8ff;
-                }
-
-            .campana-item-contenido p {
-                margin: 2px 0;
-                font-size: 12.5px;
-                color: #555;
-            }
-
-            .campana-item-contenido small {
-                color: #999;
-            }
-
-            .campana-eliminar {
-                border: none;
-                background: transparent;
-                color: #c0392b;
-                cursor: pointer;
-            }
-
-            .campana-ver-todas {
-                text-align: center;
-                padding-top: 6px;
-            }
-
-                .campana-ver-todas a {
-                    font-weight: 600;
-                    color: #a5c422;
-                }
-    </style>
+    
 </head>
 <body id="top" data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
 
@@ -480,12 +147,20 @@
                                 </ul>
                             </li>
                         }
+                        <li>
+                            <span class="usuario-logueado">
+                                <i class="fa fa-user-circle"></i>
+                                Hola, @usuario?.Nombre
+                            </span>
+                        </li>
 
-                        <li class="appointment-btn">
-                            <form asp-controller="Auth" asp-action="Logout" method="post" style="margin:0;">
-                                <button type="submit"
-                                        style="background:#d9534f;border:none;color:white;padding:10px 18px;border-radius:4px;">
-                                    Cerrar sesión
+                        <li class="logout-navbar">
+                            <form asp-controller="Auth"
+                                  asp-action="Logout"
+                                  method="post">
+                                <button type="submit" class="btn-logout-navbar">
+                                    <i class="fa fa-sign-out-alt"></i>
+                                    Cerras sesión
                                 </button>
                             </form>
                         </li>

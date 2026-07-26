@@ -1,0 +1,308 @@
+﻿@model List<AcademiaTennisDAL.Entities.ProgresoAlumno>
+
+@{
+    ViewData["Title"] = "Mi Progreso Técnico";
+
+    var ultimaEvaluacion = Model?
+        .OrderByDescending(p => p.FechaEvaluacion)
+        .FirstOrDefault();
+
+    double promedio = 0;
+
+    if (ultimaEvaluacion != null)
+    {
+        promedio =
+            (ultimaEvaluacion.NivelSaque +
+             ultimaEvaluacion.NivelReves +
+             ultimaEvaluacion.NivelDerecha +
+             ultimaEvaluacion.NivelVolea +
+             ultimaEvaluacion.NivelMovimiento +
+             ultimaEvaluacion.NivelTactica) / 6.0;
+    }
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Mi Progreso Técnico
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Consulta tus métricas, observaciones y áreas
+                        que debes seguir mejorando.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-chart-line"></i>
+                    Alumno
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a asp-controller="Home"
+                   asp-action="PerfilUsuario"
+                   class="btn btn-outline-secondary btn-sm">
+
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Volver al panel
+                </a>
+            </div>
+
+            @if (ultimaEvaluacion == null)
+            {
+                <div class="alert alert-info">
+                    Todavía no tienes evaluaciones técnicas registradas.
+                </div>
+            }
+            else
+            {
+                <div class="row g-4 mb-4">
+
+                    <div class="col-md-4">
+                        <div class="perfil-card">
+                            <i class="fa fa-signal"></i>
+                            <h3>@ultimaEvaluacion.NivelGeneral</h3>
+                            <p>Nivel actual</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="perfil-card">
+                            <i class="fa fa-line-chart"></i>
+                            <h3>@promedio.ToString("0.0") / 10</h3>
+                            <p>Promedio general</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="perfil-card">
+                            <i class="fa fa-check-circle"></i>
+                            <h3>@Model.Count</h3>
+                            <p>Evaluaciones realizadas</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between
+                            align-items-center mb-3">
+
+                            <h5 class="mb-0">Última evaluación</h5>
+
+                            <span class="text-muted">
+                                @ultimaEvaluacion.FechaEvaluacion
+                                .ToString("dd/MM/yyyy")
+                            </span>
+
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+
+                                <thead>
+                                    <tr>
+                                        <th>Habilidad</th>
+                                        <th>Resultado</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @{
+                                        var habilidades = new[]
+                                        {
+                                            new
+                                            {
+                                                Nombre = "Saque",
+                                                Valor = ultimaEvaluacion.NivelSaque
+                                            },
+                                            new
+                                            {
+                                                Nombre = "Revés",
+                                                Valor = ultimaEvaluacion.NivelReves
+                                            },
+                                            new
+                                            {
+                                                Nombre = "Derecha",
+                                                Valor = ultimaEvaluacion.NivelDerecha
+                                            },
+                                            new
+                                            {
+                                                Nombre = "Volea",
+                                                Valor = ultimaEvaluacion.NivelVolea
+                                            },
+                                            new
+                                            {
+                                                Nombre = "Movimiento",
+                                                Valor = ultimaEvaluacion.NivelMovimiento
+                                            },
+                                            new
+                                            {
+                                                Nombre = "Táctica",
+                                                Valor = ultimaEvaluacion.NivelTactica
+                                            }
+                                        };
+                                    }
+
+                                    @foreach (var habilidad in habilidades)
+                                    {
+                                        string estado;
+                                        string clase;
+
+                                        if (habilidad.Valor >= 8)
+                                        {
+                                            estado = "Destacado";
+                                            clase = "badge bg-success";
+                                        }
+                                        else if (habilidad.Valor >= 5)
+                                        {
+                                            estado = "En progreso";
+                                            clase = "badge bg-warning text-dark";
+                                        }
+                                        else
+                                        {
+                                            estado = "Debe mejorar";
+                                            clase = "badge bg-danger";
+                                        }
+
+                                        <tr>
+                                            <td>@habilidad.Nombre</td>
+                                            <td>@habilidad.Valor / 10</td>
+
+                                            <td>
+                                                <span class="@clase">
+                                                    @estado
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+
+                                <h5>
+                                    <i class="fa fa-lightbulb me-1"></i>
+                                    Áreas de mejora
+                                </h5>
+
+                                <p class="mb-0">
+                                    @(string.IsNullOrWhiteSpace(
+                                        ultimaEvaluacion.AreasMejora)
+                                        ? "No se registraron áreas de mejora."
+                                        : ultimaEvaluacion.AreasMejora)
+                                </p>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+
+                                <h5>
+                                    <i class="fa fa-comment me-1"></i>
+                                    Observaciones
+                                </h5>
+
+                                <p class="mb-0">
+                                    @(string.IsNullOrWhiteSpace(
+                                        ultimaEvaluacion.Observaciones)
+                                        ? "No se registraron observaciones."
+                                        : ultimaEvaluacion.Observaciones)
+                                </p>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+
+                        <h5 class="mb-3">
+                            Historial de evaluaciones
+                        </h5>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Curso</th>
+                                        <th>Profesor</th>
+                                        <th>Nivel general</th>
+                                        <th>Promedio</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var progreso in Model)
+                                    {
+                                        double promedioHistorial =
+                                            (progreso.NivelSaque +
+                                             progreso.NivelReves +
+                                             progreso.NivelDerecha +
+                                             progreso.NivelVolea +
+                                             progreso.NivelMovimiento +
+                                             progreso.NivelTactica) / 6.0;
+
+                                        <tr>
+                                            <td>
+                                                @(progreso.FechaEvaluacion.ToString("dd/MM/yyyy"))
+                                            </td>
+
+                                            <td>
+                                                @(progreso.Curso?.Nombre
+                                                    ?? "Sin curso")
+                                            </td>
+
+                                            <td>
+                                                @(progreso.Profesor != null
+                                                    ? $"{progreso.Profesor.Nombre} {progreso.Profesor.Apellido}"
+                                                    : "No disponible")
+                                            </td>
+
+                                            <td>@progreso.NivelGeneral</td>
+
+                                            <td>
+                                                @promedioHistorial.ToString("0.0") / 10
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</section>

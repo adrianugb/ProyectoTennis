@@ -1,0 +1,177 @@
+﻿@model AcademiaTennisDAL.Entities.ProgresoAlumno
+
+@{
+    ViewData["Title"] = "Detalle de Evaluación";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+
+    <div class="container">
+
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+
+                <div>
+
+                    <h1 class="perfil-title">
+                        Detalle de la Evaluación
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Información completa de la evaluación técnica.
+                    </p>
+
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-eye"></i>
+                    Consulta
+                </div>
+
+            </div>
+
+            <div class="mb-3">
+
+                <a asp-controller="Progreso"
+                   asp-action="AdminIndex"
+                   class="btn btn-outline-secondary btn-sm">
+
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Volver
+
+                </a>
+
+            </div>
+
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <strong>Alumno</strong><br />
+                            @Model.Alumno.Nombre @Model.Alumno.Apellido
+                        </div>
+
+                        <div class="col-md-4">
+                            <strong>Profesor</strong><br />
+                            @Model.Profesor?.Nombre @Model.Profesor?.Apellido
+                        </div>
+
+                        <div class="col-md-4">
+                            <strong>Curso</strong><br />
+                            @Model.Curso.Nombre
+                        </div>
+
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+
+                        <div class="col-md-4 mb-3">
+                            <strong>Saque</strong>
+                            <div>@Model.NivelSaque /10</div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <strong>Revés</strong>
+                            <div>@Model.NivelReves /10</div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <strong>Derecha</strong>
+                            <div>@Model.NivelDerecha /10</div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <strong>Volea</strong>
+                            <div>@Model.NivelVolea /10</div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <strong>Movimiento</strong>
+                            <div>@Model.NivelMovimiento /10</div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <strong>Táctica</strong>
+                            <div>@Model.NivelTactica /10</div>
+                        </div>
+
+                    </div>
+
+                    <hr />
+
+                    <div class="mb-3">
+
+                        <strong>Nivel General</strong>
+
+                        <div>
+
+                            @if (Model.NivelGeneral == "Avanzado")
+                            {
+                                <span class="badge bg-success">
+                                    @Model.NivelGeneral
+                                </span>
+                            }
+                            else if (Model.NivelGeneral == "Intermedio")
+                            {
+                                <span class="badge bg-warning text-dark">
+                                    @Model.NivelGeneral
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">
+                                    @Model.NivelGeneral
+                                </span>
+                            }
+
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <strong>Áreas de mejora</strong>
+
+                        <div class="border rounded p-3 mt-2">
+
+                            @(string.IsNullOrWhiteSpace(Model.AreasMejora)
+                                ? "No registradas."
+                                : Model.AreasMejora)
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <strong>Observaciones</strong>
+
+                        <div class="border rounded p-3 mt-2">
+
+                            @(string.IsNullOrWhiteSpace(Model.Observaciones)
+                                ? "No registradas."
+                                : Model.Observaciones)
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
