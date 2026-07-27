@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Helpers;
 using ProyectoGrupalTennis.Models;
+using ProyectoGrupalTennis.Services;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -12,54 +13,49 @@ namespace ProyectoGrupalTennis.Controllers
     {
         private readonly ICursoService _service;
         private readonly AppDbContext _context;
-        private readonly ProyectoGrupalTennis.Services.EmailService _emailService;
+        private readonly EmailService _emailService;
+        private readonly GoogleCalendarService _calendarService;
 
-        public CursoController(ICursoService service, AppDbContext context, ProyectoGrupalTennis.Services.EmailService emailService)
+        public CursoController(
+            ICursoService service,
+            AppDbContext context,
+            EmailService emailService,
+            GoogleCalendarService calendarService)
         {
             _service = service;
             _context = context;
             _emailService = emailService;
+            _calendarService = calendarService;
         }
 
-        // GET: /Curso/Index
         public IActionResult Index(string? buscar, string? nivel, string? estado)
         {
             var cursos = _service.ObtenerTodos();
-
             if (!string.IsNullOrEmpty(buscar))
-                cursos = cursos
-                    .Where(c => c.Nombre.Contains(buscar, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-
+                cursos = cursos.Where(c => c.Nombre.Contains(buscar, StringComparison.OrdinalIgnoreCase)).ToList();
             if (!string.IsNullOrEmpty(nivel))
                 cursos = cursos.Where(c => c.Nivel == nivel).ToList();
-
             if (estado == "Activo")
                 cursos = cursos.Where(c => c.Activo).ToList();
             else if (estado == "Inactivo")
                 cursos = cursos.Where(c => !c.Activo).ToList();
-
             return View("~/Views/Cursos/Index.cshtml", cursos);
         }
 
-        // GET: /Curso/Agregar
         public IActionResult Agregar()
         {
             var vm = new CursoFormViewModel
             {
                 Curso = new Curso(),
                 Profesores = _service.ObtenerProfesores(),
-                Horarios = new List<HorarioInputViewModel>
-                {
-                    new HorarioInputViewModel()
-                }
+                Horarios = new List<HorarioInputViewModel> { new HorarioInputViewModel() }
             };
             return View("~/Views/Cursos/Agregar.cshtml", vm);
         }
 
         // POST: /Curso/Agregar
         [HttpPost]
-        public IActionResult Agregar(CursoFormViewModel vm)
+        public async Task<IActionResult> Agregar(CursoFormViewModel vm)
         {
             if (!ModelState.IsValid)
             {
@@ -71,7 +67,47 @@ namespace ProyectoGrupalTennis.Controllers
             {
                 var horarios = MapearHorarios(vm.Horarios);
                 _service.Agregar(vm.Curso, horarios);
-                return RedirectToAction(nameof(Index));
+
+                // ── Google Calendar: crear evento en el calendario del admin ──
+                var adminUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (adminUserId != null && await _calendarService.TieneTokenAsync(adminUserId))
+                {
+                    foreach (var h in horarios)
+                    {
+                        var eventId = await _calendarService.CrearEventoAsync(
+                            adminUserId,
+                            $"Clase: {vm.Curso.Nombre}",
+                            $"Nivel: {vm.Curso.Nivel}",
+                            h.Fecha, h.HoraInicio, h.HoraFin);
+
+                        if (eventId != null)
+                        {
+                            h.GoogleEventId = eventId;
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
+
+                // ── Google Calendar: crear evento en el calendario del profesor asignado ──
+                if (vm.Curso.IdProfesor.HasValue)
+                {
+                    var profesor = await _context.Profesores
+                        .FirstOrDefaultAsync(p => p.Id == vm.Curso.IdProfesor.Value);
+
+                    if (profesor?.UserId != null && await _calendarService.TieneTokenAsync(profesor.UserId))
+                    {
+                        foreach (var h in horarios)
+                        {
+                            await _calendarService.CrearEventoAsync(
+                                profesor.UserId,
+                                $"Clase a impartir: {vm.Curso.Nombre}",
+                                $"Nivel: {vm.Curso.Nivel}",
+                                h.Fecha, h.HoraInicio, h.HoraFin);
+                        }
+                    }
+                }
+
+                return RedirectToAction("Index", "Curso");
             }
             catch (Exception ex)
             {
@@ -81,7 +117,6 @@ namespace ProyectoGrupalTennis.Controllers
             }
         }
 
-        // GET: /Curso/Editar/5
         public IActionResult Editar(int id)
         {
             var curso = _service.ObtenerPorId(id);
@@ -94,15 +129,9 @@ namespace ProyectoGrupalTennis.Controllers
                 Horarios = curso.Horarios.Select(h => new HorarioInputViewModel
                 {
                     IdHorario = h.IdHorario,
-                    Fecha = h.Fecha != DateTime.MinValue
-                        ? h.Fecha.ToString("yyyy-MM-dd")
-                        : string.Empty,
-                    HoraInicio = h.HoraInicio != TimeSpan.Zero
-                        ? h.HoraInicio.ToString(@"hh\:mm")
-                        : string.Empty,
-                    HoraFin = h.HoraFin != TimeSpan.Zero
-                        ? h.HoraFin.ToString(@"hh\:mm")
-                        : string.Empty
+                    Fecha = h.Fecha != DateTime.MinValue ? h.Fecha.ToString("yyyy-MM-dd") : string.Empty,
+                    HoraInicio = $"{h.HoraInicio.Hours:D2}:{h.HoraInicio.Minutes:D2}",
+                    HoraFin = $"{h.HoraFin.Hours:D2}:{h.HoraFin.Minutes:D2}"
                 }).ToList()
             };
 
@@ -114,7 +143,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         // POST: /Curso/Editar
         [HttpPost]
-        public IActionResult Editar(CursoFormViewModel vm)
+        public async Task<IActionResult> Editar(CursoFormViewModel vm)
         {
             if (!ModelState.IsValid)
             {
@@ -124,9 +153,46 @@ namespace ProyectoGrupalTennis.Controllers
 
             try
             {
+                // Guardar GoogleEventIds existentes antes de que Actualizar los reemplace
+                var horariosAnteriores = await _context.Horarios
+                    .Where(h => h.IdCurso == vm.Curso.IdCurso)
+                    .ToListAsync();
+
                 var horarios = MapearHorarios(vm.Horarios);
                 _service.Actualizar(vm.Curso, horarios);
-                return RedirectToAction(nameof(Index)); 
+
+                // ── Google Calendar: actualizar eventos del admin ──
+                var adminUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (adminUserId != null && await _calendarService.TieneTokenAsync(adminUserId))
+                {
+                    // Eliminar eventos anteriores
+                    foreach (var hAnterior in horariosAnteriores.Where(h => h.GoogleEventId != null))
+                    {
+                        await _calendarService.EliminarEventoAsync(adminUserId, hAnterior.GoogleEventId!);
+                    }
+
+                    // Crear nuevos eventos
+                    var horariosNuevos = await _context.Horarios
+                        .Where(h => h.IdCurso == vm.Curso.IdCurso)
+                        .ToListAsync();
+
+                    foreach (var h in horariosNuevos)
+                    {
+                        var eventId = await _calendarService.CrearEventoAsync(
+                            adminUserId,
+                            $"Clase: {vm.Curso.Nombre}",
+                            $"Nivel: {vm.Curso.Nivel}",
+                            h.Fecha, h.HoraInicio, h.HoraFin);
+
+                        if (eventId != null)
+                        {
+                            h.GoogleEventId = eventId;
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
+                return RedirectToAction("Index", "Curso");
             }
             catch (Exception ex)
             {
@@ -136,15 +202,13 @@ namespace ProyectoGrupalTennis.Controllers
             }
         }
 
-        // POST: /Curso/CambiarEstado
         [HttpPost]
         public IActionResult CambiarEstado(int id, bool activo)
         {
             _service.CambiarEstado(id, activo);
-            return RedirectToAction(nameof(Index));
+           return RedirectToAction("Index", "Curso");
         }
 
-        // POST: /Curso/AgregarHorario
         [HttpPost]
         public async Task<IActionResult> AgregarHorario(CursoFormViewModel vm)
         {
@@ -153,7 +217,6 @@ namespace ProyectoGrupalTennis.Controllers
             {
                 _service.AgregarHorario(vm.NuevoHorario);
 
-                // Notificar alumnos matriculados (USER-09-003)
                 var matriculas = await _context.Matriculas
                     .Where(m => m.IdCurso == vm.Curso.IdCurso && m.Estado == "Activa")
                     .ToListAsync();
@@ -170,7 +233,6 @@ namespace ProyectoGrupalTennis.Controllers
                         $"El horario del curso '{curso?.Nombre}' fue actualizado. Revisá tu agenda.");
                 }
 
-                // Notificar al profesor (PROF-09-002)
                 if (curso?.Profesor?.UserId != null)
                 {
                     await NotificacionHelper.EnviarNotificacionAsync(
@@ -189,15 +251,17 @@ namespace ProyectoGrupalTennis.Controllers
             return RedirectToAction(nameof(Editar), new { id = vm.Curso.IdCurso });
         }
 
-        // POST: /Curso/EliminarHorario
         [HttpPost]
         public async Task<IActionResult> EliminarHorario(int idHorario, int idCurso)
         {
             try
             {
+                // Guardar GoogleEventId antes de eliminar
+                var horario = await _context.Horarios.FindAsync(idHorario);
+                var googleEventId = horario?.GoogleEventId;
+
                 _service.EliminarHorario(idHorario);
 
-                // Notificar alumnos matriculados (USER-09-003)
                 var matriculas = await _context.Matriculas
                     .Where(m => m.IdCurso == idCurso && m.Estado == "Activa")
                     .ToListAsync();
@@ -214,13 +278,18 @@ namespace ProyectoGrupalTennis.Controllers
                         $"El horario del curso '{curso?.Nombre}' fue actualizado. Revisá tu agenda.");
                 }
 
-                // Notificar al profesor (PROF-09-002)
                 if (curso?.Profesor?.UserId != null)
                 {
                     await NotificacionHelper.EnviarNotificacionAsync(
                         _context, _emailService, curso.Profesor.UserId, "Clase", "PROF-09-002",
                         "Cambio de horario en tu curso",
                         $"El horario del curso '{curso.Nombre}' que impartís fue modificado.");
+
+                    // ── Google Calendar: eliminar evento del profesor ──
+                    if (googleEventId != null && await _calendarService.TieneTokenAsync(curso.Profesor.UserId))
+                    {
+                        await _calendarService.EliminarEventoAsync(curso.Profesor.UserId, googleEventId);
+                    }
                 }
 
                 await _context.SaveChangesAsync();
@@ -233,8 +302,6 @@ namespace ProyectoGrupalTennis.Controllers
             return RedirectToAction(nameof(Editar), new { id = idCurso });
         }
 
-        // Helper
-        
         private List<Horario> MapearHorarios(List<HorarioInputViewModel> inputs)
         {
             var horarios = new List<Horario>();

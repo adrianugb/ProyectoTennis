@@ -1,7 +1,5 @@
 ﻿using AcademiaTennisDAL.Context;
 using AcademiaTennisDAL.Entities;
-using DocumentFormat.OpenXml.InkML;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +18,20 @@ namespace ProyectoGrupalTennis.Controllers
         private readonly AppDbContext _context;
         private readonly EmailService _emailService;
         private readonly IConfiguration _configuration;
+        private readonly GoogleCalendarService _calendarService;
 
-        public UsuarioController(AppDbContext context, EmailService emailService, IConfiguration configuration)
+        public UsuarioController(
+            AppDbContext context,
+            EmailService emailService,
+            IConfiguration configuration,
+            GoogleCalendarService calendarService)
         {
             _context = context;
             _emailService = emailService;
             _configuration = configuration;
+            _calendarService = calendarService;
         }
+
 
         // GET: /Usuario/MisCursos
         public async Task<IActionResult> MisCursos(string? buscar, string? nivel)
@@ -106,6 +111,7 @@ namespace ProyectoGrupalTennis.Controllers
             }
 
             var curso = await _context.Cursos
+                .Include(c => c.Horarios)
                 .FirstOrDefaultAsync(c => c.IdCurso == idCurso && c.Activo);
 
             if (curso == null)
@@ -121,9 +127,7 @@ namespace ProyectoGrupalTennis.Controllers
             }
 
             var yaMatriculado = await _context.Matriculas
-                .AnyAsync(m => m.IdAlumno == userId &&
-                               m.IdCurso == idCurso &&
-                               m.Estado == "Activa");
+                .AnyAsync(m => m.IdAlumno == userId && m.IdCurso == idCurso && m.Estado == "Activa");
 
             if (yaMatriculado)
             {
@@ -146,23 +150,35 @@ namespace ProyectoGrupalTennis.Controllers
             };
 
             _context.Pagos.Add(pago);
+
             await NotificacionHelper.EnviarNotificacionAsync(
-                _context,
-                _emailService,
-                userId,
-                categoria: "Pago",
-                tipo: "Pago pendiente",
+                _context, _emailService, userId,
+                categoria: "Pago", tipo: "Pago pendiente",
                 titulo: "Pago pendiente de matrícula",
-                mensaje:
-                    $"Se generó un pago pendiente de ₡{curso.Precio:N0} " +
-                    $"para matricularte en el curso {curso.Nombre}. " +
-                    "Adjunta el comprobante para que el administrador pueda revisarlo."
-                );
+                mensaje: $"Se generó un pago pendiente de ₡{curso.Precio:N0} " +
+                         $"para matricularte en el curso {curso.Nombre}. " +
+                         "Adjunta el comprobante para que el administrador pueda revisarlo.");
+
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = $"Se generó el pago pendiente por ₡{curso.Precio:N0}. Debe realizar el pago para completar la matrícula.";
+            // ── Google Calendar: crear evento por cada horario del curso ──
+            if (await _calendarService.TieneTokenAsync(userId) && curso.Horarios != null)
+            {
+                foreach (var h in curso.Horarios)
+                {
+                    await _calendarService.CrearEventoAsync(
+                        userId,
+                        $"Clase: {curso.Nombre}",
+                        $"Nivel: {curso.Nivel} — Matrícula pendiente de confirmación.",
+                        h.Fecha, h.HoraInicio, h.HoraFin);
+                }
+            }
+
+            TempData["Success"] = $"Se generó el pago pendiente por ₡{curso.Precio:N0}. " +
+                                  "Debe realizar el pago para completar la matrícula.";
             return RedirectToAction("HistorialPagos");
         }
+
 
         // GET: /Usuario/MisHorarios
         public async Task<IActionResult> MisHorarios(string? buscar, string? dia)
@@ -294,8 +310,11 @@ namespace ProyectoGrupalTennis.Controllers
         public async Task<IActionResult> CancelarMatricula(int idMatricula)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId)) return RedirectToAction("Login", "Auth");
 
             var matricula = await _context.Matriculas
+                .Include(m => m.Curso)
+                    .ThenInclude(c => c.Horarios)
                 .FirstOrDefaultAsync(m => m.IdMatricula == idMatricula && m.IdAlumno == userId);
 
             if (matricula == null)
@@ -307,12 +326,18 @@ namespace ProyectoGrupalTennis.Controllers
             matricula.Estado = "Cancelada";
 
             var curso = await _context.Cursos.FindAsync(matricula.IdCurso);
-            if (curso != null)
-            {
-                curso.CuposDisponibles += 1;
-            }
+            if (curso != null) curso.CuposDisponibles += 1;
 
             await _context.SaveChangesAsync();
+
+            // ── Google Calendar: eliminar eventos del alumno para este curso ──
+            if (await _calendarService.TieneTokenAsync(userId) && matricula.Curso?.Horarios != null)
+            {
+                foreach (var h in matricula.Curso.Horarios.Where(h => h.GoogleEventId != null))
+                {
+                    await _calendarService.EliminarEventoAsync(userId, h.GoogleEventId!);
+                }
+            }
 
             TempData["Success"] = "Matrícula cancelada correctamente.";
             return RedirectToAction(nameof(AgendaPersonal));
@@ -809,4 +834,5 @@ namespace ProyectoGrupalTennis.Controllers
             return RedirectToAction(nameof(HistorialPagos));
         }
     }
+
 }

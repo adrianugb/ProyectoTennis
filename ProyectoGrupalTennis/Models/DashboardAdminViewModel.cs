@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ProyectoGrupalTennis.Models
+﻿namespace ProyectoGrupalTennis.Models
 {
     public class DashboardAdminViewModel
     {

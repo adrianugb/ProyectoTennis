@@ -38,12 +38,7 @@
                                placeholder="Buscar profesor..."
                                value="@Context.Request.Query["buscar"]" />
 
-                        <select name="especialidad" class="form-select">
-                            <option value="">Filtrar por especialidad</option>
-                            <option>Técnica básica</option>
-                            <option>Técnica avanzada</option>
-                            <option>Entrenamiento funcional</option>
-                        </select>
+                      
 
                         <select name="estado" class="form-select">
                             <option value="">Filtrar por estado</option>
@@ -63,7 +58,7 @@
                                 <th>Nombre</th>
                                 <th>Correo</th>
                                 <th>Teléfono</th>
-                                <th>Especialidad</th>
+                               
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -76,7 +71,6 @@
                                     <td>@p.Nombre @p.Apellidos</td>
                                     <td>@p.Email</td>
                                     <td>@p.Telefono</td>
-                                    <td>@p.Especialidad</td>
                                     <td>
                                         @if (p.Activo)
                                         {

@@ -14,7 +14,7 @@
         public DateTime? FechaHasta { get; set; }
         public List<AdminPagoItemViewModel> Pagos { get; set; } = new();
 
-        
+
     }
 
     public class AdminPagoItemViewModel
@@ -40,7 +40,7 @@
         public string? ComprobantePago { get; set; }
     }
 
-  
+
     public class AdminFacturaItemViewModel
     {
         public int IdFactura { get; set; }

@@ -2,7 +2,6 @@ using AcademiaTennisBLL.Services;
 using AcademiaTennisDAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ProyectoGrupalTennis.Models;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -26,9 +25,6 @@ namespace ProyectoGrupalTennis.Controllers
                     .Where(p => p.Nombre.Contains(buscar, StringComparison.OrdinalIgnoreCase)
                              || p.Apellidos.Contains(buscar, StringComparison.OrdinalIgnoreCase))
                     .ToList();
-
-            if (!string.IsNullOrEmpty(especialidad))
-                profesores = profesores.Where(p => p.Especialidad == especialidad).ToList();
 
             if (estado == "Activo")
                 profesores = profesores.Where(p => p.Activo).ToList();

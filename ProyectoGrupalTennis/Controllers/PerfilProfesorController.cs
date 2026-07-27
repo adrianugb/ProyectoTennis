@@ -1,11 +1,11 @@
 ﻿using AcademiaTennisDAL.Context;
+using AcademiaTennisDAL.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ProyectoGrupalTennis.Models;
-using AcademiaTennisDAL.Entities;
 using ProyectoGrupalTennis.Helpers;
+using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Services;
 
 namespace ProyectoGrupalTennis.Controllers
@@ -16,13 +16,20 @@ namespace ProyectoGrupalTennis.Controllers
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly EmailService _emailService;
+        private readonly GoogleCalendarService _calendarService;
 
-        public PerfilProfesorController(AppDbContext context, UserManager<ApplicationUser> userManager, EmailService emailService)
+        public PerfilProfesorController(
+            AppDbContext context,
+            UserManager<ApplicationUser> userManager,
+            EmailService emailService,
+            GoogleCalendarService calendarService)
         {
             _context = context;
             _userManager = userManager;
             _emailService = emailService;
+            _calendarService = calendarService;
         }
+
 
         private async Task<Profesor?> ObtenerProfesorActual()
         {
@@ -131,6 +138,8 @@ namespace ProyectoGrupalTennis.Controllers
                 return View("~/Views/Perfiles/ReprogramarClase.cshtml", vm);
             }
 
+            var googleEventIdAnterior = horario.GoogleEventId;
+
             horario.Fecha = DateTime.Parse(vm.Fecha);
             horario.HoraInicio = horaInicioSpan;
             horario.HoraFin = horaFinSpan;
@@ -138,6 +147,37 @@ namespace ProyectoGrupalTennis.Controllers
             await _context.SaveChangesAsync();
 
             var curso = await _context.Cursos.FindAsync(vm.IdCurso);
+            var profesorUserId = _userManager.GetUserId(User);
+
+            // ── Google Calendar: actualizar evento del profesor ──
+            if (profesorUserId != null && await _calendarService.TieneTokenAsync(profesorUserId))
+            {
+                if (googleEventIdAnterior != null)
+                {
+                    await _calendarService.ActualizarEventoAsync(
+                        profesorUserId, googleEventIdAnterior,
+                        $"Clase: {curso?.Nombre}",
+                        $"Nivel: {curso?.Nivel}",
+                        horario.Fecha, horario.HoraInicio, horario.HoraFin);
+                }
+                else
+                {
+                    // No había evento previo, crear uno nuevo
+                    var newEventId = await _calendarService.CrearEventoAsync(
+                        profesorUserId,
+                        $"Clase: {curso?.Nombre}",
+                        $"Nivel: {curso?.Nivel}",
+                        horario.Fecha, horario.HoraInicio, horario.HoraFin);
+
+                    if (newEventId != null)
+                    {
+                        horario.GoogleEventId = newEventId;
+                        await _context.SaveChangesAsync();
+                    }
+                }
+            }
+
+            // Notificar alumnos
             var matriculas = await _context.Matriculas
                 .Where(m => m.IdCurso == vm.IdCurso && m.Estado == "Activa")
                 .ToListAsync();
@@ -147,7 +187,18 @@ namespace ProyectoGrupalTennis.Controllers
                 await NotificacionHelper.EnviarNotificacionAsync(
                     _context, _emailService, m.IdAlumno, "Clase", "USER-09-003",
                     "Cambio de horario",
-                    $"La clase del curso '{curso?.Nombre}' fue reprogramada al {DateTime.Parse(vm.Fecha):dd/MM/yyyy} de {vm.HoraInicio} a {vm.HoraFin}.");
+                    $"La clase del curso '{curso?.Nombre}' fue reprogramada al " +
+                    $"{horario.Fecha:dd/MM/yyyy} de {vm.HoraInicio} a {vm.HoraFin}.");
+
+                // ── Google Calendar: actualizar evento del alumno si tiene token ──
+                if (googleEventIdAnterior != null && await _calendarService.TieneTokenAsync(m.IdAlumno))
+                {
+                    await _calendarService.ActualizarEventoAsync(
+                        m.IdAlumno, googleEventIdAnterior,
+                        $"Clase: {curso?.Nombre}",
+                        $"Nivel: {curso?.Nivel} — Clase reprogramada.",
+                        horario.Fecha, horario.HoraInicio, horario.HoraFin);
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -155,6 +206,7 @@ namespace ProyectoGrupalTennis.Controllers
             TempData["MensajeExito"] = "Clase reprogramada y alumnos notificados.";
             return RedirectToAction(nameof(MisCursos));
         }
+
 
         // POST: /PerfilProfesor/CancelarClase
         [HttpPost]
@@ -170,6 +222,9 @@ namespace ProyectoGrupalTennis.Controllers
 
             var curso = await _context.Cursos.FindAsync(idCurso);
             var fechaHorario = horario.Fecha;
+            var googleEventId = horario.GoogleEventId;
+            var profesorUserId = _userManager.GetUserId(User);
+
             _context.Horarios.Remove(horario);
 
             var matriculas = await _context.Matriculas
@@ -181,7 +236,21 @@ namespace ProyectoGrupalTennis.Controllers
                 await NotificacionHelper.EnviarNotificacionAsync(
                     _context, _emailService, m.IdAlumno, "Clase", "USER-09-002",
                     "Clase cancelada",
-                    $"La clase del curso '{curso?.Nombre}' programada para el {fechaHorario:dd/MM/yyyy} fue cancelada.");
+                    $"La clase del curso '{curso?.Nombre}' programada para el " +
+                    $"{fechaHorario:dd/MM/yyyy} fue cancelada.");
+
+                // ── Google Calendar: eliminar evento del alumno ──
+                if (googleEventId != null && await _calendarService.TieneTokenAsync(m.IdAlumno))
+                {
+                    await _calendarService.EliminarEventoAsync(m.IdAlumno, googleEventId);
+                }
+            }
+
+            // ── Google Calendar: eliminar evento del profesor ──
+            if (googleEventId != null && profesorUserId != null
+                && await _calendarService.TieneTokenAsync(profesorUserId))
+            {
+                await _calendarService.EliminarEventoAsync(profesorUserId, googleEventId);
             }
 
             await _context.SaveChangesAsync();

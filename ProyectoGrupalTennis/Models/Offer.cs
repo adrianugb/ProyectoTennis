@@ -1,5 +1,3 @@
-using System;
-
 namespace ProyectoGrupalTennis.Models
 {
     public class Offer

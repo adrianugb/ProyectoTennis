@@ -19,6 +19,22 @@
                     <i class="fa fa-user"></i> Perfil Usuario
                 </div>
             </div>
+            @if (ViewBag.TieneGoogleCalendar == true)
+            {
+                <span class="perfil-badge-success">
+                    <i class="fa fa-calendar"></i> Google Calendar conectado
+                </span>
+                <a asp-controller="GoogleCalendar" asp-action="Desconectar"
+                   class="perfil-btn-outline">Desconectar</a>
+            }
+            else
+            {
+                <a asp-controller="GoogleCalendar" asp-action="Autorizar"
+                   asp-route-returnUrl="@Context.Request.Path"
+                   class="perfil-btn">
+                    <i class="fa fa-calendar"></i> Conectar Google Calendar
+                </a>
+            }
 
             <div class="perfil-grid">
                 <div class="row g-4">

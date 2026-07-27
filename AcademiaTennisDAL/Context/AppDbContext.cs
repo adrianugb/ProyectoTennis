@@ -116,11 +116,15 @@ namespace AcademiaTennisDAL.Context
                 .WithMany()
                 .HasForeignKey(e => e.IdGanador)
                 .OnDelete(DeleteBehavior.NoAction);
-
-     
-
-
-        
         }
+
+        //CONEXIÓN CON GOOGLE CALENDAR
+        public DbSet<GoogleCalendarToken> GoogleCalendarTokens { get; set; }
+
+
+
+
+
     }
 }
+

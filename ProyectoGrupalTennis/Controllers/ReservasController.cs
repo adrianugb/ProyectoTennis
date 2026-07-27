@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Helpers;
+using ProyectoGrupalTennis.Models;
 
 namespace ProyectoGrupalTennis.Controllers
 {

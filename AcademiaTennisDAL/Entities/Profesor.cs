@@ -19,8 +19,7 @@ namespace AcademiaTennisDAL.Entities
         [StringLength(50)]
         public string? Telefono { get; set; }
 
-        [StringLength(200)]
-        public string? Especialidad { get; set; }
+        //se elimino especialidad
 
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
 

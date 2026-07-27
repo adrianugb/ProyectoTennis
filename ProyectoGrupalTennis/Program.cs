@@ -2,12 +2,12 @@ using AcademiaTennisBLL.Services;
 using AcademiaTennisDAL.Context;
 using AcademiaTennisDAL.Entities;
 using AcademiaTennisDAL.Repositories;
+using Hangfire;
+using Hangfire.MySql;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Services;
-using Hangfire;
-using Hangfire.MySql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +56,9 @@ builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 builder.Services.AddScoped<ICursoService, CursoService>();
 builder.Services.AddScoped<ProyectoGrupalTennis.Services.ChatbotService>(); // Módulo 6 - Asistente Virtual
 //----------------------------------------------------------------------------
+//REGISTRAR SERVICIO DE CALENDAR
+builder.Services.AddScoped<GoogleCalendarService>();
+builder.Services.AddSession(); // para guardar returnUrl
 
 // HANGFIRE
 builder.Services.AddHangfire(config =>
@@ -238,6 +241,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+
 // ── PIPELINE ──────────────────────────────────────────────────────────────────
 
 if (!app.Environment.IsDevelopment())
@@ -249,6 +253,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+
+app.UseSession();
 
 app.UseRouting();
 

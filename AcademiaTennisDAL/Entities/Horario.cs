@@ -26,5 +26,9 @@ namespace AcademiaTennisDAL.Entities
 
         [ForeignKey("IdCurso")]
         public Curso? Curso { get; set; }
+
+        //para almacenar el id del evento en Google Calendar, si se sincroniza
+        [StringLength(200)]
+        public string? GoogleEventId { get; set; }
     }
 }

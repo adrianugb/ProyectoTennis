@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
 
 namespace AcademiaTennisDAL.Entities
 {
@@ -28,7 +27,7 @@ namespace AcademiaTennisDAL.Entities
         public bool Activa { get; set; } = true;
 
         [StringLength(200)]
-        public string ?ProductosAplicables { get; set; }
+        public string? ProductosAplicables { get; set; }
 
         public ICollection<Cupon> Cupones { get; set; }
     }

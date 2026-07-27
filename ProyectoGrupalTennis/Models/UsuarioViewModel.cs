@@ -61,5 +61,5 @@
         public string NombreCompleto { get; set; } = string.Empty;
     }
 
-    
+
 }

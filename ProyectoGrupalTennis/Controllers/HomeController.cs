@@ -1,53 +1,41 @@
-using AcademiaTennisDAL;
 using AcademiaTennisDAL.Context;
-using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Models;
+using ProyectoGrupalTennis.Services;
 using System.Diagnostics;
 
 namespace ProyectoGrupalTennis.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly AcademiaTennisDAL.Context.AppDbContext _context;
+        private readonly AppDbContext _context;
+        private readonly GoogleCalendarService _calendarService;
 
-        public HomeController(AcademiaTennisDAL.Context.AppDbContext context)
+        public HomeController(AppDbContext context, GoogleCalendarService calendarService)
         {
             _context = context;
+            _calendarService = calendarService;
         }
+
         #region Vistas generales
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View();
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        public IActionResult Privacy() => View();
 
-        public IActionResult Retencion()
-        {
-            return View();
-        }
-        public IActionResult Campeonatos()
-        {
-            return View("~/Views/Campeonatos/campeonatos.cshtml");
-        }
+        public IActionResult Retencion() => View();
 
-        public IActionResult Tienda()
-        {
-            return View("~/Views/Home/Tienda.cshtml");
-        }
+        public IActionResult Campeonatos() =>
+            View("~/Views/Campeonatos/campeonatos.cshtml");
+
+        public IActionResult Tienda() =>
+            View("~/Views/Home/Tienda.cshtml");
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        public IActionResult Error() =>
+            View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
         #endregion
 
@@ -60,7 +48,6 @@ namespace ProyectoGrupalTennis.Controllers
             return View("~/Views/Dashboard/Index.cshtml", model);
         }
 
-        // ADM-08-004: recarga solo el bloque de administrador vía AJAX al aplicar el filtro de fechas
         [Authorize(Roles = "Administrador")]
         [HttpGet]
         public async Task<IActionResult> FiltrarDashboardAdmin(DateTime? fechaInicio, DateTime? fechaFin)
@@ -71,11 +58,9 @@ namespace ProyectoGrupalTennis.Controllers
 
         private async Task<DashboardAdminViewModel> ConstruirDashboardAdminAsync(DateTime? fechaInicio, DateTime? fechaFin)
         {
-            // ADM-08-004: si no mandan fechas, usamos el mes actual por defecto
             var inicio = (fechaInicio ?? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)).Date;
             var fin = (fechaFin ?? inicio.AddMonths(1).AddDays(-1)).Date;
 
-            // ADM-08-002: alumnos activos = alumnos con al menos una matrícula "Activa"
             var alumnosActivos = await _context.Matriculas
                 .Where(m => m.Estado == "Activa")
                 .Select(m => m.IdAlumno)
@@ -90,7 +75,6 @@ namespace ProyectoGrupalTennis.Controllers
                 .Distinct()
                 .CountAsync();
 
-            // ADM-08-003: clases programadas dentro del rango de fechas seleccionado
             var clasesDelPeriodo = await _context.ClasesProgramadas
                 .Include(c => c.Curso)
                     .ThenInclude(c => c.Profesor)
@@ -98,12 +82,10 @@ namespace ProyectoGrupalTennis.Controllers
                 .OrderBy(c => c.FechaClase)
                 .ToListAsync();
 
-            // Profesores activos (indicador general del panel)
             var profesoresActivos = await _context.Profesores
                 .Where(p => p.Activo)
                 .CountAsync();
 
-            // ADM-08-001: cursos mas demandados (con mas matriculas) en el periodo
             var cursosMasDemandados = await _context.Matriculas
                 .Where(m => m.FechaMatricula.Date >= inicio && m.FechaMatricula.Date <= fin)
                 .GroupBy(m => m.Curso.Nombre)
@@ -116,7 +98,6 @@ namespace ProyectoGrupalTennis.Controllers
                 .Take(3)
                 .ToListAsync();
 
-            // Ingresos del periodo (pagos con estado "Pagado")
             var ingresosPeriodo = await _context.Pagos
                 .Where(p => p.Estado == "Pagado"
                          && p.FechaPago.Date >= inicio
@@ -148,7 +129,6 @@ namespace ProyectoGrupalTennis.Controllers
                 Alertas = new List<string>()
             };
 
-            // Alertas simples (puedes ampliarlas después)
             var clasesLlenas = model.ClasesDelPeriodo.Count(c => c.CuposOcupados >= c.CuposTotales && c.CuposTotales > 0);
             if (clasesLlenas > 0)
                 model.Alertas.Add($"{clasesLlenas} clase(s) alcanzaron el límite de cupos.");
@@ -163,156 +143,116 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Notificaciones
 
-        public IActionResult Notificaciones()
-        {
-            return View("~/Views/Notificaciones/Index.cshtml");
-        }
+        public IActionResult Notificaciones() =>
+            View("~/Views/Notificaciones/Index.cshtml");
 
         #endregion
 
         #region Feedback
 
-        public IActionResult Feedback()
-        {
-            return View("~/Views/Feedback/Index.cshtml");
-        }
+        public IActionResult Feedback() =>
+            View("~/Views/Feedback/Index.cshtml");
 
         #endregion
 
         #region Progreso
 
-        public IActionResult Progreso()
-        {
-            return View("~/Views/Progreso/Index.cshtml");
-        }
+        public IActionResult Progreso() =>
+            View("~/Views/Progreso/Index.cshtml");
 
         #endregion
 
         #region Seguridad y autenticación
 
-        public IActionResult Login()
-        {
-            return View("~/Views/Auth/Login.cshtml");
-        }
+        public IActionResult Login() =>
+            View("~/Views/Auth/Login.cshtml");
 
-        public IActionResult Registro()
-        {
-            return RedirectToAction("Registro", "Auth");
-        }
+        public IActionResult Registro() =>
+            RedirectToAction("Registro", "Auth");
 
-        public IActionResult RecuperarContrasena()
-        {
-            return View("~/Views/Auth/RecuperarContrasena.cshtml");
-        }
+        public IActionResult RecuperarContrasena() =>
+            View("~/Views/Auth/RecuperarContrasena.cshtml");
 
         #endregion
 
         #region Perfiles
 
+        public IActionResult PerfilAdmin() =>
+            View("~/Views/Perfiles/PerfilAdmin.cshtml");
 
-        public IActionResult PerfilAdmin()
-        {
-            return View("~/Views/Perfiles/PerfilAdmin.cshtml");
-        }
+        public IActionResult AdminCursos() =>
+            RedirectToAction("Index", "Curso");
 
-        public IActionResult AdminCursos()
-        {
-            return RedirectToAction("Index", "Curso");
-        }
+        public IActionResult AdminAlumnos() =>
+            RedirectToAction("Index", "Alumnos");
 
-        public IActionResult AdminAlumnos()
-        {
-            return RedirectToAction("Index", "Alumnos");
-        }
+        public IActionResult AdminProfesores() =>
+            View("~/Views/Perfiles/AdminProfesores.cshtml");
 
-        public IActionResult AdminProfesores()
-        {
-            return View("~/Views/Perfiles/AdminProfesores.cshtml");
-        }
-
-        public IActionResult AdminFacturacion()
-        {
-            return View("~/Views/Perfiles/AdminFacturacion.cshtml");
-        }
+        public IActionResult AdminFacturacion() =>
+            View("~/Views/Perfiles/AdminFacturacion.cshtml");
 
         [Authorize(Roles = "Administrador")]
-        public IActionResult AdminPagos()
-        {
-            return RedirectToAction("AdminPagos", "Admin");
-        }
+        public IActionResult AdminPagos() =>
+            RedirectToAction("AdminPagos", "Admin");
 
-        public IActionResult AdminFacturas()
-        {
-            return View("~/Views/Perfiles/AdminFacturas.cshtml");
-        }
+        public IActionResult AdminFacturas() =>
+            View("~/Views/Perfiles/AdminFacturas.cshtml");
 
-        public IActionResult AdminUsuario()
-        {
-            return View("~/Views/Perfiles/AdminUsuario.cshtml");
-        }
+        public IActionResult AdminUsuario() =>
+            View("~/Views/Perfiles/AdminUsuario.cshtml");
+
         #endregion
 
-        #region Perfil Usuario 
+        #region Perfil Usuario
 
+        public IActionResult PerfilUsuario() =>
+            View("~/Views/Perfiles/PerfilUsuario.cshtml");
 
-        public IActionResult PerfilUsuario()
-        {
-            return View("~/Views/Perfiles/PerfilUsuario.cshtml");
-        }
-        public IActionResult UsuarioPagos()
-        {
-            return RedirectToAction("HistorialPagos", "Usuario");
-        }
+        public IActionResult UsuarioPagos() =>
+            RedirectToAction("HistorialPagos", "Usuario");
 
-        public IActionResult UsuarioHistorialPagos()
-        {
-            return View("~/Views/Perfiles/UsuarioHistorialPagos.cshtml");
-        }
+        public IActionResult UsuarioHistorialPagos() =>
+            View("~/Views/Perfiles/UsuarioHistorialPagos.cshtml");
 
         #endregion
 
         #region Perfil Profesor
 
-        public IActionResult PerfilProfesor()
+        public async Task<IActionResult> PerfilProfesor()
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.TieneGoogleCalendar = userId != null
+                && await _calendarService.TieneTokenAsync(userId);
             return View("~/Views/Perfiles/PerfilProfesor.cshtml");
         }
 
-        public IActionResult ProfesorAlumnos()
-        {
-            return View("~/Views/Perfiles/ProfesorAlumnos.cshtml");
-        }
+        public IActionResult ProfesorAlumnos() =>
+            View("~/Views/Perfiles/ProfesorAlumnos.cshtml");
 
-        public IActionResult ProfesorCursos()
-        {
-            return RedirectToAction("MisCursos", "PerfilProfesor");
-        }
+        public IActionResult ProfesorCursos() =>
+            RedirectToAction("MisCursos", "PerfilProfesor");
+
         #endregion
 
         #region Gamificacion
 
-        public IActionResult Gamificacion()
-        {
-            return View("~/Views/Gamificacion/Index.cshtml");
-        }
+        public IActionResult Gamificacion() =>
+            View("~/Views/Gamificacion/Index.cshtml");
 
         #endregion
 
         #region Geolocalizacion
 
-        public IActionResult Geolocalizacion()
-        {
-            return View("~/Views/Geolocalizacion/Index.cshtml");
-        }
+        public IActionResult Geolocalizacion() =>
+            View("~/Views/Geolocalizacion/Index.cshtml");
 
         #endregion
 
         #region Matricula
 
-        public IActionResult Matricula()
-        {
-            return View("~/Views/Matricula/Index.cshtml");
-        }
+        public IActionResult Matricula() =>
+            View("~/Views/Matricula/Index.cshtml");
 
         #endregion
     }

@@ -13,7 +13,6 @@ using ProyectoGrupalTennis.Services;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System.IO;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -248,7 +247,7 @@ namespace ProyectoGrupalTennis.Controllers
             return View("~/Views/Perfiles/AdminPagos.cshtml", model);
         }
 
-      
+
 
         // GET: /Admin/ ADMIN-05-007 – Exportar reporte de pago
 
@@ -477,7 +476,7 @@ namespace ProyectoGrupalTennis.Controllers
 
             return View("~/Views/Perfiles/AdminNotificarGrupo.cshtml", model);
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> RegistrarPagoManual()
         {
