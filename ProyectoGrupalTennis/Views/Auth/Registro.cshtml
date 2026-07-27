@@ -63,6 +63,26 @@
                             </div>
 
                             <div class="mb-3">
+                                <label asp-for="Telefono"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Telefono"
+                                       type="tel"
+                                       inputmode="numeric"
+                                       class="form-control"
+                                       placeholder="Ejemplo: 50688887777" />
+
+                                <small class="text-muted">
+                                    Incluye el código de país, sin espacios, guiones ni el símbolo +.
+                                </small>
+
+                                <span asp-validation-for="Telefono"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
                                 <label asp-for="Password" class="form-label"></label>
                                 <input asp-for="Password" class="form-control" placeholder="Ingresa tu contraseña" />
                                 <span asp-validation-for="Password" class="text-danger"></span>
@@ -98,5 +118,6 @@
             </div>
         </div>
     </div>
+    <partial name="_ValidationScriptsPartial" />
 </body>
 </html>

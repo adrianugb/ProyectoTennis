@@ -41,6 +41,7 @@ namespace ProyectoGrupalTennis.Controllers
             model.Email = model.Email.Trim().ToLower();
             model.Nombre = model.Nombre.Trim();
             model.Apellido = model.Apellido.Trim();
+            model.Telefono = model.Telefono.Trim();
 
             if (!ModelState.IsValid)
             {
@@ -61,6 +62,7 @@ namespace ProyectoGrupalTennis.Controllers
                 Apellido = model.Apellido,
                 UserName = model.Email,
                 Email = model.Email,
+                PhoneNumber = model.Telefono,
                 FechaRegistro = DateTime.Now,
                 Bloqueado = false
             };

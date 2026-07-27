@@ -9,6 +9,7 @@
       asp-append-version="true" />
 
 <section class="perfil-page compact">
+
     <div class="container-fluid px-4">
 
         <div class="perfil-container"
@@ -22,7 +23,7 @@
                     </h1>
 
                     <p class="perfil-subtitle">
-                        Revisa la información enviada por el alumno antes de proponer un horario.
+                        Consulta la información de la solicitud y la propuesta preparada por la academia.
                     </p>
                 </div>
 
@@ -43,6 +44,40 @@
             {
                 <div class="alert alert-danger">
                     @TempData["Error"]
+                </div>
+            }
+
+            @if (TempData["AdvertenciaCorreo"] != null)
+            {
+                <div class="alert alert-warning">
+                    @TempData["AdvertenciaCorreo"]
+                </div>
+            }
+
+            @if (TempData["AdvertenciaWhatsapp"] != null)
+            {
+                <div class="alert alert-warning">
+                    @TempData["AdvertenciaWhatsapp"]
+                </div>
+            }
+
+            @if (TempData["WhatsappUrl"] != null)
+            {
+                <div class="alert alert-success mt-3">
+
+                    <p class="mb-2">
+                        La propuesta fue enviada correctamente. También puedes notificar al alumno por WhatsApp.
+                    </p>
+
+                    <a href="@TempData["WhatsappUrl"]"
+                       target="_blank"
+                       class="btn btn-success">
+
+                        <i class="fa fa-whatsapp me-1"></i>
+                        Notificar por WhatsApp
+
+                    </a>
+
                 </div>
             }
 
@@ -73,10 +108,13 @@
                     $@Model.PrecioSolicitado?.ToString("N2")
                 </p>
 
-                <p>
+                <div class="mb-3">
                     <strong>Estado:</strong>
-                    @Model.Estado
-                </p>
+
+                    <span class="perfil-badge ms-2">
+                        @Model.Estado
+                    </span>
+                </div>
 
                 <p>
                     <strong>Requiere equipo:</strong>
@@ -124,10 +162,97 @@
                 }
                 else
                 {
-                    <p>No hay disponibilidades registradas.</p>
+                    <p>
+                        No hay disponibilidades registradas.
+                    </p>
                 }
 
-              <div class="perfil-actions mt-4">
+                @if (Model.FechaPropuesta.HasValue ||
+     Model.HoraInicioPropuesta.HasValue ||
+     Model.HoraFinPropuesta.HasValue ||
+     Model.IdProfesorPropuesto.HasValue ||
+     Model.IdCanchaPropuesta.HasValue)
+                {
+                    <div class="perfil-table-block mt-4">
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                            <div>
+                                <h2 class="perfil-table-title mb-1">
+                                    Propuesta de la academia
+                                </h2>
+
+                                <p class="text-muted mb-0">
+                                    Horario, profesor y cancha propuestos para esta solicitud.
+                                </p>
+                            </div>
+
+                            <span class="perfil-badge">
+                                @Model.Estado
+                            </span>
+
+                        </div>
+
+                        <div class="row g-3 mt-2">
+
+                            <div class="col-md-4">
+                                <strong>Fecha propuesta</strong>
+
+                                <p class="mb-0">
+                                    @(Model.FechaPropuesta.HasValue
+                                        ? Model.FechaPropuesta.Value.ToString("dd/MM/yyyy")
+                                        : "Por confirmar")
+                                </p>
+                            </div>
+
+                            <div class="col-md-4">
+                                <strong>Horario propuesto</strong>
+
+                                <p class="mb-0">
+                                    @(Model.HoraInicioPropuesta.HasValue
+                                        ? Model.HoraInicioPropuesta.Value.ToString(@"hh\:mm")
+                                        : "Por confirmar")
+                                    -
+                                    @(Model.HoraFinPropuesta.HasValue
+                                        ? Model.HoraFinPropuesta.Value.ToString(@"hh\:mm")
+                                        : "Por confirmar")
+                                </p>
+                            </div>
+
+                            <div class="col-md-4">
+                                <strong>Profesor</strong>
+
+                                <p class="mb-0">
+                                    @(Model.ProfesorPropuesto != null
+                                        ? $"{Model.ProfesorPropuesto.Nombre} {Model.ProfesorPropuesto.Apellidos}"
+                                        : "Por confirmar")
+                                </p>
+                            </div>
+
+                            <div class="col-md-4">
+                                <strong>Cancha</strong>
+
+                                <p class="mb-0">
+                                    @(Model.CanchaPropuesta?.Nombre ?? "Por confirmar")
+                                </p>
+                            </div>
+
+                            <div class="col-md-8">
+                                <strong>Observaciones de la academia</strong>
+
+                                <p class="mb-0">
+                                    @(string.IsNullOrWhiteSpace(Model.ObservacionesAcademia)
+                                        ? "Sin observaciones adicionales."
+                                        : Model.ObservacionesAcademia)
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+                <div class="perfil-actions mt-4">
 
                     <a asp-controller="AdminSolicitudes"
                        asp-action="Index"
@@ -135,10 +260,11 @@
                         Volver
                     </a>
 
-                    @if (Model.Estado == "Pendiente")
+                    @if (Model.Estado == "Pendiente" ||
+                         Model.Estado == "En revisión")
                     {
                         <form asp-controller="AdminSolicitudes"
-                              asp-action="MarcarEnRevision"
+                              asp-action="Revisar"
                               method="post"
                               style="display:inline;">
 
@@ -151,7 +277,9 @@
                             <button type="submit"
                                     class="perfil-btn">
 
-                                Marcar como En revisión
+                                @(Model.Estado == "Pendiente"
+                                    ? "Revisar solicitud"
+                                    : "Continuar revisión")
 
                             </button>
 
@@ -160,11 +288,10 @@
 
                 </div>
 
-                </div>
-
             </div>
 
         </div>
 
     </div>
+
 </section>

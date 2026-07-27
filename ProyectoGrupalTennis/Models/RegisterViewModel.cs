@@ -18,6 +18,13 @@ namespace ProyectoGrupalTennis.Models
         [RegularExpression(@"^(?!\s*$).+", ErrorMessage = "El correo no puede estar vacío.")]
         public string Email { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "El número de teléfono es obligatorio.")]
+        [Display(Name = "Teléfono")]
+        [RegularExpression(
+        @"^\d{8,15}$",
+        ErrorMessage = "Ingrese el número con código de país, únicamente con números.")]
+        public string Telefono { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "La contraseña es obligatoria.")]
         [StringLength(100, MinimumLength = 8,
             ErrorMessage = "La contraseña debe tener al menos 8 caracteres.")]

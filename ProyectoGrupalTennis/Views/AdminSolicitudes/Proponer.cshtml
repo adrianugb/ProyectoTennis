@@ -1,0 +1,313 @@
+﻿@model ProyectoGrupalTennis.Models.PropuestaSolicitudViewModel
+
+@{
+    ViewData["Title"] = "Preparar propuesta";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+
+    <div class="container-fluid px-4">
+
+        <div class="perfil-container"
+             style="max-width:1450px; margin:0 auto;">
+
+            <div class="perfil-header">
+
+                <div>
+                    <h1 class="perfil-title">
+                        Preparar propuesta
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Revisa la disponibilidad del alumno y define una propuesta de fecha,
+                        horario, profesor y cancha.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-calendar-check"></i>
+                    @Model.CodigoSolicitud
+                </div>
+
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Success"]
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["Error"]
+                </div>
+            }
+
+            <form asp-controller="AdminSolicitudes"
+                  asp-action="GuardarPropuesta"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input asp-for="IdSolicitudCurso"
+                       type="hidden" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="perfil-table-block mb-4">
+
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+
+                        <div>
+                            <h2 class="perfil-table-title mb-2">
+                                Resumen de la solicitud
+                            </h2>
+
+                            <p class="text-muted mb-0">
+                                Información registrada por el alumno.
+                            </p>
+                        </div>
+
+                        <span class="perfil-badge">
+                            Estado: @Model.Estado
+                        </span>
+
+                    </div>
+
+                    <div class="row g-4 mt-2">
+
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>Alumno:</strong>
+                                @Model.NombreAlumno
+                            </p>
+
+                            <p class="mb-2">
+                                <strong>Clase o paquete:</strong>
+                                @Model.NombreCurso
+                            </p>
+
+                            <p class="mb-0">
+                                <strong>Nivel:</strong>
+                                @Model.Nivel
+                            </p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>Código:</strong>
+                                @Model.CodigoSolicitud
+                            </p>
+
+                            <p class="mb-2">
+                                <strong>Estado actual:</strong>
+                                @Model.Estado
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="perfil-table-block mb-4">
+
+                    <h2 class="perfil-table-title">
+                        Disponibilidad del alumno
+                    </h2>
+
+                    <p class="text-muted mb-3">
+                        La propuesta debe realizarse dentro de alguno de los rangos indicados,
+                        salvo que la academia coordine una alternativa con el alumno.
+                    </p>
+
+                    <div class="alert alert-light border mb-0">
+                        <i class="fa fa-clock me-2"></i>
+                        @Model.DisponibilidadAlumno
+                    </div>
+
+                </div>
+
+                <div class="perfil-table-block mb-4">
+
+                    <h2 class="perfil-table-title">
+                        Datos de la propuesta
+                    </h2>
+
+                    <p class="text-muted">
+                        Complete los campos para guardar el borrador o enviar la propuesta al alumno.
+                    </p>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-4">
+
+                            <label asp-for="FechaPropuesta"
+                                   class="form-label">
+                                Fecha propuesta
+                            </label>
+
+                            <input asp-for="FechaPropuesta"
+                                   type="date"
+                                   class="form-control" />
+
+                            <span asp-validation-for="FechaPropuesta"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label asp-for="HoraInicioPropuesta"
+                                   class="form-label">
+                                Hora de inicio
+                            </label>
+
+                            <input asp-for="HoraInicioPropuesta"
+                                   type="time"
+                                   class="form-control" />
+
+                            <span asp-validation-for="HoraInicioPropuesta"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label asp-for="HoraFinPropuesta"
+                                   class="form-label">
+                                Hora de finalización
+                            </label>
+
+                            <input asp-for="HoraFinPropuesta"
+                                   type="time"
+                                   class="form-control" />
+
+                            <span asp-validation-for="HoraFinPropuesta"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label asp-for="IdProfesorPropuesto"
+                                   class="form-label">
+                                Profesor
+                            </label>
+
+                            <select asp-for="IdProfesorPropuesto"
+                                    asp-items="ViewBag.Profesores"
+                                    class="form-select">
+
+                                <option value="">
+                                    Seleccione un profesor
+                                </option>
+
+                            </select>
+
+                            <span asp-validation-for="IdProfesorPropuesto"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label asp-for="IdCanchaPropuesta"
+                                   class="form-label">
+                                Cancha
+                            </label>
+
+                            <select asp-for="IdCanchaPropuesta"
+                                    asp-items="ViewBag.Canchas"
+                                    class="form-select">
+
+                                <option value="">
+                                    Seleccione una cancha
+                                </option>
+
+                            </select>
+
+                            <span asp-validation-for="IdCanchaPropuesta"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="col-12">
+
+                            <label asp-for="ObservacionesAcademia"
+                                   class="form-label">
+                                Observaciones para el alumno
+                            </label>
+
+                            <textarea asp-for="ObservacionesAcademia"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Agregue instrucciones, recomendaciones o detalles adicionales sobre la propuesta."></textarea>
+
+                            <span asp-validation-for="ObservacionesAcademia"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="perfil-actions mt-4">
+
+                    <a asp-controller="AdminSolicitudes"
+                       asp-action="Detalle"
+                       asp-route-id="@Model.IdSolicitudCurso"
+                       class="perfil-btn-outline">
+
+                        <i class="fa fa-arrow-left me-1"></i>
+                        Volver al detalle
+
+                    </a>
+
+                    <button type="submit"
+                            name="accion"
+                            value="borrador"
+                            class="perfil-btn-outline">
+
+                        <i class="fa fa-save me-1"></i>
+                        Guardar borrador
+
+                    </button>
+
+                    <button type="submit"
+                            name="accion"
+                            value="enviar"
+                            class="perfil-btn">
+
+                        <i class="fa fa-paper-plane me-1"></i>
+                        Enviar propuesta
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
