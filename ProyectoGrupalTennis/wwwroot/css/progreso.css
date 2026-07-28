@@ -1,0 +1,516 @@
+﻿/* =====================================================
+   MÓDULO DE PROGRESO TÉCNICO
+   ===================================================== */
+
+.progreso-page {
+    --progreso-verde: #a5c422;
+    --progreso-verde-oscuro: #789516;
+    --progreso-verde-suave: #f4f9e5;
+    --progreso-azul: #3f7cac;
+    --progreso-azul-suave: #edf5fb;
+    --progreso-naranja: #e39a23;
+    --progreso-naranja-suave: #fff5df;
+    --progreso-rojo: #cf4b4b;
+    --progreso-rojo-suave: #fdecec;
+    --progreso-morado: #7654a8;
+    --progreso-morado-suave: #f2edfa;
+    --progreso-texto: #29313d;
+    --progreso-texto-suave: #6c757d;
+    --progreso-borde: #e7ebdf;
+}
+
+/* Fondo general */
+
+.progreso-page {
+    background: linear-gradient(180deg, #f8faF3 0%, #ffffff 45%);
+}
+
+    /* Encabezado */
+
+    .progreso-page .perfil-header {
+        border-bottom: 1px solid #edf0e6;
+        padding-bottom: 22px;
+    }
+
+    .progreso-page .perfil-title {
+        color: var(--progreso-texto);
+    }
+
+    .progreso-page .perfil-subtitle {
+        color: var(--progreso-texto-suave);
+    }
+
+    .progreso-page .perfil-badge {
+        background: var(--progreso-verde-suave);
+        color: var(--progreso-verde-oscuro);
+        border: 1px solid #dfeab6;
+    }
+
+        .progreso-page .perfil-badge i {
+            color: var(--progreso-verde);
+        }
+
+    /* Tarjetas generales */
+
+    .progreso-page .perfil-card,
+    .progreso-page .card {
+        border: 1px solid var(--progreso-borde);
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(36, 48, 24, 0.07);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+        .progreso-page .perfil-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 13px 30px rgba(36, 48, 24, 0.12);
+        }
+
+        .progreso-page .perfil-card h3 {
+            color: var(--progreso-texto);
+        }
+
+        .progreso-page .perfil-card p {
+            color: var(--progreso-texto-suave);
+        }
+
+    /* Tarjetas de estadísticas */
+
+    .progreso-page .progreso-stat {
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        padding: 22px;
+        min-height: 170px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+        .progreso-page .progreso-stat::after {
+            content: "";
+            position: absolute;
+            width: 95px;
+            height: 95px;
+            right: -25px;
+            bottom: -35px;
+            border-radius: 50%;
+            opacity: 0.35;
+        }
+
+        .progreso-page .progreso-stat i {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            border-radius: 14px;
+            font-size: 24px;
+        }
+
+        .progreso-page .progreso-stat h3 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+    /* Variaciones de color */
+
+    .progreso-page .stat-verde {
+        background: linear-gradient(135deg, #ffffff, var(--progreso-verde-suave));
+        border-left: 5px solid var(--progreso-verde);
+    }
+
+        .progreso-page .stat-verde i {
+            background: #e9f4c5;
+            color: var(--progreso-verde-oscuro);
+        }
+
+        .progreso-page .stat-verde::after {
+            background: #cfe37d;
+        }
+
+    .progreso-page .stat-azul {
+        background: linear-gradient(135deg, #ffffff, var(--progreso-azul-suave));
+        border-left: 5px solid var(--progreso-azul);
+    }
+
+        .progreso-page .stat-azul i {
+            background: #dcecf7;
+            color: var(--progreso-azul);
+        }
+
+        .progreso-page .stat-azul::after {
+            background: #acd0e8;
+        }
+
+    .progreso-page .stat-morado {
+        background: linear-gradient(135deg, #ffffff, var(--progreso-morado-suave));
+        border-left: 5px solid var(--progreso-morado);
+    }
+
+        .progreso-page .stat-morado i {
+            background: #e8def5;
+            color: var(--progreso-morado);
+        }
+
+        .progreso-page .stat-morado::after {
+            background: #c9b3e5;
+        }
+
+    .progreso-page .stat-naranja {
+        background: linear-gradient(135deg, #ffffff, var(--progreso-naranja-suave));
+        border-left: 5px solid var(--progreso-naranja);
+    }
+
+        .progreso-page .stat-naranja i {
+            background: #ffebbf;
+            color: #b87508;
+        }
+
+        .progreso-page .stat-naranja::after {
+            background: #f2ca73;
+        }
+
+    /* Tarjetas de acciones */
+
+    .progreso-page .progreso-action {
+        padding: 28px;
+        min-height: 215px;
+        justify-content: center;
+    }
+
+        .progreso-page .progreso-action i {
+            width: 58px;
+            height: 58px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: var(--progreso-verde-suave);
+            color: var(--progreso-verde-oscuro);
+            font-size: 25px;
+        }
+
+    .progreso-page a:hover .progreso-action {
+        border-color: #cddd8d;
+    }
+
+    /* Títulos internos */
+
+    .progreso-page .progreso-card-title {
+        color: var(--progreso-texto);
+        font-size: 18px;
+        font-weight: 700;
+        padding-bottom: 13px;
+        margin-bottom: 18px;
+        border-bottom: 2px solid var(--progreso-verde-suave);
+    }
+
+        .progreso-page .progreso-card-title i {
+            color: var(--progreso-verde);
+            margin-right: 7px;
+        }
+
+    /* Tablas */
+
+    .progreso-page .table-responsive {
+        border: 1px solid #edf0e8;
+        border-radius: 13px;
+    }
+
+    .progreso-page .table {
+        margin-bottom: 0;
+    }
+
+        .progreso-page .table thead th {
+            background: #eef5d5 !important;
+            color: #485b14;
+            border-bottom: 2px solid #dce9ac;
+            font-weight: 700;
+        }
+
+        .progreso-page .table tbody tr:nth-child(even) {
+            background: #fbfcf7;
+        }
+
+        .progreso-page .table tbody tr:hover {
+            background: #f3f8e6;
+        }
+
+    /* Formularios */
+
+    .progreso-page .form-label {
+        color: var(--progreso-texto);
+    }
+
+    .progreso-page .form-control,
+    .progreso-page .form-select {
+        border: 1px solid #dfe5d4;
+        background: #fdfefd;
+    }
+
+        .progreso-page .form-control:focus,
+        .progreso-page .form-select:focus {
+            border-color: var(--progreso-verde);
+            box-shadow: 0 0 0 0.2rem rgba(165, 196, 34, 0.18);
+        }
+
+    .progreso-page .progreso-form-section {
+        background: #fbfcf8;
+        border: 1px solid #e8eddf;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 22px;
+    }
+
+    /* Botones */
+
+    .progreso-page .btn-primary {
+        background: linear-gradient(135deg, #a5c422, #88a51b);
+        border-color: #88a51b;
+        color: #ffffff;
+    }
+
+        .progreso-page .btn-primary:hover,
+        .progreso-page .btn-primary:focus {
+            background: linear-gradient(135deg, #93b11f, #718b13);
+            border-color: #718b13;
+            color: #ffffff;
+        }
+
+    .progreso-page .btn-outline-secondary {
+        border-color: #aeb6a2;
+        color: #596052;
+    }
+
+        .progreso-page .btn-outline-secondary:hover {
+            background: #596052;
+            border-color: #596052;
+            color: #ffffff;
+        }
+
+    .progreso-page .btn-danger {
+        background: #d9534f;
+        border-color: #d9534f;
+    }
+
+        .progreso-page .btn-danger:hover {
+            background: #bd3f3b;
+            border-color: #bd3f3b;
+        }
+
+    /* Badges más suaves */
+
+    .progreso-page .badge-nivel-avanzado {
+        background: #e5f4d5;
+        color: #527913;
+        border: 1px solid #cfe5ac;
+    }
+
+    .progreso-page .badge-nivel-intermedio {
+        background: #fff1cf;
+        color: #9b6805;
+        border: 1px solid #f0d595;
+    }
+
+    .progreso-page .badge-nivel-principiante {
+        background: #fbe1e1;
+        color: #a73838;
+        border: 1px solid #efbcbc;
+    }
+
+    .progreso-page .badge-nivel-avanzado,
+    .progreso-page .badge-nivel-intermedio,
+    .progreso-page .badge-nivel-principiante {
+        display: inline-block;
+        border-radius: 30px;
+        padding: 7px 13px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .progreso-page .badge-activo {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        background: #e5f4d5;
+        color: #527913;
+        border: 1px solid #cfe5ac;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    /* Cajas de observaciones */
+
+    .progreso-page .progreso-info-box {
+        background: #fafcf5;
+        border: 1px solid #e4ebd3;
+        border-left: 4px solid var(--progreso-verde);
+        border-radius: 11px;
+        padding: 16px;
+        color: #555f4d;
+    }
+
+    /* Niveles */
+
+    .progreso-page .nivel-card {
+        border-top: 5px solid transparent;
+    }
+
+    .progreso-page .nivel-principiante {
+        border-top-color: var(--progreso-rojo);
+    }
+
+        .progreso-page .nivel-principiante i {
+            color: var(--progreso-rojo);
+        }
+
+    .progreso-page .nivel-intermedio {
+        border-top-color: var(--progreso-naranja);
+    }
+
+        .progreso-page .nivel-intermedio i {
+            color: var(--progreso-naranja);
+        }
+
+    .progreso-page .nivel-avanzado {
+        border-top-color: var(--progreso-verde);
+    }
+
+        .progreso-page .nivel-avanzado i {
+            color: var(--progreso-verde-oscuro);
+        }
+
+    /* Alertas */
+
+    .progreso-page .alert-info {
+        background: #edf6fa;
+        border-color: #c7e2ec;
+        color: #35697c;
+    }
+
+    .progreso-page .alert-success {
+        background: #edf7df;
+        border-color: #d5e9b5;
+        color: #557519;
+    }
+
+/* Responsive */
+
+@media (max-width: 767px) {
+    .progreso-page .progreso-stat {
+        text-align: center;
+    }
+
+        .progreso-page .progreso-stat i {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    .progreso-page .progreso-form-section {
+        padding: 15px;
+    }
+}
+
+
+/* =====================================================
+   AJUSTES DE ESPACIADO DEL MÓDULO DE PROGRESO
+   ===================================================== */
+
+.progreso-page .perfil-container {
+    padding: 28px 32px;
+}
+
+.progreso-page .card-body {
+    padding: 26px;
+}
+
+.progreso-page .table-responsive {
+    margin-top: 8px;
+}
+
+.progreso-page .table thead th,
+.progreso-page .table tbody td {
+    padding: 14px 16px;
+}
+
+.progreso-page .row {
+    row-gap: 16px;
+}
+
+.progreso-page hr {
+    margin: 22px 0;
+    border-color: #e7ebdf;
+    opacity: 1;
+}
+
+/* Más separación en el detalle */
+
+.progreso-page .detalle-datos {
+    padding: 8px 4px;
+}
+
+.progreso-page .detalle-metrica {
+    background: #f9fbf4;
+    border: 1px solid #e4ead8;
+    border-radius: 10px;
+    padding: 14px 16px;
+    min-height: 72px;
+}
+
+    .progreso-page .detalle-metrica strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #29313d;
+    }
+
+/* =====================================================
+   BOTÓN VOLVER
+   ===================================================== */
+
+.progreso-page .btn-volver-progreso {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 15px;
+    border: 1px solid #a5c422;
+    border-radius: 9px;
+    background: #f8fbeF;
+    color: #667d12;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    margin-bottom: 20px;
+}
+
+    .progreso-page .btn-volver-progreso:hover {
+        background: #a5c422;
+        color: #ffffff;
+        border-color: #a5c422;
+        transform: translateX(-2px);
+        text-decoration: none;
+    }
+
+    .progreso-page .btn-volver-progreso i {
+        font-size: 13px;
+    }
+
+/* Responsive */
+
+@media (max-width: 767px) {
+    .progreso-page .perfil-container {
+        padding: 20px 16px;
+    }
+
+    .progreso-page .card-body {
+        padding: 18px;
+    }
+
+    .progreso-page .table thead th,
+    .progreso-page .table tbody td {
+        padding: 12px;
+    }
+}

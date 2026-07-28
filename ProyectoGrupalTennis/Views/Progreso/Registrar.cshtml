@@ -7,8 +7,11 @@
 <link rel="stylesheet"
       href="~/css/perfiles.css"
       asp-append-version="true" />
+<link rel="stylesheet"
+      href="~/css/progreso.css"
+      asp-append-version="true" />
 
-<section class="perfil-page compact">
+<section class="perfil-page compact progreso-page">
     <div class="container">
         <div class="perfil-container">
 
@@ -33,9 +36,9 @@
             <div class="mb-3">
                 <a asp-controller="Progreso"
                    asp-action="ProfesorIndex"
-                   class="btn btn-outline-secondary btn-sm">
+                   class="btn-volver-progreso">
 
-                    <i class="fa fa-arrow-left me-1"></i>
+                    <i class="fa fa-arrow-left"></i>
                     Volver
                 </a>
             </div>
@@ -65,44 +68,39 @@
 
                         <div class="row">
 
+                            <!-- CURSO -->
                             <div class="col-md-6 mb-3">
-                                <label asp-for="IdAlumno"
-                                       class="form-label">
-                                    Alumno
-                                </label>
-
-                                <select asp-for="IdAlumno"
-                                        asp-items="Model.Alumnos"
-                                        class="form-select">
-
-                                    <option value="">
-                                        Seleccione un alumno
-                                    </option>
-                                </select>
-
-                                <span asp-validation-for="IdAlumno"
-                                      class="text-danger">
-                                </span>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="IdCurso"
-                                       class="form-label">
+                                <label asp-for="IdCurso" class="form-label">
                                     Curso
                                 </label>
 
                                 <select asp-for="IdCurso"
                                         asp-items="Model.Cursos"
+                                        id="cursoSelect"
                                         class="form-select">
-
-                                    <option value="">
-                                        Seleccione un curso
-                                    </option>
+                                    <option value="">Seleccione un curso</option>
                                 </select>
 
                                 <span asp-validation-for="IdCurso"
-                                      class="text-danger">
-                                </span>
+                                      class="text-danger"></span>
+                            </div>
+
+                            <!-- ALUMNO -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="IdAlumno" class="form-label">
+                                    Alumno
+                                </label>
+
+                                <select asp-for="IdAlumno"
+                                        asp-items="Model.Alumnos"
+                                        id="alumnoSelect"
+                                        class="form-select"
+                                        disabled>
+                                    <option value="">Primero seleccione un curso</option>
+                                </select>
+
+                                <span asp-validation-for="IdAlumno"
+                                      class="text-danger"></span>
                             </div>
 
                         </div>
@@ -283,6 +281,71 @@
     </div>
 </section>
 
-@section Scripts {
+@section Scripts
+{
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const cursoSelect = document.getElementById("cursoSelect");
+            const alumnoSelect = document.getElementById("alumnoSelect");
+
+            cursoSelect.addEventListener("change", async function () {
+                const idCurso = cursoSelect.value;
+
+                alumnoSelect.innerHTML =
+                    '<option value="">Cargando alumnos...</option>';
+
+                alumnoSelect.disabled = true;
+
+                if (!idCurso) {
+                    alumnoSelect.innerHTML =
+                        '<option value="">Primero seleccione un curso</option>';
+
+                    return;
+                }
+
+                try {
+                    const respuesta = await fetch(
+                        `/Progreso/ObtenerAlumnosPorCurso?idCurso=${idCurso}`
+                    );
+
+                    if (!respuesta.ok) {
+                        throw new Error("No se pudieron cargar los alumnos.");
+                    }
+
+                    const alumnos = await respuesta.json();
+
+                    alumnoSelect.innerHTML = "";
+
+                    if (alumnos.length === 0) {
+                        alumnoSelect.innerHTML =
+                            '<option value="">No hay alumnos disponibles</option>';
+
+                        return;
+                    }
+
+                    alumnoSelect.innerHTML =
+                        '<option value="">Seleccione un alumno</option>';
+
+                    alumnos.forEach(function (alumno) {
+                        const opcion = document.createElement("option");
+
+                        opcion.value = alumno.id;
+                        opcion.textContent = alumno.nombre;
+
+                        alumnoSelect.appendChild(opcion);
+                    });
+
+                    alumnoSelect.disabled = false;
+                }
+                catch (error) {
+                    alumnoSelect.innerHTML =
+                        '<option value="">Error al cargar alumnos</option>';
+
+                    console.error(error);
+                }
+            });
+        });
+    </script>
 }

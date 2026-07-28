@@ -5,8 +5,11 @@
 <link rel="stylesheet"
       href="~/css/perfiles.css"
       asp-append-version="true" />
+<link rel="stylesheet"
+      href="~/css/progreso.css"
+      asp-append-version="true" />
 
-<section class="perfil-page compact">
+<section class="perfil-page compact progreso-page">
     <div class="container">
         <div class="perfil-container">
 
@@ -31,9 +34,9 @@
             <div class="mb-3">
                 <a asp-controller="Progreso"
                    asp-action="AdminIndex"
-                   class="btn btn-outline-secondary btn-sm">
+                   class="btn-volver-progreso">
 
-                    <i class="fa fa-arrow-left me-1"></i>
+                    <i class="fa fa-arrow-left"></i>
                     Volver
                 </a>
             </div>
@@ -41,7 +44,7 @@
             <div class="row g-4">
 
                 <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
+                    <div class="card shadow-sm h-100 nivel-card nivel-principiante">
                         <div class="card-body text-center">
 
                             <i class="fa fa-seedling fa-3x mb-3"></i>
@@ -62,7 +65,7 @@
                 </div>
 
                 <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
+                    <div class="card shadow-sm h-100 nivel-card nivel-intermedio">
                         <div class="card-body text-center">
 
                             <i class="fa fa-chart-line fa-3x mb-3"></i>
@@ -83,7 +86,7 @@
                 </div>
 
                 <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
+                    <div class="card shadow-sm h-100 nivel-card nivel-avanzado">
                         <div class="card-body text-center">
 
                             <i class="fa fa-trophy fa-3x mb-3"></i>

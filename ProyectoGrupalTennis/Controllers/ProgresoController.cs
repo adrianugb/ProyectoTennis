@@ -146,6 +146,80 @@ namespace ProyectoGrupalTennis.Controllers
                 await CargarListas(modelo);
                 return View("Registrar", modelo);
             }
+            var matricula = await _context.Matriculas
+                .FirstOrDefaultAsync(m =>
+                    m.IdCurso == modelo.IdCurso &&
+                    m.IdAlumno == modelo.IdAlumno);
+
+            if (matricula == null)
+            {
+                ModelState.AddModelError(
+                    nameof(modelo.IdAlumno),
+                    "El alumno seleccionado no está matriculado en este curso.");
+
+                await CargarListas(modelo);
+                return View("Registrar", modelo);
+            }
+
+            var pagoConfirmado = await _context.Pagos
+                .AnyAsync(p =>
+                    p.IdMatricula == matricula.IdMatricula &&
+                    p.Estado == "Pagado");
+
+            if (!pagoConfirmado)
+            {
+                ModelState.AddModelError(
+                    nameof(modelo.IdAlumno),
+                    "El alumno no tiene el pago confirmado para este curso.");
+
+                await CargarListas(modelo);
+                return View("Registrar", modelo);
+            }
+
+            var fechaActual = DateTime.Now;
+
+            var horariosCurso = await _context.Horarios
+                .Where(h => h.IdCurso == modelo.IdCurso)
+                .ToListAsync();
+
+            if (!horariosCurso.Any())
+            {
+                ModelState.AddModelError(
+                    nameof(modelo.IdCurso),
+                    "El curso no tiene horarios registrados.");
+
+                await CargarListas(modelo);
+                return View("Registrar", modelo);
+            }
+
+            var existeClaseFinalizadaHoy = horariosCurso.Any(h =>
+            {
+                var diaHorario = ConvertirDiaSemana(h.DiaSemana);
+
+                if (diaHorario == null)
+                {
+                    return false;
+                }
+
+                bool esHoy =
+                    fechaActual.DayOfWeek == diaHorario.Value;
+
+                bool yaTermino =
+                    fechaActual.TimeOfDay >= h.HoraFin;
+
+                return esHoy && yaTermino;
+            });
+
+            if (!existeClaseFinalizadaHoy)
+            {
+                ModelState.AddModelError(
+                    nameof(modelo.IdCurso),
+                    "La evaluación solo puede registrarse después de finalizar la clase de hoy.");
+
+                await CargarListas(modelo);
+                return View("Registrar", modelo);
+            }
+
 
             var progreso = new ProgresoAlumno
             {
@@ -476,6 +550,27 @@ namespace ProyectoGrupalTennis.Controllers
             return View("Niveles");
         }
 
+        [Authorize(Roles = "Profesor")]
+        [HttpGet]
+        public async Task<IActionResult> ObtenerAlumnosPorCurso(int idCurso)
+        {
+            var alumnos = await _context.Matriculas
+                .Where(m =>
+                    m.IdCurso == idCurso &&
+                    m.Estado == "Activa" &&
+                    m.Pagos.Any(p => p.Estado == "Pagado"))
+                .Select(m => new
+                {
+                    id = m.IdAlumno,
+                    nombre = m.Alumno.Nombre + " " + m.Alumno.Apellido
+                })
+                .Distinct()
+                .OrderBy(a => a.nombre)
+                .ToListAsync();
+
+            return Json(alumnos);
+        }
+
         // =====================================================
         // MÉTODOS PRIVADOS
         // =====================================================
@@ -507,28 +602,40 @@ namespace ProyectoGrupalTennis.Controllers
         private async Task CargarListas(
             RegistrarProgresoViewModel modelo)
         {
-            var alumnos = await _userManager
-                .GetUsersInRoleAsync("Usuario");
+            modelo.Alumnos = new List<SelectListItem>();
 
-            modelo.Alumnos = alumnos
-                .OrderBy(a => a.Nombre)
-                .ThenBy(a => a.Apellido)
-                .Select(a => new SelectListItem
-                {
-                    Value = a.Id,
-                    Text = $"{a.Nombre} {a.Apellido}"
-                })
-                .ToList();
+            var fechaActual = DateTime.Now;
 
-            modelo.Cursos = await _context.Cursos
+            var cursosConHorarios = await _context.Cursos
                 .Where(c => c.Activo)
+                .Include(c => c.Horarios)
+                .ToListAsync();
+
+            modelo.Cursos = cursosConHorarios
+                .Where(c => c.Horarios.Any(h =>
+                {
+                    var diaHorario = ConvertirDiaSemana(h.DiaSemana);
+
+                    if (diaHorario == null)
+                    {
+                        return false;
+                    }
+
+                    bool esHoy =
+                        fechaActual.DayOfWeek == diaHorario.Value;
+
+                    bool yaTermino =
+                        fechaActual.TimeOfDay >= h.HoraFin;
+
+                    return esHoy && yaTermino;
+                }))
                 .OrderBy(c => c.Nombre)
                 .Select(c => new SelectListItem
                 {
                     Value = c.IdCurso.ToString(),
                     Text = c.Nombre
                 })
-                .ToListAsync();
+                .ToList();
         }
 
         [Authorize(Roles = "Profesor")]
@@ -579,5 +686,24 @@ namespace ProyectoGrupalTennis.Controllers
 
             return View(progreso);
         }
+
+        private static DayOfWeek? ConvertirDiaSemana(string dia)
+        {
+            return dia.Trim().ToLower() switch
+            {
+                "domingo" => DayOfWeek.Sunday,
+                "lunes" => DayOfWeek.Monday,
+                "martes" => DayOfWeek.Tuesday,
+                "miércoles" => DayOfWeek.Wednesday,
+                "miercoles" => DayOfWeek.Wednesday,
+                "jueves" => DayOfWeek.Thursday,
+                "viernes" => DayOfWeek.Friday,
+                "sábado" => DayOfWeek.Saturday,
+                "sabado" => DayOfWeek.Saturday,
+                _ => null
+            };
+        }
+
+
     }
 }

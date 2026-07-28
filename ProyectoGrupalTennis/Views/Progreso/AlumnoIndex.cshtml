@@ -24,8 +24,10 @@
 <link rel="stylesheet"
       href="~/css/perfiles.css"
       asp-append-version="true" />
-
-<section class="perfil-page compact">
+<link rel="stylesheet"
+      href="~/css/progreso.css"
+      asp-append-version="true" />
+<section class="perfil-page compact progreso-page">
     <div class="container">
         <div class="perfil-container">
 
@@ -50,9 +52,9 @@
             <div class="mb-3">
                 <a asp-controller="Home"
                    asp-action="PerfilUsuario"
-                   class="btn btn-outline-secondary btn-sm">
+                   class="btn-volver-progreso">
 
-                    <i class="fa fa-arrow-left me-1"></i>
+                    <i class="fa fa-arrow-left"></i>
                     Volver al panel
                 </a>
             </div>
@@ -68,7 +70,7 @@
                 <div class="row g-4 mb-4">
 
                     <div class="col-md-4">
-                        <div class="perfil-card">
+                        <div class="perfil-card progreso-stat stat-verde">
                             <i class="fa fa-signal"></i>
                             <h3>@ultimaEvaluacion.NivelGeneral</h3>
                             <p>Nivel actual</p>
@@ -76,7 +78,7 @@
                     </div>
 
                     <div class="col-md-4">
-                        <div class="perfil-card">
+                        <div class="perfil-card progreso-stat stat-azul">
                             <i class="fa fa-line-chart"></i>
                             <h3>@promedio.ToString("0.0") / 10</h3>
                             <p>Promedio general</p>
@@ -84,7 +86,7 @@
                     </div>
 
                     <div class="col-md-4">
-                        <div class="perfil-card">
+                        <div class="perfil-card progreso-stat stat-morado">
                             <i class="fa fa-check-circle"></i>
                             <h3>@Model.Count</h3>
                             <p>Evaluaciones realizadas</p>
@@ -102,8 +104,7 @@
                             <h5 class="mb-0">Última evaluación</h5>
 
                             <span class="text-muted">
-                                @ultimaEvaluacion.FechaEvaluacion
-                                .ToString("dd/MM/yyyy")
+                                @ultimaEvaluacion.FechaEvaluacion.ToString("dd/MM/yyyy")
                             </span>
 
                         </div>
@@ -164,17 +165,17 @@
                                         if (habilidad.Valor >= 8)
                                         {
                                             estado = "Destacado";
-                                            clase = "badge bg-success";
+                                            clase = "badge-nivel-avanzado";
                                         }
                                         else if (habilidad.Valor >= 5)
                                         {
                                             estado = "En progreso";
-                                            clase = "badge bg-warning text-dark";
+                                            clase = "badge-nivel-intermedio";
                                         }
                                         else
                                         {
                                             estado = "Debe mejorar";
-                                            clase = "badge bg-danger";
+                                            clase = "badge-nivel-principiante";
                                         }
 
                                         <tr>
@@ -207,12 +208,14 @@
                                     Áreas de mejora
                                 </h5>
 
-                                <p class="mb-0">
+                                <div class="progreso-info-box">
+
                                     @(string.IsNullOrWhiteSpace(
                                         ultimaEvaluacion.AreasMejora)
                                         ? "No se registraron áreas de mejora."
                                         : ultimaEvaluacion.AreasMejora)
-                                </p>
+
+                                </div>
 
                             </div>
                         </div>
@@ -227,12 +230,12 @@
                                     Observaciones
                                 </h5>
 
-                                <p class="mb-0">
+                                <div class="progreso-info-box">
                                     @(string.IsNullOrWhiteSpace(
                                         ultimaEvaluacion.Observaciones)
                                         ? "No se registraron observaciones."
                                         : ultimaEvaluacion.Observaciones)
-                                </p>
+                                </div>
 
                             </div>
                         </div>

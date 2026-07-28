@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Helpers;
 using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -15,17 +16,20 @@ namespace ProyectoGrupalTennis.Controllers
         private readonly AppDbContext _context;
         private readonly EmailService _emailService;
         private readonly GoogleCalendarService _calendarService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public CursoController(
-            ICursoService service,
-            AppDbContext context,
-            EmailService emailService,
-            GoogleCalendarService calendarService)
+        ICursoService service,
+        AppDbContext context,
+        EmailService emailService,
+        GoogleCalendarService calendarService,
+        UserManager<ApplicationUser> userManager)
         {
             _service = service;
             _context = context;
             _emailService = emailService;
             _calendarService = calendarService;
+            _userManager = userManager;
         }
 
         public IActionResult Index(string? buscar, string? nivel, string? estado)
@@ -42,14 +46,21 @@ namespace ProyectoGrupalTennis.Controllers
             return View("~/Views/Cursos/Index.cshtml", cursos);
         }
 
-        public IActionResult Agregar()
+        public async Task<IActionResult> Agregar()
         {
             var vm = new CursoFormViewModel
             {
                 Curso = new Curso(),
-                Profesores = _service.ObtenerProfesores(),
-                Horarios = new List<HorarioInputViewModel> { new HorarioInputViewModel() }
+
+                Profesores =
+                    await ObtenerProfesoresConRolAsync(),
+
+                Horarios = new List<HorarioInputViewModel>
+        {
+            new HorarioInputViewModel()
+        }
             };
+
             return View("~/Views/Cursos/Agregar.cshtml", vm);
         }
 
@@ -59,7 +70,8 @@ namespace ProyectoGrupalTennis.Controllers
         {
             if (!ModelState.IsValid)
             {
-                vm.Profesores = _service.ObtenerProfesores();
+                vm.Profesores =
+                    await ObtenerProfesoresConRolAsync();
                 return View("~/Views/Cursos/Agregar.cshtml", vm);
             }
 
@@ -112,31 +124,51 @@ namespace ProyectoGrupalTennis.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                vm.Profesores = _service.ObtenerProfesores();
+                vm.Profesores =
+                    await ObtenerProfesoresConRolAsync();
                 return View("~/Views/Cursos/Agregar.cshtml", vm);
             }
         }
 
-        public IActionResult Editar(int id)
+        public async Task<IActionResult> Editar(int id)
         {
             var curso = _service.ObtenerPorId(id);
-            if (curso == null) return NotFound();
+
+            if (curso == null)
+            {
+                return NotFound();
+            }
 
             var vm = new CursoFormViewModel
             {
                 Curso = curso,
-                Profesores = _service.ObtenerProfesores(),
-                Horarios = curso.Horarios.Select(h => new HorarioInputViewModel
-                {
-                    IdHorario = h.IdHorario,
-                    Fecha = h.Fecha != DateTime.MinValue ? h.Fecha.ToString("yyyy-MM-dd") : string.Empty,
-                    HoraInicio = $"{h.HoraInicio.Hours:D2}:{h.HoraInicio.Minutes:D2}",
-                    HoraFin = $"{h.HoraFin.Hours:D2}:{h.HoraFin.Minutes:D2}"
-                }).ToList()
+
+                Profesores =
+                    await ObtenerProfesoresConRolAsync(),
+
+                Horarios = curso.Horarios
+                    .Select(h => new HorarioInputViewModel
+                    {
+                        IdHorario = h.IdHorario,
+
+                        Fecha = h.Fecha != DateTime.MinValue
+                            ? h.Fecha.ToString("yyyy-MM-dd")
+                            : string.Empty,
+
+                        HoraInicio =
+                            $"{h.HoraInicio.Hours:D2}:{h.HoraInicio.Minutes:D2}",
+
+                        HoraFin =
+                            $"{h.HoraFin.Hours:D2}:{h.HoraFin.Minutes:D2}"
+                    })
+                    .ToList()
             };
 
             if (vm.Horarios.Count == 0)
-                vm.Horarios.Add(new HorarioInputViewModel());
+            {
+                vm.Horarios.Add(
+                    new HorarioInputViewModel());
+            }
 
             return View("~/Views/Cursos/Editar.cshtml", vm);
         }
@@ -147,7 +179,8 @@ namespace ProyectoGrupalTennis.Controllers
         {
             if (!ModelState.IsValid)
             {
-                vm.Profesores = _service.ObtenerProfesores();
+                vm.Profesores =
+                    await ObtenerProfesoresConRolAsync();
                 return View("~/Views/Cursos/Editar.cshtml", vm);
             }
 
@@ -197,7 +230,8 @@ namespace ProyectoGrupalTennis.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                vm.Profesores = _service.ObtenerProfesores();
+                vm.Profesores =
+                    await ObtenerProfesoresConRolAsync();
                 return View("~/Views/Cursos/Editar.cshtml", vm);
             }
         }
@@ -300,6 +334,25 @@ namespace ProyectoGrupalTennis.Controllers
             }
 
             return RedirectToAction(nameof(Editar), new { id = idCurso });
+        }
+
+        private async Task<List<Profesor>> ObtenerProfesoresConRolAsync()
+        {
+            var usuariosProfesores =
+                await _userManager.GetUsersInRoleAsync("Profesor");
+
+            var idsUsuarios = usuariosProfesores
+                .Select(u => u.Id)
+                .ToList();
+
+            return await _context.Profesores
+                .Where(p =>
+                    p.Activo &&
+                    p.UserId != null &&
+                    idsUsuarios.Contains(p.UserId))
+                .OrderBy(p => p.Nombre)
+                .ThenBy(p => p.Apellidos)
+                .ToListAsync();
         }
 
         private List<Horario> MapearHorarios(List<HorarioInputViewModel> inputs)

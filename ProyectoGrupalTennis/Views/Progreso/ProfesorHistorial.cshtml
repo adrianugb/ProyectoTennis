@@ -7,8 +7,11 @@
 <link rel="stylesheet"
       href="~/css/perfiles.css"
       asp-append-version="true" />
+<link rel="stylesheet"
+      href="~/css/progreso.css"
+      asp-append-version="true" />
 
-<section class="perfil-page compact">
+<section class="perfil-page compact progreso-page">
     <div class="container">
         <div class="perfil-container">
 
@@ -33,9 +36,9 @@
             <div class="mb-3">
                 <a asp-controller="Progreso"
                    asp-action="ProfesorIndex"
-                   class="btn btn-outline-secondary btn-sm">
+                   class="btn-volver-progreso">
 
-                    <i class="fa fa-arrow-left me-1"></i>
+                    <i class="fa fa-arrow-left"></i>
                     Volver
                 </a>
             </div>
@@ -118,7 +121,7 @@
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
 
-                                <thead class="table-primary">
+                                <thead>
                                     <tr>
                                         <th>Alumno</th>
                                         <th>Curso</th>
@@ -142,10 +145,10 @@
 
                                         string claseNivel =
                                             progreso.NivelGeneral == "Avanzado"
-                                                ? "badge bg-success"
+                                                ? "badge-nivel-avanzado"
                                                 : progreso.NivelGeneral == "Intermedio"
-                                                    ? "badge bg-warning text-dark"
-                                                    : "badge bg-danger";
+                                                    ? "badge-nivel-intermedio"
+                                                    : "badge-nivel-principiante";
                                         <tr>
                                             <td>
                                                 @progreso.Alumno?.Nombre
