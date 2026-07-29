@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let preguntasCargadas = false;
 
     toggle.addEventListener("click", function () {
-        const abierto = panel.style.display === "block";
-        panel.style.display = abierto ? "none" : "block";
+        const abierto = panel.style.display === "flex";
+        panel.style.display = abierto ? "none" : "flex";
 
         if (!abierto && !preguntasCargadas) {
             cargarPreguntasRapidas();

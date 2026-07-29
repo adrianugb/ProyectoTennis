@@ -1,0 +1,402 @@
+﻿/* =========================================================
+   REWORK UI — Capa de estilos globales (header / nav / footer / base)
+   Se carga DESPUÉS de las hojas viejas para ganar la cascada
+   sin tener que borrar nada todavía.
+   ========================================================= */
+
+:root {
+    --primary-dark: #7d9a17;
+    --ink: #16241a;
+    --gray-900: #1c1c1c;
+    --gray-700: #4a4a4a;
+    --gray-500: #737373;
+    --gray-200: #e7e7e7;
+    --gray-100: #f4f7ef;
+    --white: #ffffff;
+    --font-heading: 'Poppins', 'Segoe UI', sans-serif;
+    --font-body: 'Inter', 'Segoe UI', sans-serif;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 22px;
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, .06);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, .10);
+    --shadow-lg: 0 20px 45px rgba(0, 0, 0, .14);
+    --container-max: 1320px;
+}
+
+/* ---------- Base / reset general ---------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--gray-900);
+    -webkit-font-smoothing: antialiased;
+    /* tooplate-style.css trae "overflow-x: hidden" en el body. Eso rompe
+       position:sticky en varios navegadores (Chrome incluido): al tener
+       overflow-x distinto de "visible", el body pasa a comportarse como
+       contenedor de scroll y el header sticky deja de "engancharse" al
+       viewport real, por eso se perdía al bajar. Lo reseteamos acá. */
+    overflow-x: visible;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--ink);
+}
+
+a {
+    transition: color .2s ease;
+}
+
+img {
+    max-width: 100%;
+}
+
+/* Usar más el ancho de pantalla en desktop grande sin perder el grid de bootstrap */
+@media (min-width: 1400px) {
+    .container {
+        max-width: var(--container-max);
+    }
+}
+
+::selection {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+a:focus-visible,
+button:focus-visible,
+.navbar-toggler:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* ---------- HEADER / TOPBAR ---------- */
+.site-header {
+    /* tooplate-style.css tiene una regla genérica "header { display:flex;
+       height:45px }" que aplica a CUALQUIER <header> de la página, incluido
+       este. Eso forzaba al topbar y al navbar (que deberían ir apilados,
+       uno arriba del otro) a compartir una sola fila de 45px, amontonando
+       todo. Lo neutralizamos explícitamente acá. */
+    display: block;
+    height: auto;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--white);
+}
+
+.topbar {
+    background: var(--ink);
+    color: #cfd9c8;
+    font-size: 13px;
+    line-height: normal;
+}
+
+.topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 15px;
+    gap: 12px;
+}
+
+.topbar-tagline {
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    color: var(--primary-color);
+}
+
+.topbar-info {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-wrap: wrap;
+}
+
+.topbar-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 400;
+    color: #cfd9c8;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+    .topbar-item i {
+        color: inherit;
+        margin-right: 0;
+    }
+
+    .topbar-item:hover {
+        color: var(--primary-color);
+    }
+
+@media (max-width: 767px) {
+    .topbar {
+        display: none;
+    }
+}
+
+/* ---------- NAVBAR ---------- */
+.site-navbar {
+    padding: 12px 0;
+    background: var(--white);
+    transition: box-shadow .25s ease, padding .25s ease;
+}
+
+.site-header.is-scrolled .site-navbar {
+    box-shadow: var(--shadow-sm);
+    padding: 8px 0;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+}
+
+.navbar-logo {
+    height: 42px;
+    width: 42px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.navbar-brand-text {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.15;
+}
+
+    .navbar-brand-text strong {
+        color: var(--primary-color);
+    }
+
+.navbar-toggler {
+    border: 1px solid var(--gray-200);
+    padding: 6px 10px;
+}
+
+    .navbar-toggler:focus {
+        box-shadow: 0 0 0 3px rgba(165, 196, 34, .25);
+    }
+
+.main-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+}
+
+    .main-nav-links .nav-link {
+        color: var(--gray-700);
+        font-weight: 600;
+        font-size: 14.5px;
+        padding: 10px 14px;
+        border-radius: var(--radius-sm);
+        transition: color .2s ease, background .2s ease;
+    }
+
+        .main-nav-links .nav-link:hover,
+        .main-nav-links .nav-link:focus {
+            color: var(--ink);
+            background: var(--gray-100);
+        }
+
+.dropdown-menu {
+    border: none;
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+}
+
+.dropdown-item {
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .dropdown-item:hover {
+        background: var(--gray-100);
+        color: var(--ink);
+    }
+
+/* ---------- Acciones de la derecha del navbar ---------- */
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+.btn-nav {
+    padding: 9px 18px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all .2s ease;
+    white-space: nowrap;
+}
+
+.btn-nav-outline {
+    color: var(--ink);
+    border: 2px solid var(--gray-200);
+}
+
+    .btn-nav-outline:hover {
+        border-color: var(--primary-color);
+        color: var(--ink);
+    }
+
+.btn-nav-solid {
+    background: var(--primary-color);
+    color: #fff;
+    border: 2px solid var(--primary-color);
+}
+
+    .btn-nav-solid:hover {
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
+        color: #fff;
+    }
+
+.nav-panel-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary-dark);
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 30px;
+    background: rgba(165, 196, 34, .12);
+}
+
+    .nav-panel-link:hover {
+        background: rgba(165, 196, 34, .22);
+        color: var(--primary-dark);
+    }
+
+.usuario-logueado {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--gray-700) !important;
+    white-space: nowrap;
+}
+
+.campana-notificaciones {
+    display: flex;
+    align-items: center;
+}
+
+.campana-toggle {
+    position: relative;
+    color: var(--gray-700);
+    font-size: 18px;
+    padding: 6px;
+    display: inline-flex;
+}
+
+.btn-logout-navbar {
+    border: none;
+    background: transparent;
+    color: #d9534f;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 4px;
+    white-space: nowrap;
+}
+
+    .btn-logout-navbar:hover {
+        color: #b52b27;
+    }
+
+@media (max-width: 991px) {
+    .navbar-collapse {
+        margin-top: 14px;
+        padding-top: 14px;
+        padding-bottom: 6px;
+        border-top: 1px solid var(--gray-200);
+        max-height: calc(100vh - 90px);
+        overflow-y: auto;
+    }
+
+    .main-nav-links {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+        margin-bottom: 10px;
+    }
+
+    .navbar-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .btn-nav, .nav-panel-link {
+        text-align: center;
+        justify-content: center;
+    }
+
+    .usuario-logueado {
+        justify-content: center;
+        padding: 6px 0;
+    }
+
+    .campana-notificaciones {
+        justify-content: center;
+    }
+}
+
+/* ---------- Footer: pequeños ajustes responsive ---------- */
+.footer-location {
+    color: var(--gray-500);
+    text-align: left;
+}
+
+    .footer-location i {
+        color: var(--primary-color);
+    }
+
+@media (max-width: 575px) {
+    .footer-bottom {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+}

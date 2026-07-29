@@ -2,385 +2,260 @@
     ViewData["Title"] = "Inicio";
 }
 
-
-
-
-<!-- HOME -->
-<section id="home" class="slider" data-stellar-background-ratio="0.5">
-    <div class="container">
-        <div class="row">
-
-
-            <div class="owl-carousel owl-theme">
-
-                
-                <div class="item item-first">
-                    <div class="caption">
-                        <div class="col-md-offset-1 col-md-10">
-                            <h1>Conoce nuestras clases</h1>
-                            <p>Elegí la clase que te guste mas y disfrutá de una sesión interactiva</p>
-
-                            <a href="#team" class="btn btn-success">
-                                Nuestras Clases
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="item item-second">
-                    <div class="caption">
-                        <div class="slider-txt">
-                            <h1>Gestiona tu Academia de Tennis</h1>
-                            <p>Clases, reservas, pagos y seguimiento en un solo lugar</p>
-
-                            <div class="d-flex gap-3 justify-content-center mt-4">
-                                <a href="/Home/Login" class="btn btn-success px-4 py-2 fw-bold">
-                                    Iniciar sesión
-                                </a>
-
-                                <a href="/Home/Registro" class="btn btn-register px-4 py-2 fw-bold">
-                                    Registrarse
-                                </a>
-
-                         
-                            </div>
-                        </div>
-                    </div>
-                </div>
-           
-
-
-                <div class="item item-third">
-                    <div class="caption">
-                        <div class="col-md-offset-1 col-md-10">
-                            <h1>Optimiza tu rendimiento</h1>
-                            <p>Profesores y alumnos conectados con seguimiento en tiempo real</p>
-
-                            <a href="/Home/Registro" class="btn btn-register px-4 py-2 fw-bold">
-                                Crear cuenta
-                            </a>
-                        </div>
-                    </div>
-                </div>
+<!-- HERO / SLIDER -->
+<section id="inicio" class="hero-slider">
+    <div class="hero-slide is-active" style="background-image:url('@Url.Content("~/images/slider1.jpg")')">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <span class="hero-eyebrow">Academia de Tenis M.M.P.</span>
+            <h1>Conocé nuestras clases</h1>
+            <p>Elegí la clase que más te guste y disfrutá de una experiencia de entrenamiento profesional.</p>
+            <div class="hero-actions">
+                <a href="#clases" class="btn-hero btn-hero-solid smoothScroll">Ver nuestras clases</a>
             </div>
+        </div>
+    </div>
+
+    <div class="hero-slide" style="background-image:url('@Url.Content("~/images/slider2.jpg")')">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <span class="hero-eyebrow">Todo en un solo lugar</span>
+            <h1>Gestioná tu academia de tenis</h1>
+            <p>Clases, reservas, pagos y seguimiento de progreso, todo dentro del sistema.</p>
+            <div class="hero-actions">
+                <a asp-controller="Home" asp-action="Login" class="btn-hero btn-hero-solid">Iniciar sesión</a>
+                <a asp-controller="Home" asp-action="Registro" class="btn-hero btn-hero-outline">Registrarse</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-slide" style="background-image:url('@Url.Content("~/images/slider3.jpg")')">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <span class="hero-eyebrow">Rendimiento y seguimiento</span>
+            <h1>Optimizá tu rendimiento</h1>
+            <p>Profesores y alumnos conectados, con seguimiento del progreso técnico en tiempo real.</p>
+            <div class="hero-actions">
+                <a asp-controller="Home" asp-action="Registro" class="btn-hero btn-hero-solid">Crear cuenta</a>
+            </div>
+        </div>
+    </div>
+
+    <button class="hero-nav hero-prev" type="button" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button>
+    <button class="hero-nav hero-next" type="button" aria-label="Siguiente"><i class="fa fa-chevron-right"></i></button>
+
+    <div class="hero-dots"></div>
+</section>
+
+<!-- SOBRE NOSOTROS -->
+<section id="nosotros" class="section-pad section-white">
+    <div class="container">
+        @await Html.PartialAsync("~/Views/Shared/_AboutUs.cshtml")
+    </div>
+</section>
+
+<!-- NUESTRAS CLASES -->
+<section id="clases" class="section-pad section-tint">
+    <div class="container">
+        <div class="section-heading text-center reveal">
+            <span class="section-eyebrow">Modalidades de entrenamiento</span>
+            <h2 class="section-title">Nuestras Clases</h2>
+            <p class="section-subtitle">
+                Conocé nuestras modalidades de entrenamiento y elegí la que mejor se adapte a vos.
+            </p>
+        </div>
+
+        <div class="classes-grid">
+
+            <article class="class-card reveal">
+                <div class="class-card-img">
+                    <img src="~/images/clases-regulares.jpg" alt="Clases Regulares" loading="lazy" />
+                </div>
+                <div class="class-card-body">
+                    <h3>Clases Regulares</h3>
+                    <p>Clases semanales estructuradas para avanzar desde nivel básico hasta avanzado.</p>
+                    <span class="class-meta"><i class="fa fa-clock-o"></i> 55 min • Matrícula anual requerida</span>
+                    <a href="/Home/DetalleClaseRegular" class="class-link">Ver más información <i class="fa fa-arrow-right"></i></a>
+                </div>
+            </article>
+
+            <article class="class-card reveal">
+                <div class="class-card-img">
+                    <img src="~/images/clases-esporadicas.jpg" alt="Clases Esporádicas" loading="lazy" />
+                </div>
+                <div class="class-card-body">
+                    <h3>Clases Esporádicas</h3>
+                    <p>Clases flexibles con reservación previa para entrenar cuando el alumno lo desee.</p>
+                    <span class="class-meta"><i class="fa fa-clock-o"></i> 55 min • Sin matrícula anual</span>
+                    <a href="/Home/DetalleClaseEsporadica" class="class-link">Ver más información <i class="fa fa-arrow-right"></i></a>
+                </div>
+            </article>
+
+            <article class="class-card reveal">
+                <div class="class-card-img">
+                    <img src="~/images/curso-intensivo.jpg" alt="Curso Intensivo" loading="lazy" />
+                </div>
+                <div class="class-card-body">
+                    <h3>Curso Intensivo</h3>
+                    <p>Paquete de 10 lecciones en un máximo de 2 semanas, según el nivel del alumno.</p>
+                    <span class="class-meta"><i class="fa fa-clock-o"></i> 10 sesiones • 55 min c/u</span>
+                    <a href="/Home/DetalleCursoIntensivo" class="class-link">Ver más información <i class="fa fa-arrow-right"></i></a>
+                </div>
+            </article>
+
+            <article class="class-card reveal">
+                <div class="class-card-img">
+                    <img src="~/images/clases-especificas.jpg" alt="Clases Específicas" loading="lazy" />
+                </div>
+                <div class="class-card-body">
+                    <h3>Clases Específicas</h3>
+                    <p>Entrenamientos enfocados en reforzar técnicas o mejorar un tema puntual.</p>
+                    <span class="class-meta"><i class="fa fa-clock-o"></i> 55 min • Horarios a convenir</span>
+                    <a href="/Home/DetalleClaseEspecifica" class="class-link">Ver más información <i class="fa fa-arrow-right"></i></a>
+                </div>
+            </article>
+
+            <article class="class-card reveal">
+                <div class="class-card-img">
+                    <img src="~/images/clases-domicilio.jpg" alt="Clases a Domicilio" loading="lazy" />
+                </div>
+                <div class="class-card-body">
+                    <h3>Clases a Domicilio</h3>
+                    <p>Entrenamiento en la residencia del alumno si cuenta con cancha de tenis.</p>
+                    <span class="class-meta"><i class="fa fa-clock-o"></i> 55 min • Sin matrícula anual</span>
+                    <a href="/Home/DetalleClaseDomicilio" class="class-link">Ver más información <i class="fa fa-arrow-right"></i></a>
+                </div>
+            </article>
+
+            <article class="class-card reveal">
+                <div class="class-card-img">
+                    <img src="~/images/paquete-empresarial.jpg" alt="Paquete Empresarial" loading="lazy" />
+                </div>
+                <div class="class-card-body">
+                    <h3>Paquete Empresarial</h3>
+                    <p>Planes personalizados para empresas interesadas en actividades para sus colaboradores.</p>
+                    <span class="class-meta"><i class="fa fa-clock-o"></i> 55 min • Plan personalizado</span>
+                    <a href="/Home/DetallePaqueteEmpresarial" class="class-link">Ver más información <i class="fa fa-arrow-right"></i></a>
+                </div>
+            </article>
 
         </div>
     </div>
 </section>
 
-
-<!-- ABOUT -->
-<section id="about">
-    @await Html.PartialAsync("~/Views/Shared/_AboutUs.cshtml")
-</section>
-
-<!-- CLASES -->
-<section id="team" data-stellar-background-ratio="1">
+<!-- TESTIMONIOS -->
+<section id="opiniones" class="section-pad section-white">
     <div class="container">
-        <section id="team" data-stellar-background-ratio="1">
-    <div class="container">
-        <div class="row">
+        <div class="section-heading text-center reveal">
+            <span class="section-eyebrow">Lo que dicen nuestros alumnos</span>
+            <h2 class="section-title">Testimonios</h2>
+        </div>
 
-            <div class="col-md-12 col-sm-12">
-                <div class="about-info text-center">
-                    <h2 class="wow fadeInUp" data-wow-delay="0.1s">Nuestras Clases</h2>
-                    <p class="wow fadeInUp" data-wow-delay="0.2s">
-                        Conoce nuestras modalidades de entrenamiento y elige la que mejor se adapte a ti.
-                    </p>
+        <div class="reviews-grid">
+            <div class="review-card reveal">
+                <span class="review-stars">★★★★★</span>
+                <p class="review-text">
+                    Las clases me han ayudado muchísimo a mejorar mi técnica.
+                    Los profesores explican muy bien y las lecciones son dinámicas.
+                </p>
+                <div class="review-user">
+                    <strong>María González</strong>
+                    <small>Clases Regulares</small>
                 </div>
             </div>
 
-            <div class="clearfix"></div>
-
-            <!-- Clases Regulares -->
-            <div class="col-md-4 col-sm-6">
-                <div class="team-thumb wow fadeInUp" data-wow-delay="0.2s">
-                    <img src="~/images/clases-regulares.jpg" />
-
-                    <div class="team-info">
-                        <h3>Clases Regulares</h3>
-                        <p>Clases semanales estructuradas para avanzar desde nivel básico hasta avanzado.</p>
-
-                        <div class="team-contact-info">
-                            <p><i class="fa fa-clock-o"></i> 55 minutos • Matrícula anual requerida</p>
-                        </div>
-
-                        <a href="/Home/DetalleClaseRegular" class="btn btn-success btn-sm">
-                            Ver más información
-                        </a>
-                    </div>
+            <div class="review-card reveal">
+                <span class="review-stars">★★★★★</span>
+                <p class="review-text">
+                    Me encantó la flexibilidad de horarios.
+                    Es ideal si no podés asistir siempre el mismo día.
+                </p>
+                <div class="review-user">
+                    <strong>Carlos Ramírez</strong>
+                    <small>Clases Esporádicas</small>
                 </div>
             </div>
 
-            <!-- Clases Esporádicas -->
-            <div class="col-md-4 col-sm-6">
-                <div class="team-thumb wow fadeInUp" data-wow-delay="0.4s">
-                    <img src="~/images/clases-esporadicas.jpg" class="img-responsive" alt="Clases Esporádicas">
-
-                    <div class="team-info">
-                        <h3>Clases Esporádicas</h3>
-                        <p>Clases flexibles con reservación previa para entrenar cuando el alumno lo desee.</p>
-
-                        <div class="team-contact-info">
-                            <p><i class="fa fa-clock-o"></i> 55 minutos • Sin matrícula anual</p>
-                        </div>
-
-                        <a href="/Home/DetalleClaseEsporadica" class="btn btn-success btn-sm">
-                            Ver más información
-                        </a>
-                    </div>
+            <div class="review-card reveal">
+                <span class="review-stars">★★★★★</span>
+                <p class="review-text">
+                    Excelente ambiente y profesores.
+                    Se nota el seguimiento personalizado en cada clase.
+                </p>
+                <div class="review-user">
+                    <strong>Ana López</strong>
+                    <small>Curso Intensivo</small>
                 </div>
             </div>
+        </div>
 
-            <!-- Curso Intensivo -->
-            <div class="col-md-4 col-sm-6">
-                <div class="team-thumb wow fadeInUp" data-wow-delay="0.6s">
-                    <img src="~/images/curso-intensivo.jpg" class="img-responsive" alt="Curso Intensivo">
-
-                    <div class="team-info">
-                        <h3>Curso Intensivo</h3>
-                        <p>Paquete de 10 lecciones en un máximo de 2 semanas, según el nivel del alumno.</p>
-
-                        <div class="team-contact-info">
-                            <p><i class="fa fa-clock-o"></i> 10 sesiones • 55 min c/u • Sin matrícula</p>
-                        </div>
-
-                        <a href="/Home/DetalleCursoIntensivo" class="btn btn-success btn-sm">
-                            Ver más información
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Resto de clases (mantener las entradas existentes) -->
-            <div class="col-md-4 col-sm-6">
-                <div class="team-thumb wow fadeInUp" data-wow-delay="0.8s">
-                    <img src="~/images/clases-especificas.jpg" class="img-responsive" alt="Clases Específicas">
-
-                    <div class="team-info">
-                        <h3>Clases Específicas</h3>
-                        <p>Entrenamientos enfocados en reforzar técnicas o mejorar un tema puntual.</p>
-
-                        <div class="team-contact-info">
-                            <p><i class="fa fa-clock-o"></i> 55 minutos • Horarios a convenir</p>
-                        </div>
-
-                        <a href="/Home/DetalleClaseEspecifica" class="btn btn-success btn-sm">
-                            Ver más información
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6">
-                <div class="team-thumb wow fadeInUp" data-wow-delay="1s">
-                    <img src="~/images/clases-domicilio.jpg" class="img-responsive" alt="Clases a Domicilio">
-
-                    <div class="team-info">
-                        <h3>Clases a Domicilio</h3>
-                        <p>Entrenamiento en la residencia del alumno si cuenta con cancha de tenis.</p>
-
-                        <div class="team-contact-info">
-                            <p><i class="fa fa-clock-o"></i> 55 minutos • Sin matrícula anual</p>
-                        </div>
-
-                        <a href="/Home/DetalleClaseDomicilio" class="btn btn-success btn-sm">
-                            Ver más información
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6">
-                <div class="team-thumb wow fadeInUp" data-wow-delay="1.2s">
-                    <img src="~/images/paquete-empresarial.jpg" class="img-responsive" alt="Paquete Empresarial">
-
-                    <div class="team-info">
-                        <h3>Paquete Empresarial</h3>
-                        <p>Planes personalizados para empresas interesadas en actividades para sus colaboradores.</p>
-
-                        <div class="team-contact-info">
-                            <p><i class="fa fa-clock-o"></i> 55 minutos • Plan personalizado</p>
-                        </div>
-
-                        <a href="/Home/DetallePaqueteEmpresarial" class="btn btn-success btn-sm">
-                            Ver más información
-                        </a>
-                    </div>
-                </div>
-            </div>
-
+        <div class="text-center mt-4 reveal">
+            <a asp-controller="Home" asp-action="Campeonatos" class="btn-outline-tenis">
+                <i class="fa fa-trophy"></i> Conocé nuestros campeonatos
+            </a>
         </div>
     </div>
 </section>
 
-<!-- CAMPEONATOS (integrado en el Index) -->
-<section id="campeonatos" style="padding-top:60px; padding-bottom:60px; background:#f7fbf6;">
+<!-- CTA: EMPEZAR / CONTACTO -->
+<section id="contacto" class="section-pad section-dark">
     <div class="container">
-        <div class="dashboard-header" style="margin-bottom:18px;">
-            <div>
-                <h1 class="module-title">Campeonatos</h1>
-                <p class="module-subtitle">Gestión visual de torneos, inscripciones y seguimiento de jugadores.</p>
-            </div>
-            <div class="dashboard-status-badge">
-                <i class="fa fa-trophy"></i> Torneos
-            </div>
+        <div class="section-heading text-center reveal">
+            <h2 class="section-title section-title-light">Empezá tu entrenamiento</h2>
+            <p class="section-subtitle section-subtitle-light">
+                Accedé al sistema o dejanos tu consulta sobre nuestras clases.
+            </p>
         </div>
 
-        <div class="row" style="gap:18px;">
-            <div class="col-md-7">
-                <div class="perfil-table-block">
-                    <div class="perfil-table-header">
-                        <h2 class="perfil-table-title">Campeonatos próximos</h2>
-
-                        <div class="perfil-actions">
-                            <a href="#" class="perfil-btn">
-                                <i class="fa fa-plus"></i> Nuevo campeonato
-                            </a>
-                            <a href="#" class="perfil-btn-outline">
-                                Exportar resultados
-                            </a>
-                        </div>
-                    </div>
+        <div class="cta-grid">
+            <div class="cta-card reveal">
+                <h3>Reservar clases</h3>
+                <p>
+                    Iniciá sesión o creá una cuenta para gestionar tus clases,
+                    horarios y seguimiento dentro del sistema.
+                </p>
+                <div class="cta-actions">
+                    <a asp-controller="Home" asp-action="Login" class="btn-hero btn-hero-solid">Iniciar sesión</a>
+                    <a asp-controller="Home" asp-action="Registro" class="btn-hero btn-hero-outline">Crear cuenta</a>
                 </div>
+            </div>
 
-                    <div style="margin-bottom:12px;">
-                        <input type="text" class="form-control" placeholder="Buscar campeonato por nombre, fecha o categoría..." />
+            <div class="contact-card reveal">
+                <h3>Contactanos</h3>
+                <p>Dejanos tu consulta o escribinos directamente.</p>
+
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Nombre">
                     </div>
-                </div>
-
-                <!-- Review 1 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="review-card">
-                        <span class="review-stars">★★★★★</span>
-
-                        <p class="review-text">
-                            “Las clases me han ayudado muchísimo a mejorar mi técnica.
-                            Los profesores explican muy bien y las lecciones son dinámicas.”
-                        </p>
-
-                        <div class="review-user">
-                            <strong>María González</strong>
-                            <small>Clases Regulares</small>
-                        </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control" placeholder="Correo electrónico">
                     </div>
-                </div>
-
-                <!-- Review 2 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="review-card">
-                        <span class="review-stars">★★★★★</span>
-
-                        <p class="review-text">
-                            “Me encantó la flexibilidad de horarios.
-                            Es ideal si no puedes asistir siempre el mismo día.”
-                        </p>
-
-                        <div class="review-user">
-                            <strong>Carlos Ramírez</strong>
-                            <small>Clases Esporádicas</small>
-                        </div>
+                    <div class="form-group">
+                        <textarea class="form-control" rows="3" placeholder="Escribí tu mensaje"></textarea>
                     </div>
+                    <button type="button" class="btn-hero btn-hero-solid btn-block">Enviar consulta</button>
+                </form>
+
+                <div class="contact-divider"><span>o contactanos directamente</span></div>
+
+                <div class="contact-alt-buttons">
+                    <a href="mailto:info@academiatenis.com" class="btn-outline-tenis btn-sm-tenis">
+                        <i class="fa fa-envelope"></i> Correo
+                    </a>
+                    <a href="https://wa.me/50683764752" target="_blank" rel="noopener" class="btn-whatsapp-tenis">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
                 </div>
-
-                <!-- Review 3 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="review-card">
-                        <span class="review-stars">★★★★★</span>
-
-                        <p class="review-text">
-                            “Excelente ambiente y profesores.
-                            Se nota el seguimiento personalizado en cada clase.”
-                        </p>
-
-                        <div class="review-user">
-                            <strong>Ana López</strong>
-                            <small>Curso Intensivo</small>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
-    </section>
-
-<!-- MAKE AN APPOINTMENT -->
-    <section id="cta" data-stellar-background-ratio="1">
-        <div class="container">
-            <div class="row">
-
-                <div class="col-md-12 col-sm-12 text-center">
-                    <div class="section-title">
-                        <h2>Empieza tu entrenamiento</h2>
-                        <p>Accede al sistema o solicita más información sobre nuestras clases.</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-sm-12">
-                    <div class="cta-card text-center">
-                        <h3>Reservar clases</h3>
-                        <p>
-                            Inicia sesión o crea una cuenta para gestionar tus clases,
-                            horarios y seguimiento dentro del sistema.
-                        </p>
-
-                        <a href="/Home/Login" class="btn btn-success m-1">Iniciar sesión</a>
-                        <a href="/Home/Registro" class="btn btn-default m-1">Crear cuenta</a>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-sm-12">
-                    <div class="contact-card">
-
-                        <h3>Contáctanos</h3>
-                        <p>Déjanos tu consulta o escríbenos directamente.</p>
-
-                        <!-- FORM -->
-                        <form>
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Nombre">
-                            </div>
-
-                            <div class="form-group">
-                                <input type="email" class="form-control" placeholder="Correo electrónico">
-                            </div>
-
-                            <div class="form-group">
-                                <textarea class="form-control" rows="4" placeholder="Escribe tu mensaje"></textarea>
-                            </div>
-
-                            <!-- BOTÓN FORM -->
-                            <button type="button" class="btn btn-success btn-block">
-                                Enviar consulta
-                            </button>
-                        </form>
-
-                        <!-- DIVISOR -->
-                        <hr>
-
-                        <p class="text-center">O contáctanos directamente:</p>
-
-                        <!-- CONTACTO DIRECTO -->
-                        <div class="contact-alt-buttons">
-
-                            <a href="mailto:info@academiatenis.com" class="btn btn-outline-custom">
-                                Correo
-                            </a>
-
-                            <a href="https://wa.me/50688888888" target="_blank" class="btn btn-whatsapp">
-                                WhatsApp
-                            </a>
-
-                        </div>
-
-                 
-    </section>
-
-<!-- LA UBICACIÓN ESTÁ AHORA EN EL FOOTER DEL _LAYOUT -->
-
-<section class="slider">
-    ...
+    </div>
 </section>
 
-<section class="about">
-    ...
-</section>
+@section Styles {
+    <link rel="stylesheet" href="~/css/rework-home.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/hero-slider.js"></script>
+}
