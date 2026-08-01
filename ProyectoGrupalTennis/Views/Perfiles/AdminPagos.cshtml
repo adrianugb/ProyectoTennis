@@ -182,29 +182,45 @@
                                         <td>
                                             @if (pago.Estado == "En revisión")
                                             {
-                                                <form asp-action="ConfirmarPago" method="post" style="display:inline;">
+                                                <form asp-action="ConfirmarPago"
+                                                      method="post"
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('¿Desea confirmar el pago y generar la factura?');">
+
                                                     @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="idPago" value="@pago.IdPago" />
-                                                    <button type="submit" class="btn btn-success btn-sm">Confirmar</button>
+
+                                                    <input type="hidden"
+                                                           name="idPago"
+                                                           value="@pago.IdPago" />
+
+                                                    <button type="submit"
+                                                            class="btn btn-success btn-sm">
+
+                                                        <i class="fa fa-check-circle me-1"></i>
+                                                        Confirmar y facturar
+                                                    </button>
                                                 </form>
 
-                                                <form asp-action="RechazarPago" method="post" style="display:inline;">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="idPago" value="@pago.IdPago" />
-                                                    <button type="submit" class="btn btn-danger btn-sm">Rechazar</button>
-                                                </form>
-                                            }
+                                                <form asp-action="RechazarPago"
+                                                      method="post"
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('¿Desea rechazar este pago?');">
 
-                                            @if (pago.Estado == "Pagado" && pago.FacturaEstado == "Pendiente")
-                                            {
-                                                <form asp-action="GenerarFactura" method="post" style="display:inline;">
                                                     @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="idPago" value="@pago.IdPago" />
-                                                    <button type="submit" class="btn btn-primary btn-sm">
-                                                        <i class="fa fa-file-text"></i> Generar factura
+
+                                                    <input type="hidden"
+                                                           name="idPago"
+                                                           value="@pago.IdPago" />
+
+                                                    <button type="submit"
+                                                            class="btn btn-danger btn-sm">
+
+                                                        <i class="fa fa-times-circle me-1"></i>
+                                                        Rechazar
                                                     </button>
                                                 </form>
                                             }
+
 
                                             @if (pago.FacturaEstado == "Disponible")
                                             {

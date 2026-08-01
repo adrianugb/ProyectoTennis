@@ -1,6 +1,7 @@
 ﻿using AcademiaTennisDAL.Context;
 using AcademiaTennisDAL.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Helpers;
@@ -19,17 +20,20 @@ namespace ProyectoGrupalTennis.Controllers
         private readonly EmailService _emailService;
         private readonly IConfiguration _configuration;
         private readonly GoogleCalendarService _calendarService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public UsuarioController(
             AppDbContext context,
             EmailService emailService,
             IConfiguration configuration,
-            GoogleCalendarService calendarService)
+            GoogleCalendarService calendarService,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _emailService = emailService;
             _configuration = configuration;
             _calendarService = calendarService;
+            _userManager = userManager;
         }
 
 
@@ -78,105 +82,299 @@ namespace ProyectoGrupalTennis.Controllers
         [HttpGet]
         public async Task<IActionResult> ConfirmarPagoMatricula(int idCurso)
         {
+            string? idAlumno = _userManager.GetUserId(User);
+
+            if (string.IsNullOrWhiteSpace(idAlumno))
+            {
+                return Challenge();
+            }
+
             var curso = await _context.Cursos
-                .FirstOrDefaultAsync(c => c.IdCurso == idCurso && c.Activo);
+                .FirstOrDefaultAsync(c =>
+                    c.IdCurso == idCurso &&
+                    c.Activo);
 
             if (curso == null)
             {
                 TempData["Error"] = "El curso no existe.";
+
                 return RedirectToAction(nameof(MisCursos));
             }
+
+            var ubicacion = await _context.UbicacionesAlumno
+                .Include(u => u.Zona)
+                .FirstOrDefaultAsync(u =>
+                    u.IdAlumno == idAlumno &&
+                    u.EsPrincipal);
 
             var model = new ConfirmarPagoViewModel
             {
                 IdCurso = curso.IdCurso,
                 Concepto = curso.Nombre,
-                Monto = curso.Precio
+
+                Monto = curso.Precio,
+                MontoTotal = curso.Precio,
+
+                TieneUbicacion = ubicacion != null,
+
+                IdUbicacionAlumno =
+                    ubicacion?.IdUbicacion,
+
+                DireccionCompleta =
+                    ubicacion?.DireccionCompleta,
+
+                NombreZona =
+                    ubicacion?.Zona?.Nombre
             };
 
-            return View("~/Views/Pagos/ConfirmarPagoMatricula.cshtml", model);
+            if (ubicacion?.Zona != null &&
+                ubicacion.Zona.LatitudCentro.HasValue &&
+                ubicacion.Zona.LongitudCentro.HasValue)
+            {
+                double distancia = CalcularDistanciaKm(
+                    (double)ubicacion.Latitud,
+                    (double)ubicacion.Longitud,
+                    (double)ubicacion.Zona.LatitudCentro.Value,
+                    (double)ubicacion.Zona.LongitudCentro.Value);
+
+                decimal distanciaDecimal =
+                    Convert.ToDecimal(distancia);
+
+                decimal costoFijo =
+                    ubicacion.Zona.CostoAdicional;
+
+                decimal tarifaKm =
+                    ubicacion.Zona.TarifaPorKm ?? 0;
+
+                decimal costoPorDistancia =
+                    distanciaDecimal * tarifaKm;
+
+                decimal costoDesplazamiento =
+                    costoFijo + costoPorDistancia;
+
+                model.DistanciaKm =
+                    Math.Round(distanciaDecimal, 2);
+
+                model.CostoFijoZona =
+                    costoFijo;
+
+                model.TarifaPorKm =
+                    tarifaKm;
+
+                model.CostoPorDistancia =
+                    Math.Round(costoPorDistancia, 2);
+
+                model.CostoDesplazamiento =
+                    Math.Round(costoDesplazamiento, 2);
+            }
+
+            return View(
+                "~/Views/Pagos/ConfirmarPagoMatricula.cshtml",
+                model);
         }
 
         // POST: /Usuario/MatricularCurso
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MatricularCurso(int idCurso)
+        public async Task<IActionResult> MatricularCurso(
+            ConfirmarPagoViewModel modelo)
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(
+                System.Security.Claims.ClaimTypes.NameIdentifier
+            )?.Value;
 
-            if (string.IsNullOrEmpty(userId))
+            if (string.IsNullOrWhiteSpace(userId))
             {
-                TempData["Error"] = "Debe iniciar sesión para matricular un curso.";
+                TempData["Error"] =
+                    "Debe iniciar sesión para matricular un curso.";
+
                 return RedirectToAction("Login", "Auth");
             }
 
             var curso = await _context.Cursos
                 .Include(c => c.Horarios)
-                .FirstOrDefaultAsync(c => c.IdCurso == idCurso && c.Activo);
+                .FirstOrDefaultAsync(c =>
+                    c.IdCurso == modelo.IdCurso &&
+                    c.Activo);
 
             if (curso == null)
             {
-                TempData["Error"] = "El curso seleccionado no existe o no está activo.";
-                return RedirectToAction("MisCursos");
+                TempData["Error"] =
+                    "El curso seleccionado no existe o no está activo.";
+
+                return RedirectToAction(nameof(MisCursos));
             }
 
             if (curso.CuposDisponibles <= 0)
             {
-                TempData["Error"] = "No hay cupos disponibles para este curso.";
-                return RedirectToAction("MisCursos");
+                TempData["Error"] =
+                    "No hay cupos disponibles para este curso.";
+
+                return RedirectToAction(nameof(MisCursos));
             }
 
-            var yaMatriculado = await _context.Matriculas
-                .AnyAsync(m => m.IdAlumno == userId && m.IdCurso == idCurso && m.Estado == "Activa");
+            bool yaMatriculado = await _context.Matriculas
+                .AnyAsync(m =>
+                    m.IdAlumno == userId &&
+                    m.IdCurso == modelo.IdCurso &&
+                    m.Estado == "Activa");
 
             if (yaMatriculado)
             {
-                TempData["Error"] = "Ya estás matriculado en este curso.";
-                return RedirectToAction("MisCursos");
+                TempData["Error"] =
+                    "Ya estás matriculado en este curso.";
+
+                return RedirectToAction(nameof(MisCursos));
             }
+
+            decimal distanciaKm = 0;
+            decimal costoDesplazamiento = 0;
+            int? idUbicacionAlumno = null;
+
+            /*
+             * No confiamos en los precios enviados desde la vista.
+             * El servidor vuelve a consultar y calcular todo.
+             */
+            if (modelo.EsADomicilio)
+            {
+                var ubicacion = await _context.UbicacionesAlumno
+                    .Include(u => u.Zona)
+                    .FirstOrDefaultAsync(u =>
+                        u.IdAlumno == userId &&
+                        u.EsPrincipal);
+
+                if (ubicacion == null)
+                {
+                    TempData["Error"] =
+                        "Debe registrar una ubicación antes de solicitar la modalidad a domicilio.";
+
+                    return RedirectToAction(
+                        "MiUbicacion",
+                        "Geolocalizacion");
+                }
+
+                if (ubicacion.Zona == null ||
+                    !ubicacion.Zona.Activa ||
+                    !ubicacion.Zona.LatitudCentro.HasValue ||
+                    !ubicacion.Zona.LongitudCentro.HasValue)
+                {
+                    TempData["Error"] =
+                        "La ubicación registrada no tiene una zona de cobertura válida.";
+
+                    return RedirectToAction(
+                        nameof(ConfirmarPagoMatricula),
+                        new { idCurso = modelo.IdCurso });
+                }
+
+                double distanciaCalculada = CalcularDistanciaKm(
+                    (double)ubicacion.Latitud,
+                    (double)ubicacion.Longitud,
+                    (double)ubicacion.Zona.LatitudCentro.Value,
+                    (double)ubicacion.Zona.LongitudCentro.Value);
+
+                if (ubicacion.Zona.RadioMaximoKm.HasValue &&
+                    distanciaCalculada >
+                    (double)ubicacion.Zona.RadioMaximoKm.Value)
+                {
+                    TempData["Error"] =
+                        "La ubicación está fuera del radio permitido para clases a domicilio.";
+
+                    return RedirectToAction(
+                        nameof(ConfirmarPagoMatricula),
+                        new { idCurso = modelo.IdCurso });
+                }
+
+                distanciaKm = Math.Round(
+                    Convert.ToDecimal(distanciaCalculada),
+                    2);
+
+                decimal tarifaPorKm =
+                    ubicacion.Zona.TarifaPorKm ?? 0;
+
+                decimal costoPorDistancia =
+                    distanciaKm * tarifaPorKm;
+
+                costoDesplazamiento = Math.Round(
+                    ubicacion.Zona.CostoAdicional +
+                    costoPorDistancia,
+                    2);
+
+                idUbicacionAlumno =
+                    ubicacion.IdUbicacion;
+            }
+
+            decimal montoBase = curso.Precio;
+
+            decimal montoTotal =
+                montoBase + costoDesplazamiento;
 
             var pago = new Pago
             {
                 IdAlumno = userId,
                 IdCurso = curso.IdCurso,
-                Monto = curso.Precio,
+
+                MontoBase = montoBase,
+                CostoDesplazamiento = costoDesplazamiento,
+                Monto = montoTotal,
+
+                EsADomicilio = modelo.EsADomicilio,
+                IdUbicacionAlumno = idUbicacionAlumno,
+                DistanciaKm = distanciaKm,
+
                 TipoPago = "Matricula",
                 MetodoPago = "Pendiente",
                 Estado = "Pendiente",
                 FechaPago = DateTime.Now,
                 FechaVencimiento = DateTime.Now.AddDays(3),
                 EsManual = false,
-                Observaciones = $"Pago pendiente por matrícula al curso {curso.Nombre}"
+
+                Observaciones = modelo.EsADomicilio
+                    ? $"Pago pendiente por matrícula al curso {curso.Nombre}. " +
+                      $"Modalidad a domicilio. Desplazamiento: ₡{costoDesplazamiento:N0}."
+                    : $"Pago pendiente por matrícula al curso {curso.Nombre}. " +
+                      "Modalidad en la academia."
             };
 
             _context.Pagos.Add(pago);
 
             await NotificacionHelper.EnviarNotificacionAsync(
-                _context, _emailService, userId,
-                categoria: "Pago", tipo: "Pago pendiente",
+                _context,
+                _emailService,
+                userId,
+                categoria: "Pago",
+                tipo: "Pago pendiente",
                 titulo: "Pago pendiente de matrícula",
-                mensaje: $"Se generó un pago pendiente de ₡{curso.Precio:N0} " +
-                         $"para matricularte en el curso {curso.Nombre}. " +
-                         "Adjunta el comprobante para que el administrador pueda revisarlo.");
+                mensaje:
+                    $"Se generó un pago pendiente de ₡{montoTotal:N0} " +
+                    $"para matricularte en el curso {curso.Nombre}. " +
+                    "Adjunta el comprobante para que el administrador pueda revisarlo."
+            );
 
             await _context.SaveChangesAsync();
 
-            // ── Google Calendar: crear evento por cada horario del curso ──
-            if (await _calendarService.TieneTokenAsync(userId) && curso.Horarios != null)
+            // Google Calendar
+            if (await _calendarService.TieneTokenAsync(userId) &&
+                curso.Horarios != null)
             {
-                foreach (var h in curso.Horarios)
+                foreach (var horario in curso.Horarios)
                 {
                     await _calendarService.CrearEventoAsync(
                         userId,
                         $"Clase: {curso.Nombre}",
-                        $"Nivel: {curso.Nivel} — Matrícula pendiente de confirmación.",
-                        h.Fecha, h.HoraInicio, h.HoraFin);
+                        modelo.EsADomicilio
+                            ? $"Nivel: {curso.Nivel} — Modalidad a domicilio — Pago pendiente."
+                            : $"Nivel: {curso.Nivel} — Modalidad en academia — Pago pendiente.",
+                        horario.Fecha,
+                        horario.HoraInicio,
+                        horario.HoraFin);
                 }
             }
 
-            TempData["Success"] = $"Se generó el pago pendiente por ₡{curso.Precio:N0}. " +
-                                  "Debe realizar el pago para completar la matrícula.";
-            return RedirectToAction("HistorialPagos");
+            TempData["Success"] =
+                $"Se generó el pago pendiente por ₡{montoTotal:N0}. " +
+                "Debe realizar el pago para completar la matrícula.";
+
+            return RedirectToAction(nameof(HistorialPagos));
         }
 
 
@@ -832,6 +1030,35 @@ namespace ProyectoGrupalTennis.Controllers
 
             TempData["Success"] = "Comprobante adjuntado correctamente. Queda pendiente de revisión.";
             return RedirectToAction(nameof(HistorialPagos));
+        }
+
+        private static double CalcularDistanciaKm(
+            double lat1,
+            double lon1,
+            double lat2,
+            double lon2)
+        {
+            const double radioTierra = 6371;
+
+            double dLat =
+                (lat2 - lat1) * Math.PI / 180;
+
+            double dLon =
+                (lon2 - lon1) * Math.PI / 180;
+
+            double a =
+                Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                Math.Cos(lat1 * Math.PI / 180) *
+                Math.Cos(lat2 * Math.PI / 180) *
+                Math.Sin(dLon / 2) *
+                Math.Sin(dLon / 2);
+
+            double c =
+                2 * Math.Atan2(
+                    Math.Sqrt(a),
+                    Math.Sqrt(1 - a));
+
+            return radioTierra * c;
         }
     }
 

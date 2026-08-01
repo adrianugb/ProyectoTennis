@@ -15,7 +15,14 @@ namespace AcademiaTennisDAL.Entities
         public ApplicationUser Alumno { get; set; } = null!;
 
         [Required]
+        [Column(TypeName = "decimal(10,2)")]
         public decimal Monto { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal MontoBase { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal CostoDesplazamiento { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -59,5 +66,15 @@ namespace AcademiaTennisDAL.Entities
         public string? ComprobantePago { get; set; }
 
         public DateTime? FechaComprobante { get; set; }
+
+        public bool EsADomicilio { get; set; }
+
+        public int? IdUbicacionAlumno { get; set; }
+
+        [ForeignKey(nameof(IdUbicacionAlumno))]
+        public UbicacionAlumno? UbicacionAlumno { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal DistanciaKm { get; set; }
     }
 }

@@ -1,0 +1,348 @@
+﻿@model AcademiaTennisDAL.Entities.UbicacionAlumno
+
+@{
+    ViewData["Title"] = "Mi Ubicación";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+
+<link rel="stylesheet"
+      href="~/css/geolocalizacion.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Mi Ubicación
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Seleccione su ubicación para solicitar clases a domicilio.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-map-marker"></i>
+                    Clase a domicilio
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <a asp-controller="Home"
+                   asp-action="PerfilUsuario"
+                   class="geo-btn geo-btn-outline geo-btn-small">
+
+                    <i class="fa fa-arrow-left"></i>
+                    Volver al panel
+                </a>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show"
+                     role="alert">
+
+                    <i class="fa fa-check-circle me-2"></i>
+                    @TempData["Success"]
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Cerrar">
+                    </button>
+                </div>
+            }
+
+            <div class="geo-card">
+                <div class="geo-card-body">
+
+                    <form asp-controller="Geolocalizacion"
+                          asp-action="MiUbicacion"
+                          method="post"
+                          id="formUbicacionAlumno">
+
+                        @Html.AntiForgeryToken()
+
+                        <input asp-for="IdUbicacion"
+                               type="hidden" />
+
+                        <input asp-for="Latitud"
+                               type="hidden" />
+
+                        <input asp-for="Longitud"
+                               type="hidden" />
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger">
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-12 mb-4">
+                                <label asp-for="DireccionCompleta"
+                                       class="form-label">
+
+                                    Dirección completa o referencia
+                                </label>
+
+                                <textarea asp-for="DireccionCompleta"
+                                          class="form-control"
+                                          rows="3"
+                                          maxlength="300"
+                                          placeholder="Ejemplo: 200 metros norte de la iglesia, casa color blanco."></textarea>
+
+                                <span asp-validation-for="DireccionCompleta"
+                                      class="text-danger"></span>
+
+                                <small class="text-muted">
+                                    Incluya referencias que ayuden al profesor
+                                    a encontrar la ubicación.
+                                </small>
+                            </div>
+
+                            <input asp-for="IdZona"
+                                   type="hidden"
+                                   id="IdZona" />
+
+                            <div class="col-12 mb-4">
+
+                                <div id="resultadoZona"
+                                     class="geo-zone-result d-none">
+
+                                    <div class="geo-zone-header">
+                                        <div>
+                                            <small>Zona detectada</small>
+                                            <h4 id="nombreZona">
+                                                Sin detectar
+                                            </h4>
+                                        </div>
+
+                                        <span id="estadoCobertura"
+                                              class="geo-status">
+                                        </span>
+                                    </div>
+
+                                    <div class="geo-zone-grid">
+
+                                        <div class="geo-zone-item">
+                                            <small>Distancia aproximada</small>
+                                            <strong id="distanciaZona">-- km</strong>
+                                        </div>
+
+                                        <div class="geo-zone-item">
+                                            <small>Radio máximo</small>
+                                            <strong id="radioZona">-- km</strong>
+                                        </div>
+
+                                        <div class="geo-zone-item">
+                                            <small>Costo fijo</small>
+                                            <strong id="costoZona">₡0,00</strong>
+                                        </div>
+
+                                        <div class="geo-zone-item">
+                                            <small>Tarifa por kilómetro</small>
+                                            <strong id="tarifaZona">₡0,00</strong>
+                                        </div>
+
+                                        <div class="geo-zone-item">
+                                            <small>Costo calculado por distancia</small>
+
+                                            <strong id="costoDistanciaZona">
+                                                ₡0,00
+                                            </strong>
+                                        </div>
+
+                                        <div class="geo-zone-item geo-zone-total">
+                                            <small>Costo total de desplazamiento</small>
+
+                                            <strong id="costoTotalZona">
+                                                ₡0,00
+                                            </strong>
+                                        </div>
+
+                                    </div>
+
+                                    <div id="mensajeZona"
+                                         class="geo-zone-message">
+                                    </div>
+
+                                </div>
+
+                                <div id="zonaSinDetectar"
+                                     class="geo-info-box">
+
+                                    <i class="fa fa-map-marker"></i>
+
+                                    <div>
+                                        <strong>Zona pendiente</strong>
+
+                                        <p>
+                                            Seleccione una ubicación en el mapa para que
+                                            el sistema detecte automáticamente la zona de cobertura.
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <span asp-validation-for="IdZona"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <div class="geo-info-box">
+
+                                    <i class="fa fa-info-circle"></i>
+
+                                    <div>
+                                        <strong>
+                                            Ubicación principal
+                                        </strong>
+
+                                        <p>
+                                            Esta ubicación será utilizada para
+                                            calcular la distancia y el costo
+                                            de las clases a domicilio.
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+
+                                <label class="form-label">
+                                    Seleccione su ubicación exacta
+                                </label>
+
+                                <p class="mapa-instruccion">
+                                    Haga clic sobre el mapa o utilice el botón
+                                    de ubicación actual. También puede mover
+                                    el marcador después de colocarlo.
+                                </p>
+
+                                <div class="geo-actions">
+
+                                    <button type="button"
+                                            id="btnMiUbicacion"
+                                            class="geo-btn geo-btn-primary">
+
+                                        <i class="fa fa-crosshairs"></i>
+                                        Usar mi ubicación actual
+                                    </button>
+
+                                    <button type="button"
+                                            id="btnLimpiarUbicacion"
+                                            class="geo-btn geo-btn-outline">
+
+                                        <i class="fa fa-eraser"></i>
+                                        Limpiar selección
+                                    </button>
+
+                                </div>
+
+                                <div id="mapaAlumno"
+                                     class="mapa-geolocalizacion">
+                                </div>
+
+                                <div class="ubicacion-seleccionada mt-3">
+
+                                    <div class="row">
+
+                                        <div class="col-md-6 mb-3 mb-md-0">
+
+                                            <small>
+                                                Latitud seleccionada
+                                            </small>
+
+                                            <strong id="textoLatitud">
+                                                No seleccionada
+                                            </strong>
+
+                                        </div>
+
+                                        <div class="col-md-6">
+
+                                            <small>
+                                                Longitud seleccionada
+                                            </small>
+
+                                            <strong id="textoLongitud">
+                                                No seleccionada
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div id="errorUbicacion"
+                                     class="text-danger mt-2 d-none">
+
+                                    Debe seleccionar una ubicación en el mapa.
+                                </div>
+
+                                <span asp-validation-for="Latitud"
+                                      class="text-danger"></span>
+
+                                <span asp-validation-for="Longitud"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                        </div>
+
+                        <hr />
+
+                        <div class="geo-form-actions">
+
+                            <a asp-controller="Home"
+                               asp-action="PerfilUsuario"
+                               class="geo-btn geo-btn-outline">
+
+                                <i class="fa fa-times"></i>
+                                Cancelar
+                            </a>
+
+                            <button type="submit"
+                                    class="geo-btn geo-btn-primary">
+
+                                <i class="fa fa-save"></i>
+
+                                @(Model.IdUbicacion > 0
+                                    ? "Actualizar ubicación"
+                                    : "Guardar ubicación")
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+    <script src="~/js/geolocalizacion-alumno.js"
+            asp-append-version="true">
+    </script>
+}

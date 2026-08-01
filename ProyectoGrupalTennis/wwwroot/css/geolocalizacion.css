@@ -344,3 +344,1067 @@
         background: #dc3545;
         transform: translateY(-2px);
     }
+
+/* ========================================
+   UBICACIÓN DEL ALUMNO
+======================================== */
+
+.geo-info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    height: 100%;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, #f8fbec, #ffffff);
+    border-left: 4px solid #a5c422;
+    border-radius: 12px;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.05);
+}
+
+    .geo-info-box > i {
+        flex-shrink: 0;
+        margin-top: 3px;
+        color: #a5c422;
+        font-size: 22px;
+    }
+
+    .geo-info-box strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #252525;
+        font-size: 14px;
+    }
+
+    .geo-info-box p {
+        margin: 0;
+        color: #757575;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+.ubicacion-seleccionada strong {
+    display: block;
+    overflow-wrap: anywhere;
+    color: #252525;
+    font-size: 15px;
+}
+
+@media (max-width: 768px) {
+    .geo-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+        .geo-actions .geo-btn {
+            width: 100%;
+        }
+
+    .geo-info-box {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .mapa-geolocalizacion {
+        height: 290px;
+    }
+
+    .ubicacion-seleccionada {
+        padding: 13px;
+    }
+
+    .geo-card-body {
+        padding: 18px 15px;
+    }
+
+    .perfil-title {
+        font-size: 25px;
+    }
+
+    .perfil-subtitle {
+        font-size: 14px;
+    }
+}
+
+/* ========================================
+   DETECCIÓN AUTOMÁTICA DE ZONA
+======================================== */
+
+.geo-zone-result {
+    padding: 20px;
+    background: linear-gradient(135deg, #f8fbec, #ffffff);
+    border: 1px solid #e4ebca;
+    border-left: 5px solid #a5c422;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.geo-zone-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+    .geo-zone-header small {
+        display: block;
+        margin-bottom: 4px;
+        color: #757575;
+        font-size: 13px;
+    }
+
+    .geo-zone-header h4 {
+        margin: 0;
+        color: #252525;
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+.geo-zone-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.geo-zone-item {
+    padding: 14px;
+    background: #ffffff;
+    border: 1px solid #ececec;
+    border-radius: 10px;
+}
+
+    .geo-zone-item small {
+        display: block;
+        margin-bottom: 5px;
+        color: #757575;
+        font-size: 12px;
+    }
+
+    .geo-zone-item strong {
+        display: block;
+        color: #252525;
+        font-size: 15px;
+        overflow-wrap: anywhere;
+    }
+
+.geo-zone-message {
+    margin-top: 15px;
+    color: #5f6368;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+@media (max-width: 992px) {
+    .geo-zone-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    .geo-zone-result {
+        padding: 15px;
+    }
+
+    .geo-zone-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .geo-zone-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .geo-zone-header h4 {
+        font-size: 18px;
+    }
+}
+
+.geo-zone-total {
+    background: linear-gradient( 135deg, #eef6d3, #ffffff );
+    border: 1px solid #cddd91;
+}
+
+    .geo-zone-total small {
+        color: #6f8f12;
+        font-weight: 600;
+    }
+
+    .geo-zone-total strong {
+        color: #5f7f16;
+        font-size: 17px;
+    }
+
+@media (max-width: 576px) {
+    .geo-zone-total strong {
+        font-size: 16px;
+    }
+}
+
+/* ========================================
+   CONFIRMACIÓN DE PAGO Y MODALIDAD
+======================================== */
+
+.pago-seccion-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    color: #252525;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+    .pago-seccion-titulo i {
+        color: #a5c422;
+    }
+
+.modalidad-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.modalidad-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px;
+    background: #ffffff;
+    border: 2px solid #e8e8e8;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .modalidad-card:hover {
+        border-color: #cbdc83;
+        box-shadow: 0 7px 18px rgba(0, 0, 0, 0.07);
+        transform: translateY(-2px);
+    }
+
+    .modalidad-card:has(input:checked) {
+        background: linear-gradient(135deg, #f8fbec, #ffffff);
+        border-color: #a5c422;
+        box-shadow: 0 7px 18px rgba(165, 196, 34, 0.16);
+    }
+
+    .modalidad-card input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+    }
+
+.modalidad-icono {
+    display: inline-flex;
+    flex: 0 0 46px;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    color: #75900e;
+    background: #eef6d3;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+.modalidad-contenido {
+    flex: 1;
+}
+
+    .modalidad-contenido strong {
+        display: block;
+        margin-bottom: 6px;
+        color: #252525;
+        font-size: 16px;
+    }
+
+    .modalidad-contenido small {
+        display: block;
+        color: #757575;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+.modalidad-check {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    color: #ffffff;
+    background: #a5c422;
+    border-radius: 50%;
+    font-size: 12px;
+}
+
+.modalidad-card:has(input:checked) .modalidad-check {
+    display: inline-flex;
+}
+
+.modalidad-disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+    .modalidad-disabled:hover {
+        border-color: #e8e8e8;
+        box-shadow: none;
+        transform: none;
+    }
+
+.detalle-domicilio {
+    padding: 20px;
+    background: linear-gradient(135deg, #f8fbec, #ffffff);
+    border: 1px solid #e1ebbd;
+    border-left: 5px solid #a5c422;
+    border-radius: 14px;
+}
+
+.detalle-domicilio-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 16px;
+}
+
+    .detalle-domicilio-header small {
+        display: block;
+        margin-bottom: 4px;
+        color: #757575;
+    }
+
+    .detalle-domicilio-header h4 {
+        margin: 0;
+        color: #252525;
+        font-size: 20px;
+    }
+
+.direccion-pago {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px;
+    background: #ffffff;
+    border: 1px solid #ececec;
+    border-radius: 10px;
+}
+
+    .direccion-pago > i {
+        margin-top: 3px;
+        color: #a5c422;
+        font-size: 20px;
+    }
+
+    .direccion-pago small {
+        display: block;
+        margin-bottom: 4px;
+        color: #757575;
+    }
+
+    .direccion-pago strong {
+        display: block;
+        color: #252525;
+        overflow-wrap: anywhere;
+    }
+
+.resumen-pago {
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #ececec;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+    .resumen-pago h5 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        color: #252525;
+        font-size: 18px;
+    }
+
+        .resumen-pago h5 i {
+            color: #a5c422;
+        }
+
+.resumen-pago-fila,
+.resumen-pago-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 12px 0;
+}
+
+.resumen-pago-fila {
+    color: #5f6368;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.resumen-pago-total {
+    margin-top: 5px;
+    color: #5f7f16;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+    .resumen-pago-total strong {
+        font-size: 22px;
+    }
+
+.aceptacion-domicilio {
+    padding: 16px 18px;
+    background: #fffdf2;
+    border: 1px solid #eadc9a;
+    border-radius: 10px;
+}
+
+    .aceptacion-domicilio .form-check-label {
+        color: #4d4d4d;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+.geo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    color: #7d9917;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+    .geo-link:hover {
+        color: #5f7f16;
+        text-decoration: underline;
+    }
+
+@media (max-width: 768px) {
+    .modalidad-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detalle-domicilio-header {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .modalidad-card {
+        padding: 16px;
+    }
+
+    .modalidad-icono {
+        flex-basis: 40px;
+        width: 40px;
+        height: 40px;
+        font-size: 17px;
+    }
+
+    .detalle-domicilio,
+    .resumen-pago {
+        padding: 16px;
+    }
+
+    .resumen-pago-total {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+        .resumen-pago-total strong {
+            font-size: 20px;
+        }
+}
+
+/* ========================================
+   CLASES A DOMICILIO DEL PROFESOR
+======================================== */
+
+.geo-profesor-filtros {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.geo-filtro-grupo {
+    flex: 1;
+    max-width: 420px;
+}
+
+.geo-filtro-acciones {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.geo-profesor-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.geo-clase-card {
+    padding: 24px;
+    background: linear-gradient(180deg, #ffffff 0%, #fdfdfd 100%);
+    border: 1px solid #eeeeee;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+}
+
+.geo-clase-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+    .geo-clase-header h3 {
+        margin: 6px 0 3px;
+        color: #252525;
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .geo-clase-header p {
+        margin: 0;
+        color: #757575;
+        font-size: 14px;
+    }
+
+.geo-clase-etiqueta {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 11px;
+    color: #647f12;
+    background: #eef6d3;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.geo-clase-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 13px;
+    margin-bottom: 16px;
+}
+
+.geo-clase-dato {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 1px solid #eeeeee;
+    border-radius: 11px;
+}
+
+    .geo-clase-dato > i {
+        flex-shrink: 0;
+        margin-top: 3px;
+        color: #a5c422;
+        font-size: 17px;
+    }
+
+    .geo-clase-dato small,
+    .geo-direccion-profesor small,
+    .geo-clase-resumen small {
+        display: block;
+        margin-bottom: 4px;
+        color: #757575;
+        font-size: 12px;
+    }
+
+    .geo-clase-dato strong,
+    .geo-direccion-profesor strong,
+    .geo-clase-resumen strong {
+        display: block;
+        color: #252525;
+        font-size: 14px;
+        overflow-wrap: anywhere;
+    }
+
+.geo-direccion-profesor {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 17px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #f8fbec, #ffffff);
+    border-left: 4px solid #a5c422;
+    border-radius: 11px;
+}
+
+    .geo-direccion-profesor > i {
+        flex-shrink: 0;
+        margin-top: 3px;
+        color: #a5c422;
+        font-size: 21px;
+    }
+
+.geo-clase-resumen {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+    .geo-clase-resumen > div {
+        padding: 14px 16px;
+        background: #ffffff;
+        border: 1px solid #e6ebd0;
+        border-radius: 10px;
+    }
+
+        .geo-clase-resumen > div:last-child {
+            background: linear-gradient(135deg, #eef6d3, #ffffff);
+        }
+
+            .geo-clase-resumen > div:last-child strong {
+                color: #5f7f16;
+                font-size: 16px;
+            }
+
+.geo-horarios-profesor {
+    margin-bottom: 18px;
+}
+
+    .geo-horarios-profesor h4 {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 11px;
+        color: #333333;
+        font-size: 16px;
+    }
+
+        .geo-horarios-profesor h4 i {
+            color: #a5c422;
+        }
+
+.geo-horarios-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.geo-horario-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    color: #555555;
+    background: #f8f9fa;
+    border: 1px solid #e5e5e5;
+    border-radius: 30px;
+    font-size: 12px;
+}
+
+    .geo-horario-item i {
+        color: #a5c422;
+    }
+
+.mapa-profesor {
+    height: 360px;
+}
+
+.geo-rutas-acciones {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 11px;
+    margin-top: 18px;
+}
+
+.geo-btn-waze {
+    color: #ffffff;
+    background: linear-gradient(135deg, #33ccff 0%, #169bd5 100%);
+    box-shadow: 0 6px 14px rgba(22, 155, 213, 0.22);
+}
+
+    .geo-btn-waze:hover {
+        color: #ffffff;
+        background: linear-gradient(135deg, #20b9ec 0%, #1089be 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 18px rgba(22, 155, 213, 0.3);
+    }
+
+@media (max-width: 992px) {
+    .geo-clase-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .geo-profesor-filtros {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .geo-filtro-grupo {
+        max-width: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .geo-clase-card {
+        padding: 19px;
+    }
+
+    .geo-clase-resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .mapa-profesor {
+        height: 320px;
+    }
+
+    .geo-rutas-acciones {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+        .geo-rutas-acciones .geo-btn {
+            width: 100%;
+        }
+}
+
+@media (max-width: 576px) {
+    .geo-clase-header {
+        flex-direction: column;
+    }
+
+    .geo-clase-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .geo-filtro-acciones {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+        .geo-filtro-acciones .geo-btn {
+            width: 100%;
+        }
+
+    .mapa-profesor {
+        height: 280px;
+    }
+}
+
+/* ========================================
+   MAPA LOGÍSTICO ADMINISTRATIVO
+======================================== */
+
+.geo-admin-filtros {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    align-items: end;
+    gap: 14px;
+}
+
+.geo-admin-filtro {
+    min-width: 0;
+}
+
+.geo-admin-filtro-acciones {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+
+.geo-admin-resumen {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.geo-admin-resumen-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    background: linear-gradient( 135deg, #f8fbec, #ffffff );
+    border-left: 4px solid #a5c422;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+    .geo-admin-resumen-item > i {
+        display: inline-flex;
+        flex: 0 0 44px;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        color: #ffffff;
+        background: linear-gradient( 135deg, #a5c422, #819c18 );
+        border-radius: 50%;
+        font-size: 18px;
+    }
+
+    .geo-admin-resumen-item strong {
+        display: block;
+        color: #252525;
+        font-size: 22px;
+        line-height: 1.1;
+    }
+
+    .geo-admin-resumen-item small {
+        display: block;
+        margin-top: 4px;
+        color: #757575;
+        font-size: 12px;
+    }
+
+.geo-admin-layout {
+    display: grid;
+    grid-template-columns: minmax(300px, 370px) minmax(0, 1fr);
+    gap: 20px;
+    align-items: stretch;
+}
+
+.geo-admin-lista,
+.geo-admin-mapa-contenedor {
+    min-width: 0;
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+}
+
+.geo-admin-lista {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.geo-admin-lista-header {
+    padding: 20px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+    .geo-admin-lista-header h3 {
+        margin: 0 0 4px;
+        color: #252525;
+        font-size: 18px;
+    }
+
+    .geo-admin-lista-header p {
+        margin: 0;
+        color: #757575;
+        font-size: 13px;
+    }
+
+.geo-admin-clases-scroll {
+    max-height: 650px;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+.geo-admin-clase-item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 7px;
+    padding: 15px;
+    margin-bottom: 10px;
+    color: inherit;
+    text-align: left;
+    background: #ffffff;
+    border: 1px solid #ececec;
+    border-radius: 11px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+    .geo-admin-clase-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .geo-admin-clase-item:hover,
+    .geo-admin-clase-item.active {
+        background: linear-gradient( 135deg, #f8fbec, #ffffff );
+        border-color: #a5c422;
+        box-shadow: 0 6px 15px rgba(165, 196, 34, 0.14);
+        transform: translateY(-1px);
+    }
+
+.geo-admin-clase-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.geo-admin-fecha,
+.geo-admin-hora {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.geo-admin-fecha {
+    color: #718b14;
+}
+
+.geo-admin-hora {
+    color: #555555;
+    background: #f2f4f5;
+    border-radius: 20px;
+    padding: 4px 8px;
+}
+
+.geo-admin-curso {
+    color: #252525;
+    font-size: 15px;
+}
+
+.geo-admin-alumno,
+.geo-admin-profesor,
+.geo-admin-zona {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #666666;
+    font-size: 12px;
+}
+
+    .geo-admin-alumno i,
+    .geo-admin-profesor i,
+    .geo-admin-zona i {
+        width: 15px;
+        color: #a5c422;
+    }
+
+.geo-admin-mapa-contenedor {
+    padding: 15px;
+}
+
+.mapa-logistico-admin {
+    height: 650px;
+}
+
+.geo-admin-mapa-ayuda {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 12px;
+    color: #737373;
+    font-size: 12px;
+}
+
+    .geo-admin-mapa-ayuda i {
+        margin-top: 2px;
+        color: #a5c422;
+    }
+
+.geo-popup-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 220px;
+}
+
+    .geo-popup-admin > strong {
+        margin-bottom: 3px;
+        color: #252525;
+        font-size: 15px;
+    }
+
+    .geo-popup-admin > span {
+        display: flex;
+        align-items: flex-start;
+        gap: 7px;
+        color: #555555;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .geo-popup-admin i {
+        flex: 0 0 14px;
+        margin-top: 2px;
+        color: #a5c422;
+    }
+
+@media (max-width: 1200px) {
+    .geo-admin-filtros {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .geo-admin-filtro-acciones {
+        grid-column: 1 / -1;
+    }
+
+    .geo-admin-layout {
+        grid-template-columns: minmax(280px, 330px) minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .geo-admin-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .geo-admin-clases-scroll {
+        max-height: 420px;
+    }
+
+    .mapa-logistico-admin {
+        height: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .geo-admin-filtros,
+    .geo-admin-resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .geo-admin-filtro-acciones {
+        grid-column: auto;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+        .geo-admin-filtro-acciones .geo-btn {
+            width: 100%;
+        }
+
+    .mapa-logistico-admin {
+        height: 400px;
+    }
+}
+
+@media (max-width: 576px) {
+    .geo-admin-lista-header {
+        padding: 16px;
+    }
+
+    .geo-admin-clases-scroll {
+        max-height: 360px;
+        padding: 9px;
+    }
+
+    .geo-admin-clase-top {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .geo-admin-mapa-contenedor {
+        padding: 10px;
+    }
+
+    .mapa-logistico-admin {
+        height: 320px;
+    }
+}

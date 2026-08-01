@@ -1,0 +1,203 @@
+﻿@model AcademiaTennisDAL.Entities.UbicacionAlumno?
+
+@{
+    ViewData["Title"] = "Mi Ubicación";
+
+    bool tieneUbicacion = Model != null;
+
+    string latitud = tieneUbicacion
+        ? Model!.Latitud.ToString(
+            System.Globalization.CultureInfo.InvariantCulture)
+        : "0";
+
+    string longitud = tieneUbicacion
+        ? Model!.Longitud.ToString(
+            System.Globalization.CultureInfo.InvariantCulture)
+        : "0";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+
+<link rel="stylesheet"
+      href="~/css/geolocalizacion.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">Mi Ubicación</h1>
+
+                    <p class="perfil-subtitle">
+                        Consulte la ubicación registrada para sus clases a domicilio.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-map-marker"></i>
+                    Clase a domicilio
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <a asp-controller="Home"
+                   asp-action="PerfilUsuario"
+                   class="geo-btn geo-btn-outline geo-btn-small">
+
+                    <i class="fa fa-arrow-left"></i>
+                    Volver al panel
+                </a>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show"
+                     role="alert">
+
+                    <i class="fa fa-check-circle me-2"></i>
+                    @TempData["Success"]
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Cerrar">
+                    </button>
+                </div>
+            }
+
+            @if (tieneUbicacion)
+            {
+                <div class="geo-card">
+                    <div class="geo-card-body">
+
+                        <div class="row g-3 mb-4">
+
+                            <div class="col-md-6">
+                                <div class="dato-zona">
+                                    <small>Dirección registrada</small>
+                                    <strong>@Model!.DireccionCompleta</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="dato-zona">
+                                    <small>Zona de cobertura</small>
+
+                                    <strong>
+                                        @(Model.Zona?.Nombre ?? "No asignada")
+                                    </strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="dato-zona">
+                                    <small>Costo adicional de la zona</small>
+
+                                    <strong>
+                                        @if (Model.Zona != null)
+                                        {
+                                            @($"₡{Model.Zona.CostoAdicional:N2}")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                No disponible
+                                            </span>
+                                        }
+                                    </strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="dato-zona">
+                                    <small>Estado</small>
+
+                                    <span class="geo-status geo-status-active">
+                                        <i class="fa fa-check"></i>
+                                        Ubicación principal
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <h5 class="mb-3">
+                            <i class="fa fa-map-marker me-1"></i>
+                            Ubicación en el mapa
+                        </h5>
+
+                        <div id="mapaAlumnoDetalle"
+                             class="mapa-geolocalizacion"
+                             data-latitud="@latitud"
+                             data-longitud="@longitud"
+                             data-nombre="Mi ubicación">
+                        </div>
+
+                        <div class="geo-form-actions mt-4">
+
+                            <a asp-controller="Home"
+                               asp-action="PerfilUsuario"
+                               class="geo-btn geo-btn-outline">
+
+                                <i class="fa fa-arrow-left"></i>
+                                Regresar
+                            </a>
+
+                            <a asp-controller="Geolocalizacion"
+                               asp-action="MiUbicacion"
+                               class="geo-btn geo-btn-primary">
+
+                                <i class="fa fa-edit"></i>
+                                Editar ubicación
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="geo-card">
+                    <div class="geo-card-body text-center py-5">
+
+                        <i class="fa fa-map-marker fa-3x text-muted mb-3"></i>
+
+                        <h4>No tienes una ubicación registrada</h4>
+
+                        <p class="text-muted mb-4">
+                            Registra tu ubicación para poder solicitar clases a domicilio.
+                        </p>
+
+                        <a asp-controller="Geolocalizacion"
+                           asp-action="MiUbicacion"
+                           class="geo-btn geo-btn-primary">
+
+                            <i class="fa fa-plus"></i>
+                            Registrar ubicación
+                        </a>
+
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @if (tieneUbicacion)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        <script src="~/js/geolocalizacion-alumno-detalle.js"
+                asp-append-version="true"></script>
+    }
+}

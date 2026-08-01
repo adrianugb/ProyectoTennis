@@ -1,0 +1,340 @@
+﻿@model ProyectoGrupalTennis.Models.ClasesDomicilioProfesorViewModel
+
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Clases a Domicilio";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+
+<link rel="stylesheet"
+      href="~/css/geolocalizacion.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Clases a Domicilio
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Consulte la ubicación de sus alumnos y abra la ruta
+                        mediante Google Maps o Waze.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-map-marker"></i>
+                    Rutas del profesor
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <a asp-controller="Home"
+                   asp-action="PerfilProfesor"
+                   class="geo-btn geo-btn-outline geo-btn-small">
+
+                    <i class="fa fa-arrow-left"></i>
+                    Volver al panel
+                </a>
+            </div>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="fa fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+                </div>
+            }
+
+            <div class="geo-card mb-4">
+                <div class="geo-card-body">
+
+                    <form asp-controller="Geolocalizacion"
+                          asp-action="ClasesDomicilioProfesor"
+                          method="get">
+
+                        <div class="geo-profesor-filtros">
+
+                            <div class="geo-filtro-grupo">
+                                <label for="curso"
+                                       class="form-label">
+                                    Filtrar por curso
+                                </label>
+
+                                <select id="curso"
+                                        name="curso"
+                                        class="form-select">
+
+                                    <option value="">
+                                        Todos los cursos
+                                    </option>
+
+                                    @foreach (var nombreCurso in Model.CursosDisponibles)
+                                    {
+                                        if (Model.FiltroCurso == nombreCurso)
+                                        {
+                                            <option value="@nombreCurso"
+                                                    selected>
+                                                @nombreCurso
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@nombreCurso">
+                                                @nombreCurso
+                                            </option>
+                                        }
+                                    }
+
+                                </select>
+                            </div>
+
+                            <div class="geo-filtro-acciones">
+
+                                <button type="submit"
+                                        class="geo-btn geo-btn-primary">
+
+                                    <i class="fa fa-filter"></i>
+                                    Filtrar
+                                </button>
+
+                                <a asp-controller="Geolocalizacion"
+                                   asp-action="ClasesDomicilioProfesor"
+                                   class="geo-btn geo-btn-outline">
+
+                                    <i class="fa fa-times"></i>
+                                    Limpiar
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+            @if (Model.Clases == null || !Model.Clases.Any())
+            {
+                <div class="geo-card">
+                    <div class="geo-card-body text-center py-5">
+
+                        <i class="fa fa-map-marker fa-3x text-muted mb-3"></i>
+
+                        <h4>
+                            No hay clases a domicilio
+                        </h4>
+
+                        <p class="text-muted mb-0">
+                            No existen matrículas activas a domicilio
+                            para los cursos asignados.
+                        </p>
+
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="geo-profesor-lista">
+
+                    @foreach (var clase in Model.Clases)
+                    {
+                        string latitud =
+                            clase.Latitud.ToString(
+                                CultureInfo.InvariantCulture);
+
+                        string longitud =
+                            clase.Longitud.ToString(
+                                CultureInfo.InvariantCulture);
+
+                        string urlGoogleMaps =
+                            $"https://www.google.com/maps/dir/?api=1&destination={latitud},{longitud}";
+
+                        string urlWaze =
+                            $"https://waze.com/ul?ll={latitud},{longitud}&navigate=yes";
+
+                        <article class="geo-clase-card">
+
+                            <div class="geo-clase-header">
+
+                                <div>
+                                    <span class="geo-clase-etiqueta">
+                                        Clase a domicilio
+                                    </span>
+
+                                    <h3>
+                                        @clase.Curso
+                                    </h3>
+
+                                    <p>
+                                        Nivel @clase.Nivel
+                                    </p>
+                                </div>
+
+                                <span class="geo-status geo-status-active">
+                                    <i class="fa fa-check"></i>
+                                    Activa
+                                </span>
+
+                            </div>
+
+                            <div class="geo-clase-grid">
+
+                                <div class="geo-clase-dato">
+                                    <i class="fa fa-user"></i>
+
+                                    <div>
+                                        <small>Alumno</small>
+                                        <strong>@clase.Alumno</strong>
+                                    </div>
+                                </div>
+
+                                <div class="geo-clase-dato">
+                                    <i class="fa fa-phone"></i>
+
+                                    <div>
+                                        <small>Teléfono</small>
+                                        <strong>@clase.Telefono</strong>
+                                    </div>
+                                </div>
+
+                                <div class="geo-clase-dato">
+                                    <i class="fa fa-envelope"></i>
+
+                                    <div>
+                                        <small>Correo</small>
+                                        <strong>@clase.Correo</strong>
+                                    </div>
+                                </div>
+
+                                <div class="geo-clase-dato">
+                                    <i class="fa fa-map"></i>
+
+                                    <div>
+                                        <small>Zona</small>
+                                        <strong>@clase.Zona</strong>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="geo-direccion-profesor">
+
+                                <i class="fa fa-map-marker"></i>
+
+                                <div>
+                                    <small>
+                                        Dirección o referencia
+                                    </small>
+
+                                    <strong>
+                                        @clase.Direccion
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="geo-clase-resumen">
+
+                                <div>
+                                    <small>Distancia aproximada</small>
+
+                                    <strong>
+                                        @clase.DistanciaKm.ToString("N2") km
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="geo-horarios-profesor">
+
+                                <h4>
+                                    <i class="fa fa-calendar"></i>
+                                    Horarios
+                                </h4>
+
+                                @if (clase.Horarios != null &&
+                                     clase.Horarios.Any())
+                                {
+                                    <div class="geo-horarios-lista">
+
+                                        @foreach (var horario in clase.Horarios)
+                                        {
+                                            <span class="geo-horario-item">
+                                                <i class="fa fa-clock-o"></i>
+                                                @horario
+                                            </span>
+                                        }
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="text-muted mb-0">
+                                        Sin horarios asignados.
+                                    </p>
+                                }
+
+                            </div>
+
+                            <div id="mapaProfesor-@clase.IdMatricula"
+                                 class="mapa-geolocalizacion mapa-profesor"
+                                 data-latitud="@latitud"
+                                 data-longitud="@longitud"
+                                 data-alumno="@clase.Alumno"
+                                 data-curso="@clase.Curso">
+                            </div>
+
+                            <div class="geo-rutas-acciones">
+
+                                <a href="@urlGoogleMaps"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="geo-btn geo-btn-primary">
+
+                                    <i class="fa fa-map"></i>
+                                    Abrir Google Maps
+                                </a>
+
+                                <a href="@urlWaze"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="geo-btn geo-btn-waze">
+
+                                    <i class="fa fa-car"></i>
+                                    Abrir Waze
+                                </a>
+
+                            </div>
+
+                        </article>
+                    }
+
+                </div>
+            }
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+    <script src="~/js/geolocalizacion-profesor.js"
+            asp-append-version="true">
+    </script>
+}

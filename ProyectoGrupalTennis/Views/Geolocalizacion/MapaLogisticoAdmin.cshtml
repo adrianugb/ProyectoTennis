@@ -1,0 +1,356 @@
+﻿@model ProyectoGrupalTennis.Models.MapaLogisticoAdminViewModel
+
+@using System.Globalization
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Mapa Logístico";
+
+    var clasesJson = JsonSerializer.Serialize(
+        Model.Clases.Select(c => new
+        {
+            idMatricula = c.IdMatricula,
+            alumno = c.Alumno,
+            profesor = c.Profesor,
+            curso = c.Curso,
+            nivel = c.Nivel,
+            direccion = c.Direccion,
+            zona = c.Zona,
+            latitud = c.Latitud,
+            longitud = c.Longitud,
+            fecha = c.Fecha.ToString("dd/MM/yyyy"),
+            diaSemana = c.DiaSemana,
+            horaInicio = c.HoraInicio,
+            horaFin = c.HoraFin,
+            telefono = c.TelefonoAlumno
+        })
+    );
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+
+<link rel="stylesheet"
+      href="~/css/geolocalizacion.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Mapa Logístico
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Visualice las clases a domicilio programadas,
+                        sus ubicaciones y profesores asignados.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-map"></i>
+                    Logística administrativa
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <a asp-controller="Home"
+                   asp-action="PerfilAdmin"
+                   class="geo-btn geo-btn-outline geo-btn-small">
+
+                    <i class="fa fa-arrow-left"></i>
+                    Volver al panel
+                </a>
+            </div>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="fa fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+                </div>
+            }
+
+            <div class="geo-card mb-4">
+                <div class="geo-card-body">
+
+                    <form asp-controller="Geolocalizacion"
+                          asp-action="MapaLogisticoAdmin"
+                          method="get">
+
+                        <div class="geo-admin-filtros">
+
+                            <div class="geo-admin-filtro">
+                                <label for="profesor"
+                                       class="form-label">
+                                    Profesor
+                                </label>
+
+                                <select id="profesor"
+                                        name="profesor"
+                                        class="form-select">
+
+                                    <option value="">
+                                        Todos los profesores
+                                    </option>
+
+                                    @foreach (var profesor in Model.Profesores)
+                                    {
+                                        if (Model.FiltroProfesor == profesor.IdProfesor)
+                                        {
+                                            <option value="@profesor.IdProfesor"
+                                                    selected>
+                                                @profesor.Nombre
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@profesor.IdProfesor">
+                                                @profesor.Nombre
+                                            </option>
+                                        }
+                                    }
+
+                                </select>
+                            </div>
+
+                            <div class="geo-admin-filtro">
+                                <label for="zona"
+                                       class="form-label">
+                                    Zona
+                                </label>
+
+                                <select id="zona"
+                                        name="zona"
+                                        class="form-select">
+
+                                    <option value="">
+                                        Todas las zonas
+                                    </option>
+
+                                    @foreach (var zona in Model.Zonas)
+                                    {
+                                        if (Model.FiltroZona == zona.IdZona)
+                                        {
+                                            <option value="@zona.IdZona"
+                                                    selected>
+                                                @zona.Nombre
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@zona.IdZona">
+                                                @zona.Nombre
+                                            </option>
+                                        }
+                                    }
+
+                                </select>
+                            </div>
+
+                            <div class="geo-admin-filtro">
+                                <label for="fecha"
+                                       class="form-label">
+                                    Fecha
+                                </label>
+
+                                <input id="fecha"
+                                       name="fecha"
+                                       type="date"
+                                       class="form-control"
+                                       value="@(Model.FiltroFecha?.ToString("yyyy-MM-dd"))" />
+                            </div>
+
+                            <div class="geo-admin-filtro-acciones">
+
+                                <button type="submit"
+                                        class="geo-btn geo-btn-primary">
+
+                                    <i class="fa fa-filter"></i>
+                                    Filtrar
+                                </button>
+
+                                <a asp-controller="Geolocalizacion"
+                                   asp-action="MapaLogisticoAdmin"
+                                   class="geo-btn geo-btn-outline">
+
+                                    <i class="fa fa-times"></i>
+                                    Limpiar
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+            <div class="geo-admin-resumen mb-4">
+
+                <div class="geo-admin-resumen-item">
+                    <i class="fa fa-home"></i>
+
+                    <div>
+                        <strong>@Model.Clases.Count</strong>
+                        <small>Clases encontradas</small>
+                    </div>
+                </div>
+
+                <div class="geo-admin-resumen-item">
+                    <i class="fa fa-user"></i>
+
+                    <div>
+                        <strong>
+                            @(Model.Clases
+                                .Select(c => c.Profesor)
+                                .Distinct()
+                                .Count())
+                        </strong>
+
+                        <small>Profesores asignados</small>
+                    </div>
+                </div>
+
+                <div class="geo-admin-resumen-item">
+                    <i class="fa fa-map-marker"></i>
+
+                    <div>
+                        <strong>
+                            @(Model.Clases
+                                .Select(c => c.Zona)
+                                .Distinct()
+                                .Count())
+                        </strong>
+
+                        <small>Zonas incluidas</small>
+                    </div>
+                </div>
+
+            </div>
+
+            @if (!Model.Clases.Any())
+            {
+                <div class="geo-card">
+                    <div class="geo-card-body text-center py-5">
+
+                        <i class="fa fa-map-marker fa-3x text-muted mb-3"></i>
+
+                        <h4>
+                            No hay clases a domicilio
+                        </h4>
+
+                        <p class="text-muted mb-0">
+                            No existen clases que coincidan con los filtros aplicados.
+                        </p>
+
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="geo-admin-layout">
+
+                    <aside class="geo-admin-lista">
+
+                        <div class="geo-admin-lista-header">
+                            <div>
+                                <h3>Clases programadas</h3>
+
+                                <p>
+                                    Seleccione una clase para ubicarla en el mapa.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="geo-admin-clases-scroll">
+
+                            @foreach (var clase in Model.Clases)
+                            {
+                                <button type="button"
+                                        class="geo-admin-clase-item"
+                                        data-id-matricula="@clase.IdMatricula"
+                                        data-latitud="@clase.Latitud.ToString(CultureInfo.InvariantCulture)"
+                                        data-longitud="@clase.Longitud.ToString(CultureInfo.InvariantCulture)">
+
+                                    <div class="geo-admin-clase-top">
+
+                                        <span class="geo-admin-fecha">
+                                            <i class="fa fa-calendar"></i>
+                                            @clase.Fecha.ToString("dd/MM/yyyy")
+                                        </span>
+
+                                        <span class="geo-admin-hora">
+                                            @clase.HoraInicio - @clase.HoraFin
+                                        </span>
+
+                                    </div>
+
+                                    <strong class="geo-admin-curso">
+                                        @clase.Curso
+                                    </strong>
+
+                                    <span class="geo-admin-alumno">
+                                        <i class="fa fa-user"></i>
+                                        @clase.Alumno
+                                    </span>
+
+                                    <span class="geo-admin-profesor">
+                                        <i class="fa fa-chalkboard-teacher"></i>
+                                        @clase.Profesor
+                                    </span>
+
+                                    <span class="geo-admin-zona">
+                                        <i class="fa fa-map-marker"></i>
+                                        @clase.Zona
+                                    </span>
+
+                                </button>
+                            }
+
+                        </div>
+
+                    </aside>
+
+                    <div class="geo-admin-mapa-contenedor">
+
+                        <div id="mapaLogisticoAdmin"
+                             class="mapa-geolocalizacion mapa-logistico-admin"
+                             data-clases='@Html.Raw(clasesJson)'>
+                        </div>
+
+                        <div class="geo-admin-mapa-ayuda">
+                            <i class="fa fa-info-circle"></i>
+
+                            <span>
+                                Haga clic en un marcador para consultar los detalles
+                                de la clase programada.
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @if (Model.Clases.Any())
+    {
+        <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        <script src="~/js/geolocalizacion-admin.js"
+                asp-append-version="true"></script>
+    }
+}

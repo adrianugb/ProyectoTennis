@@ -606,7 +606,14 @@ namespace ProyectoGrupalTennis.Controllers
                         IdAlumno = pago.IdAlumno,
                         IdCurso = curso.IdCurso,
                         FechaMatricula = DateTime.Now,
-                        Estado = "Activa"
+                        Estado = "Activa",
+
+                        EsADomicilio = pago.EsADomicilio,
+                        IdUbicacionAlumno = pago.IdUbicacionAlumno,
+                        DistanciaKm = pago.DistanciaKm,
+                        CostoDesplazamiento = pago.CostoDesplazamiento,
+                        PrecioCurso = pago.MontoBase,
+                        MontoTotal = pago.Monto
                     };
 
                     _context.Matriculas.Add(matricula);
@@ -677,10 +684,34 @@ namespace ProyectoGrupalTennis.Controllers
                 pago.Estado = "Pagado";
                 pago.FechaPago = DateTime.Now;
 
+                // Generar factura automáticamente
+                var numeroFactura = $"FAC-{DateTime.Now:yyyyMMdd}-{pago.IdPago:D4}";
+
+                var factura = new Factura
+                {
+                    IdPago = pago.IdPago,
+                    NumeroFactura = numeroFactura,
+                    FechaFactura = DateTime.Now
+                };
+
+                _context.Facturas.Add(factura);
+
+                await NotificacionHelper.EnviarNotificacionAsync(
+                    _context,
+                    _emailService,
+                    pago.IdAlumno,
+                    categoria: "Pago",
+                    tipo: "Factura generada",
+                    titulo: "Factura disponible",
+                    mensaje:
+                        $"Tu factura {numeroFactura} correspondiente al pago fue generada correctamente."
+                );
+
                 await _context.SaveChangesAsync();
                 await transaccion.CommitAsync();
 
-                TempData["MensajeExito"] = "Pago confirmado correctamente.";
+                TempData["MensajeExito"] =
+                    "Pago confirmado y factura generada correctamente.";
             }
             catch
             {

@@ -1,10 +1,25 @@
 ﻿@model ProyectoGrupalTennis.Models.ConfirmarPagoViewModel
 
+@using System.Globalization
+
 @{
     ViewData["Title"] = "Confirmar Pago";
+
+    string montoBaseJs = Model.Monto.ToString(
+        CultureInfo.InvariantCulture);
+
+    string costoDesplazamientoJs =
+        Model.CostoDesplazamiento.ToString(
+            CultureInfo.InvariantCulture);
 }
 
-<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="~/css/geolocalizacion.css"
+      asp-append-version="true" />
 
 <section class="perfil-page compact">
     <div class="container">
@@ -12,57 +27,356 @@
 
             <div class="perfil-header">
                 <div>
-                    <h1 class="perfil-title">Confirmar Pago</h1>
+                    <h1 class="perfil-title">
+                        Confirmar Pago
+                    </h1>
+
                     <p class="perfil-subtitle">
-                        Revise el monto antes de generar el pago.
+                        Seleccione la modalidad y revise el monto antes
+                        de generar el pago pendiente.
                     </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-credit-card"></i>
+                    Matrícula
                 </div>
             </div>
 
-            <div class="perfil-table-block">
+            <div class="mb-4">
+                <a asp-controller="Usuario"
+                   asp-action="MisCursos"
+                   class="geo-btn geo-btn-outline geo-btn-small">
 
-                <table class="perfil-table">
-                    <tbody>
-                        <tr>
-                            <th>Curso</th>
-                            <td>@Model.Concepto</td>
-                        </tr>
+                    <i class="fa fa-arrow-left"></i>
+                    Volver a cursos
+                </a>
+            </div>
 
-                        <tr>
-                            <th>Monto</th>
-                            <td>
-                                <strong>₡@Model.Monto.ToString("N0")</strong>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="fa fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+                </div>
+            }
 
-                <form asp-action="MatricularCurso" method="post">
+            <div class="geo-card">
+                <div class="geo-card-body">
 
-                    @Html.AntiForgeryToken()
+                    <form asp-controller="Usuario"
+                          asp-action="MatricularCurso"
+                          method="post"
+                          id="formConfirmarPago">
 
-                    <input type="hidden"
-                           name="idCurso"
-                           value="@Model.IdCurso" />
+                        @Html.AntiForgeryToken()
 
-                    <div class="mt-4">
+                        <input asp-for="IdCurso"
+                               type="hidden" />
 
-                        <a asp-action="MisCursos"
-                           class="btn btn-secondary">
-                            Cancelar
-                        </a>
+                        <div asp-validation-summary="All"
+                             class="alert alert-danger">
+                        </div>
 
-                        <button class="btn btn-success"
-                                type="submit">
-                            Generar pago
-                        </button>
+                        <div class="row g-3 mb-4">
 
-                    </div>
+                            <div class="col-md-6">
+                                <div class="dato-zona">
+                                    <small>Curso seleccionado</small>
 
-                </form>
+                                    <strong>
+                                        <i class="fa fa-book me-1"></i>
+                                        @Model.Concepto
+                                    </strong>
+                                </div>
+                            </div>
 
+                            <div class="col-md-6">
+                                <div class="dato-zona">
+                                    <small>Precio base del curso</small>
+
+                                    <strong>
+                                        ₡@Model.Monto.ToString("N2")
+                                    </strong>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <h5 class="pago-seccion-titulo">
+                            <i class="fa fa-map-marker"></i>
+                            Modalidad de la clase
+                        </h5>
+
+                        <div class="modalidad-grid mb-4">
+
+                            <label class="modalidad-card"
+                                   for="modalidadAcademia">
+
+                                <input asp-for="EsADomicilio"
+                                       type="radio"
+                                       id="modalidadAcademia"
+                                       value="false"
+                                       checked />
+
+                                <span class="modalidad-icono">
+                                    <i class="fa fa-building"></i>
+                                </span>
+
+                                <span class="modalidad-contenido">
+                                    <strong>
+                                        En la academia
+                                    </strong>
+
+                                    <small>
+                                        La clase se imparte en las instalaciones
+                                        de la academia, sin costo de desplazamiento.
+                                    </small>
+                                </span>
+
+                                <span class="modalidad-check">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                            </label>
+
+                            <label class="modalidad-card
+                                @(Model.TieneUbicacion
+                                       ? string.Empty
+                                       : "modalidad-disabled")"
+                                   for="modalidadDomicilio">
+
+                                <input asp-for="EsADomicilio"
+                                       type="radio"
+                                       id="modalidadDomicilio"
+                                       value="true"
+                                       disabled="@(!Model.TieneUbicacion)" />
+
+                                <span class="modalidad-icono">
+                                    <i class="fa fa-home"></i>
+                                </span>
+
+                                <span class="modalidad-contenido">
+                                    <strong>
+                                        A domicilio
+                                    </strong>
+
+                                    <small>
+                                        El profesor se desplazará hasta la
+                                        ubicación registrada.
+                                    </small>
+                                </span>
+
+                                <span class="modalidad-check">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                            </label>
+
+                        </div>
+
+                        @if (!Model.TieneUbicacion)
+                        {
+                            <div class="geo-info-box mb-4">
+
+                                <i class="fa fa-info-circle"></i>
+
+                                <div>
+                                    <strong>
+                                        No tienes una ubicación registrada
+                                    </strong>
+
+                                    <p>
+                                        Para escoger la modalidad a domicilio,
+                                        primero debes registrar una ubicación válida.
+                                    </p>
+
+                                    <a asp-controller="Geolocalizacion"
+                                       asp-action="MiUbicacion"
+                                       class="geo-link">
+
+                                        Registrar ubicación
+                                        <i class="fa fa-arrow-right"></i>
+                                    </a>
+                                </div>
+
+                            </div>
+                        }
+
+                        @if (Model.TieneUbicacion)
+                        {
+                            <div id="detalleDomicilio"
+                                 class="detalle-domicilio d-none">
+
+                                <div class="detalle-domicilio-header">
+                                    <div>
+                                        <small>Ubicación registrada</small>
+
+                                        <h4>
+                                            @Model.NombreZona
+                                        </h4>
+                                    </div>
+
+                                    <span class="geo-status geo-status-active">
+                                        <i class="fa fa-check"></i>
+                                        Disponible
+                                    </span>
+                                </div>
+
+                                <div class="direccion-pago">
+                                    <i class="fa fa-map-marker"></i>
+
+                                    <div>
+                                        <small>Dirección o referencia</small>
+                                        <strong>@Model.DireccionCompleta</strong>
+                                    </div>
+                                </div>
+
+                                <div class="geo-zone-grid mt-3">
+
+                                    <div class="geo-zone-item">
+                                        <small>Distancia aproximada</small>
+
+                                        <strong>
+                                            @Model.DistanciaKm.ToString("N2") km
+                                        </strong>
+                                    </div>
+
+                                    <div class="geo-zone-item">
+                                        <small>Costo fijo</small>
+
+                                        <strong>
+                                            ₡@Model.CostoFijoZona.ToString("N2")
+                                        </strong>
+                                    </div>
+
+                                    <div class="geo-zone-item">
+                                        <small>Tarifa por kilómetro</small>
+
+                                        <strong>
+                                            ₡@Model.TarifaPorKm.ToString("N2")
+                                        </strong>
+                                    </div>
+
+                                    <div class="geo-zone-item">
+                                        <small>Costo por distancia</small>
+
+                                        <strong>
+                                            ₡@Model.CostoPorDistancia.ToString("N2")
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div class="alert alert-info mt-3 mb-0">
+                                    <i class="fa fa-info-circle me-1"></i>
+
+                                    El costo de desplazamiento se sumará al
+                                    precio base del curso.
+                                </div>
+
+                            </div>
+                        }
+
+                        <div class="resumen-pago mt-4">
+
+                            <h5>
+                                <i class="fa fa-receipt"></i>
+                                Resumen del pago
+                            </h5>
+
+                            <div class="resumen-pago-fila">
+                                <span>Precio del curso</span>
+
+                                <strong>
+                                    ₡@Model.Monto.ToString("N2")
+                                </strong>
+                            </div>
+
+                            <div id="filaDesplazamiento"
+                                 class="resumen-pago-fila d-none">
+
+                                <span>Costo de desplazamiento</span>
+
+                                <strong>
+                                    ₡@Model.CostoDesplazamiento.ToString("N2")
+                                </strong>
+                            </div>
+
+                            <div class="resumen-pago-total">
+                                <span>Total pendiente</span>
+
+                                <strong id="montoTotal"
+                                        data-monto-base="@montoBaseJs"
+                                        data-costo-desplazamiento="@costoDesplazamientoJs">
+
+                                    ₡@Model.Monto.ToString("N2")
+                                </strong>
+                            </div>
+
+                        </div>
+
+                        <div id="aceptacionDomicilio"
+                             class="aceptacion-domicilio d-none mt-3">
+
+                            <div class="form-check">
+
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       id="aceptaCostoDomicilio" />
+
+                                <label class="form-check-label"
+                                       for="aceptaCostoDomicilio">
+
+                                    Estoy de acuerdo con el costo adicional
+                                    de desplazamiento mostrado.
+                                </label>
+
+                            </div>
+
+                            <div id="errorAceptacion"
+                                 class="text-danger mt-2 d-none">
+
+                                Debe aceptar el costo de desplazamiento
+                                antes de continuar.
+                            </div>
+
+                        </div>
+
+                        <hr />
+
+                        <div class="geo-form-actions">
+
+                            <a asp-controller="Usuario"
+                               asp-action="MisCursos"
+                               class="geo-btn geo-btn-outline">
+
+                                <i class="fa fa-times"></i>
+                                Cancelar
+                            </a>
+
+                            <button type="submit"
+                                    class="geo-btn geo-btn-primary">
+
+                                <i class="fa fa-credit-card"></i>
+                                Generar pago pendiente
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
             </div>
 
         </div>
     </div>
 </section>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+
+        <script src="~/js/confirmar-pago-matricula.js"
+                asp-append-version="true"></script>
+    }
+}

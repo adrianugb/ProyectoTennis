@@ -3,6 +3,7 @@ using System;
 using AcademiaTennisDAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AcademiaTennisDAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260801015922_AgregarClasesDomicilioAMatricula")]
+    partial class AgregarClasesDomicilioAMatricula
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -829,12 +832,6 @@ namespace AcademiaTennisDAL.Migrations
                     b.Property<decimal>("CostoDesplazamiento")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<decimal>("DistanciaKm")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<bool>("EsADomicilio")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<bool>("EsManual")
                         .HasColumnType("tinyint(1)");
 
@@ -863,9 +860,6 @@ namespace AcademiaTennisDAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("IdReserva")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("IdUbicacionAlumno")
                         .HasColumnType("int");
 
                     b.Property<string>("MetodoPago")
@@ -897,8 +891,6 @@ namespace AcademiaTennisDAL.Migrations
                     b.HasIndex("IdMatricula");
 
                     b.HasIndex("IdReserva");
-
-                    b.HasIndex("IdUbicacionAlumno");
 
                     b.ToTable("Pagos");
                 });
@@ -1860,10 +1852,6 @@ namespace AcademiaTennisDAL.Migrations
                         .WithMany("Pagos")
                         .HasForeignKey("IdReserva");
 
-                    b.HasOne("AcademiaTennisDAL.Entities.UbicacionAlumno", "UbicacionAlumno")
-                        .WithMany()
-                        .HasForeignKey("IdUbicacionAlumno");
-
                     b.Navigation("Alumno");
 
                     b.Navigation("Curso");
@@ -1871,8 +1859,6 @@ namespace AcademiaTennisDAL.Migrations
                     b.Navigation("Matricula");
 
                     b.Navigation("Reserva");
-
-                    b.Navigation("UbicacionAlumno");
                 });
 
             modelBuilder.Entity("AcademiaTennisDAL.Entities.PreferenciaNotificacion", b =>
