@@ -95,7 +95,7 @@
                             @if (!Model.Cursos.Any())
                             {
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted py-4">
+                                    <td colspan="8" class="text-center text-muted py-4">
                                         <i class="fa fa-book fa-2x mb-2 d-block"></i>
                                         No hay cursos registrados en el sistema.
                                     </td>
@@ -158,6 +158,28 @@
                                                 <button type="submit" class="perfil-action-link"
                                                         style="background:none;border:none;padding:0;cursor:pointer;">
                                                     @(curso.Activo ? "Desactivar" : "Activar")
+                                                </button>
+                                            </form>
+                                            <span class="perfil-action-separator">|</span>
+
+                                            <form asp-controller="Curso"
+                                                  asp-action="Eliminar"
+                                                  method="post"
+                                                  style="display:inline"
+                                                  onsubmit="return confirm('¿Seguro que desea eliminar este curso? Esta acción no se puede deshacer.');">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@curso.IdCurso" />
+
+                                                <button type="submit"
+                                                        class="perfil-action-link perfil-action-danger"
+                                                        style="background:none;border:none;padding:0;cursor:pointer;">
+
+                                                    <i class="fa fa-trash"></i>
+                                                    Eliminar
                                                 </button>
                                             </form>
                                         </td>

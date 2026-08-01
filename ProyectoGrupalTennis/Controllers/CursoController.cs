@@ -1,12 +1,13 @@
 ﻿using AcademiaTennisBLL.Services;
 using AcademiaTennisDAL.Context;
 using AcademiaTennisDAL.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Helpers;
 using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Services;
-using Microsoft.AspNetCore.Identity;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -32,18 +33,47 @@ namespace ProyectoGrupalTennis.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index(string? buscar, string? nivel, string? estado)
+        public async Task<IActionResult> Index(
+            string? buscar,
+            string? nivel,
+            string? estado)
         {
+            await _service.ActualizarCursosFinalizadosAsync();
+
             var cursos = _service.ObtenerTodos();
-            if (!string.IsNullOrEmpty(buscar))
-                cursos = cursos.Where(c => c.Nombre.Contains(buscar, StringComparison.OrdinalIgnoreCase)).ToList();
-            if (!string.IsNullOrEmpty(nivel))
-                cursos = cursos.Where(c => c.Nivel == nivel).ToList();
+
+            if (!string.IsNullOrWhiteSpace(buscar))
+            {
+                cursos = cursos
+                    .Where(c => c.Nombre.Contains(
+                        buscar,
+                        StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(nivel))
+            {
+                cursos = cursos
+                    .Where(c => c.Nivel == nivel)
+                    .ToList();
+            }
+
             if (estado == "Activo")
-                cursos = cursos.Where(c => c.Activo).ToList();
+            {
+                cursos = cursos
+                    .Where(c => c.Activo)
+                    .ToList();
+            }
             else if (estado == "Inactivo")
-                cursos = cursos.Where(c => !c.Activo).ToList();
-            return View("~/Views/Cursos/Index.cshtml", cursos);
+            {
+                cursos = cursos
+                    .Where(c => !c.Activo)
+                    .ToList();
+            }
+
+            return View(
+                "~/Views/Cursos/Index.cshtml",
+                cursos);
         }
 
         public async Task<IActionResult> Agregar()
@@ -235,12 +265,78 @@ namespace ProyectoGrupalTennis.Controllers
                 return View("~/Views/Cursos/Editar.cshtml", vm);
             }
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            var curso = await _context.Cursos
+                .Include(c => c.Matriculas)
+                .Include(c => c.Horarios)
+                .FirstOrDefaultAsync(c =>
+                    c.IdCurso == id);
+
+            if (curso == null)
+            {
+                TempData["MensajeError"] =
+                    "No se encontró el curso seleccionado.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            bool tieneMatriculas =
+                curso.Matriculas != null &&
+                curso.Matriculas.Any();
+
+            bool tienePagos = await _context.Pagos
+                .AnyAsync(p =>
+                    p.IdCurso == id ||
+                    (
+                        p.Matricula != null &&
+                        p.Matricula.IdCurso == id
+                    ));
+
+            if (tieneMatriculas || tienePagos)
+            {
+                TempData["MensajeError"] =
+                    "El curso no puede eliminarse porque tiene matrículas " +
+                    "o pagos relacionados. Puede desactivarlo para conservar " +
+                    "el historial.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (curso.Horarios != null &&
+                curso.Horarios.Any())
+            {
+                _context.Horarios.RemoveRange(
+                    curso.Horarios);
+            }
+
+            _context.Cursos.Remove(curso);
+
+            await _context.SaveChangesAsync();
+
+            TempData["MensajeExito"] =
+                "El curso fue eliminado correctamente.";
+
+            return RedirectToAction(nameof(Index));
+        }
 
         [HttpPost]
-        public IActionResult CambiarEstado(int id, bool activo)
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
+        public IActionResult CambiarEstado(
+            int id,
+            bool activo)
         {
             _service.CambiarEstado(id, activo);
-           return RedirectToAction("Index", "Curso");
+
+            TempData["MensajeExito"] = activo
+                ? "El curso fue activado correctamente."
+                : "El curso fue desactivado correctamente.";
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]

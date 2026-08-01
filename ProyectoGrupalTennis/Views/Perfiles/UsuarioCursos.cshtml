@@ -164,19 +164,44 @@
                                             ₡@curso.Precio.ToString("N0")
                                         </td>
                                         <td>
-                                            @if (curso.CuposDisponibles > 0)
+                                            @if (curso.MatriculaCerrada)
+                                            {
+                                                <span class="perfil-badge-warning">
+                                                    <i class="fa fa-lock me-1"></i>
+                                                    Matrícula cerrada
+                                                </span>
+
+                                                @if (!string.IsNullOrWhiteSpace(curso.FechaLimiteMatricula))
+                                                {
+                                                    <small class="d-block text-muted mt-1">
+                                                        Cerró el @curso.FechaLimiteMatricula
+                                                    </small>
+                                                }
+                                            }
+                                            else if (curso.CuposDisponibles > 0)
                                             {
                                                 <a asp-controller="Usuario"
                                                    asp-action="ConfirmarPagoMatricula"
                                                    asp-route-idCurso="@curso.IdCurso"
                                                    class="btn btn-success btn-sm">
+
+                                                    <i class="fa fa-money me-1"></i>
                                                     Ver monto
                                                 </a>
 
+                                                @if (!string.IsNullOrWhiteSpace(curso.FechaLimiteMatricula))
+                                                {
+                                                    <small class="d-block text-muted mt-1">
+                                                        Disponible hasta
+                                                        @curso.FechaLimiteMatricula
+                                                    </small>
+                                                }
                                             }
                                             else
                                             {
-                                                <span class="text-muted">No disponible</span>
+                                                <span class="perfil-badge-warning">
+                                                    Sin cupos
+                                                </span>
                                             }
                                         </td>
                                     </tr>

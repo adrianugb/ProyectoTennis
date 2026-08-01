@@ -38,7 +38,9 @@ namespace ProyectoGrupalTennis.Controllers
 
 
         // GET: /Usuario/MisCursos
-        public async Task<IActionResult> MisCursos(string? buscar, string? nivel)
+        public async Task<IActionResult> MisCursos(
+    string? buscar,
+    string? nivel)
         {
             var query = _context.Cursos
                 .Include(c => c.Horarios)
@@ -47,36 +49,97 @@ namespace ProyectoGrupalTennis.Controllers
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(buscar))
-                query = query.Where(c => c.Nombre.Contains(buscar));
+            {
+                query = query.Where(c =>
+                    c.Nombre.Contains(buscar));
+            }
 
             if (!string.IsNullOrWhiteSpace(nivel))
-                query = query.Where(c => c.Nivel == nivel);
+            {
+                query = query.Where(c =>
+                    c.Nivel == nivel);
+            }
 
-            var cursos = await query.OrderBy(c => c.Nombre).ToListAsync();
+            var cursos = await query
+                .OrderBy(c => c.Nombre)
+                .ToListAsync();
+
+            DateTime ahora = DateTime.Now;
+
+            // Oculta cursos cuyo último horario ya terminó.
+            cursos = cursos
+                .Where(c =>
+                    c.Horarios == null ||
+                    !c.Horarios.Any() ||
+                    c.Horarios.Any(h =>
+                        h.Fecha.Date.Add(h.HoraFin) > ahora))
+                .ToList();
 
             var viewModel = new UsuarioCursosViewModel
             {
                 FiltroBuscar = buscar,
                 FiltroNivel = nivel,
-                Cursos = cursos.Select(c => new CursoUsuarioItemViewModel
+
+                Cursos = cursos.Select(c =>
                 {
-                    IdCurso = c.IdCurso,
-                    Nombre = c.Nombre,
-                    Descripcion = c.Descripcion ?? string.Empty,
-                    Nivel = c.Nivel,
-                    CuposDisponibles = c.CuposDisponibles,
-                    Precio = c.Precio,
-                    NombreProfesor = c.Profesor != null
-                        ? $"{c.Profesor.Nombre} {c.Profesor.Apellidos}"
-                        : "Sin asignar",
-                    Horarios = c.Horarios != null
-                        ? c.Horarios.Select(h =>
-                            $"{h.DiaSemana} {h.HoraInicio:hh\\:mm} - {h.HoraFin:hh\\:mm}").ToList()
-                        : new List<string>()
+                    DateTime? primerInicio =
+                        c.Horarios != null &&
+                        c.Horarios.Any()
+                            ? c.Horarios
+                                .Select(h =>
+                                    h.Fecha.Date.Add(h.HoraInicio))
+                                .Min()
+                            : null;
+
+                    DateTime? fechaLimite =
+                        primerInicio?.AddHours(-3);
+
+                    bool matriculaCerrada =
+                        fechaLimite.HasValue &&
+                        ahora >= fechaLimite.Value;
+
+                    return new CursoUsuarioItemViewModel
+                    {
+                        IdCurso = c.IdCurso,
+                        Nombre = c.Nombre,
+                        Descripcion =
+                            c.Descripcion ?? string.Empty,
+                        Nivel = c.Nivel,
+                        CuposDisponibles =
+                            c.CuposDisponibles,
+                        Precio = c.Precio,
+
+                        NombreProfesor =
+                            c.Profesor != null
+                                ? $"{c.Profesor.Nombre} {c.Profesor.Apellidos}"
+                                : "Sin asignar",
+
+                        Horarios =
+                            c.Horarios != null
+                                ? c.Horarios
+                                    .OrderBy(h => h.Fecha)
+                                    .ThenBy(h => h.HoraInicio)
+                                    .Select(h =>
+                                        $"{h.Fecha:dd/MM/yyyy} - " +
+                                        $"{h.DiaSemana} " +
+                                        $"{h.HoraInicio:hh\\:mm} - " +
+                                        $"{h.HoraFin:hh\\:mm}")
+                                    .ToList()
+                                : new List<string>(),
+
+                        MatriculaCerrada =
+                            matriculaCerrada,
+
+                        FechaLimiteMatricula =
+                            fechaLimite?.ToString(
+                                "dd/MM/yyyy HH:mm")
+                    };
                 }).ToList()
             };
 
-            return View("~/Views/Perfiles/UsuarioCursos.cshtml", viewModel);
+            return View(
+                "~/Views/Perfiles/UsuarioCursos.cshtml",
+                viewModel);
         }
 
         [HttpGet]
@@ -90,6 +153,7 @@ namespace ProyectoGrupalTennis.Controllers
             }
 
             var curso = await _context.Cursos
+                .Include(c => c.Horarios)
                 .FirstOrDefaultAsync(c =>
                     c.IdCurso == idCurso &&
                     c.Activo);
@@ -97,6 +161,14 @@ namespace ProyectoGrupalTennis.Controllers
             if (curso == null)
             {
                 TempData["Error"] = "El curso no existe.";
+
+                return RedirectToAction(nameof(MisCursos));
+            }
+
+            if (MatriculaCerrada(curso))
+            {
+                TempData["Error"] =
+                    "La matrícula para este curso ya está cerrada porque faltan menos de 3 horas para iniciar.";
 
                 return RedirectToAction(nameof(MisCursos));
             }
@@ -1059,6 +1131,29 @@ namespace ProyectoGrupalTennis.Controllers
                     Math.Sqrt(1 - a));
 
             return radioTierra * c;
+        }
+
+        private static bool MatriculaCerrada(
+            Curso curso,
+            int horasAnticipacion = 3)
+        {
+            if (curso.Horarios == null ||
+                !curso.Horarios.Any())
+            {
+                return false;
+            }
+
+            DateTime ahora = DateTime.Now;
+
+            DateTime primerInicio = curso.Horarios
+                .Select(h =>
+                    h.Fecha.Date.Add(h.HoraInicio))
+                .Min();
+
+            DateTime fechaLimite =
+                primerInicio.AddHours(-horasAnticipacion);
+
+            return ahora >= fechaLimite;
         }
     }
 

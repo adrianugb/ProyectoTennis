@@ -13,5 +13,7 @@ namespace AcademiaTennisBLL.Services
         List<Horario> ObtenerHorarios(int idCurso);
         void AgregarHorario(Horario horario);
         void EliminarHorario(int idHorario);
+
+        Task ActualizarCursosFinalizadosAsync();
     }
 }

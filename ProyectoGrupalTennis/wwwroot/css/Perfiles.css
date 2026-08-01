@@ -975,3 +975,12 @@
             text-align: center;
         }
 }
+
+.perfil-action-danger {
+    color: #dc3545 !important;
+}
+
+    .perfil-action-danger:hover {
+        color: #a71d2a !important;
+        text-decoration: underline;
+    }

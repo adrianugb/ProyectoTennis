@@ -12,6 +12,10 @@
         public decimal Precio { get; set; }
         public string? NombreProfesor { get; set; }
         public List<string> Horarios { get; set; } = new();
+
+        public bool MatriculaCerrada { get; set; }
+
+        public string? FechaLimiteMatricula { get; set; }
     }
 
     public class UsuarioCursosViewModel

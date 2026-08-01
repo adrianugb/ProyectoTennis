@@ -1,15 +1,21 @@
-﻿using AcademiaTennisDAL.Entities;
+﻿using AcademiaTennisDAL.Context;
+using AcademiaTennisDAL.Entities;
 using AcademiaTennisDAL.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace AcademiaTennisBLL.Services
 {
     public class CursoService : ICursoService
     {
         private readonly ICursoRepository _repo;
+        private readonly AppDbContext _context;
 
-        public CursoService(ICursoRepository repo)
+        public CursoService(
+            ICursoRepository repo,
+            AppDbContext context)
         {
             _repo = repo;
+            _context = context;
         }
 
         public List<Curso> ObtenerTodos() => _repo.ObtenerTodos();
@@ -52,5 +58,42 @@ namespace AcademiaTennisBLL.Services
         public List<Horario> ObtenerHorarios(int idCurso) => _repo.ObtenerHorarios(idCurso);
         public void AgregarHorario(Horario horario) => _repo.AgregarHorario(horario);
         public void EliminarHorario(int idHorario) => _repo.EliminarHorario(idHorario);
+
+        public async Task ActualizarCursosFinalizadosAsync()
+        {
+            DateTime ahora = DateTime.Now;
+
+            var cursosActivos = await _context.Cursos
+                .Include(c => c.Horarios)
+                .Where(c => c.Activo)
+                .ToListAsync();
+
+            bool huboCambios = false;
+
+            foreach (var curso in cursosActivos)
+            {
+                if (curso.Horarios == null ||
+                    !curso.Horarios.Any())
+                {
+                    continue;
+                }
+
+                DateTime ultimoFinal = curso.Horarios
+                    .Select(h =>
+                        h.Fecha.Date.Add(h.HoraFin))
+                    .Max();
+
+                if (ultimoFinal <= ahora)
+                {
+                    curso.Activo = false;
+                    huboCambios = true;
+                }
+            }
+
+            if (huboCambios)
+            {
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
