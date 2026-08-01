@@ -1,0 +1,271 @@
+﻿@model AcademiaTennisDAL.Entities.ZonaCobertura
+
+@{
+    ViewData["Title"] = "Editar Zona";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+
+<link rel="stylesheet"
+      href="~/css/geolocalizacion.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Editar Zona de Cobertura
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Modifique la configuración y la ubicación de la zona.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-map-marker"></i>
+                    Geolocalización
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <a asp-action="Index"
+                   class="geo-btn geo-btn-outline geo-btn-small">
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Volver
+                </a>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <form asp-controller="Geolocalizacion"
+                          asp-action="Editar"
+                          asp-route-id="@Model.IdZona"
+                          method="post"
+                          id="formZona">
+
+                        @Html.AntiForgeryToken()
+
+                        <input asp-for="IdZona" type="hidden" />
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger">
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Nombre"
+                                       class="form-label">
+                                    Nombre de la zona
+                                </label>
+
+                                <input asp-for="Nombre"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Nombre"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CostoAdicional"
+                                       class="form-label">
+                                    Costo adicional fijo
+                                </label>
+
+                                <input asp-for="CostoAdicional"
+                                       class="form-control"
+                                       type="number"
+                                       min="0"
+                                       step="0.01" />
+
+                                <span asp-validation-for="CostoAdicional"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="RadioMaximoKm"
+                                       class="form-label">
+                                    Radio máximo de cobertura
+                                </label>
+
+                                <div class="input-group">
+                                    <input asp-for="RadioMaximoKm"
+                                           class="form-control"
+                                           type="number"
+                                           min="0.01"
+                                           step="0.01" />
+
+                                    <span class="input-group-text">
+                                        km
+                                    </span>
+                                </div>
+
+                                <span asp-validation-for="RadioMaximoKm"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TarifaPorKm"
+                                       class="form-label">
+                                    Tarifa por kilómetro
+                                </label>
+
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        ₡
+                                    </span>
+
+                                    <input asp-for="TarifaPorKm"
+                                           class="form-control"
+                                           type="number"
+                                           min="0"
+                                           step="0.01" />
+                                </div>
+
+                                <span asp-validation-for="TarifaPorKm"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <input asp-for="LatitudCentro"
+                                   type="hidden" />
+
+                            <input asp-for="LongitudCentro"
+                                   type="hidden" />
+
+                            <div class="col-12 mb-3">
+
+                                <label class="form-label fw-bold">
+                                    Ubicación de referencia
+                                </label>
+
+                                <p class="mapa-instruccion mb-2">
+                                    Mueva el marcador o haga clic en otro punto
+                                    para cambiar la ubicación.
+                                </p>
+
+                                <div class="geo-actions">
+
+                                    <button type="button"
+                                            id="btnMiUbicacion"
+                                            class="geo-btn geo-btn-primary">
+
+                                        <i class="fa fa-crosshairs"></i>
+                                        Usar mi ubicación actual
+                                    </button>
+
+                                    <button type="button"
+                                            id="btnLimpiarUbicacion"
+                                            class="geo-btn geo-btn-outline">
+
+                                        <i class="fa fa-eraser"></i>
+                                        Limpiar selección
+                                    </button>
+
+                                </div>
+
+                                <div id="mapaSede"
+                                     class="mapa-geolocalizacion">
+                                </div>
+
+                                <div class="ubicacion-seleccionada mt-3">
+                                    <div class="row">
+
+                                        <div class="col-md-6 mb-2 mb-md-0">
+                                            <small class="text-muted">
+                                                Latitud seleccionada
+                                            </small>
+
+                                            <div id="textoLatitud"
+                                                 class="fw-bold">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <small class="text-muted">
+                                                Longitud seleccionada
+                                            </small>
+
+                                            <div id="textoLongitud"
+                                                 class="fw-bold">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div id="errorUbicacion"
+                                     class="text-danger mt-2 d-none">
+
+                                    Debe seleccionar una ubicación en el mapa.
+                                </div>
+
+                                <span asp-validation-for="LatitudCentro"
+                                      class="text-danger"></span>
+
+                                <span asp-validation-for="LongitudCentro"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                            <div class="col-12 mt-2">
+                                <div class="form-check">
+
+                                    <input asp-for="Activa"
+                                           class="form-check-input" />
+
+                                    <label asp-for="Activa"
+                                           class="form-check-label">
+                                        Mantener esta zona activa
+                                    </label>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <hr />
+
+                        <div class="geo-form-actions">
+
+                            <a asp-action="Index"
+                               class="geo-btn geo-btn-outline">
+
+                                <i class="fa fa-times"></i>
+                                Cancelar
+                            </a>
+
+                            <button type="submit"
+                                    class="geo-btn geo-btn-primary">
+
+                                <i class="fa fa-save"></i>
+                                Guardar cambios
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script src="~/js/geolocalizacion-formulario.js"
+            asp-append-version="true"></script>
+}

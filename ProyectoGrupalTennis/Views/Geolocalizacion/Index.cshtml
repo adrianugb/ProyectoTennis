@@ -1,48 +1,282 @@
+@model IEnumerable<AcademiaTennisDAL.Entities.ZonaCobertura>
+
 @{
-    ViewData["Title"] = "Módulo 10 — Geolocalización para Clases a Domicilio";
+    ViewData["Title"] = "Geolocalización";
 }
 
-<section id="geo-view" style="padding-top: 80px; padding-bottom: 80px; background: #f7f9fc;">
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="~/css/geolocalizacion.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
     <div class="container">
 
-        <div class="row" style="margin-bottom: 30px;">
-            <div class="col-md-12 text-center">
-                <a href="/Home/Index" class="section-btn btn btn-default">Volver al inicio</a>
+        <div class="perfil-container">
+
+            <!-- Encabezado -->
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Geolocalización
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Administre las zonas de cobertura, el radio de servicio
+                        y los costos de desplazamiento para las clases a domicilio.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-map-marker"></i>
+                    Zonas de cobertura
+                </div>
             </div>
-        </div>
 
-        <div class="vista active" id="geo-admin">
-            @await Html.PartialAsync("~/Views/Geolocalizacion/_AdminGeo.cshtml")
-        </div>
+            <!-- Botones superiores -->
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 
-        <div class="vista" id="geo-admin-config">
-            @await Html.PartialAsync("~/Views/Geolocalizacion/_AdminGeoConfig.cshtml")
-        </div>
+                <a asp-controller="Home"
+                   asp-action="PerfilAdmin"
+                   class="geo-btn geo-btn-outline geo-btn-small">
 
-        <div class="vista" id="geo-prof">
-            @await Html.PartialAsync("~/Views/Geolocalizacion/_ProfesorGeo.cshtml")
-        </div>
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Volver al panel
+                </a>
 
-        <div class="vista" id="geo-prof-ubicaciones">
-            @await Html.PartialAsync("~/Views/Geolocalizacion/_ProfesorUbicaciones.cshtml")
-        </div>
+                <a asp-controller="Geolocalizacion"
+                   asp-action="Crear"
+                   class="geo-btn geo-btn-primary">
 
-        <div class="vista" id="geo-usuario">
-            @await Html.PartialAsync("~/Views/Geolocalizacion/_UsuarioUbicacion.cshtml")
-        </div>
+                    <i class="fa fa-plus me-1"></i>
+                    Nueva zona
+                </a>
 
+            </div>
+
+            <!-- Mensaje de éxito -->
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show"
+                     role="alert">
+
+                    <i class="fa fa-check-circle me-2"></i>
+                    @TempData["Success"]
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Cerrar">
+                    </button>
+                </div>
+            }
+
+            <!-- Mensaje de error -->
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show"
+                     role="alert">
+
+                    <i class="fa fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Cerrar">
+                    </button>
+                </div>
+            }
+
+            <!-- Tabla de zonas -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+
+                            <table class="table table-hover align-middle mb-0">
+
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Zona</th>
+                                        <th>Costo fijo</th>
+                                        <th>Radio máximo</th>
+                                        <th>Tarifa por km</th>
+                                        <th>Estado</th>
+                                        <th class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (var zona in Model)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="fa fa-map-marker text-primary"></i>
+
+                                                    <strong>
+                                                        @zona.Nombre
+                                                    </strong>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <span>
+                                                    ₡@zona.CostoAdicional.ToString("N2")
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                @if (zona.RadioMaximoKm.HasValue)
+                                                {
+                                                    <span>
+                                                        @zona.RadioMaximoKm.Value.ToString("N2") km
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">
+                                                        No definido
+                                                    </span>
+                                                }
+                                            </td>
+
+                                            <td>
+                                                @if (zona.TarifaPorKm.HasValue)
+                                                {
+                                                    <span>
+                                                        ₡@zona.TarifaPorKm.Value.ToString("N2")
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">
+                                                        No definida
+                                                    </span>
+                                                }
+                                            </td>
+
+                                            <td>
+                                                @if (zona.Activa)
+                                                {
+                                                    <span class="badge bg-success">
+                                                        <i class="fa fa-check me-1"></i>
+                                                        Activa
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">
+                                                        <i class="fa fa-ban me-1"></i>
+                                                        Inactiva
+                                                    </span>
+                                                }
+                                            </td>
+
+                                            <td class="text-center">
+
+                                                <div class="d-flex justify-content-center gap-2 flex-wrap">
+
+                                                    <a asp-controller="Geolocalizacion"
+                                                       asp-action="Detalles"
+                                                       asp-route-id="@zona.IdZona"
+                                                       class="geo-btn geo-btn-details geo-btn-small">
+
+                                                        <i class="fa fa-eye me-1"></i>
+                                                        Detalles
+                                                    </a>
+
+                                                    <a asp-controller="Geolocalizacion"
+                                                       asp-action="Editar"
+                                                       asp-route-id="@zona.IdZona"
+                                                       class="geo-btn geo-btn-edit geo-btn-small">
+
+                                                        <i class="fa fa-edit me-1"></i>
+                                                        Editar
+                                                    </a>
+
+                                                    <form asp-controller="Geolocalizacion"
+                                                          asp-action="CambiarEstado"
+                                                          asp-route-id="@zona.IdZona"
+                                                          method="post"
+                                                          class="d-inline">
+
+                                                        @Html.AntiForgeryToken()
+
+                                                        @if (zona.Activa)
+                                                        {
+                                                            <button type="submit"
+                                                                    class="geo-btn geo-btn-danger geo-btn-small"
+                                                                    onclick="return confirm('¿Desea desactivar esta zona?');">
+
+                                                                <i class="fa fa-ban me-1"></i>
+                                                                Desactivar
+                                                            </button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="submit"
+                                                                    class="geo-btn geo-btn-primary geo-btn-small"
+                                                                    onclick="return confirm('¿Desea activar esta zona?');">
+
+                                                                <i class="fa fa-check me-1"></i>
+                                                                Activar
+                                                            </button>
+                                                        }
+
+                                                    </form>
+
+                                                </div>
+
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Mensaje cuando no existen zonas -->
+                        <div class="text-center py-5">
+
+                            <i class="fa fa-map-o fa-3x text-muted mb-3"></i>
+
+                            <h4>
+                                No hay zonas registradas
+                            </h4>
+
+                            <p class="text-muted mb-4">
+                                Registre una zona de cobertura para comenzar
+                                a gestionar las clases a domicilio.
+                            </p>
+
+                            <a asp-controller="Geolocalizacion"
+                               asp-action="Crear"
+                               class="btn btn-primary">
+
+                                <i class="fa fa-plus me-1"></i>
+                                Registrar primera zona
+                            </a>
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
     </div>
 </section>
-
-@section Scripts {
-    <script>
-        function mostrarVista(id) {
-            document.querySelectorAll('#geo-view .vista').forEach(function (v) {
-                v.classList.remove('active');
-            });
-            var target = document.getElementById(id);
-            if (target) target.classList.add('active');
-            window.scrollTo(0, 0);
-        }
-    </script>
-}

@@ -1,0 +1,346 @@
+﻿.mapa-geolocalizacion {
+    position: relative;
+    width: 100%;
+    height: 430px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    z-index: 1;
+}
+
+    .mapa-geolocalizacion img,
+    .mapa-geolocalizacion.leaflet-container img,
+    .leaflet-container img {
+        max-width: none !important;
+        width: auto;
+    }
+
+    .mapa-geolocalizacion.leaflet-container,
+    .leaflet-container {
+        font-family: inherit;
+    }
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+    position: absolute;
+}
+
+.mapa-instruccion {
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+    font-size: 0.92rem;
+}
+
+.ubicacion-seleccionada {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+}
+
+    .ubicacion-seleccionada small {
+        display: block;
+        margin-bottom: 3px;
+        color: #6c757d;
+    }
+
+    .ubicacion-seleccionada .fw-bold {
+        overflow-wrap: anywhere;
+    }
+
+.dato-zona {
+    height: 100%;
+    padding: 14px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+}
+
+    .dato-zona small {
+        display: block;
+        margin-bottom: 5px;
+        color: #6c757d;
+    }
+
+    .dato-zona strong {
+        font-size: 1rem;
+    }
+
+@media (max-width: 768px) {
+    .mapa-geolocalizacion {
+        height: 350px;
+    }
+}
+
+@media (max-width: 576px) {
+    .mapa-geolocalizacion {
+        height: 300px;
+        border-radius: 8px;
+    }
+
+    .ubicacion-seleccionada,
+    .dato-zona {
+        padding: 12px;
+    }
+}
+/* ===========================
+   BOTONES GEOLOCALIZACIÓN
+=========================== */
+
+.geo-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.geo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .30s ease;
+}
+
+/* Botón principal */
+
+.geo-btn-primary {
+    background: linear-gradient(135deg,#a5c422 0%,#8eab1d 100%);
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(165,196,34,.25);
+}
+
+    .geo-btn-primary:hover {
+        color: #fff;
+        background: linear-gradient(135deg,#93b11f 0%,#7f9919 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 18px rgba(165,196,34,.35);
+    }
+
+/* Secundario */
+
+.geo-btn-secondary {
+    background: #fff;
+    color: #495057;
+    border: 1px solid #ced4da;
+    box-shadow: none;
+}
+
+    .geo-btn-secondary:hover {
+        background: #f8f9fa;
+        border-color: #adb5bd;
+        color: #212529;
+        transform: translateY(-2px);
+    }
+/* ========================================
+   CONTENEDORES DE GEOLOCALIZACIÓN
+======================================== */
+
+.geo-card {
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
+    border: 1px solid #f1f1f1;
+    border-radius: 16px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.geo-card-body {
+    padding: 28px;
+}
+
+/* ========================================
+   DATOS DE LA ZONA
+======================================== */
+
+.dato-zona {
+    height: 100%;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #f8fbec, #ffffff);
+    border-left: 4px solid #a5c422;
+    border-radius: 12px;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.05);
+}
+
+    .dato-zona small {
+        display: block;
+        margin-bottom: 7px;
+        color: #757575;
+        font-size: 13px;
+    }
+
+    .dato-zona strong {
+        display: block;
+        color: #252525;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+/* ========================================
+   BOTONES
+======================================== */
+
+.geo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 11px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.geo-btn-small {
+    padding: 8px 14px;
+    font-size: 13px;
+}
+
+.geo-btn-primary {
+    color: #ffffff;
+    background: linear-gradient(135deg, #a5c422 0%, #8eab1d 100%);
+    box-shadow: 0 6px 14px rgba(165, 196, 34, 0.25);
+}
+
+    .geo-btn-primary:hover {
+        color: #ffffff;
+        background: linear-gradient(135deg, #93b11f 0%, #7f9919 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 18px rgba(165, 196, 34, 0.35);
+    }
+
+.geo-btn-outline {
+    color: #555555;
+    background: #ffffff;
+    border: 1px solid #d5d9dd;
+}
+
+    .geo-btn-outline:hover {
+        color: #6f8f12;
+        background: #f8fbec;
+        border-color: #a5c422;
+        transform: translateY(-2px);
+    }
+
+/* ========================================
+   ESTADOS
+======================================== */
+
+.geo-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 13px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.geo-status-active {
+    color: #5f7f16;
+    background: #eaf7df;
+}
+
+.geo-status-inactive {
+    color: #6b7280;
+    background: #eef2f7;
+}
+
+/* ========================================
+   ACCIONES DEL FORMULARIO
+======================================== */
+
+.geo-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* ========================================
+   MAPA
+======================================== */
+
+.mapa-geolocalizacion {
+    width: 100%;
+    height: 430px;
+    border: 1px solid #e4e4e4;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+}
+
+.leaflet-container img {
+    max-width: none !important;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+    .geo-card-body {
+        padding: 20px;
+    }
+
+    .mapa-geolocalizacion {
+        height: 330px;
+    }
+
+    .geo-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+        .geo-form-actions .geo-btn {
+            width: 100%;
+        }
+}
+
+.geo-btn-details {
+    color: #168aad;
+    background: #ffffff;
+    border: 1px solid #35b6d4;
+}
+
+    .geo-btn-details:hover {
+        color: #ffffff;
+        background: #35b6d4;
+        transform: translateY(-2px);
+    }
+
+.geo-btn-edit {
+    color: #a87500;
+    background: #ffffff;
+    border: 1px solid #e2ad20;
+}
+
+    .geo-btn-edit:hover {
+        color: #ffffff;
+        background: #e2ad20;
+        transform: translateY(-2px);
+    }
+
+.geo-btn-danger {
+    color: #dc3545;
+    background: #ffffff;
+    border: 1px solid #dc3545;
+}
+
+    .geo-btn-danger:hover {
+        color: #ffffff;
+        background: #dc3545;
+        transform: translateY(-2px);
+    }

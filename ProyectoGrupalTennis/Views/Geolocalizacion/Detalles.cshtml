@@ -1,0 +1,223 @@
+﻿@model AcademiaTennisDAL.Entities.ZonaCobertura
+
+@{
+    ViewData["Title"] = "Detalle de Zona";
+
+    string latitud =
+        Model.LatitudCentro?.ToString(
+            System.Globalization.CultureInfo.InvariantCulture
+        ) ?? "0";
+
+    string longitud =
+        Model.LongitudCentro?.ToString(
+            System.Globalization.CultureInfo.InvariantCulture
+        ) ?? "0";
+
+    bool tieneUbicacion =
+        Model.LatitudCentro.HasValue &&
+        Model.LongitudCentro.HasValue;
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="~/css/geolocalizacion.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Detalle de la Zona
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Consulte la configuración y ubicación de la zona.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-map-marker"></i>
+                    Geolocalización
+                </div>
+            </div>
+
+            <a asp-action="Index"
+               class="geo-btn geo-btn-outline geo-btn-small">
+
+                <i class="fa fa-arrow-left"></i>
+                Volver
+            </a>
+
+            <div class="geo-card">
+                <div class="geo-card-body">
+
+                    <div class="row g-3 mb-4">
+
+                        <div class="col-md-6">
+                            <div class="dato-zona">
+                                <small>Nombre de la zona</small>
+                                <strong>@Model.Nombre</strong>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="dato-zona">
+                                <small>Costo adicional fijo</small>
+                                <strong>
+                                    ₡@Model.CostoAdicional.ToString("N2")
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="dato-zona">
+                                <small>Radio máximo</small>
+
+                                <strong>
+                                    @if (Model.RadioMaximoKm.HasValue)
+                                    {
+                                        @($"{Model.RadioMaximoKm.Value:N2} km")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            No definido
+                                        </span>
+                                    }
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="dato-zona">
+                                <small>Tarifa por kilómetro</small>
+
+                                <strong>
+                                    @if (Model.TarifaPorKm.HasValue)
+                                    {
+                                        @($"₡{Model.TarifaPorKm.Value:N2}")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            No definida
+                                        </span>
+                                    }
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="dato-zona">
+                                <small>Estado</small>
+
+                                @if (Model.Activa)
+                                {
+                                    <span class="geo-status geo-status-active">
+                                        <i class="fa fa-check"></i>
+                                        Activa
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="geo-status geo-status-inactive">
+                                        <i class="fa fa-ban"></i>
+                                        Inactiva
+                                    </span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="dato-zona">
+                                <small>Ubicaciones asociadas</small>
+
+                                <strong>
+                                    @(Model.Ubicaciones?.Count ?? 0)
+                                </strong>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <h5 class="mb-3">
+                        <i class="fa fa-map-marker me-1"></i>
+                        Ubicación de referencia
+                    </h5>
+
+                    @if (tieneUbicacion)
+                    {
+                        <div id="mapaDetalle"
+                             class="mapa-geolocalizacion"
+                             data-latitud="@latitud"
+                             data-longitud="@longitud"
+                             data-nombre="@Model.Nombre">
+                        </div>
+
+                        <div class="row g-3 mt-1">
+
+                            <div class="col-md-6">
+                                <div class="dato-zona">
+                                    <small>Latitud</small>
+                                    <strong>@Model.LatitudCentro</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="dato-zona">
+                                    <small>Longitud</small>
+                                    <strong>@Model.LongitudCentro</strong>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            Esta zona no tiene una ubicación configurada.
+                        </div>
+                    }
+
+                    <hr />
+
+                    <div class="geo-form-actions">
+
+                        <a asp-action="Index"
+                           class="geo-btn geo-btn-outline">
+
+                            <i class="fa fa-arrow-left"></i>
+                            Regresar
+                        </a>
+
+                        <a asp-action="Editar"
+                           asp-route-id="@Model.IdZona"
+                           class="geo-btn geo-btn-primary">
+
+                            <i class="fa fa-edit"></i>
+                            Editar zona
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @if (tieneUbicacion)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        <script src="~/js/geolocalizacion-detalles.js"
+                asp-append-version="true"></script>
+    }
+}

@@ -9,22 +9,24 @@ namespace AcademiaTennisDAL.Entities
         public int IdUbicacion { get; set; }
 
         [Required]
-        public string IdAlumno { get; set; }
+        public string IdAlumno { get; set; } = string.Empty;
 
-        [ForeignKey("IdAlumno")]
-        public ApplicationUser Alumno { get; set; }
+        [ForeignKey(nameof(IdAlumno))]
+        public ApplicationUser Alumno { get; set; } = null!;
 
         [Required]
         [StringLength(300)]
-        public string DireccionCompleta { get; set; }
+        public string DireccionCompleta { get; set; } = string.Empty;
 
+        [Column(TypeName = "decimal(10,7)")]
         public decimal Latitud { get; set; }
 
+        [Column(TypeName = "decimal(10,7)")]
         public decimal Longitud { get; set; }
 
         public int? IdZona { get; set; }
 
-        [ForeignKey("IdZona")]
+        [ForeignKey(nameof(IdZona))]
         public ZonaCobertura? Zona { get; set; }
 
         public bool EsPrincipal { get; set; } = true;
