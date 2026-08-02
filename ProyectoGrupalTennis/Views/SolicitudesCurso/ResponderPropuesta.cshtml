@@ -3,8 +3,25 @@
 @{
     ViewData["Title"] = "Responder propuesta";
 }
+<link rel="stylesheet"
+      href="~/css/Perfiles.css"
+      asp-append-version="true" />
 
 <div class="container mt-4">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
 
     <div class="card shadow-sm">
 
@@ -45,26 +62,155 @@
 
             <p>
                 <strong>Observaciones:</strong>
-                @Model.ObservacionesAcademia
+                @(string.IsNullOrWhiteSpace(Model.ObservacionesAcademia)
+                    ? "Sin observaciones adicionales."
+                    : Model.ObservacionesAcademia)
             </p>
 
             <hr />
 
-            <div class="d-flex gap-2">
+            @if (Model.Estado == "Propuesta enviada")
+            {
+                <div class="d-flex flex-wrap gap-2 mb-3">
 
-                <button class="btn btn-success" disabled>
-                    Aceptar propuesta
-                </button>
+                    <form asp-controller="SolicitudesCurso"
+                          asp-action="AceptarPropuesta"
+                          method="post">
 
-                <button class="btn btn-danger" disabled>
-                    Rechazar propuesta
-                </button>
+                        @Html.AntiForgeryToken()
 
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.IdSolicitudCurso" />
+
+                        <button type="submit"
+                                class="btn btn-success">
+                            <i class="fa fa-check me-1"></i>
+                            Aceptar propuesta
+                        </button>
+
+                    </form>
+
+                    <button type="button"
+                            class="btn btn-danger"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#bloqueRechazo"
+                            aria-expanded="false"
+                            aria-controls="bloqueRechazo">
+
+                        <i class="fa fa-times me-1"></i>
+                        Rechazar propuesta
+                    </button>
+
+                </div>
+
+                <div class="collapse" id="bloqueRechazo">
+
+                    <div class="card border-danger-subtle bg-light mt-3">
+                        <div class="card-body">
+
+                            <h5 class="card-title mb-2">
+                                Indica el motivo del rechazo
+                            </h5>
+
+                            <p class="text-muted mb-3">
+                                Explicá por qué no puedes aceptar el horario o indicá una nueva disponibilidad.
+                            </p>
+
+                            <form asp-controller="SolicitudesCurso"
+                                  asp-action="RechazarPropuesta"
+                                  method="post">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@Model.IdSolicitudCurso" />
+
+                                <div class="mb-3">
+                                    <textarea id="motivo"
+                                              name="motivo"
+                                              class="form-control"
+                                              rows="4"
+                                              maxlength="1000"
+                                              required
+                                              placeholder="Ejemplo: No puedo asistir a esa hora. Tengo disponibilidad los viernes después de las 3:00 p. m."></textarea>
+
+                                    <div class="form-text">
+                                        Este comentario será enviado a la academia para preparar una nueva propuesta.
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-2">
+
+                                    <button type="submit"
+                                            class="btn btn-danger">
+                                        <i class="fa fa-times me-1"></i>
+                                        Confirmar rechazo
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-outline-secondary"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#bloqueRechazo">
+                                        Cancelar
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info mb-0">
+                    Esta propuesta ya fue respondida.
+                    Estado actual: <strong>@Model.Estado</strong>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.MotivoRechazoAlumno))
+            {
+                <div class="alert alert-warning mt-3">
+
+                    @if (Model.Estado == "Propuesta enviada")
+                    {
+                        <strong>
+                            <i class="fa fa-history me-1"></i>
+                            Historial de la solicitud
+                        </strong>
+
+                        <p class="mb-1 mt-2">
+                            Motivo del rechazo anterior:
+                        </p>
+                    }
+                    else
+                    {
+                        <strong>
+                            Motivo del rechazo:
+                        </strong>
+                    }
+
+                    <div class="mt-2">
+                        @Model.MotivoRechazoAlumno
+                    </div>
+
+                </div>
+            }
+          <div class="mt-4">
+    <a asp-controller="SolicitudesCurso"
+       asp-action="MisSolicitudes"
+       class="perfil-btn-outline">
+
+        <i class="fa fa-arrow-left"></i>
+        Volver a Mis Solicitudes
+    </a>
+</div>
             </div>
-
-            <small class="text-muted mt-3 d-block">
-                (Los botones se activarán en la siguiente historia de usuario.)
-            </small>
+            </div>
 
         </div>
 

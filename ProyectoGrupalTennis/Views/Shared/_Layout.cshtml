@@ -138,29 +138,62 @@
                                 </a>
                             }
 
-                            @if (User.IsInRole("Usuario"))
-                            {
-                                <div class="dropdown campana-notificaciones">
-                                    <a href="#" class="campana-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa fa-bell"></i>
-                                        <span id="campanaBadge" class="badge-campana" style="display:none;">0</span>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end campana-dropdown" id="campanaLista">
-                                        <li class="campana-item text-muted text-center">Cargando...</li>
-                                    </ul>
-                                </div>
-                            }
+                            <div class="usuario-navbar-actions">
 
-                            <span class="usuario-logueado">
-                                <i class="fa fa-user-circle"></i>
-                                Hola, @usuario?.Nombre
-                            </span>
+                                @if (User.IsInRole("Usuario"))
+                                {
+                                    <div class="dropdown campana-notificaciones">
 
-                            <form asp-controller="Auth" asp-action="Logout" method="post" class="logout-navbar">
-                                <button type="submit" class="btn-logout-navbar">
-                                    <i class="fa fa-sign-out-alt"></i> Cerrar sesión
-                                </button>
-                            </form>
+                                        <a href="#"
+                                           class="campana-toggle"
+                                           data-bs-toggle="dropdown"
+                                           aria-expanded="false">
+
+                                            <i class="fa fa-bell"></i>
+
+                                            <span id="campanaBadge"
+                                                  class="badge-campana"
+                                                  style="display:none;">
+                                                0
+                                            </span>
+
+                                        </a>
+
+                                        <ul class="dropdown-menu dropdown-menu-end campana-dropdown"
+                                            id="campanaLista">
+
+                                            <li class="campana-item text-muted text-center">
+                                                Cargando...
+                                            </li>
+
+                                        </ul>
+
+                                    </div>
+                                }
+
+                                <span class="usuario-logueado">
+                                    <i class="fa fa-user-circle"></i>
+                                    Hola, @usuario?.Nombre
+                                </span>
+
+                                <form asp-controller="Auth"
+                                      asp-action="Logout"
+                                      method="post"
+                                      class="logout-navbar">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn-logout-navbar">
+
+                                        <i class="fa fa-sign-out-alt"></i>
+                                        Cerrar sesión
+
+                                    </button>
+
+                                </form>
+
+                            </div>
                         }
                     </div>
                 </div>

@@ -26,6 +26,9 @@
                         Revisa la disponibilidad del alumno y define una propuesta de fecha,
                         horario, profesor y cancha.
                     </p>
+
+                    
+                    
                 </div>
 
                 <div class="perfil-badge">
@@ -133,7 +136,25 @@
                         @Model.DisponibilidadAlumno
                     </div>
 
+                    @if (!string.IsNullOrWhiteSpace(Model.MotivoRechazoAlumno))
+                    {
+                        <div class="alert alert-warning mt-3">
+
+                            <h5 class="mb-2">
+                                <i class="fa fa-exclamation-triangle me-2"></i>
+                                Motivo del rechazo / nueva disponibilidad
+                            </h5>
+
+                            <p class="mb-0">
+                                <strong>@Model.MotivoRechazoAlumno</strong>
+                            </p>
+
+                        </div>
+                    }
+
                 </div>
+
+                  
 
                 <div class="perfil-table-block mb-4">
 

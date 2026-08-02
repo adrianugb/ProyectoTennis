@@ -168,6 +168,26 @@
                     </p>
                 }
 
+                @if (!string.IsNullOrWhiteSpace(Model.MotivoRechazoAlumno))
+                {
+                    <div class="alert alert-warning mt-4">
+
+                        <h5 class="mb-3">
+                            <i class="fa fa-exclamation-triangle me-2"></i>
+                            Propuesta rechazada por el alumno
+                        </h5>
+
+                        <p class="mb-2">
+                            <strong>Motivo o nueva disponibilidad:</strong>
+                        </p>
+
+                        <p class="mb-0">
+                            @Model.MotivoRechazoAlumno
+                        </p>
+
+                    </div>
+                }
+
                 @if (Model.FechaPropuesta.HasValue ||
      Model.HoraInicioPropuesta.HasValue ||
      Model.HoraFinPropuesta.HasValue ||
@@ -279,8 +299,11 @@
                                     class="perfil-btn">
 
                                 @(Model.Estado == "Pendiente"
-                                    ? "Revisar solicitud"
-                                    : "Continuar revisión")
+      ? "Revisar solicitud"
+      : Model.Estado == "En revisión" &&
+        !string.IsNullOrWhiteSpace(Model.MotivoRechazoAlumno)
+          ? "Preparar nueva propuesta"
+          : "Continuar revisión")
 
                             </button>
 

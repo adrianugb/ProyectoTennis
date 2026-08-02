@@ -210,6 +210,9 @@ namespace ProyectoGrupalTennis.Controllers
                 DisponibilidadAlumno =
                     solicitud.Disponibilidad,
 
+                MotivoRechazoAlumno =
+    solicitud.MotivoRechazoAlumno,
+
                 Estado =
                     solicitud.Estado,
 

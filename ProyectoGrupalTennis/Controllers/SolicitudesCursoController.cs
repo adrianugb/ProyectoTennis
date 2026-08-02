@@ -419,9 +419,9 @@ namespace ProyectoGrupalTennis.Controllers
      _configuration["AcademiaSettings:BaseUrl"];
 
             var urlGestion =
-                string.IsNullOrWhiteSpace(baseUrl)
-                    ? "#"
-                    : $"{baseUrl.TrimEnd('/')}/AdminSolicitudesCurso/Detalle/{solicitud.IdSolicitudCurso}";
+         string.IsNullOrWhiteSpace(baseUrl)
+             ? "#"
+             : $"{baseUrl.TrimEnd('/')}/AdminSolicitudes/Detalle/{solicitud.IdSolicitudCurso}";
 
             var cuerpoCorreo = $"""
 <!DOCTYPE html>
@@ -614,6 +614,197 @@ namespace ProyectoGrupalTennis.Controllers
             );
         }
 
+
+        private async Task EnviarCorreoRechazoAsync(
+           SolicitudCurso solicitud)
+        {
+
+            Console.WriteLine("===========");
+            Console.WriteLine("ENTRÓ A EnviarCorreoRechazoAsync");
+            Console.WriteLine($"Destino: {_configuration["AcademiaSettings:CorreoSolicitudes"]}");
+            Console.WriteLine("===========");
+            var correoDestino =
+                _configuration["AcademiaSettings:CorreoSolicitudes"];
+
+            if (string.IsNullOrWhiteSpace(correoDestino))
+            {
+                return;
+            }
+
+            var baseUrl =
+                _configuration["AcademiaSettings:BaseUrl"];
+            var urlGestion =
+                string.IsNullOrWhiteSpace(baseUrl)
+                    ? "#"
+                    : $"{baseUrl.TrimEnd('/')}/AdminSolicitudes/Detalle/{solicitud.IdSolicitudCurso}";
+
+            var fechaPropuesta =
+                solicitud.FechaPropuesta?.ToString("dd/MM/yyyy")
+                ?? "Sin fecha definida";
+
+            var horaInicio =
+                solicitud.HoraInicioPropuesta?.ToString(@"hh\:mm")
+                ?? "Sin hora";
+
+            var horaFin =
+                solicitud.HoraFinPropuesta?.ToString(@"hh\:mm")
+                ?? "Sin hora";
+
+            var motivoRechazo =
+                string.IsNullOrWhiteSpace(solicitud.MotivoRechazoAlumno)
+                    ? "Sin motivo indicado."
+                    : solicitud.MotivoRechazoAlumno;
+
+            var cuerpoCorreo = $"""
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+</head>
+
+<body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:30px;">
+
+<tr>
+<td align="center">
+
+<table width="650"
+       cellpadding="0"
+       cellspacing="0"
+       style="background:#ffffff;border-radius:14px;overflow:hidden;">
+
+<tr>
+<td style="background:#f39c12;padding:24px;color:white;">
+
+<h2 style="margin:0;">
+Propuesta rechazada por el alumno
+</h2>
+
+<p style="margin-top:8px;">
+La solicitud requiere una nueva revisión.
+</p>
+
+</td>
+</tr>
+
+<tr>
+<td style="padding:30px;">
+
+<table width="100%" style="border-collapse:collapse;">
+
+<tr>
+<td style="padding:10px;font-weight:bold;border-bottom:1px solid #eee;">
+Código
+</td>
+
+<td style="padding:10px;border-bottom:1px solid #eee;">
+SOL-{solicitud.IdSolicitudCurso:D4}
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;font-weight:bold;border-bottom:1px solid #eee;">
+Servicio solicitado
+</td>
+
+<td style="padding:10px;border-bottom:1px solid #eee;">
+{solicitud.NombreCurso}
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;font-weight:bold;border-bottom:1px solid #eee;">
+Fecha propuesta
+</td>
+
+<td style="padding:10px;border-bottom:1px solid #eee;">
+{fechaPropuesta}</td>
+</tr>
+
+<tr>
+<td style="padding:10px;font-weight:bold;border-bottom:1px solid #eee;">
+Horario
+</td>
+
+<td style="padding:10px;border-bottom:1px solid #eee;">
+{horaInicio} - {horaFin}
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;font-weight:bold;vertical-align:top;">
+Motivo del alumno
+</td>
+
+<td style="padding:10px;">
+{motivoRechazo}</td>
+</tr>
+
+</table>
+
+<div style="text-align:center;margin-top:35px;">
+
+<a href="{urlGestion}"
+style="background:#95c11f;
+color:white;
+padding:14px 24px;
+text-decoration:none;
+border-radius:8px;
+font-weight:bold;">
+
+Revisar solicitud
+
+</a>
+
+</div>
+
+</td>
+</tr>
+
+<tr>
+
+<td style="background:#f7f8f9;
+padding:18px;
+text-align:center;
+font-size:12px;
+color:#777;">
+
+Academia de Tennis<br/>
+Notificación automática del sistema
+
+</td>
+
+</tr>
+
+</table>
+
+</td>
+</tr>
+
+</table>
+
+</body>
+</html>
+""";
+
+            Console.WriteLine("ANTES DE ENVIAR EL CORREO");
+
+            await _emailService.EnviarCorreoAsync(
+                correoDestino,
+                $"Propuesta rechazada - SOL-{solicitud.IdSolicitudCurso:D4}",
+                cuerpoCorreo);
+
+            Console.WriteLine("CORREO ENVIADO");
+
+        }
+
+
+
+
+
+
         [HttpGet]
         [Authorize(Roles = "Usuario")]
         public async Task<IActionResult> ResponderPropuesta(int id)
@@ -635,5 +826,141 @@ namespace ProyectoGrupalTennis.Controllers
 
             return View(solicitud);
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Usuario")]
+        public async Task<IActionResult> MisSolicitudes()
+        {
+            var idAlumno = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            var solicitudes = await _context.SolicitudesCurso
+                .Include(s => s.ProfesorPropuesto)
+                .Include(s => s.CanchaPropuesta)
+                .Where(s => s.IdAlumno == idAlumno)
+                .OrderByDescending(s => s.FechaSolicitud)
+                .ToListAsync();
+
+            return View(solicitudes);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Usuario")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AceptarPropuesta(int id)
+        {
+            var idAlumno = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            var solicitud = await _context.SolicitudesCurso
+                .FirstOrDefaultAsync(s =>
+                    s.IdSolicitudCurso == id &&
+                    s.IdAlumno == idAlumno);
+
+            if (solicitud == null)
+            {
+                return NotFound();
+            }
+
+            if (solicitud.Estado != "Propuesta enviada")
+            {
+                TempData["Error"] =
+                    "Esta propuesta ya fue respondida o no está disponible.";
+
+                return RedirectToAction(
+                    nameof(ResponderPropuesta),
+                    new { id });
+            }
+
+            solicitud.Estado = "Aceptada";
+            solicitud.FechaRespuestaAlumno = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] =
+                "La propuesta fue aceptada correctamente.";
+
+            return RedirectToAction(
+                nameof(ResponderPropuesta),
+                new { id });
+        }
+        [HttpPost]
+        [Authorize(Roles = "Usuario")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RechazarPropuesta(
+    int id,
+    string motivo)
+        {
+            var idAlumno = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            var solicitud = await _context.SolicitudesCurso
+                .FirstOrDefaultAsync(s =>
+                    s.IdSolicitudCurso == id &&
+                    s.IdAlumno == idAlumno);
+
+            if (solicitud == null)
+            {
+                return NotFound();
+            }
+
+            if (solicitud.Estado != "Propuesta enviada")
+            {
+                TempData["Error"] =
+                    "Esta propuesta ya fue respondida o no está disponible.";
+
+                return RedirectToAction(
+                    nameof(ResponderPropuesta),
+                    new { id });
+            }
+
+            motivo = motivo?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(motivo))
+            {
+                TempData["Error"] =
+                    "Debes indicar el motivo del rechazo o una nueva disponibilidad.";
+
+                return RedirectToAction(
+                    nameof(ResponderPropuesta),
+                    new { id });
+            }
+
+            if (motivo.Length > 1000)
+            {
+                TempData["Error"] =
+                    "El motivo del rechazo no puede superar los 1000 caracteres.";
+
+                return RedirectToAction(
+                    nameof(ResponderPropuesta),
+                    new { id });
+            }
+
+            solicitud.Estado = "En revisión";
+            solicitud.FechaRespuestaAlumno = DateTime.Now;
+            solicitud.MotivoRechazoAlumno = motivo;
+
+            await _context.SaveChangesAsync();
+
+            try
+            {
+                await EnviarCorreoRechazoAsync(solicitud);
+            }
+            catch (Exception ex)
+            {
+                TempData["AdvertenciaCorreo"] =
+                    "El rechazo fue registrado, pero no se pudo enviar el correo a la academia.";
+
+                Console.WriteLine($"ERROR CORREO RECHAZO: {ex}");
+            }
+
+            TempData["Success"] =
+                "La propuesta fue rechazada. La solicitud regresó a revisión.";
+
+            return RedirectToAction(
+                nameof(ResponderPropuesta),
+                new { id });
+        }
+
     }
-}
+    }

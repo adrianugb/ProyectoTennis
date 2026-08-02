@@ -4,7 +4,7 @@
 
 <link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
 
-<section class="perfil-page compact">
+<section class="perfil-page compact perfil-usuario-page">
     <div class="container">
         <div class="perfil-container">
 
@@ -36,137 +36,367 @@
                 </a>
             }
 
-            <div class="perfil-grid">
-                <div class="row g-4">
+            <nav class="perfil-usuario-nav">
+                <a href="#gestion-academica">
+                    <i class="fa fa-graduation-cap"></i>
+                    Gestión académica
+                </a>
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-lock"></i>
-                            <h3>Mi Agenda</h3>
-                        <p>Consultá tus clases programadas y filtrá por fecha.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Usuario" asp-action="AgendaPersonal"
+                <a href="#mi-cuenta">
+                    <i class="fa fa-user-cog"></i>
+                    Mi cuenta
+                </a>
 
-                           class="perfil-btn">
-                            Ver Agenda
-                        </a>
-                                    </div>
+                <a href="#servicios">
+                    <i class="fa fa-star"></i>
+                    Servicios
+                </a>
+            </nav>
+
+       
+
+            <!-- =====================================================
+         SECCIÓN 1: GESTIÓN ACADÉMICA
+    ====================================================== -->
+             <div id="gestion-academica"
+                 class="perfil-usuario-section">
+
+                <h2>
+                    <i class="fa fa-graduation-cap"></i>
+                    Gestión académica
+                </h2>
+
+                <p>
+                    Consultá tus clases, solicitudes y opciones disponibles.
+                </p>
+
+            </div>
+
+            <div class="row g-4">
+
+                <!-- Mi Agenda -->
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-calendar-alt"></i>
+
+                        <h3>Mi Agenda</h3>
+
+                        <p>
+                            Consultá tus clases confirmadas, horarios y próximas sesiones.
+                        </p>
+
+                        <div class="perfil-actions">
+                            <a asp-controller="Usuario"
+                               asp-action="AgendaPersonal"
+                               class="perfil-btn">
+
+                                <i class="fa fa-calendar-check"></i>
+                                Ver Agenda
+                            </a>
                         </div>
                     </div>
+                </div>
 
+                <!-- Mis Solicitudes -->
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-file-alt"></i>
 
+                        <h3>Mis Solicitudes de Clase</h3>
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-lock"></i>
-                            <h3>Seguridad</h3>
-                            <p>Actualizá tu contraseña para mantener protegida tu cuenta.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Auth"
-                                   asp-action="CambiarPassword"
-                                   class="perfil-btn">
-                                    Cambiar Contraseña
-                                </a>
-                            </div>
+                        <p>
+                            Da seguimiento a tus solicitudes y respondé las propuestas de la academia.
+                        </p>
+
+                        <div class="perfil-actions">
+                            <a asp-controller="SolicitudesCurso"
+                               asp-action="MisSolicitudes"
+                               class="perfil-btn">
+
+                                <i class="fa fa-list-alt"></i>
+                                Ver Solicitudes
+                            </a>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-book-open"></i>
-                            <h3>Cursos Disponibles</h3>
-                            <p>Explorá los cursos activos de la academia, niveles, horarios y profesores.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="SolicitudesCurso"
-                                   asp-action="Catalogo"
-                                   class="perfil-btn">
-                                    Ver Cursos
-                                </a>
-                            </div>
+                <!-- Catálogo -->
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-book-open"></i>
+
+                        <h3>Catálogo de Clases</h3>
+
+                        <p>
+                            Explorá modalidades, niveles, paquetes y servicios disponibles.
+                        </p>
+
+                        <div class="perfil-actions">
+                            <a asp-controller="SolicitudesCurso"
+                               asp-action="Catalogo"
+                               class="perfil-btn">
+
+                                <i class="fa fa-search"></i>
+                                Ver Catálogo
+                            </a>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-clock"></i>
-                            <h3>Horarios Disponibles</h3>
-                            <p>Consultá los horarios de los cursos activos y filtrá por día.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Usuario" asp-action="MisHorarios" class="perfil-btn">
-                                    Ver Horarios
-                                </a>
-                            </div>
+                <!-- Matrícula -->
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-file-signature"></i>
+
+                        <h3>Matrícula</h3>
+
+                        <p>
+                            Consultá las clases programadas por la academia y matriculate cuando exista disponibilidad.
+                        </p>
+
+                        <div class="perfil-actions">
+                            <a asp-controller="Usuario"
+                               asp-action="MisCursos"
+                               class="perfil-btn">
+
+                                <i class="fa fa-user-plus"></i>
+                                Ver Matrícula
+                            </a>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-file-signature"></i>
-                            <h3>Matrícula</h3>
-                            <p>Revisá el estado de tu matrícula e inscribite a cursos disponibles.</p>
+            </div>
 
-                            <div class="perfil-actions">
-                                <a asp-controller="Usuario"
-                                   asp-action="MisCursos"
-                                   class="perfil-btn">
-                                    Ver Matrícula
-                                </a>
-                            </div>
+
+            <!-- =====================================================
+         SECCIÓN 2: CUENTA Y COMUNICACIÓN
+    ====================================================== -->
+
+            <div id="mi-cuenta"
+                 class="perfil-usuario-section">
+
+                <h2>
+                    <i class="fa fa-user-cog"></i>
+                    Mi cuenta
+                </h2>
+
+                <p>
+                    Administrá tus pagos, notificaciones y seguridad.
+                </p>
+
+            </div>
+
+            <div class="row g-4">
+
+                <!-- Pagos -->
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-wallet"></i>
+
+                        <h3>Pagos</h3>
+
+                        <p>
+                            Consultá el estado de tus pagos, facturas y recibos.
+                        </p>
+
+                        <div class="perfil-actions">
+                            <a asp-controller="Home"
+                               asp-action="UsuarioPagos"
+                               class="perfil-btn">
+
+                                <i class="fa fa-receipt"></i>
+                                Ver Pagos
+                            </a>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-trophy"></i>
-                            <h3>Campeonatos</h3>
-                            <p>Ver torneos disponibles e inscribirte como jugador.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Home" asp-action="Campeonatos" class="perfil-btn">
-                                    Ver Campeonatos
-                                </a>
-                            </div>
+                <!-- Notificaciones -->
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-bell"></i>
+
+                        <h3>Notificaciones</h3>
+
+                        <p>
+                            Revisá mensajes, propuestas y avisos recientes de la academia.
+                        </p>
+
+                        <div class="perfil-actions">
+                            <a asp-controller="Usuario"
+                               asp-action="Notificaciones"
+                               class="perfil-btn">
+
+                                <i class="fa fa-envelope"></i>
+                                Ver Notificaciones
+                            </a>
                         </div>
                     </div>
+                </div>
 
+                <!-- Seguridad -->
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-shield-alt"></i>
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-wallet"></i>
-                            <h3>Pagos</h3>
-                            <p>Consultá el estado de tus pagos, suscripciones y recibos.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Home" asp-action="UsuarioPagos" class="perfil-btn">
-                                    Ver Pagos
-                                </a>
-                            </div>
+                        <h3>Seguridad</h3>
+
+                        <p>
+                            Actualizá tu contraseña para mantener protegida tu cuenta.
+                        </p>
+
+                        <div class="perfil-actions">
+                            <a asp-controller="Auth"
+                               asp-action="CambiarPassword"
+                               class="perfil-btn">
+
+                                <i class="fa fa-key"></i>
+                                Cambiar Contraseña
+                            </a>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-bell"></i>
-                            <h3>Notificaciones</h3>
-                            <p>Revisá tus notificaciones y mensajes recientes.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Usuario" asp-action="Notificaciones" class="perfil-btn">
-                                    Ver Notificaciones
-                                </a>
-                            </div>
+            </div>
+
+
+            <!-- =====================================================
+         SECCIÓN 3: EXPERIENCIA Y SERVICIOS
+    ====================================================== -->
+
+            <div id="servicios"
+                 class="perfil-usuario-section">
+
+                <h2>
+                    <i class="fa fa-star"></i>
+                    Experiencia y servicios
+                </h2>
+
+                <p>
+                    Accedé a tu progreso, actividades y servicios adicionales.
+                </p>
+
+            </div>
+
+            </div>
+            <div class="row g-4">
+
+                <!-- Progreso Técnico -->
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-chart-line"></i>
+
+                        <h3>Progreso Técnico</h3>
+
+                        <p>
+                            Consultá tus evaluaciones, nivel actual y áreas de mejora.
+                        </p>
+
+                        <div class="perfil-actions">
+                            <a asp-controller="Progreso"
+                               asp-action="AlumnoIndex"
+                               class="perfil-btn">
+
+                                <i class="fa fa-chart-bar"></i>
+                                Ver Progreso
+                            </a>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-headset"></i>
-                            <h3>Soporte</h3>
-                            <p>¿Necesitás ayuda? Contactá al equipo de soporte de la academia.</p>
-                            <div class="perfil-actions">
-                                <a href="/#google-map" class="perfil-btn">
-                                    Contactar
-                                </a>
-                            </div>
+                <!-- Campeonatos -->
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-trophy"></i>
+
+                        <h3>Campeonatos</h3>
+
+                        <p>
+                            Consultá torneos disponibles e inscribite como jugador.
+                        </p>
+
+                        <div class="perfil-actions">
+                            <a asp-controller="Home"
+                               asp-action="Campeonatos"
+                               class="perfil-btn">
+
+                                <i class="fa fa-medal"></i>
+                                Ver Campeonatos
+                            </a>
                         </div>
                     </div>
+                </div>
+
+                <!-- Mi Ubicación -->
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-map-marker-alt"></i>
+
+                        <h3>Mi Ubicación</h3>
+
+                        <p>
+                            Registrá o actualizá tu ubicación para solicitar clases a domicilio.
+                        </p>
+
+                        <div class="perfil-actions">
+                            <a asp-controller="Geolocalizacion"
+                               asp-action="IndexAlumno"
+                               class="perfil-btn">
+
+                                <i class="fa fa-location-arrow"></i>
+                                Gestionar Ubicación
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soporte -->
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-headset"></i>
+
+                        <h3>Soporte</h3>
+
+                        <p>
+                            ¿Necesitás ayuda? Contactá al equipo de la academia.
+                        </p>
+
+                        <div class="perfil-actions">
+                            <a href="/#google-map"
+                               class="perfil-btn">
+
+                                <i class="fa fa-comments"></i>
+                                Contactar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+@*                 Seccion 4 - Extra y evaluar si se necesita 
+ *@
+
+                  @*  No se si deberia estar - No lo quito pero lo comento 
+                <div class="col-md-6 col-sm-6">
+                    <div class="perfil-card">
+                        <i class="fa fa-clock"></i>
+                        <h3>Horarios Disponibles</h3>
+                        <p>Consultá los horarios de los cursos activos y filtrá por día.</p>
+                        <div class="perfil-actions">
+                            <a asp-controller="Usuario" asp-action="MisHorarios" class="perfil-btn">
+                                Ver Horarios
+                            </a>
+                        </div>
+                    </div>
+                </div>
+ *@
+                 
+
+               @*   Aun esto se necesta? 
 
                     <div class="col-md-6 col-sm-6">
                         <div class="perfil-card">
@@ -184,7 +414,9 @@
                                 </a>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
+
+             @*        Nota: La academia tiene si acaso dos canchas, no permite reservar una cancha (hay que reservar una clase/paquete) pero si da visibilidad de la cancha asignada. 
 
                     <div class="col-md-6 col-sm-6">
                         <div class="perfil-card">
@@ -202,47 +434,14 @@
                                 </a>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-bullhorn"></i>
-                            <h3>Progreso Técnico</h3>
-                            <p>
-                                Consulta tus evaluaciones, nivel actual
-                                    y áreas que debes mejorar.
-                            </p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Progreso" asp-action="AlumnoIndex" class="perfil-btn">
-                                    Ver Progreso
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+               
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-bullhorn"></i>
-
-                            <h3>Mi Ubicación</h3>
-
-                            <p>
-                                Registra o actualiza tu ubicación para solicitar
-                                clases a domicilio.
-                            </p>
-
-                            <div class="perfil-actions">
-                                <a asp-controller="Geolocalizacion"
-                                   asp-action="IndexAlumno"
-                                   class="perfil-btn">
-                                    Gestionar Ubicación
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
 
         </div>
-    </div>
+
 </section>

@@ -18,6 +18,8 @@ namespace ProyectoGrupalTennis.Models
 
         public string Estado { get; set; } = string.Empty;
 
+        public string? MotivoRechazoAlumno { get; set; }
+
         [Required(ErrorMessage = "Debe seleccionar una fecha.")]
         [DataType(DataType.Date)]
         public DateTime? FechaPropuesta { get; set; }

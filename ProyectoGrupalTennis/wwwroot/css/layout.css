@@ -389,3 +389,43 @@ body {
         .usuario-logueado:hover i {
             color: #444 !important;
         }
+
+/* Alinear acciones del usuario en una sola fila */
+.usuario-navbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    justify-content: flex-end;
+    gap: 14px;
+    flex-wrap: nowrap;
+}
+
+    .usuario-navbar-actions .campana-notificaciones {
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .usuario-navbar-actions .usuario-logueado {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        white-space: nowrap;
+    }
+
+    .usuario-navbar-actions .logout-navbar {
+        display: inline-flex;
+        align-items: center;
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .usuario-navbar-actions .btn-logout-navbar {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        white-space: nowrap;
+    }

@@ -87,6 +87,9 @@ namespace AcademiaTennisDAL.Entities
 
         public DateTime? FechaRespuestaAlumno { get; set; }
 
+        [StringLength(1000)]
+        public string? MotivoRechazoAlumno { get; set; }
+
         // Nueva disponibilidad estructurada
         public ICollection<DisponibilidadSolicitud> Disponibilidades { get; set; }
             = new List<DisponibilidadSolicitud>();

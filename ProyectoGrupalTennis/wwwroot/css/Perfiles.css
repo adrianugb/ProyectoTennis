@@ -80,12 +80,12 @@
         box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
     }
 
-    .perfil-card i {
-        font-size: 34px;
-        color: #a5c422;
-        margin-bottom: 14px;
-        display: inline-block;
-    }
+.perfil-card > i {
+    font-size: 34px;
+    color: #a5c422;
+    margin-bottom: 14px;
+    display: inline-block;
+}
 
     .perfil-card h3 {
         font-size: 24px;
@@ -984,3 +984,91 @@
         color: #a71d2a !important;
         text-decoration: underline;
     }
+
+/* Navegación exclusiva del Perfil de Usuario */
+.perfil-usuario-page .perfil-usuario-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 24px 0 32px;
+    padding: 10px;
+    background: #f7f9f1;
+    border: 1px solid #e7ecd9;
+    border-radius: 14px;
+}
+
+    .perfil-usuario-page .perfil-usuario-nav a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        color: #536d0b;
+        background: #ffffff;
+        border: 1px solid #dde7c3;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+        .perfil-usuario-page .perfil-usuario-nav a:hover {
+            background: #a5c422;
+            border-color: #a5c422;
+            color: #ffffff;
+        }
+
+/* Encabezados exclusivos del Perfil de Usuario */
+.perfil-usuario-page .perfil-usuario-section {
+    width: 100%;
+    margin: 30px 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e8ebef;
+    scroll-margin-top: 150px;
+}
+
+    .perfil-usuario-page .perfil-usuario-section h2 {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.2;
+        font-weight: 700;
+        color: #252525;
+    }
+
+        .perfil-usuario-page .perfil-usuario-section h2 i {
+            margin: 0;
+            font-size: 17px;
+            color: #8fb400;
+        }
+
+    .perfil-usuario-page .perfil-usuario-section p {
+        margin: 5px 0 0 26px;
+        font-size: 13px;
+        color: #757575;
+    }
+
+@media (max-width: 768px) {
+    .perfil-usuario-page .perfil-usuario-nav {
+        flex-direction: column;
+    }
+
+        .perfil-usuario-page .perfil-usuario-nav a {
+            justify-content: center;
+        }
+
+    .perfil-usuario-page .perfil-usuario-section {
+        margin: 24px 0 14px;
+        padding-bottom: 9px;
+    }
+
+        .perfil-usuario-page .perfil-usuario-section h2 {
+            font-size: 18px;
+        }
+
+        .perfil-usuario-page .perfil-usuario-section p {
+            margin-left: 0;
+        }
+}
