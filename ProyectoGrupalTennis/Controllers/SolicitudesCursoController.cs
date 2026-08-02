@@ -613,5 +613,27 @@ namespace ProyectoGrupalTennis.Controllers
                 cuerpoCorreo
             );
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Usuario")]
+        public async Task<IActionResult> ResponderPropuesta(int id)
+        {
+            var idAlumno = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            var solicitud = await _context.SolicitudesCurso
+                .Include(s => s.ProfesorPropuesto)
+                .Include(s => s.CanchaPropuesta)
+                .FirstOrDefaultAsync(s =>
+                    s.IdSolicitudCurso == id &&
+                    s.IdAlumno == idAlumno);
+
+            if (solicitud == null)
+            {
+                return NotFound();
+            }
+
+            return View(solicitud);
+        }
     }
 }

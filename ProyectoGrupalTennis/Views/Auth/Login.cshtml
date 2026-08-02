@@ -42,6 +42,12 @@
                         <div asp-validation-summary="All" class="text-danger mb-3"></div>  @* //Eso mostrara errores generales del login *@
 
                         <form asp-controller="Auth" asp-action="Login" method="post" class="auth-form">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="returnUrl"
+                                   value="@ViewData["ReturnUrl"]" />
                             <div class="mb-3">
                                 <label asp-for="Email" class="form-label"></label>
                                 <input asp-for="Email" class="form-control" placeholder="ejemplo@correo.com" />

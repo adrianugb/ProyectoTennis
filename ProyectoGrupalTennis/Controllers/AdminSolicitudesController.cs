@@ -293,6 +293,70 @@ namespace ProyectoGrupalTennis.Controllers
                     "La fecha propuesta no puede ser anterior a la fecha actual.");
             }
 
+            // Validar conflictos de horario antes de enviar la propuesta
+            if (esEnvio &&
+                model.FechaPropuesta.HasValue &&
+                model.HoraInicioPropuesta.HasValue &&
+                model.HoraFinPropuesta.HasValue &&
+                model.IdProfesorPropuesto.HasValue &&
+                model.IdCanchaPropuesta.HasValue)
+            {
+                var fechaInicio = model.FechaPropuesta.Value.Date;
+                var fechaFin = fechaInicio.AddDays(1);
+
+                var horaInicio = model.HoraInicioPropuesta.Value;
+                var horaFin = model.HoraFinPropuesta.Value;
+
+                var estadosQueReservanHorario = new[]
+                {
+        "Propuesta enviada",
+        "Aceptada"
+    };
+
+                var profesorOcupado =
+                    await _context.SolicitudesCurso.AnyAsync(s =>
+                        s.IdSolicitudCurso != model.IdSolicitudCurso &&
+                        estadosQueReservanHorario.Contains(s.Estado) &&
+                        s.FechaPropuesta.HasValue &&
+                        s.FechaPropuesta.Value >= fechaInicio &&
+                        s.FechaPropuesta.Value < fechaFin &&
+                        s.HoraInicioPropuesta.HasValue &&
+                        s.HoraFinPropuesta.HasValue &&
+                        s.IdProfesorPropuesto ==
+                            model.IdProfesorPropuesto.Value &&
+                        s.HoraInicioPropuesta.Value < horaFin &&
+                        s.HoraFinPropuesta.Value > horaInicio);
+
+                var canchaOcupada =
+                    await _context.SolicitudesCurso.AnyAsync(s =>
+                        s.IdSolicitudCurso != model.IdSolicitudCurso &&
+                        estadosQueReservanHorario.Contains(s.Estado) &&
+                        s.FechaPropuesta.HasValue &&
+                        s.FechaPropuesta.Value >= fechaInicio &&
+                        s.FechaPropuesta.Value < fechaFin &&
+                        s.HoraInicioPropuesta.HasValue &&
+                        s.HoraFinPropuesta.HasValue &&
+                        s.IdCanchaPropuesta ==
+                            model.IdCanchaPropuesta.Value &&
+                        s.HoraInicioPropuesta.Value < horaFin &&
+                        s.HoraFinPropuesta.Value > horaInicio);
+
+                if (profesorOcupado)
+                {
+                    ModelState.AddModelError(
+                        nameof(model.IdProfesorPropuesto),
+                        "El profesor seleccionado ya tiene una clase programada en ese horario.");
+                }
+
+                if (canchaOcupada)
+                {
+                    ModelState.AddModelError(
+                        nameof(model.IdCanchaPropuesta),
+                        "La cancha seleccionada ya está reservada en ese horario.");
+                }
+            }
+
+
             if (!ModelState.IsValid)
             {
                 await CargarOpcionesPropuestaAsync(
@@ -598,19 +662,39 @@ namespace ProyectoGrupalTennis.Controllers
 
                             </table>
 
-                                  <div style="text-align:center; margin-top:30px;">
-    <a href="{urlRespuesta}"
-       style="
-           display:inline-block;
-           background:#95c11f;
-           color:#ffffff;
-           text-decoration:none;
-           padding:14px 24px;
-           border-radius:8px;
-           font-weight:bold;">
-        Ver y responder propuesta
-    </a>
-</div>
+  <table role="presentation"
+       align="center"
+       cellspacing="0"
+       cellpadding="0"
+       border="0"
+       style="margin:30px auto;">
+    <tr>
+        <td align="center"
+            bgcolor="#95c11f"
+            style="background-color:#95c11f; border-radius:8px;">
+
+            <a href="{urlRespuesta}"
+               target="_blank"
+               style="display:inline-block;
+                      background-color:#95c11f;
+                      border:1px solid #95c11f;
+                      border-radius:8px;
+                      padding:14px 24px;
+                      font-family:Arial, Helvetica, sans-serif;
+                      font-size:15px;
+                      font-weight:bold;
+                      line-height:20px;
+                      color:#ffffff !important;
+                      text-decoration:none;">
+
+                Ver y responder propuesta
+
+            </a>
+
+        </td>
+    </tr>
+</table>
+
 
 <p style="margin:28px 0 0; font-size:13px; color:#666666; line-height:1.5;">
     También puedes iniciar sesión en el sistema y buscar la solicitud

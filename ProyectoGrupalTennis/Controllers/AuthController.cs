@@ -96,41 +96,84 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Login
 
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Login(string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
+            return View();
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(
+     LoginViewModel model,
+     string? returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+
             model.Email = model.Email.Trim().ToLower();
 
             if (!ModelState.IsValid)
+            {
                 return View(model);
+            }
 
-            var usuario = await _userManager.FindByEmailAsync(model.Email);
+            var usuario = await _userManager.FindByEmailAsync(
+                model.Email);
 
             if (usuario != null && usuario.Bloqueado)
             {
-                ModelState.AddModelError("", "Tu cuenta ha sido bloqueada.");
+                ModelState.AddModelError(
+                    "",
+                    "Tu cuenta ha sido bloqueada.");
+
                 return View(model);
             }
 
-            var resultado = await _signInManager.PasswordSignInAsync(
-                model.Email,
-                model.Password,
-                model.Recordarme,
-                lockoutOnFailure: false);
+            var resultado =
+                await _signInManager.PasswordSignInAsync(
+                    model.Email,
+                    model.Password,
+                    model.Recordarme,
+                    lockoutOnFailure: false);
 
             if (resultado.Succeeded)
             {
-                // Redirigir según el rol del usuario
-                if (await _userManager.IsInRoleAsync(usuario!, "Administrador"))
-                    return RedirectToAction("PerfilAdmin", "Home");
+                if (!string.IsNullOrWhiteSpace(returnUrl) &&
+                    Url.IsLocalUrl(returnUrl))
+                {
+                    return LocalRedirect(returnUrl);
+                }
 
-                if (await _userManager.IsInRoleAsync(usuario!, "Profesor"))
-                    return RedirectToAction("PerfilProfesor", "Home");
+                if (await _userManager.IsInRoleAsync(
+                        usuario!,
+                        "Administrador"))
+                {
+                    return RedirectToAction(
+                        "PerfilAdmin",
+                        "Home");
+                }
 
-                return RedirectToAction("PerfilUsuario", "Home");
+                if (await _userManager.IsInRoleAsync(
+                        usuario!,
+                        "Profesor"))
+                {
+                    return RedirectToAction(
+                        "PerfilProfesor",
+                        "Home");
+                }
+
+                return RedirectToAction(
+                    "PerfilUsuario",
+                    "Home");
             }
 
-            ModelState.AddModelError("", "Correo o contraseña incorrectos.");
+            ModelState.AddModelError(
+                "",
+                "Correo o contraseña incorrectos.");
+
             return View(model);
         }
 

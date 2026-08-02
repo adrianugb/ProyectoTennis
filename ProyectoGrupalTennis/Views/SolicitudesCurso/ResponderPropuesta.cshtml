@@ -1,0 +1,73 @@
+﻿@model AcademiaTennisDAL.Entities.SolicitudCurso
+
+@{
+    ViewData["Title"] = "Responder propuesta";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0">
+                Propuesta de horario
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+            <p>
+                <strong>Clase:</strong>
+                @Model.NombreCurso
+            </p>
+
+            <p>
+                <strong>Fecha:</strong>
+                @Model.FechaPropuesta?.ToString("dd/MM/yyyy")
+            </p>
+
+            <p>
+                <strong>Horario:</strong>
+                @Model.HoraInicioPropuesta -
+                @Model.HoraFinPropuesta
+            </p>
+
+            <p>
+                <strong>Profesor:</strong>
+                @Model.ProfesorPropuesto?.Nombre
+                @Model.ProfesorPropuesto?.Apellidos
+            </p>
+
+            <p>
+                <strong>Cancha:</strong>
+                @Model.CanchaPropuesta?.Nombre
+            </p>
+
+            <p>
+                <strong>Observaciones:</strong>
+                @Model.ObservacionesAcademia
+            </p>
+
+            <hr />
+
+            <div class="d-flex gap-2">
+
+                <button class="btn btn-success" disabled>
+                    Aceptar propuesta
+                </button>
+
+                <button class="btn btn-danger" disabled>
+                    Rechazar propuesta
+                </button>
+
+            </div>
+
+            <small class="text-muted mt-3 d-block">
+                (Los botones se activarán en la siguiente historia de usuario.)
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
