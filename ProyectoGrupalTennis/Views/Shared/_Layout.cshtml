@@ -140,7 +140,7 @@
 
                             <div class="usuario-navbar-actions">
 
-                                @if (User.IsInRole("Usuario"))
+                            @if (User.IsInRole("Usuario") || User.IsInRole("Administrador"))
                                 {
                                     <div class="dropdown campana-notificaciones">
 
@@ -279,7 +279,8 @@
     <script src="~/js/jquery.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/custom.js"></script>
-    <script src="~/js/NavbarCampana.js"></script>
+    <script src="~/js/NavbarCampana.js"
+        asp-append-version="true"></script>
     <script src="~/js/VirtualAssistant.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -290,6 +291,7 @@
                 if (!header) return;
                 var onScroll = function() {
                     if (window.scrollY > 30) header.classList.add('is-scrolled');
+                    else header.classList.remove('is-scrolled');
                     else header.classList.remove('is-scrolled');
                 };
                 window.addEventListener('scroll', onScroll, { passive: true });

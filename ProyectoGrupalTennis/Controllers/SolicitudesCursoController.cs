@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Services;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -15,16 +16,20 @@ namespace ProyectoGrupalTennis.Controllers
         private readonly AppDbContext _context;
         private readonly EmailService _emailService;
         private readonly IConfiguration _configuration;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public SolicitudesCursoController(
-            AppDbContext context,
-            EmailService emailService,
-            IConfiguration configuration)
+        AppDbContext context,
+        EmailService emailService,
+        IConfiguration configuration,
+        UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _emailService = emailService;
             _configuration = configuration;
+            _userManager = userManager;
         }
+
 
         // GET: /SolicitudesCurso/Catalogo
         [HttpGet]
@@ -1078,6 +1083,62 @@ Notificación automática del sistema
         }
 
 
+        private async Task CrearNotificacionAdministradoresAsync(
+        SolicitudCurso solicitud,
+        bool aceptada)
+        {
+            var administradores =
+                await _userManager.GetUsersInRoleAsync("Administrador");
+
+            var codigoSolicitud =
+                $"SOL-{solicitud.IdSolicitudCurso:D4}";
+
+            var titulo = aceptada
+                ? $"Propuesta aceptada - {codigoSolicitud}"
+                : $"Propuesta rechazada - {codigoSolicitud}";
+
+            var mensaje = aceptada
+                ? $"El alumno aceptó la propuesta de horario para la solicitud " +
+                  $"{codigoSolicitud}. Fecha: " +
+                  $"{solicitud.FechaPropuesta:dd/MM/yyyy}, horario: " +
+                  $"{solicitud.HoraInicioPropuesta:hh\\:mm} - " +
+                  $"{solicitud.HoraFinPropuesta:hh\\:mm}."
+                : $"El alumno rechazó la propuesta de horario para la solicitud " +
+                  $"{codigoSolicitud}. Motivo o nueva disponibilidad: " +
+                  $"{solicitud.MotivoRechazoAlumno}";
+
+            foreach (var administrador in administradores)
+            {
+                var yaExiste = await _context.Notificaciones.AnyAsync(n =>
+                    n.IdUsuario == administrador.Id &&
+                    n.Tipo == (aceptada
+                        ? "Propuesta aceptada"
+                        : "Propuesta rechazada") &&
+                    n.Titulo == titulo &&
+                    n.FechaEnvio >= DateTime.Now.AddMinutes(-2));
+
+                if (yaExiste)
+                {
+                    continue;
+                }
+
+                _context.Notificaciones.Add(
+                    new Notificacion
+                    {
+                        IdUsuario = administrador.Id,
+                        Tipo = aceptada
+                            ? "Propuesta aceptada"
+                            : "Propuesta rechazada",
+                        Titulo = titulo,
+                        Mensaje = mensaje,
+                        Leida = false,
+                        FechaEnvio = DateTime.Now,
+                        CanalUsado = "Plataforma",
+                        EnvioFallido = false
+                    });
+            }
+        }
+
 
         [HttpGet]
         [Authorize(Roles = "Usuario")]
@@ -1152,6 +1213,20 @@ Notificación automática del sistema
             solicitud.FechaRespuestaAlumno = DateTime.Now;
 
             await _context.SaveChangesAsync();
+
+            try
+            {
+                await CrearNotificacionAdministradoresAsync(
+                    solicitud,
+                    aceptada: true);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    $"ERROR NOTIFICACIÓN INTERNA ACEPTACIÓN: {ex}");
+            }
 
             try
             {
@@ -1248,6 +1323,21 @@ Notificación automática del sistema
             solicitud.FechaRespuestaAlumno = DateTime.Now;
             solicitud.MotivoRechazoAlumno = motivo;
             await _context.SaveChangesAsync();
+
+            try
+            {
+                await CrearNotificacionAdministradoresAsync(
+                    solicitud,
+                    aceptada: false);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    $"ERROR NOTIFICACIÓN INTERNA RECHAZO: {ex}");
+            }
+
 
             try
             {
