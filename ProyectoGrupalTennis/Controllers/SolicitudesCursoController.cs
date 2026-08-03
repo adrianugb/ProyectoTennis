@@ -412,7 +412,8 @@ namespace ProyectoGrupalTennis.Controllers
 
             if (string.IsNullOrWhiteSpace(correoDestino))
             {
-                return;
+                throw new InvalidOperationException(
+                    "No está configurado el correo de solicitudes de la academia.");
             }
 
             var baseUrl =
@@ -509,8 +510,8 @@ namespace ProyectoGrupalTennis.Controllers
                                         Cantidad de sesiones
                                     </td>
                                     <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
-                                    {tarifa.CantidadLecciones}
-                                    {(tarifa.CantidadLecciones == 1 ? "sesión" : "sesiones")}    
+                                         {tarifa.CantidadLecciones}
+                                        {(tarifa.CantidadLecciones == 1 ? " sesión" : " sesiones")}
                                     </td>
                                 </tr>
 
@@ -577,6 +578,23 @@ namespace ProyectoGrupalTennis.Controllers
                             </table>
 
 
+                            <div style="text-align:center;margin-top:35px;">
+
+                                <a href="{urlGestion}"
+                                   style="background:#95c11f;
+                                          color:#ffffff;
+                                          padding:14px 24px;
+                                          text-decoration:none;
+                                          border-radius:8px;
+                                          font-weight:bold;
+                                          display:inline-block;">
+
+                                    Revisar solicitud
+
+                                </a>
+
+                            </div>
+
                            <p style="margin:28px 0 0; font-size:13px; color:#666666; line-height:1.5;">
                             Inicia sesión en el sistema para revisar la solicitud,
                             asignar un profesor, definir el horario y contactar al alumno.
@@ -619,10 +637,7 @@ namespace ProyectoGrupalTennis.Controllers
            SolicitudCurso solicitud)
         {
 
-            Console.WriteLine("===========");
-            Console.WriteLine("ENTRÓ A EnviarCorreoRechazoAsync");
-            Console.WriteLine($"Destino: {_configuration["AcademiaSettings:CorreoSolicitudes"]}");
-            Console.WriteLine("===========");
+   
             var correoDestino =
                 _configuration["AcademiaSettings:CorreoSolicitudes"];
 
@@ -789,19 +804,278 @@ Notificación automática del sistema
 </html>
 """;
 
-            Console.WriteLine("ANTES DE ENVIAR EL CORREO");
 
             await _emailService.EnviarCorreoAsync(
                 correoDestino,
                 $"Propuesta rechazada - SOL-{solicitud.IdSolicitudCurso:D4}",
                 cuerpoCorreo);
 
-            Console.WriteLine("CORREO ENVIADO");
 
         }
 
 
+        private async Task EnviarCorreoAceptacionAsync(
+    SolicitudCurso solicitud)
+        {
+            var correoDestino =
+                _configuration["AcademiaSettings:CorreoSolicitudes"];
 
+            if (string.IsNullOrWhiteSpace(correoDestino))
+            {
+                return;
+            }
+
+            var baseUrl =
+                _configuration["AcademiaSettings:BaseUrl"];
+
+            var urlGestion =
+                string.IsNullOrWhiteSpace(baseUrl)
+                    ? "#"
+                    : $"{baseUrl.TrimEnd('/')}/AdminSolicitudes/Detalle/{solicitud.IdSolicitudCurso}";
+
+            var fechaPropuesta =
+                solicitud.FechaPropuesta?.ToString("dd/MM/yyyy")
+                ?? "Sin fecha definida";
+
+            var horaInicio =
+                solicitud.HoraInicioPropuesta?.ToString(@"hh\:mm")
+                ?? "Sin hora";
+
+            var horaFin =
+                solicitud.HoraFinPropuesta?.ToString(@"hh\:mm")
+                ?? "Sin hora";
+
+            var profesor =
+                solicitud.ProfesorPropuesto == null
+                    ? "Por confirmar"
+                    : $"{solicitud.ProfesorPropuesto.Nombre} {solicitud.ProfesorPropuesto.Apellidos}";
+
+            var cancha =
+                solicitud.CanchaPropuesta?.Nombre
+                ?? "Por confirmar";
+
+            var cuerpoCorreo = $"""
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:30px;">
+<tr>
+<td align="center">
+
+<table width="650"
+       cellpadding="0"
+       cellspacing="0"
+       style="background:#ffffff;border-radius:14px;overflow:hidden;">
+
+<tr>
+<td style="background:#95c11f;padding:24px;color:white;">
+
+<h2 style="margin:0;">
+Propuesta aceptada por el alumno
+</h2>
+
+<p style="margin-top:8px;">
+El alumno confirmó el horario desde el sistema.
+</p>
+
+</td>
+</tr>
+
+<tr>
+<td style="padding:30px;">
+
+<table width="100%" style="border-collapse:collapse;">
+
+<tr>
+<td style="padding:10px;font-weight:bold;border-bottom:1px solid #eee;">
+Código
+</td>
+
+<td style="padding:10px;border-bottom:1px solid #eee;">
+SOL-{solicitud.IdSolicitudCurso:D4}
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;font-weight:bold;border-bottom:1px solid #eee;">
+Servicio
+</td>
+
+<td style="padding:10px;border-bottom:1px solid #eee;">
+{solicitud.NombreCurso}
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;font-weight:bold;border-bottom:1px solid #eee;">
+Fecha aceptada
+</td>
+
+<td style="padding:10px;border-bottom:1px solid #eee;">
+{fechaPropuesta}
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;font-weight:bold;border-bottom:1px solid #eee;">
+Horario
+</td>
+
+<td style="padding:10px;border-bottom:1px solid #eee;">
+{horaInicio} - {horaFin}
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;font-weight:bold;border-bottom:1px solid #eee;">
+Profesor
+</td>
+
+<td style="padding:10px;border-bottom:1px solid #eee;">
+{profesor}
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;font-weight:bold;">
+Cancha
+</td>
+
+<td style="padding:10px;">
+{cancha}
+</td>
+</tr>
+
+</table>
+
+<div style="text-align:center;margin-top:35px;">
+
+<a href="{urlGestion}"
+   style="background:#95c11f;
+          color:white;
+          padding:14px 24px;
+          text-decoration:none;
+          border-radius:8px;
+          font-weight:bold;">
+
+Ver solicitud
+
+</a>
+
+</div>
+
+</td>
+</tr>
+
+<tr>
+<td style="background:#f7f8f9;
+           padding:18px;
+           text-align:center;
+           font-size:12px;
+           color:#777;">
+
+Academia de Tennis<br/>
+Notificación automática del sistema
+
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
+""";
+
+            await _emailService.EnviarCorreoAsync(
+                correoDestino,
+                $"Propuesta aceptada - SOL-{solicitud.IdSolicitudCurso:D4}",
+                cuerpoCorreo);
+        }
+
+        private string? ConstruirWhatsappRespuestaAlumno(
+    SolicitudCurso solicitud,
+    bool aceptada)
+        {
+            var telefonoAcademia =
+                _configuration["AcademiaSettings:WhatsappSolicitudes"];
+
+            if (string.IsNullOrWhiteSpace(telefonoAcademia))
+            {
+                return null;
+            }
+
+            var telefonoLimpio =
+                new string(
+                    telefonoAcademia
+                        .Where(char.IsDigit)
+                        .ToArray());
+
+            if (string.IsNullOrWhiteSpace(telefonoLimpio))
+            {
+                return null;
+            }
+
+            var fecha =
+                solicitud.FechaPropuesta?
+                    .ToString("dd/MM/yyyy")
+                ?? "Por confirmar";
+
+            var horaInicio =
+                solicitud.HoraInicioPropuesta?
+                    .ToString(@"hh\:mm")
+                ?? "Por confirmar";
+
+            var horaFin =
+                solicitud.HoraFinPropuesta?
+                    .ToString(@"hh\:mm")
+                ?? "Por confirmar";
+
+            var codigoSolicitud =
+                $"SOL-{solicitud.IdSolicitudCurso:D4}";
+
+            string mensaje;
+
+            if (aceptada)
+            {
+                mensaje =
+                    $"Hola. Confirmo que acepté la propuesta de horario para la solicitud codigoSolicitud} " +
+                    $"y la acepté desde el sistema.\n\n" +
+                    $"*Detalles de la propuesta aceptada:*\n" +
+                    $"*Servicio:* {solicitud.NombreCurso}\n" +
+                    $"*Fecha:* {fecha}\n" +
+                    $"*Horario:* {horaInicio} - {horaFin}\n" +
+                    $"*Profesor:* " +
+                    $"{solicitud.ProfesorPropuesto?.Nombre} " +
+                    $"{solicitud.ProfesorPropuesto?.Apellidos}\n" +
+                    $"*Cancha:* {solicitud.CanchaPropuesta?.Nombre}\n\n" +
+                    $"Quedo atento(a) a cualquier información adicional.";
+            }
+            else
+            {
+                mensaje =
+                    $"Hola. He revisado la propuesta de horario de la solicitud {codigoSolicitud} " +
+                    $"y no puedo aceptarla.\n\n" +
+                    $"*Propuesta recibida:*\n" +
+                    $"*Servicio:* {solicitud.NombreCurso}\n" +
+                    $"*Fecha:* {fecha}\n" +
+                    $"*Horario:* {horaInicio} - {horaFin}\n\n" +
+                    $"*Comentario o nueva disponibilidad:*\n" +
+                    $"{solicitud.MotivoRechazoAlumno}\n\n" +
+                    $"Quedo pendiente de una nueva propuesta.";
+            }
+
+            return $"https://wa.me/{telefonoLimpio}" +
+                   $"?text={Uri.EscapeDataString(mensaje)}";
+        }
 
 
 
@@ -853,6 +1127,8 @@ Notificación automática del sistema
                 ClaimTypes.NameIdentifier);
 
             var solicitud = await _context.SolicitudesCurso
+                .Include(s => s.ProfesorPropuesto)
+                .Include(s => s.CanchaPropuesta)
                 .FirstOrDefaultAsync(s =>
                     s.IdSolicitudCurso == id &&
                     s.IdAlumno == idAlumno);
@@ -877,6 +1153,35 @@ Notificación automática del sistema
 
             await _context.SaveChangesAsync();
 
+            try
+            {
+                await EnviarCorreoAceptacionAsync(solicitud);
+            }
+            catch (Exception ex)
+            {
+                TempData["AdvertenciaCorreo"] =
+                    "La aceptación fue registrada, pero no se pudo enviar el correo a la academia.";
+
+                Console.WriteLine(
+                    $"ERROR CORREO ACEPTACIÓN: {ex}");
+            }
+
+            var whatsappUrl =
+                ConstruirWhatsappRespuestaAlumno(
+                    solicitud,
+                    aceptada: true);
+
+            if (!string.IsNullOrWhiteSpace(whatsappUrl))
+            {
+                TempData["WhatsappRespuestaUrl"] =
+                    whatsappUrl;
+            }
+            else
+            {
+                TempData["AdvertenciaWhatsapp"] =
+                    "La respuesta fue registrada, pero no se encontró el número de WhatsApp de la academia.";
+            }
+
             TempData["Success"] =
                 "La propuesta fue aceptada correctamente.";
 
@@ -884,20 +1189,23 @@ Notificación automática del sistema
                 nameof(ResponderPropuesta),
                 new { id });
         }
+
+
         [HttpPost]
         [Authorize(Roles = "Usuario")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RechazarPropuesta(
-    int id,
-    string motivo)
-        {
+        public async Task<IActionResult> RechazarPropuesta(int id,string motivo)   
+            {
+
             var idAlumno = User.FindFirstValue(
                 ClaimTypes.NameIdentifier);
 
             var solicitud = await _context.SolicitudesCurso
-                .FirstOrDefaultAsync(s =>
-                    s.IdSolicitudCurso == id &&
-                    s.IdAlumno == idAlumno);
+        .Include(s => s.ProfesorPropuesto)
+        .Include(s => s.CanchaPropuesta)
+        .FirstOrDefaultAsync(s =>
+            s.IdSolicitudCurso == id &&
+            s.IdAlumno == idAlumno);
 
             if (solicitud == null)
             {
@@ -939,7 +1247,6 @@ Notificación automática del sistema
             solicitud.Estado = "En revisión";
             solicitud.FechaRespuestaAlumno = DateTime.Now;
             solicitud.MotivoRechazoAlumno = motivo;
-
             await _context.SaveChangesAsync();
 
             try
@@ -954,6 +1261,22 @@ Notificación automática del sistema
                 Console.WriteLine($"ERROR CORREO RECHAZO: {ex}");
             }
 
+            var whatsappUrl =
+                ConstruirWhatsappRespuestaAlumno(
+                    solicitud,
+                    aceptada: false);
+
+            if (!string.IsNullOrWhiteSpace(whatsappUrl))
+            {
+                TempData["WhatsappRespuestaUrl"] =
+                    whatsappUrl;
+            }
+            else
+            {
+                TempData["AdvertenciaWhatsapp"] =
+                    "El rechazo fue registrado, pero no se encontró el número de WhatsApp de la academia.";
+            }
+
             TempData["Success"] =
                 "La propuesta fue rechazada. La solicitud regresó a revisión.";
 
@@ -961,6 +1284,8 @@ Notificación automática del sistema
                 nameof(ResponderPropuesta),
                 new { id });
         }
+
+
 
     }
     }

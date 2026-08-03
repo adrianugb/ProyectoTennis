@@ -23,6 +23,36 @@
         </div>
     }
 
+
+
+    @if (TempData["AdvertenciaWhatsapp"] != null)
+    {
+        <div class="alert alert-warning mt-3">
+            @TempData["AdvertenciaWhatsapp"]
+        </div>
+    }
+
+    @if (TempData["WhatsappRespuestaUrl"] != null)
+    {
+        <div class="alert alert-success mt-3">
+
+            <p class="mb-2">
+                Tu respuesta fue registrada correctamente.
+                Puedes continuar la coordinación con la academia por WhatsApp.
+            </p>
+
+            <a href="@TempData["WhatsappRespuestaUrl"]"
+               target="_blank"
+               class="btn btn-success">
+
+                <i class="fab fa-whatsapp me-1"></i>
+                Seguir conversación por WhatsApp
+
+            </a>
+
+        </div>
+    }
+
     <div class="card shadow-sm">
 
         <div class="card-header bg-success text-white">
@@ -184,7 +214,7 @@
                         </strong>
 
                         <p class="mb-1 mt-2">
-                            Motivo del rechazo anterior:
+                            Comentario del rechazo anterior:
                         </p>
                     }
                     else
