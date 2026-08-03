@@ -80,12 +80,12 @@
         box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
     }
 
-.perfil-card > i {
-    font-size: 34px;
-    color: #a5c422;
-    margin-bottom: 14px;
-    display: inline-block;
-}
+    .perfil-card > i {
+        font-size: 34px;
+        color: #a5c422;
+        margin-bottom: 14px;
+        display: inline-block;
+    }
 
     .perfil-card h3 {
         font-size: 24px;
@@ -130,6 +130,7 @@
         transform: translateY(-2px);
         box-shadow: 0 10px 18px rgba(165, 196, 34, 0.35);
     }
+
 .perfil-page .container-fluid {
     max-width: none;
     padding-left: 30px;
@@ -397,7 +398,6 @@
             width: 100%;
             min-width: 100%;
         }
-    
 }
 /* =========================================
    ADMIN / CURSOS
