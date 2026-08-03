@@ -1047,7 +1047,7 @@ Notificación automática del sistema
             if (aceptada)
             {
                 mensaje =
-                    $"Hola. Confirmo que acepté la propuesta de horario para la solicitud codigoSolicitud} " +
+                    $"Hola. Confirmo que acepté la propuesta de horario para la solicitud {codigoSolicitud} " +
                     $"y la acepté desde el sistema.\n\n" +
                     $"*Detalles de la propuesta aceptada:*\n" +
                     $"*Servicio:* {solicitud.NombreCurso}\n" +
