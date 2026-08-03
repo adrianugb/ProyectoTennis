@@ -2,183 +2,226 @@
     ViewData["Title"] = "Perfil Administrativo";
 }
 
-<link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
 
-<section class="perfil-page compact">
-    <div class="container">
+<section class="perfil-page compact perfil-admin-page">
+    <div class="container-xxl">
         <div class="perfil-container">
+
+            <!-- ==========================================
+                 ENCABEZADO
+                 ========================================== -->
 
             <div class="perfil-header">
                 <div>
-                    <h1 class="perfil-title">Panel Administrativo</h1>
+                    <h1 class="perfil-title">
+                        Panel Administrativo
+                    </h1>
+
                     <p class="perfil-subtitle">
-                        Gestiona cursos, alumnos, profesores y facturación desde un solo lugar.
+                        Gestiona cursos, alumnos, profesores, pagos
+                        y demás funciones administrativas desde un solo lugar.
                     </p>
                 </div>
+
                 <div class="perfil-badge">
-                    <i class="fa fa-user-shield"></i> Perfil Administrador
+                    <i class="fa fa-user-shield"></i>
+                    Perfil Administrador
                 </div>
             </div>
 
+            <nav class="perfil-usuario-nav perfil-admin-nav">
+
+                <a href="#gestion-academica">
+                    <i class="fa fa-book-open"></i>
+                    Gestión académica
+                </a>
+
+                <a href="#administracion-finanzas">
+                    <i class="fa fa-cogs"></i>
+                    Administración
+                </a>
+
+                <a href="#seguimiento-comunicacion">
+                    <i class="fa fa-chart-line"></i>
+                    Seguimiento
+                </a>
+
+                <a href="#geolocalizacion">
+                    <i class="fa fa-map-marked-alt"></i>
+                    Geolocalización
+                </a>
+
+            </nav>
+
+            <div id="gestion-academica"
+                 class="perfil-usuario-section">
+
+                <h2>
+                    <i class="fa fa-graduation-cap"></i>
+                    Gestión académica
+                </h2>
+
+                <p>
+                    Administra los cursos, alumnos, profesores,
+                    canchas, solicitudes y reservas de la academia.
+                </p>
+            </div>
+
             <div class="perfil-grid">
-                <div class="row">
+                <div class="row g-4">
 
-                    <div class="col-md-6 col-sm-6">
+                    <!-- Gestión de Cursos -->
+                    <div class="col-12 col-md-6 col-xxl-3">
                         <div class="perfil-card">
+
                             <i class="fa fa-book"></i>
+
                             <h3>Gestión de Cursos</h3>
-                            <p>Administra el catálogo de cursos y asigná profesores.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Curso" asp-action="Index" class="perfil-btn">
-                                    Ir a Cursos
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-user-graduate"></i>
-                            <h3>Gestión de Alumnos</h3>
-                            <p>Consulta, registra, edita y visualiza la información general de los alumnos.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Alumnos" asp-action="Index" class="perfil-btn">
-                                    Ir a Alumnos
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-table-tennis"></i>
-                            <h3>Gestión de Canchas</h3>
-                            <p>Administrá la disponibilidad y mantenimiento de las canchas de la academia.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Canchas" asp-action="Index" class="perfil-btn">
-                                    Ir a Canchas
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-chalkboard-teacher"></i>
-                            <h3>Gestión de Profesores</h3>
-                            <p>Visualiza y administra la información relacionada con los profesores.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Home" asp-action="AdminProfesores" class="perfil-btn">
-                                    Ir a Profesores
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-file-invoice-dollar"></i>
-                            <h3>Pagos y Facturación</h3>
-                            <p>Registra pagos, confirma transacciones y consulta el historial financiero.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Home" asp-action="AdminFacturacion" class="perfil-btn">
-                                    Ir a Facturación
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-book-open"></i>
-
-                            <h3>Catálogo, Tarifas y Servicios</h3>
 
                             <p>
-                                Administra tipos de clase, tarifas, paquetes
-                                y condiciones generales del servicio.
+                                Administra el catálogo de cursos
+                                y asigna profesores.
                             </p>
 
                             <div class="perfil-actions">
-                                <a asp-controller="AdminCatalogoCursos"
+                                <a asp-controller="Curso"
                                    asp-action="Index"
                                    class="perfil-btn">
-                                    Administrar Catálogo
+
+                                    <i class="fa fa-book-open"></i>
+                                    Ir a Cursos
                                 </a>
                             </div>
+
                         </div>
                     </div>
 
-                    <div class="col-md-6 col-sm-6">
+                    <!-- Gestión de Alumnos -->
+                    <div class="col-12 col-md-6 col-xxl-3">
                         <div class="perfil-card">
+
+                            <i class="fa fa-user-graduate"></i>
+
+                            <h3>Gestión de Alumnos</h3>
+
+                            <p>
+                                Consulta, registra, edita y visualiza
+                                la información general de los alumnos.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Alumnos"
+                                   asp-action="Index"
+                                   class="perfil-btn">
+
+                                    <i class="fa fa-user-graduate"></i>
+                                    Ir a Alumnos
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Gestión de Profesores -->
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="perfil-card">
+
+                            <i class="fa fa-chalkboard-teacher"></i>
+
+                            <h3>Gestión de Profesores</h3>
+
+                            <p>
+                                Visualiza y administra la información
+                                relacionada con los profesores.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home"
+                                   asp-action="AdminProfesores"
+                                   class="perfil-btn">
+
+                                    <i class="fa fa-chalkboard-teacher"></i>
+                                    Ir a Profesores
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Gestión de Canchas -->
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="perfil-card">
+
+                            <i class="fa fa-table-tennis"></i>
+
+                            <h3>Gestión de Canchas</h3>
+
+                            <p>
+                                Administra la disponibilidad y el mantenimiento
+                                de las canchas de la academia.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Canchas"
+                                   asp-action="Index"
+                                   class="perfil-btn">
+
+                                    <i class="fa fa-table-tennis"></i>
+                                    Ir a Canchas
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Gestionar Solicitudes -->
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="perfil-card">
+
                             <i class="fa fa-clipboard-list"></i>
+
                             <h3>Gestionar Solicitudes</h3>
 
                             <p>
-                                Administra las solicitudes de clases, revisa detalles y actualiza estados.
+                                Revisa las solicitudes de clases,
+                                sus detalles y estados actuales.
                             </p>
 
                             <div class="perfil-actions">
                                 <a asp-controller="AdminSolicitudes"
                                    asp-action="Index"
                                    class="perfil-btn">
-                                    Gestionar solicitudes
+
+                                    <i class="fa fa-list-alt"></i>
+                                    Ver Solicitudes
                                 </a>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-users-cog"></i>
-                            <h3>Gestión de Usuarios</h3>
-                            <p>Administra usuarios del sistema, roles, accesos y estados de bloqueo.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Admin" asp-action="Index" class="perfil-btn">
-                                    Ir a Usuarios
-                                </a>
-                            </div>
+
                         </div>
                     </div>
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-tags"></i>
-                            <h3>Gestión de Ofertas</h3>
-                            <p>Crea y administra códigos de descuento y promociones.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Offers" asp-action="Index" class="perfil-btn">
-                                    Ir a Ofertas
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                            <i class="fa fa-chart-line"></i>
-                            <h3>Dashboard y Reportes</h3>
-                            <p>Consulta estadísticas generales, alumnos activos y clases programadas.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Home" asp-action="Dashboard" class="perfil-btn">
-                                    Ver Dashboard
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-6">
+                    <!-- Gestión de Reservas -->
+                    <div class="col-12 col-md-6 col-xxl-3">
                         <div class="perfil-card">
 
-                            <i class="fa fa-calendar"></i>
+                            <i class="fa fa-calendar-check"></i>
 
                             <h3>Gestión de Reservas</h3>
 
                             <p>
-                                Visualice, edite o elimine reservas de canchas.
+                                Visualiza, edita o elimina las reservas
+                                de canchas registradas.
                             </p>
 
                             <div class="perfil-actions">
                                 <a asp-controller="Reservas"
                                    asp-action="GestionReservas"
                                    class="perfil-btn">
+
+                                    <i class="fa fa-calendar"></i>
                                     Ver Reservas
                                 </a>
                             </div>
@@ -186,79 +229,314 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6 col-sm-6">
+                </div>
+            </div>
+
+
+            <div id="administracion-finanzas"
+                 class="perfil-usuario-section">
+
+                <h2>
+                    <i class="fa fa-briefcase"></i>
+                    Administración y finanzas
+                </h2>
+
+                <p>
+                    Gestiona pagos, facturación, tarifas,
+                    usuarios, roles y promociones.
+                </p>
+            </div>
+
+            <div class="perfil-grid">
+                <div class="row g-4">
+
+                    <!-- Pagos y Facturación -->
+                    <div class="col-12 col-md-6 col-xxl-3">
                         <div class="perfil-card">
-                            <i class="fa fa-bullhorn"></i>
-                            <h3>Notificar Alumnos</h3>
-                            <p>Envía avisos generales a un curso específico o a todos los alumnos activos.</p>
+
+                            <i class="fa fa-file-invoice-dollar"></i>
+
+                            <h3>Pagos y Facturación</h3>
+
+                            <p>
+                                Registra pagos, confirma transacciones
+                                y consulta el historial financiero.
+                            </p>
+
                             <div class="perfil-actions">
-                                <a asp-controller="Admin" asp-action="NotificarAlumnos" class="perfil-btn">
+                                <a asp-controller="Home"
+                                   asp-action="AdminFacturacion"
+                                   class="perfil-btn">
+
+                                    <i class="fa fa-receipt"></i>
+                                    Ir a Facturación
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Catálogo, Tarifas y Servicios -->
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="perfil-card">
+
+                            <i class="fa fa-graduation-cap"></i>
+
+                            <h3>Catálogo, Tarifas y Servicios</h3>
+
+                            <p>
+                                Administra tipos de clase, tarifas,
+                                paquetes y condiciones del servicio.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="AdminCatalogoCursos"
+                                   asp-action="Index"
+                                   class="perfil-btn">
+
+                                    <i class="fa fa-cog"></i>
+                                    Administrar Catálogo
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Gestión de Usuarios -->
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="perfil-card">
+
+                            <i class="fa fa-users-cog"></i>
+
+                            <h3>Gestión de Usuarios</h3>
+
+                            <p>
+                                Administra usuarios, roles, permisos
+                                y estados de bloqueo.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Admin"
+                                   asp-action="Index"
+                                   class="perfil-btn">
+
+                                    <i class="fa fa-users"></i>
+                                    Ir a Usuarios
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Gestión de Ofertas -->
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="perfil-card">
+
+                            <i class="fa fa-tags"></i>
+
+                            <h3>Gestión de Ofertas</h3>
+
+                            <p>
+                                Crea y administra códigos de descuento,
+                                promociones y ofertas.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Offers"
+                                   asp-action="Index"
+                                   class="perfil-btn">
+
+                                    <i class="fa fa-percent"></i>
+                                    Ir a Ofertas
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div id="seguimiento-comunicacion"
+                 class="perfil-usuario-section">
+
+                <h2>
+                    <i class="fa fa-chart-line"></i>
+                    Seguimiento y comunicación
+                </h2>
+
+                <p>
+                    Consulta reportes, progreso técnico,
+                    notificaciones y herramientas de apoyo.
+                </p>
+            </div>
+
+            <div class="perfil-grid">
+                <div class="row g-4">
+
+                    <!-- Dashboard y Reportes -->
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="perfil-card">
+
+                            <i class="fa fa-chart-line"></i>
+
+                            <h3>Dashboard y Reportes</h3>
+
+                            <p>
+                                Consulta estadísticas generales,
+                                alumnos activos y clases programadas.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Home"
+                                   asp-action="Dashboard"
+                                   class="perfil-btn">
+
+                                    <i class="fa fa-chart-bar"></i>
+                                    Ver Dashboard
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Notificar Alumnos -->
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="perfil-card">
+
+                            <i class="fa fa-bullhorn"></i>
+
+                            <h3>Notificar Alumnos</h3>
+
+                            <p>
+                                Envía avisos a un curso específico
+                                o a todos los alumnos activos.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Admin"
+                                   asp-action="NotificarAlumnos"
+                                   class="perfil-btn">
+
+                                    <i class="fa fa-paper-plane"></i>
                                     Notificar Grupo
                                 </a>
                             </div>
+
                         </div>
                     </div>
 
-                    <div class="col-md-6 col-sm-6">
+                    <!-- Progreso Técnico -->
+                    <div class="col-12 col-md-6 col-xxl-3">
                         <div class="perfil-card">
-                            <i class="fa fa-robot"></i>
-                            <h3>Asistente Virtual</h3>
-                            <p>Administra las preguntas frecuentes del chatbot y revisa las consultas sin respuesta.</p>
-                            <div class="perfil-actions">
-                                <a asp-controller="Chatbot" asp-action="AdminFaqs" class="perfil-btn">
-                                    Gestionar Chatbot
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="perfil-card">
-                        <i class="fa fa-robot"></i>
+                            <i class="fa fa-chart-bar"></i>
+
                             <h3>Progreso Técnico</h3>
+
                             <p>
-                                Consulta las evaluaciones registradas,
-                                criterios y niveles técnicos.
+                                Consulta las evaluaciones, criterios
+                                y niveles técnicos registrados.
                             </p>
+
                             <div class="perfil-actions">
-                                <a asp-controller="Progreso" asp-action="AdminIndex" class="perfil-btn">
+                                <a asp-controller="Progreso"
+                                   asp-action="AdminIndex"
+                                   class="perfil-btn">
+
+                                    <i class="fa fa-chart-line"></i>
                                     Ver Progreso
                                 </a>
                             </div>
+
                         </div>
                     </div>
-                    
-                    <div class="col-md-6 col-sm-6">
+
+                    <!-- Asistente Virtual -->
+                    <div class="col-12 col-md-6 col-xxl-3">
                         <div class="perfil-card">
-                            <i class="fa fa-map-marker"></i>
+
+                            <i class="fa fa-robot"></i>
+
+                            <h3>Asistente Virtual</h3>
+
+                            <p>
+                                Administra las preguntas frecuentes
+                                y revisa consultas sin respuesta.
+                            </p>
+
+                            <div class="perfil-actions">
+                                <a asp-controller="Chatbot"
+                                   asp-action="AdminFaqs"
+                                   class="perfil-btn">
+
+                                    <i class="fa fa-comments"></i>
+                                    Gestionar Chatbot
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div id="geolocalizacion"
+                 class="perfil-usuario-section">
+
+                <h2>
+                    <i class="fa fa-map-marker-alt"></i>
+                    Geolocalización
+                </h2>
+
+                <p>
+                    Administra las zonas de cobertura,
+                    ubicaciones de alumnos y rutas de profesores.
+                </p>
+            </div>
+
+            <div class="perfil-grid">
+                <div class="row g-4">
+
+                    <!-- Geolocalización -->
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="perfil-card">
+
+                            <i class="fa fa-map-marker-alt"></i>
 
                             <h3>Geolocalización</h3>
 
                             <p>
-                                Administra las zonas de cobertura, el radio de servicio
-                                y los costos para las clases a domicilio.
+                                Administra las zonas de cobertura,
+                                el radio de servicio y los costos a domicilio.
                             </p>
 
                             <div class="perfil-actions">
                                 <a asp-controller="Geolocalizacion"
                                    asp-action="Index"
                                    class="perfil-btn">
+
+                                    <i class="fa fa-map-pin"></i>
                                     Administrar
                                 </a>
                             </div>
+
                         </div>
                     </div>
 
-                    <div class="col-md-6 col-sm-6">
+                    <!-- Mapa Logístico -->
+                    <div class="col-12 col-md-6 col-xxl-3">
                         <div class="perfil-card">
+
                             <i class="fa fa-map"></i>
 
                             <h3>Mapa Logístico</h3>
 
                             <p>
-                                Visualiza las clases a domicilio, ubicaciones
-                                de alumnos y rutas asignadas a los profesores.
+                                Visualiza clases a domicilio, ubicaciones
+                                de alumnos y rutas asignadas.
                             </p>
 
                             <div class="perfil-actions">
@@ -266,9 +544,11 @@
                                    asp-action="MapaLogisticoAdmin"
                                    class="perfil-btn">
 
-                                    Ver mapa
+                                    <i class="fa fa-route"></i>
+                                    Ver Mapa
                                 </a>
                             </div>
+
                         </div>
                     </div>
 

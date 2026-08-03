@@ -75,7 +75,7 @@
         </div>
 
         <nav class="navbar navbar-expand-lg site-navbar">
-            <div class="container">
+            <div class="container-xxl">
                 <a href="/" class="navbar-brand">
                     <img src="~/images/Logo-mmp.png" alt="Academia de Tenis M.M.P." class="navbar-logo" />
                     <span class="navbar-brand-text">Academia de Tenis <strong>M.M.P.</strong></span>
@@ -173,7 +173,10 @@
 
                                 <span class="usuario-logueado">
                                     <i class="fa fa-user-circle"></i>
-                                    Hola, @usuario?.Nombre
+                                    <span class="saludo">Hola,</span>
+                                    <span class="usuario-nombre" title="@usuario?.Nombre">
+                                        @usuario?.Nombre
+                                    </span>
                                 </span>
 
                                 <form asp-controller="Auth"

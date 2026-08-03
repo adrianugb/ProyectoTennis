@@ -63,13 +63,13 @@
 .perfil-card {
     background: linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
     border-radius: 16px;
-    padding: 24px 20px;
+    padding: 20px;
     text-align: center;
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
     border: 1px solid #f3f3f3;
     transition: all 0.3s ease;
     height: 100%;
-    min-height: 250px;
+    min-height: 215px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -211,6 +211,7 @@
 
 .perfil-filter-row {
     display: flex;
+    align-items: center;
     gap: 12px;
     flex-wrap: wrap;
     margin-bottom: 18px;
@@ -218,7 +219,12 @@
 
     .perfil-filter-row .form-control,
     .perfil-filter-row .form-select {
+        flex: 1 1 230px;
+        width: auto;
         min-width: 200px;
+        height: 48px;
+        min-height: 48px;
+        line-height: 1.5;
         border-radius: 10px;
         border: 1px solid #e4e4e4;
         padding: 10px 14px;
@@ -733,11 +739,10 @@
     align-items: stretch;
 }
 
-.perfil-grid .col-md-6,
-.perfil-grid .col-sm-6 {
-    display: flex;
-    margin-bottom: 25px;
-}
+    .perfil-grid .row > [class*="col-"] {
+        display: flex;
+        margin-bottom: 25px;
+    }
 
 .perfil-grid .perfil-card {
     width: 100%;
@@ -985,8 +990,9 @@
         text-decoration: underline;
     }
 
-/* Navegación exclusiva del Perfil de Usuario */
-.perfil-usuario-page .perfil-usuario-nav {
+/* Navegación de Perfil Usuario y Administrador */
+.perfil-usuario-page .perfil-usuario-nav,
+.perfil-admin-page .perfil-usuario-nav {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -997,7 +1003,8 @@
     border-radius: 14px;
 }
 
-    .perfil-usuario-page .perfil-usuario-nav a {
+    .perfil-usuario-page .perfil-usuario-nav a,
+    .perfil-admin-page .perfil-usuario-nav a {
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -1012,14 +1019,16 @@
         transition: 0.2s ease;
     }
 
-        .perfil-usuario-page .perfil-usuario-nav a:hover {
+        .perfil-usuario-page .perfil-usuario-nav a:hover,
+        .perfil-admin-page .perfil-usuario-nav a:hover {
             background: #a5c422;
             border-color: #a5c422;
             color: #ffffff;
         }
 
-/* Encabezados exclusivos del Perfil de Usuario */
-.perfil-usuario-page .perfil-usuario-section {
+/* Encabezados de Perfil Usuario y Administrador */
+.perfil-usuario-page .perfil-usuario-section,
+.perfil-admin-page .perfil-usuario-section {
     width: 100%;
     margin: 30px 0 16px;
     padding-bottom: 10px;
@@ -1027,7 +1036,8 @@
     scroll-margin-top: 150px;
 }
 
-    .perfil-usuario-page .perfil-usuario-section h2 {
+    .perfil-usuario-page .perfil-usuario-section h2,
+    .perfil-admin-page .perfil-usuario-section h2 {
         display: flex;
         align-items: center;
         gap: 9px;
@@ -1038,37 +1048,73 @@
         color: #252525;
     }
 
-        .perfil-usuario-page .perfil-usuario-section h2 i {
+        .perfil-usuario-page .perfil-usuario-section h2 i,
+        .perfil-admin-page .perfil-usuario-section h2 i {
             margin: 0;
             font-size: 17px;
             color: #8fb400;
         }
 
-    .perfil-usuario-page .perfil-usuario-section p {
+    .perfil-usuario-page .perfil-usuario-section p,
+    .perfil-admin-page .perfil-usuario-section p {
         margin: 5px 0 0 26px;
         font-size: 13px;
         color: #757575;
     }
 
 @media (max-width: 768px) {
-    .perfil-usuario-page .perfil-usuario-nav {
+    .perfil-usuario-page .perfil-usuario-nav,
+    .perfil-admin-page .perfil-usuario-nav {
         flex-direction: column;
     }
 
-        .perfil-usuario-page .perfil-usuario-nav a {
+        .perfil-usuario-page .perfil-usuario-nav a,
+        .perfil-admin-page .perfil-usuario-nav a {
             justify-content: center;
         }
 
-    .perfil-usuario-page .perfil-usuario-section {
+    .perfil-usuario-page .perfil-usuario-section,
+    .perfil-admin-page .perfil-usuario-section {
         margin: 24px 0 14px;
         padding-bottom: 9px;
     }
 
-        .perfil-usuario-page .perfil-usuario-section h2 {
+        .perfil-usuario-page .perfil-usuario-section h2,
+        .perfil-admin-page .perfil-usuario-section h2 {
             font-size: 18px;
         }
 
-        .perfil-usuario-page .perfil-usuario-section p {
+        .perfil-usuario-page .perfil-usuario-section p,
+        .perfil-admin-page .perfil-usuario-section p {
             margin-left: 0;
         }
 }
+
+/* ===========================
+   Títulos de secciones
+=========================== */
+
+.perfil-usuario-section {
+    margin: 45px 0 25px;
+}
+
+    .perfil-usuario-section h2 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 2rem; /* Antes parece de 3rem */
+        font-weight: 700;
+        color: #18212b;
+        margin-bottom: 12px;
+    }
+
+        .perfil-usuario-section h2 i {
+            font-size: 1.8rem; /* Mucho más pequeño */
+            color: var(--primary-color);
+        }
+
+    .perfil-usuario-section p {
+        font-size: 1rem;
+        color: #666;
+        margin: 0;
+    }

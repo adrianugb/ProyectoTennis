@@ -186,9 +186,9 @@ button:focus-visible,
 
 .navbar-brand-text {
     font-family: var(--font-heading);
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ink);
+    font-size: 18px;
+    font-weight: 700;
+    color: #111111;
     line-height: 1.15;
 }
 
@@ -215,9 +215,10 @@ button:focus-visible,
     .main-nav-links .nav-link {
         color: var(--gray-700);
         font-weight: 600;
-        font-size: 14.5px;
-        padding: 10px 14px;
+        font-size: 14px;
+        padding: 10px 9px;
         border-radius: var(--radius-sm);
+        white-space: nowrap;
         transition: color .2s ease, background .2s ease;
     }
 
@@ -254,9 +255,21 @@ button:focus-visible,
     align-items: center;
     gap: 10px;
     margin-left: auto;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+}
+.usuario-navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
 }
 
+.logout-navbar {
+    margin: 0;
+    flex-shrink: 0;
+}
 .btn-nav {
     padding: 9px 18px;
     border-radius: 30px;
@@ -308,12 +321,20 @@ button:focus-visible,
     }
 
 .usuario-logueado {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-weight: 600;
-    font-size: 14px;
-    color: var(--gray-700) !important;
+    min-width: 0;
+    font-weight: 700;
+    font-size: 15px;
+    color: #1a1a1a !important;
+    white-space: nowrap;
+}
+.usuario-nombre {
+    display: inline-block;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
@@ -399,4 +420,46 @@ button:focus-visible,
         gap: 12px;
         text-align: center;
     }
+}
+
+/* Resaltar usuario conectado */
+.site-navbar .usuario-logueado {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    min-width: 0;
+    padding: 8px 10px;
+    color: #111111 !important;
+    font-family: var(--font-body) !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap;
+}
+
+    .site-navbar .usuario-logueado i {
+        color: #111111 !important;
+        font-size: 16px !important;
+        margin: 0 !important;
+    }
+
+    .site-navbar .usuario-logueado .saludo,
+    .site-navbar .usuario-logueado .usuario-nombre {
+        display: inline !important;
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        color: #111111 !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+    }
+
+.site-navbar .usuario-nombre {
+    display: inline-block;
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
