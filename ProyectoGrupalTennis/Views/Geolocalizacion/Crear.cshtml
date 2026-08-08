@@ -13,6 +13,9 @@
       href="~/css/geolocalizacion.css"
       asp-append-version="true" />
 
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+
 <section class="perfil-page compact">
     <div class="container">
 
@@ -138,21 +141,15 @@
                             </div>
 
                             <!-- Coordenadas ocultas -->
-                            <input asp-for="LatitudCentro"
-                                   type="hidden"
-                                   id="LatitudCentro" />
-
-                            <input asp-for="LongitudCentro"
-                                   type="hidden"
-                                   id="LongitudCentro" />
+                            <input type="hidden"
+                                   id="LatitudCentro"
+                                   name="LatitudCentroTexto"
+                                   value="@(Model.LatitudCentro?.ToString(System.Globalization.CultureInfo.InvariantCulture))" />
 
                             <input type="hidden"
-                                   id="LatitudCentroTexto"
-                                   name="LatitudCentroTexto" />
-
-                            <input type="hidden"
-                                   id="LongitudCentroTexto"
-                                   name="LongitudCentroTexto" />
+                                   id="LongitudCentro"
+                                   name="LongitudCentroTexto"
+                                   value="@(Model.LongitudCentro?.ToString(System.Globalization.CultureInfo.InvariantCulture))" />
 
                             <div class="col-12 mb-3">
 

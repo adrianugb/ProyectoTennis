@@ -45,49 +45,47 @@ namespace ProyectoGrupalTennis.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(
-            ZonaCobertura zona,
-            string? LatitudCentroTexto,
-            string? LongitudCentroTexto)
+    ZonaCobertura zona,
+    string? LatitudCentroTexto,
+    string? LongitudCentroTexto)
         {
-
             ModelState.Remove(nameof(zona.LatitudCentro));
             ModelState.Remove(nameof(zona.LongitudCentro));
 
-            bool latitudValida =
-                decimal.TryParse(
-                    LatitudCentroTexto,
-                    NumberStyles.Float,
-                    CultureInfo.InvariantCulture,
-                    out decimal latitud);
+            const NumberStyles estilosCoordenada =
+                NumberStyles.Float |
+                NumberStyles.AllowLeadingSign;
 
-            bool longitudValida =
-                decimal.TryParse(
-                    LongitudCentroTexto,
-                    NumberStyles.Float,
-                    CultureInfo.InvariantCulture,
-                    out decimal longitud);
-
-            if (!latitudValida)
+            if (decimal.TryParse(
+                LatitudCentroTexto,
+                estilosCoordenada,
+                CultureInfo.InvariantCulture,
+                out decimal latitud))
+            {
+                zona.LatitudCentro = latitud;
+            }
+            else
             {
                 ModelState.AddModelError(
                     nameof(zona.LatitudCentro),
                     "La latitud seleccionada no es válida.");
             }
-            else
-            {
-                zona.LatitudCentro = latitud;
-            }
 
-            if (!longitudValida)
+            if (decimal.TryParse(
+                LongitudCentroTexto,
+                estilosCoordenada,
+                CultureInfo.InvariantCulture,
+                out decimal longitud))
+            {
+                zona.LongitudCentro = longitud;
+            }
+            else
             {
                 ModelState.AddModelError(
                     nameof(zona.LongitudCentro),
                     "La longitud seleccionada no es válida.");
             }
-            else
-            {
-                zona.LongitudCentro = longitud;
-            }
+
             if (!ModelState.IsValid)
             {
                 return View(zona);
