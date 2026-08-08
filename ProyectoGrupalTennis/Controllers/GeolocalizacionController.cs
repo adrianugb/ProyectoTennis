@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoGrupalTennis.Models;
+using System.Globalization;
 
 namespace ProyectoGrupalTennis.Controllers
 {
@@ -43,8 +44,50 @@ namespace ProyectoGrupalTennis.Controllers
         [Authorize(Roles = "Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear(ZonaCobertura zona)
+        public async Task<IActionResult> Crear(
+            ZonaCobertura zona,
+            string? LatitudCentroTexto,
+            string? LongitudCentroTexto)
         {
+
+            ModelState.Remove(nameof(zona.LatitudCentro));
+            ModelState.Remove(nameof(zona.LongitudCentro));
+
+            bool latitudValida =
+                decimal.TryParse(
+                    LatitudCentroTexto,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out decimal latitud);
+
+            bool longitudValida =
+                decimal.TryParse(
+                    LongitudCentroTexto,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out decimal longitud);
+
+            if (!latitudValida)
+            {
+                ModelState.AddModelError(
+                    nameof(zona.LatitudCentro),
+                    "La latitud seleccionada no es válida.");
+            }
+            else
+            {
+                zona.LatitudCentro = latitud;
+            }
+
+            if (!longitudValida)
+            {
+                ModelState.AddModelError(
+                    nameof(zona.LongitudCentro),
+                    "La longitud seleccionada no es válida.");
+            }
+            else
+            {
+                zona.LongitudCentro = longitud;
+            }
             if (!ModelState.IsValid)
             {
                 return View(zona);
@@ -148,11 +191,51 @@ namespace ProyectoGrupalTennis.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(
             int id,
-            ZonaCobertura zona)
+            ZonaCobertura zona,
+            string? LatitudCentroTexto,
+            string? LongitudCentroTexto)
         {
             if (id != zona.IdZona)
             {
                 return BadRequest();
+            }
+            ModelState.Remove(nameof(zona.LatitudCentro));
+            ModelState.Remove(nameof(zona.LongitudCentro));
+
+            bool latitudValida =
+                decimal.TryParse(
+                    LatitudCentroTexto,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out decimal latitud);
+
+            bool longitudValida =
+                decimal.TryParse(
+                    LongitudCentroTexto,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out decimal longitud);
+
+            if (!latitudValida)
+            {
+                ModelState.AddModelError(
+                    nameof(zona.LatitudCentro),
+                    "La latitud seleccionada no es válida.");
+            }
+            else
+            {
+                zona.LatitudCentro = latitud;
+            }
+
+            if (!longitudValida)
+            {
+                ModelState.AddModelError(
+                    nameof(zona.LongitudCentro),
+                    "La longitud seleccionada no es válida.");
+            }
+            else
+            {
+                zona.LongitudCentro = longitud;
             }
             if (!zona.LatitudCentro.HasValue ||
             !zona.LongitudCentro.HasValue)

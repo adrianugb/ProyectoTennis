@@ -20,6 +20,19 @@
         return;
     }
 
+    delete L.Icon.Default.prototype._getIconUrl;
+
+    L.Icon.Default.mergeOptions({
+        iconRetinaUrl:
+            "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+
+        iconUrl:
+            "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+
+        shadowUrl:
+            "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png"
+    });
+
     const convertirNumero = function (valor) {
         if (!valor) {
             return Number.NaN;
@@ -59,22 +72,42 @@
     let marcador = null;
 
     const seleccionarUbicacion = function (latitud, longitud) {
-        const latitudFormateada = Number(latitud).toFixed(7);
-        const longitudFormateada = Number(longitud).toFixed(7);
+        const latitudFormateada =
+            Number(latitud).toFixed(7);
 
-        /*
-         * Los inputs utilizan coma porque ASP.NET está trabajando
-         * con la configuración regional en español.
-         */
-        latitudInput.value = latitudFormateada.replace(".", ",");
-        longitudInput.value = longitudFormateada.replace(".", ",");
+        const longitudFormateada =
+            Number(longitud).toFixed(7);
+
+        latitudInput.value =
+            latitudFormateada;
+
+        longitudInput.value =
+            longitudFormateada;
+
+        const latitudTextoInput =
+            document.getElementById("LatitudCentroTexto");
+
+        const longitudTextoInput =
+            document.getElementById("LongitudCentroTexto");
+
+        if (latitudTextoInput) {
+            latitudTextoInput.value =
+                latitudFormateada;
+        }
+
+        if (longitudTextoInput) {
+            longitudTextoInput.value =
+                longitudFormateada;
+        }
 
         if (textoLatitud) {
-            textoLatitud.textContent = latitudFormateada;
+            textoLatitud.textContent =
+                latitudFormateada;
         }
 
         if (textoLongitud) {
-            textoLongitud.textContent = longitudFormateada;
+            textoLongitud.textContent =
+                longitudFormateada;
         }
 
         if (errorUbicacion) {
@@ -93,16 +126,22 @@
                 .bindPopup("Ubicación seleccionada")
                 .openPopup();
 
-            marcador.on("dragend", function (evento) {
-                const posicion = evento.target.getLatLng();
+            marcador.on(
+                "dragend",
+                function (evento) {
+                    const posicion =
+                        evento.target.getLatLng();
 
-                seleccionarUbicacion(
-                    posicion.lat,
-                    posicion.lng
-                );
-            });
+                    seleccionarUbicacion(
+                        posicion.lat,
+                        posicion.lng
+                    );
+                }
+            );
         } else {
-            marcador.setLatLng([latitud, longitud]);
+            marcador.setLatLng(
+                [latitud, longitud]
+            );
         }
     };
 
@@ -185,12 +224,28 @@
             latitudInput.value = "";
             longitudInput.value = "";
 
+            const latitudTextoInput =
+                document.getElementById("LatitudCentroTexto");
+
+            const longitudTextoInput =
+                document.getElementById("LongitudCentroTexto");
+
+            if (latitudTextoInput) {
+                latitudTextoInput.value = "";
+            }
+
+            if (longitudTextoInput) {
+                longitudTextoInput.value = "";
+            }
+
             if (textoLatitud) {
-                textoLatitud.textContent = "No seleccionada";
+                textoLatitud.textContent =
+                    "No seleccionada";
             }
 
             if (textoLongitud) {
-                textoLongitud.textContent = "No seleccionada";
+                textoLongitud.textContent =
+                    "No seleccionada";
             }
 
             if (marcador !== null) {
