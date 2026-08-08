@@ -141,7 +141,34 @@
                                         <td>@pago.Alumno</td>
                                         <td>@pago.Concepto</td>
                                         <td>@pago.MetodoPago</td>
-                                        <td>₡@pago.Monto.ToString("N0")</td>
+                                        <td>
+                                            @if (pago.EsADomicilio)
+                                            {
+                                                <div>
+                                                    <strong>
+                                                        ₡@pago.Monto.ToString("N0")
+                                                    </strong>
+                                                </div>
+
+                                                <small class="text-muted d-block">
+                                                    Base: ₡@pago.MontoBase.ToString("N0")
+                                                </small>
+
+                                                <small class="text-muted d-block">
+                                                    Domicilio: ₡@pago.CostoDesplazamiento.ToString("N0")
+                                                </small>
+
+                                                <small class="text-muted d-block">
+                                                    Distancia: @pago.DistanciaKm.ToString("N2") km
+                                                </small>
+                                            }
+                                            else
+                                            {
+                                                <strong>
+                                                    ₡@pago.Monto.ToString("N0")
+                                                </strong>
+                                            }
+                                        </td>
                                         <td>@pago.FechaPago.ToString("dd/MM/yyyy")</td>
                                         <td>@pago.Estado</td>
 

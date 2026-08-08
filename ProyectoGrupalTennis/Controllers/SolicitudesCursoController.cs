@@ -1188,6 +1188,43 @@ Notificación automática del sistema
                 ClaimTypes.NameIdentifier);
 
             var solicitud = await _context.SolicitudesCurso
+                .FirstOrDefaultAsync(s =>
+                    s.IdSolicitudCurso == id &&
+                    s.IdAlumno == idAlumno);
+
+            if (solicitud == null)
+            {
+                return NotFound();
+            }
+
+            if (solicitud.Estado != "Propuesta enviada")
+            {
+                TempData["Error"] =
+                    "Esta propuesta ya fue respondida o no está disponible.";
+
+                return RedirectToAction(
+                    nameof(ResponderPropuesta),
+                    new { id });
+            }
+
+            return RedirectToAction(
+                nameof(ConfirmarPagoSolicitud),
+                new { id });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Usuario")]
+        public async Task<IActionResult> ConfirmarPagoSolicitud(int id)
+        {
+            var idAlumno = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrWhiteSpace(idAlumno))
+            {
+                return Challenge();
+            }
+
+            var solicitud = await _context.SolicitudesCurso
                 .Include(s => s.ProfesorPropuesto)
                 .Include(s => s.CanchaPropuesta)
                 .FirstOrDefaultAsync(s =>
@@ -1208,6 +1245,364 @@ Notificación automática del sistema
                     nameof(ResponderPropuesta),
                     new { id });
             }
+
+            if (!solicitud.PrecioSolicitado.HasValue ||
+                solicitud.PrecioSolicitado.Value <= 0)
+            {
+                TempData["Error"] =
+                    "No se encontró un monto válido para esta solicitud.";
+
+                return RedirectToAction(
+                    nameof(ResponderPropuesta),
+                    new { id });
+            }
+
+            UbicacionAlumno? ubicacion = null;
+
+            decimal distanciaKm = 0;
+            decimal costoFijo = 0;
+            decimal tarifaPorKm = 0;
+            decimal costoPorDistancia = 0;
+            decimal costoDesplazamiento = 0;
+
+            if (solicitud.EsADomicilio)
+            {
+                ubicacion = await _context.UbicacionesAlumno
+                    .Include(u => u.Zona)
+                    .FirstOrDefaultAsync(u =>
+                        u.IdAlumno == idAlumno &&
+                        u.EsPrincipal);
+
+                if (ubicacion == null)
+                {
+                    TempData["Error"] =
+                        "Debe registrar una ubicación principal para calcular el costo de la clase a domicilio.";
+
+                    return RedirectToAction(
+                        "MiUbicacion",
+                        "Geolocalizacion");
+                }
+
+                if (ubicacion.Zona == null ||
+                    !ubicacion.Zona.Activa ||
+                    !ubicacion.Zona.LatitudCentro.HasValue ||
+                    !ubicacion.Zona.LongitudCentro.HasValue)
+                {
+                    TempData["Error"] =
+                        "La ubicación registrada no tiene una zona de cobertura válida.";
+
+                    return RedirectToAction(
+                        nameof(ResponderPropuesta),
+                        new { id });
+                }
+
+                double distanciaCalculada = CalcularDistanciaKm(
+                    (double)ubicacion.Latitud,
+                    (double)ubicacion.Longitud,
+                    (double)ubicacion.Zona.LatitudCentro.Value,
+                    (double)ubicacion.Zona.LongitudCentro.Value);
+
+                if (ubicacion.Zona.RadioMaximoKm.HasValue &&
+                    distanciaCalculada >
+                    (double)ubicacion.Zona.RadioMaximoKm.Value)
+                {
+                    TempData["Error"] =
+                        "La ubicación está fuera del radio permitido para clases a domicilio.";
+
+                    return RedirectToAction(
+                        nameof(ResponderPropuesta),
+                        new { id });
+                }
+
+                distanciaKm = Math.Round(
+                    Convert.ToDecimal(distanciaCalculada),
+                    2);
+
+                costoFijo =
+                    ubicacion.Zona.CostoAdicional;
+
+                tarifaPorKm =
+                    ubicacion.Zona.TarifaPorKm ?? 0;
+
+                costoPorDistancia = Math.Round(
+                    distanciaKm * tarifaPorKm,
+                    2);
+
+                costoDesplazamiento = Math.Round(
+                    costoFijo + costoPorDistancia,
+                    2);
+            }
+
+            decimal montoBase =
+                solicitud.PrecioSolicitado.Value;
+
+            decimal montoTotal =
+                montoBase + costoDesplazamiento;
+
+            var model = new ConfirmarPagoSolicitudViewModel
+            {
+                IdSolicitudCurso =
+                    solicitud.IdSolicitudCurso,
+
+                Concepto =
+                    solicitud.NombreCurso,
+
+                Monto =
+                    montoBase,
+
+                MontoTotal =
+                    montoTotal,
+
+                EsADomicilio =
+                    solicitud.EsADomicilio,
+
+                DireccionDomicilio =
+                    solicitud.DireccionDomicilio,
+
+                FechaPropuesta =
+                    solicitud.FechaPropuesta,
+
+                HoraInicioPropuesta =
+                    solicitud.HoraInicioPropuesta,
+
+                HoraFinPropuesta =
+                    solicitud.HoraFinPropuesta,
+
+                Profesor =
+                    solicitud.ProfesorPropuesto == null
+                        ? "Por confirmar"
+                        : $"{solicitud.ProfesorPropuesto.Nombre} " +
+                          $"{solicitud.ProfesorPropuesto.Apellidos}",
+
+                Cancha =
+                    solicitud.CanchaPropuesta?.Nombre,
+
+                TieneUbicacion =
+                    ubicacion != null,
+
+                NombreZona =
+                    ubicacion?.Zona?.Nombre,
+
+                DireccionUbicacion =
+                    ubicacion?.DireccionCompleta,
+
+                DistanciaKm =
+                    distanciaKm,
+
+                CostoFijoZona =
+                    costoFijo,
+
+                TarifaPorKm =
+                    tarifaPorKm,
+
+                CostoPorDistancia =
+                    costoPorDistancia,
+
+                CostoDesplazamiento =
+                    costoDesplazamiento
+            };
+
+            return View(
+                "~/Views/Pagos/ConfirmarPagoSolicitud.cshtml",
+                model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Usuario")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GenerarPagoSolicitud(int id)
+        {
+            var idAlumno = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrWhiteSpace(idAlumno))
+            {
+                return Challenge();
+            }
+
+            var solicitud = await _context.SolicitudesCurso
+                .Include(s => s.ProfesorPropuesto)
+                .Include(s => s.CanchaPropuesta)
+                .FirstOrDefaultAsync(s =>
+                    s.IdSolicitudCurso == id &&
+                    s.IdAlumno == idAlumno);
+
+            if (solicitud == null)
+            {
+                return NotFound();
+            }
+
+            if (solicitud.Estado != "Propuesta enviada")
+            {
+                TempData["Error"] =
+                    "Esta propuesta ya fue respondida o no está disponible.";
+
+                return RedirectToAction(
+                    nameof(ResponderPropuesta),
+                    new { id });
+            }
+
+            if (!solicitud.PrecioSolicitado.HasValue ||
+                solicitud.PrecioSolicitado.Value <= 0)
+            {
+                TempData["Error"] =
+                    "No se encontró un monto válido para esta solicitud.";
+
+                return RedirectToAction(
+                    nameof(ConfirmarPagoSolicitud),
+                    new { id });
+            }
+
+            bool yaExistePago = await _context.Pagos
+                .AnyAsync(p =>
+                    p.IdAlumno == idAlumno &&
+                    p.TipoPago == "Solicitud de clase" &&
+                    p.Observaciones != null &&
+                    p.Observaciones.Contains(
+                        $"SOL-{solicitud.IdSolicitudCurso:D4}") &&
+                    p.Estado != "Anulado");
+
+            if (yaExistePago)
+            {
+                TempData["Error"] =
+                    "Ya existe un pago generado para esta solicitud.";
+
+                return RedirectToAction(
+                    nameof(ConfirmarPagoSolicitud),
+                    new { id });
+            }
+
+            decimal distanciaKm = 0;
+            decimal costoDesplazamiento = 0;
+            int? idUbicacionAlumno = null;
+
+            if (solicitud.EsADomicilio)
+            {
+                var ubicacion = await _context.UbicacionesAlumno
+                    .Include(u => u.Zona)
+                    .FirstOrDefaultAsync(u =>
+                        u.IdAlumno == idAlumno &&
+                        u.EsPrincipal);
+
+                if (ubicacion == null)
+                {
+                    TempData["Error"] =
+                        "Debe registrar una ubicación principal para la clase a domicilio.";
+
+                    return RedirectToAction(
+                        "MiUbicacion",
+                        "Geolocalizacion");
+                }
+
+                if (ubicacion.Zona == null ||
+                    !ubicacion.Zona.Activa ||
+                    !ubicacion.Zona.LatitudCentro.HasValue ||
+                    !ubicacion.Zona.LongitudCentro.HasValue)
+                {
+                    TempData["Error"] =
+                        "La ubicación registrada no tiene una zona de cobertura válida.";
+
+                    return RedirectToAction(
+                        nameof(ConfirmarPagoSolicitud),
+                        new { id });
+                }
+
+                double distanciaCalculada = CalcularDistanciaKm(
+                    (double)ubicacion.Latitud,
+                    (double)ubicacion.Longitud,
+                    (double)ubicacion.Zona.LatitudCentro.Value,
+                    (double)ubicacion.Zona.LongitudCentro.Value);
+
+                if (ubicacion.Zona.RadioMaximoKm.HasValue &&
+                    distanciaCalculada >
+                    (double)ubicacion.Zona.RadioMaximoKm.Value)
+                {
+                    TempData["Error"] =
+                        "La ubicación está fuera del radio permitido para clases a domicilio.";
+
+                    return RedirectToAction(
+                        nameof(ConfirmarPagoSolicitud),
+                        new { id });
+                }
+
+                distanciaKm = Math.Round(
+                    Convert.ToDecimal(distanciaCalculada),
+                    2);
+
+                decimal tarifaPorKm =
+                    ubicacion.Zona.TarifaPorKm ?? 0;
+
+                decimal costoPorDistancia =
+                    distanciaKm * tarifaPorKm;
+
+                costoDesplazamiento = Math.Round(
+                    ubicacion.Zona.CostoAdicional +
+                    costoPorDistancia,
+                    2);
+
+                idUbicacionAlumno =
+                    ubicacion.IdUbicacion;
+            }
+
+            decimal montoBase =
+                solicitud.PrecioSolicitado.Value;
+
+            decimal montoTotal =
+                montoBase + costoDesplazamiento;
+
+            var pago = new Pago
+            {
+                IdAlumno = idAlumno,
+
+                MontoBase = montoBase,
+
+                CostoDesplazamiento =
+                    costoDesplazamiento,
+
+                Monto =
+                    montoTotal,
+
+                EsADomicilio =
+                    solicitud.EsADomicilio,
+
+                IdUbicacionAlumno =
+                    idUbicacionAlumno,
+
+                DistanciaKm =
+                    distanciaKm,
+
+                TipoPago =
+                    "Solicitud de clase",
+
+                MetodoPago =
+                    "Pendiente",
+
+                Estado =
+                    "Pendiente",
+
+                FechaPago =
+                    DateTime.Now,
+
+                FechaVencimiento =
+                    DateTime.Now.AddDays(3),
+
+                EsManual =
+                    false,
+
+                Observaciones =
+                    solicitud.EsADomicilio
+                        ? $"Pago pendiente para la solicitud " +
+                          $"SOL-{solicitud.IdSolicitudCurso:D4} - " +
+                          $"{solicitud.NombreCurso}. " +
+                          $"Modalidad a domicilio. " +
+                          $"Desplazamiento: ₡{costoDesplazamiento:N0}."
+                        : $"Pago pendiente para la solicitud " +
+                          $"SOL-{solicitud.IdSolicitudCurso:D4} - " +
+                          $"{solicitud.NombreCurso}. " +
+                          "Modalidad en la academia."
+            };
+
+            _context.Pagos.Add(pago);
 
             solicitud.Estado = "Aceptada";
             solicitud.FechaRespuestaAlumno = DateTime.Now;
@@ -1230,39 +1625,25 @@ Notificación automática del sistema
 
             try
             {
-                await EnviarCorreoAceptacionAsync(solicitud);
+                await EnviarCorreoAceptacionAsync(
+                    solicitud);
             }
             catch (Exception ex)
             {
                 TempData["AdvertenciaCorreo"] =
-                    "La aceptación fue registrada, pero no se pudo enviar el correo a la academia.";
+                    "La propuesta fue aceptada, pero no se pudo enviar el correo a la academia.";
 
                 Console.WriteLine(
                     $"ERROR CORREO ACEPTACIÓN: {ex}");
             }
 
-            var whatsappUrl =
-                ConstruirWhatsappRespuestaAlumno(
-                    solicitud,
-                    aceptada: true);
-
-            if (!string.IsNullOrWhiteSpace(whatsappUrl))
-            {
-                TempData["WhatsappRespuestaUrl"] =
-                    whatsappUrl;
-            }
-            else
-            {
-                TempData["AdvertenciaWhatsapp"] =
-                    "La respuesta fue registrada, pero no se encontró el número de WhatsApp de la academia.";
-            }
-
             TempData["Success"] =
-                "La propuesta fue aceptada correctamente.";
+                $"Se generó el pago pendiente por ₡{montoTotal:N0}. " +
+                "Adjunta el comprobante para completar el proceso.";
 
             return RedirectToAction(
-                nameof(ResponderPropuesta),
-                new { id });
+                "HistorialPagos",
+                "Usuario");
         }
 
 
@@ -1374,7 +1755,34 @@ Notificación automática del sistema
                 nameof(ResponderPropuesta),
                 new { id });
         }
+        private static double CalcularDistanciaKm(
+            double lat1,
+            double lon1,
+            double lat2,
+            double lon2)
+        {
+            const double radioTierra = 6371;
 
+            double dLat =
+                (lat2 - lat1) * Math.PI / 180;
+
+            double dLon =
+                (lon2 - lon1) * Math.PI / 180;
+
+            double a =
+                Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                Math.Cos(lat1 * Math.PI / 180) *
+                Math.Cos(lat2 * Math.PI / 180) *
+                Math.Sin(dLon / 2) *
+                Math.Sin(dLon / 2);
+
+            double c =
+                2 * Math.Atan2(
+                    Math.Sqrt(a),
+                    Math.Sqrt(1 - a));
+
+            return radioTierra * c;
+        }
 
 
     }

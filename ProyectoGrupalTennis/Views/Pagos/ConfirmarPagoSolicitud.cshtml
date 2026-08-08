@@ -1,0 +1,280 @@
+﻿@model ProyectoGrupalTennis.Models.ConfirmarPagoSolicitudViewModel
+
+@{
+    ViewData["Title"] = "Confirmar Pago";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<section class="perfil-page compact">
+    <div class="container">
+        <div class="perfil-container">
+
+            <div class="perfil-header">
+                <div>
+                    <h1 class="perfil-title">
+                        Confirmar Pago
+                    </h1>
+
+                    <p class="perfil-subtitle">
+                        Revisa la propuesta antes de generar el pago pendiente.
+                    </p>
+                </div>
+
+                <div class="perfil-badge">
+                    <i class="fa fa-credit-card"></i>
+                    Solicitud
+                </div>
+            </div>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger mt-3">
+                    @TempData["Error"]
+                </div>
+            }
+
+            <div class="card shadow-sm mt-4">
+
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        Detalle de la propuesta
+                    </h4>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Clase o paquete
+                                </small>
+
+                                <strong>
+                                    @Model.Concepto
+                                </strong>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Precio
+                                </small>
+
+                                <strong class="fs-5">
+                                    ₡@Model.Monto.ToString("N2")
+                                </strong>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Fecha
+                                </small>
+
+                                <strong>
+                                    @(Model.FechaPropuesta?.ToString("dd/MM/yyyy")
+                                        ?? "Por confirmar")
+                                </strong>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Horario
+                                </small>
+
+                                <strong>
+                                    @(Model.HoraInicioPropuesta?.ToString(@"hh\:mm")
+                                        ?? "--:--")
+                                    -
+                                    @(Model.HoraFinPropuesta?.ToString(@"hh\:mm")
+                                        ?? "--:--")
+                                </strong>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Profesor
+                                </small>
+
+                                <strong>
+                                    @Model.Profesor
+                                </strong>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <h5 class="mb-3">
+                        <i class="fa fa-map-marker-alt me-1"></i>
+                        Modalidad de la clase
+                    </h5>
+
+                    @if (Model.EsADomicilio)
+                    {
+                        <div class="alert alert-info">
+
+                            <strong>
+                                <i class="fa fa-home me-1"></i>
+                                Clase a domicilio
+                            </strong>
+
+                            <div class="mt-2">
+
+                                <small class="text-muted d-block">
+                                    Dirección
+                                </small>
+
+                                <span>
+                                    @(string.IsNullOrWhiteSpace(Model.DireccionDomicilio)
+                                        ? "Dirección no disponible."
+                                        : Model.DireccionDomicilio)
+                                </span>
+
+                            </div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success">
+
+                            <strong>
+                                <i class="fa fa-building me-1"></i>
+                                Clase en la academia
+                            </strong>
+
+                            <div class="mt-2">
+
+                                <small class="text-muted d-block">
+                                    Cancha
+                                </small>
+
+                                <span>
+                                    @(string.IsNullOrWhiteSpace(Model.Cancha)
+                                        ? "Por confirmar"
+                                        : Model.Cancha)
+                                </span>
+
+                            </div>
+
+                        </div>
+                    }
+
+                    <div class="border rounded p-3 mt-4">
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>
+                                Precio de la clase
+                            </span>
+
+                            <strong>
+                                ₡@Model.Monto.ToString("N2")
+                            </strong>
+                        </div>
+
+                        @if (Model.EsADomicilio)
+                        {
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>
+                                    Costo de desplazamiento
+                                </span>
+
+                                <strong>
+                                    ₡@Model.CostoDesplazamiento.ToString("N2")
+                                </strong>
+                            </div>
+
+                            <div class="text-muted small mb-2">
+                                Distancia aproximada:
+                                @Model.DistanciaKm.ToString("N2") km
+                            </div>
+
+                            <div class="text-muted small mb-2">
+                                Zona:
+                                @(string.IsNullOrWhiteSpace(Model.NombreZona)
+                                    ? "No disponible"
+                                    : Model.NombreZona)
+                            </div>
+                        }
+
+                        <hr />
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <span class="fw-bold">
+                                Total pendiente
+                            </span>
+
+                            <strong class="fs-4">
+                                ₡@Model.MontoTotal.ToString("N2")
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <form asp-controller="SolicitudesCurso"
+                          asp-action="GenerarPagoSolicitud"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.IdSolicitudCurso" />
+
+                        <div class="d-flex flex-wrap justify-content-end gap-2">
+
+                            <a asp-controller="SolicitudesCurso"
+                               asp-action="ResponderPropuesta"
+                               asp-route-id="@Model.IdSolicitudCurso"
+                               class="btn btn-outline-secondary">
+
+                                <i class="fa fa-arrow-left me-1"></i>
+                                Volver
+
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-success">
+
+                                <i class="fa fa-credit-card me-1"></i>
+                                Generar pago pendiente
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

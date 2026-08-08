@@ -226,6 +226,10 @@ namespace ProyectoGrupalTennis.Controllers
                     Alumno = p.Alumno != null
                         ? $"{p.Alumno.Nombre} {p.Alumno.Apellido}"
                         : "Sin alumno",
+                    MontoBase = p.MontoBase,
+                    CostoDesplazamiento = p.CostoDesplazamiento,
+                    EsADomicilio = p.EsADomicilio,
+                    DistanciaKm = p.DistanciaKm,
                     Concepto = p.TipoPago,
                     MetodoPago = p.MetodoPago,
                     Monto = p.Monto,
@@ -673,6 +677,21 @@ namespace ProyectoGrupalTennis.Controllers
                             $"Tu reserva en {nombreCancha} fue confirmada para el " +
                             $"{reserva.FechaReserva:dd/MM/yyyy} de " +
                             $"{reserva.HoraInicio:hh\\:mm} a {reserva.HoraFin:hh\\:mm}."
+                    );
+                }
+                else if (pago.TipoPago == "Solicitud de clase")
+                {
+
+                    await NotificacionHelper.EnviarNotificacionAsync(
+                        _context,
+                        _emailService,
+                        pago.IdAlumno,
+                        categoria: "Pago",
+                        tipo: "Pago confirmado",
+                        titulo: "Pago de solicitud confirmado",
+                        mensaje:
+                            $"El pago PAG-{pago.IdPago} correspondiente a tu solicitud de clase " +
+                            $"por ₡{pago.Monto:N0} fue confirmado correctamente."
                     );
                 }
                 else
