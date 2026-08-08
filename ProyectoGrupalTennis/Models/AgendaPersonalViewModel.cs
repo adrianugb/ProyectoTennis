@@ -8,7 +8,6 @@
 
         public string? FiltroFecha { get; set; }
 
-
         public List<AgendaPersonalItemViewModel> Clases { get; set; } = new();
     }
 
@@ -18,18 +17,31 @@
 
         public int IdMatricula { get; set; }
 
+        public int? IdReserva { get; set; }
+
         public string Curso { get; set; } = string.Empty;
 
         public string Nivel { get; set; } = string.Empty;
 
+        public string TipoAgenda { get; set; } = string.Empty;
+        // "Curso recurrente" o "Clase programada"
+
         public string DiaSemana { get; set; } = string.Empty;
+
         public string FechaClase { get; set; } = string.Empty;
 
+        public DateTime? FechaClaseReal { get; set; }
 
         public string HoraInicio { get; set; } = string.Empty;
 
         public string HoraFin { get; set; } = string.Empty;
 
+        public string Profesor { get; set; } = string.Empty;
+
+        public string Cancha { get; set; } = string.Empty;
+
         public string EstadoMatricula { get; set; } = string.Empty;
+
+        public string Estado { get; set; } = string.Empty;
     }
 }

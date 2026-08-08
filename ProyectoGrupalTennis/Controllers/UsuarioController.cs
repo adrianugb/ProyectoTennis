@@ -497,62 +497,185 @@ namespace ProyectoGrupalTennis.Controllers
         // GET: /Usuario/AgendaPersonal
         public async Task<IActionResult> AgendaPersonal(string? dia)
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(
+                System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-            // Trae las matrículas activas del usuario logueado, junto con el curso
-            // y sus horarios recurrentes (Curso -> Horarios).
+            // 1. Cursos preagendados provenientes de matrículas activas
             var matriculas = await _context.Matriculas
                 .Include(m => m.Curso)
                     .ThenInclude(c => c.Horarios)
-                .Where(m => m.IdAlumno == userId && m.Estado == "Activa")
+                .Include(m => m.Curso)
+                    .ThenInclude(c => c.Profesor)
+                .Where(m =>
+                    m.IdAlumno == userId &&
+                    m.Estado == "Activa")
+                .ToListAsync();
+
+            // 2. Reservas concretas asignadas al alumno
+            var reservas = await _context.Reservas
+                .Include(r => r.Profesor)
+                .Include(r => r.Cancha)
+                .Where(r =>
+                    r.IdAlumno == userId &&
+                    r.Estado == "Asignada")
+                .OrderBy(r => r.FechaReserva)
+                .ThenBy(r => r.HoraInicio)
                 .ToListAsync();
 
             var clases = new List<AgendaPersonalItemViewModel>();
 
+            // =========================================================
+            // CURSOS RECURRENTES / PREAGENDADOS
+            // =========================================================
+
             foreach (var m in matriculas)
             {
-                if (m.Curso == null) continue;
-
-                if (m.Curso.Horarios != null && m.Curso.Horarios.Any())
+                if (m.Curso == null)
                 {
-                    // Una fila por cada horario recurrente del curso matriculado
+                    continue;
+                }
+
+                if (m.Curso.Horarios != null &&
+                    m.Curso.Horarios.Any())
+                {
                     foreach (var h in m.Curso.Horarios)
                     {
-                        clases.Add(new AgendaPersonalItemViewModel
-                        {
-                            IdMatricula = m.IdMatricula,
-                            IdCurso = m.Curso.IdCurso,
-                            Curso = m.Curso.Nombre,
-                            Nivel = m.Curso.Nivel,
-                            DiaSemana = h.DiaSemana,
-                            FechaClase = string.Empty, // recurrente, no tiene fecha concreta
-                            HoraInicio = h.HoraInicio.ToString(@"hh\:mm"),
-                            HoraFin = h.HoraFin.ToString(@"hh\:mm"),
-                            EstadoMatricula = m.Estado
-                        });
+                        clases.Add(
+                            new AgendaPersonalItemViewModel
+                            {
+                                IdMatricula = m.IdMatricula,
+                                IdCurso = m.Curso.IdCurso,
+
+                                Curso = m.Curso.Nombre,
+                                Nivel = m.Curso.Nivel,
+
+                                TipoAgenda = "Curso recurrente",
+
+                                DiaSemana = h.DiaSemana,
+
+                                FechaClase = string.Empty,
+                                FechaClaseReal = null,
+
+                                HoraInicio =
+                                    h.HoraInicio.ToString(@"hh\:mm"),
+
+                                HoraFin =
+                                    h.HoraFin.ToString(@"hh\:mm"),
+
+                                Profesor =
+                                    m.Curso.Profesor == null
+                                        ? "Sin profesor asignado"
+                                        : $"{m.Curso.Profesor.Nombre} " +
+                                          $"{m.Curso.Profesor.Apellidos}",
+
+                                Cancha = "No asignada",
+
+                                EstadoMatricula = m.Estado,
+                                Estado = m.Estado
+                            });
                     }
                 }
                 else
                 {
-                    // El curso aún no tiene horarios cargados; igual se muestra la matrícula
-                    clases.Add(new AgendaPersonalItemViewModel
-                    {
-                        IdMatricula = m.IdMatricula,
-                        IdCurso = m.Curso.IdCurso,
-                        Curso = m.Curso.Nombre,
-                        Nivel = m.Curso.Nivel,
-                        DiaSemana = "Sin horario asignado",
-                        FechaClase = string.Empty,
-                        HoraInicio = string.Empty,
-                        HoraFin = string.Empty,
-                        EstadoMatricula = m.Estado
-                    });
+                    clases.Add(
+                        new AgendaPersonalItemViewModel
+                        {
+                            IdMatricula = m.IdMatricula,
+                            IdCurso = m.Curso.IdCurso,
+
+                            Curso = m.Curso.Nombre,
+                            Nivel = m.Curso.Nivel,
+
+                            TipoAgenda = "Curso recurrente",
+
+                            DiaSemana = "Sin horario asignado",
+
+                            FechaClase = string.Empty,
+                            FechaClaseReal = null,
+
+                            HoraInicio = string.Empty,
+                            HoraFin = string.Empty,
+
+                            Profesor =
+                                m.Curso.Profesor == null
+                                    ? "Sin profesor asignado"
+                                    : $"{m.Curso.Profesor.Nombre} " +
+                                      $"{m.Curso.Profesor.Apellidos}",
+
+                            Cancha = "No asignada",
+
+                            EstadoMatricula = m.Estado,
+                            Estado = m.Estado
+                        });
                 }
             }
 
+            // =========================================================
+            // CLASES CON FECHA CONCRETA / RESERVAS
+            // =========================================================
+
+            foreach (var r in reservas)
+            {
+                clases.Add(
+                    new AgendaPersonalItemViewModel
+                    {
+                        IdReserva = r.IdReserva,
+
+                        IdCurso = 0,
+                        IdMatricula = 0,
+
+                        Curso = "Clase programada",
+
+                        Nivel = string.Empty,
+
+                        TipoAgenda = "Clase programada",
+
+                        DiaSemana =
+                            r.FechaReserva.ToString(
+                                "dddd",
+                                new System.Globalization.CultureInfo("es-CR")),
+
+                        FechaClase =
+                            r.FechaReserva.ToString("dd/MM/yyyy"),
+
+                        FechaClaseReal = r.FechaReserva,
+
+                        HoraInicio =
+                            r.HoraInicio.ToString(@"hh\:mm"),
+
+                        HoraFin =
+                            r.HoraFin.ToString(@"hh\:mm"),
+
+                        Profesor =
+                            r.Profesor == null
+                                ? "Sin profesor asignado"
+                                : $"{r.Profesor.Nombre} " +
+                                  $"{r.Profesor.Apellido}",
+
+                        Cancha =
+                            r.Cancha == null
+                                ? "Sin cancha asignada"
+                                : r.Cancha.Nombre,
+
+                        EstadoMatricula = string.Empty,
+
+                        Estado = r.Estado
+                    });
+            }
+
+            // =========================================================
+            // FILTRO POR DÍA
+            // =========================================================
+
             if (!string.IsNullOrWhiteSpace(dia))
             {
-                clases = clases.Where(x => x.DiaSemana == dia).ToList();
+                clases = clases
+                    .Where(x =>
+                        string.Equals(
+                            x.DiaSemana,
+                            dia,
+                            StringComparison.OrdinalIgnoreCase))
+                    .ToList();
             }
 
             var diasDisponibles = clases
@@ -562,18 +685,28 @@ namespace ProyectoGrupalTennis.Controllers
                 .OrderBy(d => d)
                 .ToList();
 
+            // Primero las clases con fecha concreta;
+            // luego los cursos recurrentes.
+            var clasesOrdenadas = clases
+                .OrderBy(x => x.FechaClaseReal.HasValue ? 0 : 1)
+                .ThenBy(x => x.FechaClaseReal)
+                .ThenBy(x => x.DiaSemana)
+                .ThenBy(x => x.HoraInicio)
+                .ToList();
+
             var viewModel = new AgendaPersonalViewModel
             {
                 FiltroDia = dia,
                 DiasDisponibles = diasDisponibles,
-                Clases = clases
-                    .OrderBy(x => x.DiaSemana)
-                    .ThenBy(x => x.HoraInicio)
-                    .ToList()
+                Clases = clasesOrdenadas
             };
 
-            return View("~/Views/Matricula/_UsuarioAgenda.cshtml", viewModel);
+            return View(
+                "~/Views/Matricula/_UsuarioAgenda.cshtml",
+                viewModel);
         }
+
+
         // POST: /Usuario/CancelarMatricula
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -28,6 +28,9 @@ namespace AcademiaTennisDAL.Entities
         [Column(TypeName = "decimal(10,2)")]
         public decimal? PrecioSolicitado { get; set; }
 
+        [StringLength(3)]
+        public string? MonedaSolicitada { get; set; }
+
         [Required]
         [StringLength(100)]
         public string NombreCurso { get; set; } = string.Empty;

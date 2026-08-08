@@ -31,6 +31,10 @@ namespace AcademiaTennisDAL.Entities
         [Column(TypeName = "decimal(10,2)")]
         public decimal Precio { get; set; }
 
+        [Required]
+        [StringLength(3)]
+        public string Moneda { get; set; } = "USD";
+
         public bool PrecioPorPersona { get; set; }
 
         [StringLength(300)]

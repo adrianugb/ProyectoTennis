@@ -25,6 +25,8 @@ namespace ProyectoGrupalTennis.Models
 
         public decimal? PrecioEstimado { get; set; }
 
+        public string Moneda { get; set; } = string.Empty;
+
         [Required(
             ErrorMessage = "Debe seleccionar un nivel."
         )]

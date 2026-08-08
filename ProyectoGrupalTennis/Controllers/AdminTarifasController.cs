@@ -74,7 +74,9 @@ namespace ProyectoGrupalTennis.Controllers
             return View(new TarifaClase
             {
                 Activa = true,
-                CantidadLecciones = 1
+                CantidadLecciones = 1,
+                    Moneda = "USD"
+
             });
         }
 
@@ -180,6 +182,9 @@ namespace ProyectoGrupalTennis.Controllers
             tarifaExistente.CantidadLecciones =
                 tarifa.CantidadLecciones;
             tarifaExistente.Precio = tarifa.Precio;
+
+            tarifaExistente.Moneda =
+                tarifa.Moneda;
             tarifaExistente.PrecioPorPersona =
                 tarifa.PrecioPorPersona;
             tarifaExistente.Descripcion =

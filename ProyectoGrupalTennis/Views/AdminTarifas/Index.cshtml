@@ -129,7 +129,7 @@
                                         </td>
 
                                         <td>
-                                            $@tarifa.Precio.ToString("N2")
+                                            @(tarifa.Moneda == "CRC" ? "₡" : "$")@tarifa.Precio.ToString("N2")
                                         </td>
 
                                         <td>

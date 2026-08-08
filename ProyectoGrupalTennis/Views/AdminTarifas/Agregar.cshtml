@@ -104,7 +104,7 @@
                             </span>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label asp-for="Precio" class="form-label">
                                 Precio
                             </label>
@@ -120,6 +120,31 @@
                                   class="text-danger">
                             </span>
                         </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Moneda" class="form-label">
+                                Moneda
+                            </label>
+
+                            <select asp-for="Moneda"
+                                    class="form-select">
+
+                                <option value="USD">
+                                    Dólares ($)
+                                </option>
+
+                                <option value="CRC">
+                                    Colones (₡)
+                                </option>
+
+                            </select>
+
+                            <span asp-validation-for="Moneda"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                      
 
                         <div class="col-md-6 d-flex align-items-end">
                             <div class="form-check mb-2">

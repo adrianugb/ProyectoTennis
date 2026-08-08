@@ -123,6 +123,7 @@ namespace ProyectoGrupalTennis.Controllers
                 CantidadLecciones = tarifa.CantidadLecciones,
                 PrecioPorPersona = tarifa.PrecioPorPersona,
                 PrecioEstimado = tarifa.Precio,
+                Moneda = tarifa.Moneda,
 
                 Disponibilidades =
                     new List<DisponibilidadSolicitudViewModel>
@@ -229,6 +230,8 @@ namespace ProyectoGrupalTennis.Controllers
                 IdTarifaClase = tarifa!.IdTarifaClase,
 
                 PrecioSolicitado = tarifa.Precio,
+
+                MonedaSolicitada = tarifa.Moneda,
 
                 // La oferta seleccionada se conserva en la solicitud.
                 NombreCurso = tarifa.Nombre,
