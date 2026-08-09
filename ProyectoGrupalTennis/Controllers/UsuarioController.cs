@@ -524,6 +524,24 @@ namespace ProyectoGrupalTennis.Controllers
              .OrderBy(r => r.FechaReserva)
              .ThenBy(r => r.HoraInicio)
              .ToListAsync();
+
+
+            var idsReservas = reservas
+    .Select(r => r.IdReserva)
+    .ToList();
+
+            var reprogramacionesPendientes =
+                await _context.SolicitudesCurso
+                    .Where(s =>
+                        s.IdAlumno == userId &&
+                        s.IdReservaOrigen.HasValue &&
+                        idsReservas.Contains(s.IdReservaOrigen.Value) &&
+                        (
+                            s.Estado == "Pendiente" ||
+                            s.Estado == "En revisión" ||
+                            s.Estado == "Propuesta enviada"
+                        ))
+                    .ToListAsync();
             var clases = new List<AgendaPersonalItemViewModel>();
 
             // =========================================================
@@ -647,6 +665,13 @@ namespace ProyectoGrupalTennis.Controllers
                         }
                     }
                 }
+
+                var reprogramacionPendiente =
+    reprogramacionesPendientes
+        .FirstOrDefault(s =>
+            s.IdReservaOrigen == r.IdReserva);
+
+
                 clases.Add(
                     new AgendaPersonalItemViewModel
                     {
@@ -690,7 +715,15 @@ namespace ProyectoGrupalTennis.Controllers
 
                         EstadoMatricula = string.Empty,
 
-                        Estado = r.Estado
+                        Estado = r.Estado,
+
+                        TieneReprogramacionPendiente =
+                          reprogramacionPendiente != null,
+
+                        EstadoReprogramacion =
+                             reprogramacionPendiente?.Estado
+
+
                     });
             }
 

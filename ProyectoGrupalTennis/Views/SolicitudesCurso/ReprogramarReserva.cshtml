@@ -1,0 +1,190 @@
+﻿@model ProyectoGrupalTennis.Models.SolicitudCursoViewModel
+
+@{
+    ViewData["Title"] = "Reprogramar clase";
+}
+
+<link rel="stylesheet"
+      href="~/css/perfiles.css"
+      asp-append-version="true" />
+
+<div style="
+    max-width:1100px;
+    margin:0 auto;
+    padding:32px 24px 50px;
+    ">
+
+    <div style="margin-bottom:15px;">
+        <a asp-controller="Usuario"
+           asp-action="AgendaPersonal"
+           style="color:#a5c422;font-weight:600;text-decoration:none;">
+            <i class="fa fa-arrow-left"></i>
+            Regresar a Mi Agenda
+        </a>
+    </div>
+
+    <div class="perfil-header">
+        <div>
+            <h1 class="perfil-title">
+                Solicitar reprogramación
+            </h1>
+
+            <p class="perfil-subtitle">
+                Indica tu nueva disponibilidad para que la academia pueda enviarte una nueva propuesta.
+            </p>
+        </div>
+
+        <div class="perfil-badge">
+            <i class="fa fa-exchange"></i>
+            Reprogramación
+        </div>
+    </div>
+
+    <div class="perfil-table-block">
+
+        <div class="alert alert-info mb-4">
+            <strong>@Model.NombreCurso</strong><br />
+            La clase actual se mantendrá confirmada hasta que aceptes una nueva propuesta.
+        </div>
+
+        <form asp-controller="SolicitudesCurso"
+              asp-action="GuardarReprogramacionReserva"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   name="idReserva"
+                   value="@ViewBag.IdReservaOrigen" />
+
+            <input asp-for="IdTarifaClase"
+                   type="hidden" />
+
+            <input asp-for="IdCurso"
+                   type="hidden" />
+
+            <input asp-for="NombreCurso"
+                   type="hidden" />
+
+            <input asp-for="Nivel"
+                   type="hidden" />
+
+            <input asp-for="RequiereEquipo"
+                   type="hidden" />
+
+            <input asp-for="EsADomicilio"
+                   type="hidden" />
+
+            <input asp-for="DireccionDomicilio"
+                   type="hidden" />
+
+            <input asp-for="Comentarios"
+                   type="hidden" />
+
+            <input asp-for="TipoClase" type="hidden" />
+            <input asp-for="CantidadLecciones" type="hidden" />
+            <input asp-for="PrecioEstimado" type="hidden" />
+            <input asp-for="Moneda" type="hidden" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3">
+            </div>
+
+            <h4 class="mb-3">
+                Nueva disponibilidad
+            </h4>
+
+            <p class="text-muted">
+                Indica al menos una opción de día y horario que te funcione.
+            </p>
+
+            <div id="contenedorDisponibilidades">
+
+                @for (var i = 0; i < Model.Disponibilidades.Count; i++)
+                {
+                    <div class="row g-3 mb-3 disponibilidad-item">
+
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                Día
+                            </label>
+
+                            <select asp-for="Disponibilidades[i].DiaSemana"
+                                    class="form-select">
+
+                                <option value="">
+                                    Seleccione
+                                </option>
+
+                                <option value="lunes">Lunes</option>
+                                <option value="martes">Martes</option>
+                                <option value="miércoles">Miércoles</option>
+                                <option value="jueves">Jueves</option>
+                                <option value="viernes">Viernes</option>
+                                <option value="sábado">Sábado</option>
+                                <option value="domingo">Domingo</option>
+
+                            </select>
+
+                            <span asp-validation-for="Disponibilidades[i].DiaSemana"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                Desde
+                            </label>
+
+                            <input asp-for="Disponibilidades[i].HoraDesde"
+                                   type="time"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Disponibilidades[i].HoraDesde"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                Hasta
+                            </label>
+
+                            <input asp-for="Disponibilidades[i].HoraHasta"
+                                   type="time"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Disponibilidades[i].HoraHasta"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+            <div class="perfil-actions mt-4">
+
+                <a asp-controller="Usuario"
+                   asp-action="AgendaPersonal"
+                   class="perfil-btn-outline">
+
+                    <i class="fa fa-times"></i>
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        class="perfil-btn">
+
+                    <i class="fa fa-paper-plane"></i>
+                    Enviar solicitud de reprogramación
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

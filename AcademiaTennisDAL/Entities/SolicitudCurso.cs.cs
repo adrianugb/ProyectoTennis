@@ -17,7 +17,14 @@ namespace AcademiaTennisDAL.Entities
         public int? IdCurso { get; set; }
 
         [ForeignKey(nameof(IdCurso))]
+
         public Curso? Curso { get; set; }
+        public int? IdReservaOrigen { get; set; }
+
+        [ForeignKey(nameof(IdReservaOrigen))]
+        public Reserva? ReservaOrigen { get; set; }
+
+
 
         // NUEVO
         public int? IdTarifaClase { get; set; }

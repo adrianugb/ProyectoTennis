@@ -18,6 +18,28 @@
     </a>
 </div>
 
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success mb-3">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger mb-3">
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (TempData["AdvertenciaCorreo"] != null)
+    {
+        <div class="alert alert-warning mb-3">
+            @TempData["AdvertenciaCorreo"]
+        </div>
+    }
+
+
 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
     <div>
         <h1 class="page-title">Mi Agenda Personal</h1>
@@ -325,54 +347,103 @@ else
 
                             </span>
 
-                            @if (!esReserva)
-                            {
-                                <div style="display:flex;
-                                    gap:10px;
-                                    flex-wrap:wrap;
-                                    justify-content:flex-end;">
+                                        @if (esReserva &&
+                                            clase.TieneReprogramacionPendiente)
+                                        {
+                                            <span style="
+                                                font-size:11px;
+                                                padding:4px 9px;
+                                                border-radius:12px;
+                                                background:#fff3cd;
+                                                color:#9a7000;
+                                                font-weight:600;">
 
-                                    <a asp-controller="Usuario"
-                                       asp-action="Reprogramar"
-                                       asp-route-idMatricula="@clase.IdMatricula"
-                                       style="font-size:12px;
-                                        color:#a5c422;
-                                        text-decoration:none;
-                                        font-weight:600;">
+                                                <i class="fa fa-clock-o"></i>
+                                                Reprogramación en proceso
+                                            </span>
+                                        }
+                           <div style="display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;">
 
-                                        <i class="fa fa-exchange"></i>
-                                        Reprogramar
-                                    </a>
+    @if (esReserva)
+    {
+        @if (!clase.TieneReprogramacionPendiente)
+        {
+            <a asp-controller="SolicitudesCurso"
+               asp-action="SolicitarReprogramacionReserva"
+               asp-route-idReserva="@clase.IdReserva"
+               style="font-size:12px;
+                      color:#a5c422;
+                      text-decoration:none;
+                      font-weight:600;">
 
-                                    <form asp-controller="Usuario"
-                                          asp-action="CancelarMatricula"
-                                          method="post"
-                                          style="display:inline;"
-                                          onsubmit="return confirm('¿Cancelar esta matrícula?');">
+                <i class="fa fa-exchange"></i>
+                Reprogramar
+            </a>
+        }
 
-                                        @Html.AntiForgeryToken()
+        <a href="#"
+           style="font-size:12px;
+                  color:#e05656;
+                  text-decoration:none;
+                  font-weight:600;">
 
-                                        <input type="hidden"
-                                               name="idMatricula"
-                                               value="@clase.IdMatricula" />
+            <i class="fa fa-times"></i>
+            Cancelar clase
+        </a>
+    }
+    else
+    {
+        <a asp-controller="Usuario"
+           asp-action="Reprogramar"
+           asp-route-idMatricula="@clase.IdMatricula"
+           style="font-size:12px;
+                  color:#a5c422;
+                  text-decoration:none;
+                  font-weight:600;">
 
-                                        <button type="submit"
-                                                style="background:none;
-                                            border:none;
-                                            padding:0;
-                                            cursor:pointer;
-                                            font-size:12px;
-                                            color:#e05656;
-                                            font-weight:600;">
+            <i class="fa fa-exchange"></i>
+            Reprogramar
+        </a>
 
-                                            <i class="fa fa-times"></i>
-                                            Cancelar
-                                        </button>
+        <form asp-controller="Usuario"
+              asp-action="CancelarMatricula"
+              method="post"
+              style="display:inline;"
+              onsubmit="return confirm('¿Cancelar esta matrícula?');">
 
-                                    </form>
+            @Html.AntiForgeryToken()
 
-                                </div>
-                            }
+            <input type="hidden"
+                   name="idMatricula"
+                   value="@clase.IdMatricula" />
+
+            <button type="submit"
+                    style="background:none;
+                           border:none;
+                           padding:0;
+                           cursor:pointer;
+                           font-size:12px;
+                           color:#e05656;
+                           font-weight:600;">
+
+                <i class="fa fa-times"></i>
+                Cancelar matrícula
+            </button>
+        </form>
+    }
+
+</div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
 
                         </div>
 

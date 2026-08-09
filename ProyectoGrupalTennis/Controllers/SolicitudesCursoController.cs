@@ -1009,6 +1009,102 @@ Notificación automática del sistema
                 cuerpoCorreo);
         }
 
+
+        private async Task EnviarCorreoReprogramacionAsync(
+    SolicitudCurso solicitud,
+    Reserva reserva,
+    string resumenDisponibilidad)
+        {
+            var alumno = await _context.Users
+                .FirstOrDefaultAsync(u =>
+                    u.Id == solicitud.IdAlumno);
+
+            if (alumno == null ||
+                string.IsNullOrWhiteSpace(alumno.Email))
+            {
+                throw new Exception(
+                    "El alumno no tiene un correo válido.");
+            }
+
+            var correoAcademia =
+                _configuration["AcademiaSettings:CorreoSolicitudes"];
+
+            var asuntoAcademia =
+                $"Solicitud de reprogramación - SOL-{solicitud.IdSolicitudCurso:D4}";
+
+            var cuerpoAcademia = $@"
+        <h2>Solicitud de reprogramación</h2>
+
+        <p>
+            El alumno ha solicitado reprogramar una clase confirmada.
+        </p>
+
+        <p>
+            <strong>Solicitud:</strong>
+            SOL-{solicitud.IdSolicitudCurso:D4}
+        </p>
+
+        <p>
+            <strong>Clase:</strong>
+            {solicitud.NombreCurso}
+        </p>
+
+        <p>
+            <strong>Fecha actual:</strong>
+            {reserva.FechaReserva:dd/MM/yyyy}
+        </p>
+
+        <p>
+            <strong>Horario actual:</strong>
+            {reserva.HoraInicio:hh\\:mm} -
+            {reserva.HoraFin:hh\\:mm}
+        </p>
+
+        <p>
+            <strong>Nueva disponibilidad:</strong>
+            {resumenDisponibilidad}
+        </p>
+    ";
+
+            if (!string.IsNullOrWhiteSpace(correoAcademia))
+            {
+                await _emailService.EnviarCorreoAsync(
+                    correoAcademia,
+                    asuntoAcademia,
+                    cuerpoAcademia);
+            }
+
+            var asuntoAlumno =
+                "Solicitud de reprogramación recibida";
+
+            var cuerpoAlumno = $@"
+        <h2>Solicitud de reprogramación recibida</h2>
+
+        <p>
+            Hemos recibido tu solicitud de reprogramación para:
+        </p>
+
+        <p>
+            <strong>{solicitud.NombreCurso}</strong>
+        </p>
+
+        <p>
+            <strong>Nueva disponibilidad:</strong>
+            {resumenDisponibilidad}
+        </p>
+
+        <p>
+            Tu clase actual se mantendrá confirmada
+            mientras la academia revisa tu solicitud
+            y prepara una nueva propuesta.
+        </p>
+    ";
+
+            await _emailService.EnviarCorreoAsync(
+      alumno.Email,
+      asuntoAlumno,
+      cuerpoAlumno);
+        }
         private string? ConstruirWhatsappRespuestaAlumno(
     SolicitudCurso solicitud,
     bool aceptada)
@@ -1191,6 +1287,8 @@ Notificación automática del sistema
                 ClaimTypes.NameIdentifier);
 
             var solicitud = await _context.SolicitudesCurso
+                .Include(s => s.ProfesorPropuesto)
+                .Include(s => s.CanchaPropuesta)
                 .FirstOrDefaultAsync(s =>
                     s.IdSolicitudCurso == id &&
                     s.IdAlumno == idAlumno);
@@ -1209,6 +1307,88 @@ Notificación automática del sistema
                     nameof(ResponderPropuesta),
                     new { id });
             }
+
+            // =====================================================
+            // REPROGRAMACIÓN DE UNA RESERVA YA PAGADA
+            // =====================================================
+            if (solicitud.IdReservaOrigen.HasValue)
+            {
+                var reserva = await _context.Reservas
+                    .FirstOrDefaultAsync(r =>
+                        r.IdReserva == solicitud.IdReservaOrigen.Value &&
+                        r.IdAlumno == idAlumno);
+
+                if (reserva == null)
+                {
+                    TempData["Error"] =
+                        "No se encontró la reserva original que se desea reprogramar.";
+
+                    return RedirectToAction(
+                        nameof(ResponderPropuesta),
+                        new { id });
+                }
+
+                if (!solicitud.FechaPropuesta.HasValue ||
+                    !solicitud.HoraInicioPropuesta.HasValue ||
+                    !solicitud.HoraFinPropuesta.HasValue ||
+                    !solicitud.IdProfesorPropuesto.HasValue ||
+                    !solicitud.IdCanchaPropuesta.HasValue)
+                {
+                    TempData["Error"] =
+                        "La propuesta de reprogramación no contiene toda la información requerida.";
+
+                    return RedirectToAction(
+                        nameof(ResponderPropuesta),
+                        new { id });
+                }
+
+                if (solicitud.ProfesorPropuesto == null ||
+                    string.IsNullOrWhiteSpace(
+                        solicitud.ProfesorPropuesto.UserId))
+                {
+                    TempData["Error"] =
+                        "El profesor propuesto no está vinculado a un usuario del sistema.";
+
+                    return RedirectToAction(
+                        nameof(ResponderPropuesta),
+                        new { id });
+                }
+
+                // Actualizar la reserva existente.
+                reserva.FechaReserva =
+                    solicitud.FechaPropuesta.Value;
+
+                reserva.HoraInicio =
+                    solicitud.HoraInicioPropuesta.Value;
+
+                reserva.HoraFin =
+                    solicitud.HoraFinPropuesta.Value;
+
+                reserva.IdProfesor =
+                    solicitud.ProfesorPropuesto.UserId;
+
+                reserva.IdCancha =
+                    solicitud.IdCanchaPropuesta.Value;
+
+                reserva.Estado = "Asignada";
+
+                // Marcar la solicitud de reprogramación como aceptada.
+                solicitud.Estado = "Aceptada";
+                solicitud.FechaRespuestaAlumno = DateTime.Now;
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] =
+                    "La reprogramación fue aceptada. Tu agenda ha sido actualizada.";
+
+                return RedirectToAction(
+                    "AgendaPersonal",
+                    "Usuario");
+            }
+
+            // =====================================================
+            // SOLICITUD NORMAL: CONTINÚA AL PAGO
+            // =====================================================
 
             return RedirectToAction(
                 nameof(ConfirmarPagoSolicitud),
@@ -1788,5 +1968,292 @@ Notificación automática del sistema
         }
 
 
+
+        // GET: /SolicitudesCurso/SolicitarReprogramacionReserva/5
+        [HttpGet]
+        [Authorize(Roles = "Usuario")]
+        public async Task<IActionResult> SolicitarReprogramacionReserva(int idReserva)
+        {
+            var idAlumno = User.FindFirstValue(
+                System.Security.Claims.ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrWhiteSpace(idAlumno))
+            {
+                return Challenge();
+            }
+
+            var reserva = await _context.Reservas
+                .Include(r => r.Pagos)
+                .FirstOrDefaultAsync(r =>
+                    r.IdReserva == idReserva &&
+                    r.IdAlumno == idAlumno &&
+                    r.Estado == "Asignada");
+
+            if (reserva == null)
+            {
+                TempData["Error"] =
+                    "No se encontró la clase reservada indicada.";
+
+                return RedirectToAction(
+                    "AgendaPersonal",
+                    "Usuario");
+            }
+
+            var pagoSolicitud = reserva.Pagos
+                .FirstOrDefault(p =>
+                    p.TipoPago == "Solicitud de clase");
+
+            if (pagoSolicitud == null ||
+                string.IsNullOrWhiteSpace(pagoSolicitud.Observaciones))
+            {
+                TempData["Error"] =
+                    "No fue posible identificar la solicitud original de esta clase.";
+
+                return RedirectToAction(
+                    "AgendaPersonal",
+                    "Usuario");
+            }
+
+            var coincidencia =
+                System.Text.RegularExpressions.Regex.Match(
+                    pagoSolicitud.Observaciones,
+                    @"SOL-(\d+)");
+
+            if (!coincidencia.Success ||
+                !int.TryParse(
+                    coincidencia.Groups[1].Value,
+                    out int idSolicitudOriginal))
+            {
+                TempData["Error"] =
+                    "No fue posible identificar la solicitud original.";
+
+                return RedirectToAction(
+                    "AgendaPersonal",
+                    "Usuario");
+            }
+
+            var solicitudOriginal =
+                await _context.SolicitudesCurso
+                    .FirstOrDefaultAsync(s =>
+                        s.IdSolicitudCurso == idSolicitudOriginal &&
+                        s.IdAlumno == idAlumno);
+
+            if (solicitudOriginal == null)
+            {
+                TempData["Error"] =
+                    "No se encontró la solicitud original de esta clase.";
+
+                return RedirectToAction(
+                    "AgendaPersonal",
+                    "Usuario");
+            }
+
+            var model = new SolicitudCursoViewModel
+            {
+                IdCurso = solicitudOriginal.IdCurso,
+                IdTarifaClase = solicitudOriginal.IdTarifaClase,
+                NombreCurso = solicitudOriginal.NombreCurso,
+                Nivel = solicitudOriginal.Nivel,
+                RequiereEquipo = solicitudOriginal.RequiereEquipo,
+                EsADomicilio = solicitudOriginal.EsADomicilio,
+                DireccionDomicilio = solicitudOriginal.DireccionDomicilio,
+                Comentarios = solicitudOriginal.Comentarios,
+                TipoClase = solicitudOriginal.Modalidad ?? string.Empty,
+
+                CantidadLecciones =
+                    solicitudOriginal.CantidadLecciones ?? 1,
+
+                                PrecioEstimado =
+                    solicitudOriginal.PrecioSolicitado,
+
+                                Moneda =
+                    solicitudOriginal.MonedaSolicitada ?? "USD",
+                Disponibilidades =
+                    new List<DisponibilidadSolicitudViewModel>
+                    {
+                new DisponibilidadSolicitudViewModel()
+                    }
+            };
+
+            ViewBag.IdReservaOrigen = idReserva;
+
+            return View(
+                "~/Views/SolicitudesCurso/ReprogramarReserva.cshtml",
+                model);
+        }
+
+        // POST: /SolicitudesCurso/GuardarReprogramacionReserva
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Usuario")]
+        public async Task<IActionResult> GuardarReprogramacionReserva(
+            int idReserva,
+            SolicitudCursoViewModel model)
+        {
+            var idAlumno = User.FindFirstValue(
+                System.Security.Claims.ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrWhiteSpace(idAlumno))
+            {
+                return Challenge();
+            }
+
+            model.Disponibilidades ??=
+                new List<DisponibilidadSolicitudViewModel>();
+
+            var reserva = await _context.Reservas
+                .FirstOrDefaultAsync(r =>
+                    r.IdReserva == idReserva &&
+                    r.IdAlumno == idAlumno &&
+                    r.Estado == "Asignada");
+
+            if (reserva == null)
+            {
+                TempData["Error"] =
+                    "No se encontró la clase reservada indicada.";
+
+                return RedirectToAction(
+                    "AgendaPersonal",
+                    "Usuario");
+            }
+
+            var yaExisteReprogramacionPendiente =
+    await _context.SolicitudesCurso.AnyAsync(s =>
+        s.IdReservaOrigen == idReserva &&
+        s.IdAlumno == idAlumno &&
+        (s.Estado == "Pendiente" ||
+         s.Estado == "En revisión" ||
+         s.Estado == "Propuesta enviada"));
+
+            if (yaExisteReprogramacionPendiente)
+            {
+                TempData["Error"] =
+                    "Ya existe una solicitud de reprogramación pendiente para esta clase.";
+
+                return RedirectToAction(
+                    "AgendaPersonal",
+                    "Usuario");
+            }
+
+            if (!model.Disponibilidades.Any())
+            {
+                ModelState.AddModelError(
+                    nameof(model.Disponibilidades),
+                    "Debe indicar al menos una disponibilidad.");
+            }
+
+            for (var i = 0;
+                 i < model.Disponibilidades.Count;
+                 i++)
+            {
+                var disponibilidad =
+                    model.Disponibilidades[i];
+
+                if (disponibilidad.HoraHasta <=
+                    disponibilidad.HoraDesde)
+                {
+                    ModelState.AddModelError(
+                        $"Disponibilidades[{i}].HoraHasta",
+                        "La hora final debe ser posterior a la hora inicial.");
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.IdReservaOrigen = idReserva;
+
+                return View(
+                    "~/Views/SolicitudesCurso/ReprogramarReserva.cshtml",
+                    model);
+            }
+
+            var resumenDisponibilidad = string.Join(
+                "; ",
+                model.Disponibilidades.Select(d =>
+                    $"{d.DiaSemana}: " +
+                    $"{d.HoraDesde:hh\\:mm} - " +
+                    $"{d.HoraHasta:hh\\:mm}")
+            );
+
+            var solicitud = new SolicitudCurso
+            {
+                IdAlumno = idAlumno,
+
+                IdCurso = model.IdCurso,
+
+                IdTarifaClase = model.IdTarifaClase,
+
+                IdReservaOrigen = idReserva,
+
+                NombreCurso = model.NombreCurso,
+
+                Nivel = model.Nivel,
+
+                RequiereEquipo = model.RequiereEquipo,
+
+                EsADomicilio = model.EsADomicilio,
+
+                DireccionDomicilio = model.DireccionDomicilio,
+
+                Comentarios = model.Comentarios,
+
+                Disponibilidad = resumenDisponibilidad,
+
+                Estado = "Pendiente",
+
+                FechaSolicitud = DateTime.Now,
+
+                Modalidad = model.TipoClase,
+
+                CantidadLecciones =
+                model.CantidadLecciones,
+
+                PrecioSolicitado =
+                model.PrecioEstimado,
+
+                MonedaSolicitada =
+                model.Moneda,
+            };
+
+            foreach (var disponibilidad in model.Disponibilidades)
+            {
+                solicitud.Disponibilidades.Add(
+                    new DisponibilidadSolicitud
+                    {
+                        DiaSemana = disponibilidad.DiaSemana,
+                        HoraDesde = disponibilidad.HoraDesde,
+                        HoraHasta = disponibilidad.HoraHasta
+                    });
+            }
+
+            _context.SolicitudesCurso.Add(solicitud);
+
+            await _context.SaveChangesAsync();
+
+            try
+            {
+                await EnviarCorreoReprogramacionAsync(
+                    solicitud,
+                    reserva,
+                    resumenDisponibilidad);
+            }
+            catch (Exception ex)
+            {
+                TempData["AdvertenciaCorreo"] =
+                    "La solicitud de reprogramación fue guardada, pero no se pudo enviar el correo.";
+
+                Console.WriteLine(
+                    $"ERROR CORREO REPROGRAMACIÓN: {ex}");
+            }
+
+            TempData["Success"] =
+                "Tu solicitud de reprogramación fue enviada correctamente.";
+
+            return RedirectToAction(
+                "AgendaPersonal",
+                "Usuario");
+        }
     }
+
+
     }

@@ -45,5 +45,9 @@
         public string EstadoMatricula { get; set; } = string.Empty;
 
         public string Estado { get; set; } = string.Empty;
+
+        public bool TieneReprogramacionPendiente { get; set; }
+
+        public string? EstadoReprogramacion { get; set; }
     }
 }
