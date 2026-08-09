@@ -542,6 +542,27 @@ namespace ProyectoGrupalTennis.Controllers
                             s.Estado == "Propuesta enviada"
                         ))
                     .ToListAsync();
+
+
+            var solicitudesPendientesPago =
+                await _context.SolicitudesCurso
+                    .Include(s => s.ProfesorPropuesto)
+                    .Include(s => s.CanchaPropuesta)
+                    .Where(s =>
+                        s.IdAlumno == userId &&
+                        s.IdReservaOrigen == null &&
+                        s.Estado == "Aceptada")
+                    .ToListAsync();
+
+                        var pagosSolicitudAlumno =
+                            await _context.Pagos
+                                .Where(p =>
+                                    p.IdAlumno == userId &&
+                                    p.TipoPago == "Solicitud de clase" &&
+                                    p.Estado != "Pagado" &&
+                                    p.Estado != "Anulado")
+                                .ToListAsync();
+
             var clases = new List<AgendaPersonalItemViewModel>();
 
             // =========================================================
@@ -629,6 +650,87 @@ namespace ProyectoGrupalTennis.Controllers
                         });
                 }
             }
+
+
+            // =========================================================
+            // SOLICITUDES ACEPTADAS CON PAGO PENDIENTE / EN REVISIÓN
+            // =========================================================
+
+            foreach (var solicitud in solicitudesPendientesPago)
+            {
+                var codigoSolicitud =
+                    $"SOL-{solicitud.IdSolicitudCurso:D4}";
+
+                var pagoRelacionado =
+                    pagosSolicitudAlumno
+                        .FirstOrDefault(p =>
+                            p.Observaciones != null &&
+                            p.Observaciones.Contains(codigoSolicitud));
+
+                if (pagoRelacionado == null)
+                {
+                    continue;
+                }
+
+                clases.Add(
+                    new AgendaPersonalItemViewModel
+                    {
+                        IdCurso = 0,
+                        IdMatricula = 0,
+                        IdReserva = null,
+
+                        Curso = solicitud.NombreCurso,
+
+                        Nivel = solicitud.Nivel,
+
+                        TipoAgenda = "Clase reservada",
+
+                        DiaSemana =
+                            solicitud.FechaPropuesta.HasValue
+                                ? solicitud.FechaPropuesta.Value.ToString(
+                                    "dddd",
+                                    new System.Globalization.CultureInfo("es-CR"))
+                                : string.Empty,
+
+                        FechaClase =
+                            solicitud.FechaPropuesta?.ToString("dd/MM/yyyy")
+                            ?? string.Empty,
+
+                        FechaClaseReal =
+                            solicitud.FechaPropuesta,
+
+                        HoraInicio =
+                            solicitud.HoraInicioPropuesta?.ToString(@"hh\:mm")
+                            ?? string.Empty,
+
+                        HoraFin =
+                            solicitud.HoraFinPropuesta?.ToString(@"hh\:mm")
+                            ?? string.Empty,
+
+                        Profesor =
+                            solicitud.ProfesorPropuesto == null
+                                ? "Sin profesor asignado"
+                                : $"{solicitud.ProfesorPropuesto.Nombre} " +
+                                  $"{solicitud.ProfesorPropuesto.Apellidos}",
+
+                        Cancha =
+                            solicitud.CanchaPropuesta?.Nombre
+                            ?? "Sin cancha asignada",
+
+                        EstadoMatricula = string.Empty,
+
+                        Estado =
+                            pagoRelacionado.Estado == "En revisión"
+                                ? "Pago en revisión"
+                                : "Pago pendiente",
+
+                        TieneReprogramacionPendiente = false,
+
+                        EstadoReprogramacion = null
+                    });
+            }
+
+
 
             // =========================================================
             // CLASES CON FECHA CONCRETA / RESERVAS

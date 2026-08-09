@@ -39,6 +39,10 @@
         !string.IsNullOrWhiteSpace(filtroEstado) ||
         !string.IsNullOrWhiteSpace(filtroTipoClase) ||
         !string.IsNullOrWhiteSpace(filtroFecha);
+
+    var pagosPorSolicitud =
+        ViewBag.PagosPorSolicitud as Dictionary<int, int>
+        ?? new Dictionary<int, int>();
 }
 
 <link rel="stylesheet"
@@ -51,6 +55,19 @@
 
         <div class="perfil-container"
              style="max-width:1600px; margin:0 auto;">
+
+            <div style="margin-bottom:18px;">
+
+                <a href="javascript:history.back()"
+                   class="perfil-btn-outline"
+                   style="text-decoration:none;">
+
+                    <i class="fa fa-arrow-left me-1"></i>
+                    Regresar
+
+                </a>
+
+            </div>
 
             <div class="perfil-header">
 
@@ -317,16 +334,30 @@
                                         </td>
 
                                         <td>
-                                            <a asp-controller="AdminSolicitudes"
-                                               asp-action="Detalle"
-                                               asp-route-id="@solicitud.IdSolicitudCurso"
-                                               class="btn btn-success btn-sm">
+                                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
 
-                                                Ver detalle
+                                                <a asp-controller="AdminSolicitudes"
+                                                   asp-action="Detalle"
+                                                   asp-route-id="@solicitud.IdSolicitudCurso"
+                                                   class="btn btn-success btn-sm">
+                                                    Ver detalle
+                                                </a>
 
-                                            </a>
+                                                @if (pagosPorSolicitud.TryGetValue(
+                                                    solicitud.IdSolicitudCurso,
+                                                    out var idPago))
+                                                {
+                                                    <a asp-controller="Admin"
+                                                       asp-action="AdminPagos"
+                                                       class="btn btn-warning btn-sm">
+
+                                                        <i class="fa fa-credit-card"></i>
+                                                        Revisar pago
+                                                    </a>
+                                                }
+
+                                            </div>
                                         </td>
-
                                     </tr>
                                 }
                             }

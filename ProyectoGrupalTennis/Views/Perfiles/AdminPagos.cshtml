@@ -7,8 +7,9 @@
 <link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
 
 <section class="perfil-page compact">
-    <div class="container">
-        <div class="perfil-container">
+    <div class="container-fluid px-4">
+        <div class="perfil-container"
+             style="max-width:1600px; margin:0 auto;">
 
             <div class="perfil-header">
                 <div>
@@ -112,6 +113,7 @@
                         <thead>
                             <tr>
                                 <th>Alumno</th>
+                                <th>Referencia</th>
                                 <th>Concepto</th>
                                 <th>Método</th>
                                 <th>Monto</th>
@@ -128,7 +130,7 @@
                             @if (!Model.Pagos.Any())
                             {
                                 <tr>
-                                    <td colspan="10" class="text-center">
+                                    <td colspan="11" class="text-center">
                                         No hay pagos registrados.
                                     </td>
                                 </tr>
@@ -139,6 +141,26 @@
                                 {
                                     <tr>
                                         <td>@pago.Alumno</td>
+                                        <td>
+                                            @{
+                                                var referencia = "—";
+
+                                                if (!string.IsNullOrWhiteSpace(pago.Observaciones))
+                                                {
+                                                    var match =
+                                                        System.Text.RegularExpressions.Regex.Match(
+                                                            pago.Observaciones,
+                                                            @"SOL-\d+");
+
+                                                    if (match.Success)
+                                                    {
+                                                        referencia = match.Value;
+                                                    }
+                                                }
+                                            }
+
+                                            @referencia
+                                        </td>
                                         <td>@pago.Concepto</td>
                                         <td>@pago.MetodoPago</td>
                                         <td>

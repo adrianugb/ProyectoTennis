@@ -69,6 +69,35 @@ namespace ProyectoGrupalTennis.Controllers
                 .OrderByDescending(s => s.FechaSolicitud)
                 .ToListAsync();
 
+            var pagosPendientes = await _context.Pagos
+                .Where(p =>
+                    p.TipoPago == "Solicitud de clase" &&
+                    (p.Estado == "Pendiente" ||
+                     p.Estado == "En revisión") &&
+                    p.Observaciones != null)
+                .ToListAsync();
+
+            var pagosPorSolicitud = new Dictionary<int, int>();
+
+            foreach (var solicitud in solicitudes)
+            {
+                var codigoSolicitud =
+                    $"SOL-{solicitud.IdSolicitudCurso:D4}";
+
+                var pago = pagosPendientes
+                    .FirstOrDefault(p =>
+                        p.Observaciones != null &&
+                        p.Observaciones.Contains(codigoSolicitud));
+
+                if (pago != null)
+                {
+                    pagosPorSolicitud[solicitud.IdSolicitudCurso] =
+                        pago.IdPago;
+                }
+            }
+
+            ViewBag.PagosPorSolicitud = pagosPorSolicitud;
+
             var alumnos = await _context.SolicitudesCurso
                 .Include(s => s.Alumno)
                 .Select(s => new

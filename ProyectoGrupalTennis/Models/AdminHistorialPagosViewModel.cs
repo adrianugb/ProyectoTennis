@@ -44,6 +44,8 @@
         public DateTime? FechaFactura { get; set; }
 
         public string? ComprobantePago { get; set; }
+
+        public string? Observaciones { get; set; }
     }
 
     public class AdminFacturaItemViewModel

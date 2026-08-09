@@ -236,6 +236,7 @@ namespace ProyectoGrupalTennis.Controllers
                     FechaPago = p.FechaPago,
                     Estado = p.Estado,
                     ComprobantePago = p.ComprobantePago,
+                    Observaciones = p.Observaciones,
 
                     FacturaEstado = p.Factura != null
                         ? "Disponible"
