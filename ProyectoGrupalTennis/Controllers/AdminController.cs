@@ -681,19 +681,155 @@ namespace ProyectoGrupalTennis.Controllers
                 }
                 else if (pago.TipoPago == "Solicitud de clase")
                 {
+                    // Obtener el código SOL-XXXX guardado en Observaciones del pago.
+                    if (string.IsNullOrWhiteSpace(pago.Observaciones))
+                    {
+                        TempData["MensajeError"] =
+                            "El pago no tiene información para identificar la solicitud.";
+
+                        await transaccion.RollbackAsync();
+
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    var coincidencia = System.Text.RegularExpressions.Regex.Match(
+                        pago.Observaciones,
+                        @"SOL-(\d+)");
+
+                    if (!coincidencia.Success ||
+                        !int.TryParse(
+                            coincidencia.Groups[1].Value,
+                            out int idSolicitudCurso))
+                    {
+                        TempData["MensajeError"] =
+                            "No fue posible identificar la solicitud asociada al pago.";
+
+                        await transaccion.RollbackAsync();
+
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    var solicitud = await _context.SolicitudesCurso
+                        .Include(s => s.ProfesorPropuesto)
+                        .Include(s => s.CanchaPropuesta)
+                        .FirstOrDefaultAsync(s =>
+                            s.IdSolicitudCurso == idSolicitudCurso &&
+                            s.IdAlumno == pago.IdAlumno);
+
+                    if (solicitud == null)
+                    {
+                        TempData["MensajeError"] =
+                            "No se encontró la solicitud asociada al pago.";
+
+                        await transaccion.RollbackAsync();
+
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    if (!solicitud.FechaPropuesta.HasValue ||
+                        !solicitud.HoraInicioPropuesta.HasValue ||
+                        !solicitud.HoraFinPropuesta.HasValue)
+                    {
+                        TempData["MensajeError"] =
+                            "La solicitud no tiene una fecha y horario propuestos válidos.";
+
+                        await transaccion.RollbackAsync();
+
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    if (solicitud.ProfesorPropuesto == null ||
+                        string.IsNullOrWhiteSpace(
+                            solicitud.ProfesorPropuesto.UserId))
+                    {
+                        TempData["MensajeError"] =
+                            "El profesor propuesto no está vinculado a un usuario del sistema.";
+
+                        await transaccion.RollbackAsync();
+
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    // La entidad Reserva actualmente requiere una cancha.
+                    if (!solicitud.IdCanchaPropuesta.HasValue)
+                    {
+                        TempData["MensajeError"] =
+                            "La solicitud no tiene una cancha asignada.";
+
+                        await transaccion.RollbackAsync();
+
+                        return RedirectToAction(nameof(AdminPagos));
+                    }
+
+                    // Evitar crear la misma reserva dos veces.
+                    var reservaExistente = await _context.Reservas
+                        .FirstOrDefaultAsync(r =>
+                            r.IdAlumno == pago.IdAlumno &&
+                            r.IdCancha == solicitud.IdCanchaPropuesta.Value &&
+                            r.IdProfesor == solicitud.ProfesorPropuesto.UserId &&
+                            r.FechaReserva.Date ==
+                                solicitud.FechaPropuesta.Value.Date &&
+                            r.HoraInicio ==
+                                solicitud.HoraInicioPropuesta.Value &&
+                            r.HoraFin ==
+                                solicitud.HoraFinPropuesta.Value);
+
+                    if (reservaExistente == null)
+                    {
+                        var nuevaReserva = new Reserva
+                        {
+                            IdAlumno = pago.IdAlumno,
+
+                            IdProfesor =
+                                solicitud.ProfesorPropuesto.UserId,
+
+                            IdCancha =
+                                solicitud.IdCanchaPropuesta.Value,
+
+                            FechaReserva =
+                                solicitud.FechaPropuesta.Value,
+
+                            HoraInicio =
+                                solicitud.HoraInicioPropuesta.Value,
+
+                            HoraFin =
+                                solicitud.HoraFinPropuesta.Value,
+
+                            Monto = pago.Monto,
+
+                            Estado = "Asignada"
+                        };
+
+                        _context.Reservas.Add(nuevaReserva);
+
+                        // Necesitamos guardar para obtener IdReserva.
+                        await _context.SaveChangesAsync();
+
+                        pago.IdReserva = nuevaReserva.IdReserva;
+                    }
+                    else
+                    {
+                        // Si ya existía, simplemente relacionamos el pago.
+                        pago.IdReserva = reservaExistente.IdReserva;
+
+                        reservaExistente.Estado = "Asignada";
+                    }
 
                     await NotificacionHelper.EnviarNotificacionAsync(
                         _context,
                         _emailService,
                         pago.IdAlumno,
-                        categoria: "Pago",
-                        tipo: "Pago confirmado",
-                        titulo: "Pago de solicitud confirmado",
+                        categoria: "Clase",
+                        tipo: "Reserva",
+                        titulo: "Clase confirmada",
                         mensaje:
-                            $"El pago PAG-{pago.IdPago} correspondiente a tu solicitud de clase " +
-                            $"por ₡{pago.Monto:N0} fue confirmado correctamente."
+                            $"Tu clase fue confirmada para el " +
+                            $"{solicitud.FechaPropuesta.Value:dd/MM/yyyy} de " +
+                            $"{solicitud.HoraInicioPropuesta.Value:hh\\:mm} a " +
+                            $"{solicitud.HoraFinPropuesta.Value:hh\\:mm}."
                     );
                 }
+
                 else
                 {
                     TempData["MensajeError"] = "El tipo de pago no es válido.";

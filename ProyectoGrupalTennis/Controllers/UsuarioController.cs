@@ -495,7 +495,9 @@ namespace ProyectoGrupalTennis.Controllers
         }
 
         // GET: /Usuario/AgendaPersonal
-        public async Task<IActionResult> AgendaPersonal(string? dia)
+        public async Task<IActionResult> AgendaPersonal(
+            string? dia,
+            string? tipo)
         {
             var userId = User.FindFirst(
                 System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -513,15 +515,15 @@ namespace ProyectoGrupalTennis.Controllers
 
             // 2. Reservas concretas asignadas al alumno
             var reservas = await _context.Reservas
-                .Include(r => r.Profesor)
-                .Include(r => r.Cancha)
-                .Where(r =>
-                    r.IdAlumno == userId &&
-                    r.Estado == "Asignada")
-                .OrderBy(r => r.FechaReserva)
-                .ThenBy(r => r.HoraInicio)
-                .ToListAsync();
-
+             .Include(r => r.Profesor)
+             .Include(r => r.Cancha)
+             .Include(r => r.Pagos)
+             .Where(r =>
+                 r.IdAlumno == userId &&
+                 r.Estado == "Asignada")
+             .OrderBy(r => r.FechaReserva)
+             .ThenBy(r => r.HoraInicio)
+             .ToListAsync();
             var clases = new List<AgendaPersonalItemViewModel>();
 
             // =========================================================
@@ -549,7 +551,7 @@ namespace ProyectoGrupalTennis.Controllers
                                 Curso = m.Curso.Nombre,
                                 Nivel = m.Curso.Nivel,
 
-                                TipoAgenda = "Curso recurrente",
+                                TipoAgenda = "Curso programado",
 
                                 DiaSemana = h.DiaSemana,
 
@@ -586,7 +588,7 @@ namespace ProyectoGrupalTennis.Controllers
                             Curso = m.Curso.Nombre,
                             Nivel = m.Curso.Nivel,
 
-                            TipoAgenda = "Curso recurrente",
+                            TipoAgenda = "Curso programado",
 
                             DiaSemana = "Sin horario asignado",
 
@@ -616,6 +618,35 @@ namespace ProyectoGrupalTennis.Controllers
 
             foreach (var r in reservas)
             {
+
+                var pagoSolicitud = r.Pagos
+    .FirstOrDefault(p =>
+        p.TipoPago == "Solicitud de clase");
+
+                var nombreClase = "Clase reservada";
+
+                if (pagoSolicitud != null &&
+                    !string.IsNullOrWhiteSpace(pagoSolicitud.Observaciones))
+                {
+                    var observaciones = pagoSolicitud.Observaciones;
+
+                    var separador = observaciones.IndexOf(" - ");
+
+                    if (separador >= 0)
+                    {
+                        nombreClase =
+                            observaciones[(separador + 3)..];
+
+                        var puntoModalidad =
+                            nombreClase.IndexOf(". Modalidad");
+
+                        if (puntoModalidad >= 0)
+                        {
+                            nombreClase =
+                                nombreClase[..puntoModalidad];
+                        }
+                    }
+                }
                 clases.Add(
                     new AgendaPersonalItemViewModel
                     {
@@ -624,11 +655,11 @@ namespace ProyectoGrupalTennis.Controllers
                         IdCurso = 0,
                         IdMatricula = 0,
 
-                        Curso = "Clase programada",
+                        Curso = nombreClase,
 
                         Nivel = string.Empty,
 
-                        TipoAgenda = "Clase programada",
+                        TipoAgenda = "Clase reservada",
 
                         DiaSemana =
                             r.FechaReserva.ToString(
@@ -678,6 +709,13 @@ namespace ProyectoGrupalTennis.Controllers
                     .ToList();
             }
 
+            if (!string.IsNullOrWhiteSpace(tipo))
+            {
+                clases = clases
+                    .Where(x => x.TipoAgenda == tipo)
+                    .ToList();
+            }
+
             var diasDisponibles = clases
                 .Select(x => x.DiaSemana)
                 .Where(d => !string.IsNullOrWhiteSpace(d))
@@ -697,6 +735,7 @@ namespace ProyectoGrupalTennis.Controllers
             var viewModel = new AgendaPersonalViewModel
             {
                 FiltroDia = dia,
+                FiltroTipo = tipo,
                 DiasDisponibles = diasDisponibles,
                 Clases = clasesOrdenadas
             };

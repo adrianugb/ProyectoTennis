@@ -4,6 +4,8 @@
     {
         public string? FiltroDia { get; set; }
 
+        public string? FiltroTipo { get; set; }
+
         public List<string> DiasDisponibles { get; set; } = new();
 
         public string? FiltroFecha { get; set; }
