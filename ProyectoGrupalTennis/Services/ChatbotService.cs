@@ -198,18 +198,12 @@ namespace ProyectoGrupalTennis.Services
             return mencionaCancha && mencionaDisponibilidad;
         }
 
+        private static readonly CultureInfo CulturaEspanol = new("es-ES");
+
         private async Task<string> ConsultarCanchasLibresHoyAsync(string mensaje)
         {
             var texto = QuitarAcentos(mensaje.ToLowerInvariant());
             var hoy = DateTime.Today;
-
-            var query = _context.Reservas
-                .Include(r => r.Cancha)
-                .Where(r =>
-                    r.IdAlumno == null &&
-                    r.Estado == "Disponible" &&
-                    r.FechaReserva.Date == hoy)
-                .AsQueryable();
 
             // Filtro por tipo de cancha si el alumno lo menciona (criterio de aceptación 2)
             string? tipoSolicitado = null;
@@ -218,29 +212,60 @@ namespace ProyectoGrupalTennis.Services
             else if (texto.Contains("pickleball")) tipoSolicitado = "pickleball";
             else if (texto.Contains("tenis") || texto.Contains("tennis")) tipoSolicitado = "tenis";
 
+            var disponiblesHoy = await BuscarDisponiblesAsync(hoy, tipoSolicitado);
+
+            if (disponiblesHoy.Any())
+            {
+                var lineas = disponiblesHoy.Select(r =>
+                    $"• {r.Cancha!.Nombre}: {r.HoraInicio:hh\\:mm} - {r.HoraFin:hh\\:mm}");
+
+                return "Estas son las canchas libres para hoy:\n" + string.Join("\n", lineas) +
+                       "\n\nPuedes ir a la sección \"Canchas disponibles\" para reservar el horario que prefieras.";
+            }
+
+            // Si no hay nada para hoy, se busca el próximo día con disponibilidad (mejora sobre el criterio base)
+            for (var offset = 1; offset <= 7; offset++)
+            {
+                var fecha = hoy.AddDays(offset);
+                var disponibles = await BuscarDisponiblesAsync(fecha, tipoSolicitado);
+
+                if (disponibles.Any())
+                {
+                    var tipoTextoProximo = tipoSolicitado != null ? $" de {tipoSolicitado}" : "";
+                    var lineas = disponibles.Select(r =>
+                        $"• {r.Cancha!.Nombre}: {r.HoraInicio:hh\\:mm} - {r.HoraFin:hh\\:mm}");
+
+                    return $"Por ahora no hay espacios libres{tipoTextoProximo} para hoy, pero sí encontré para el " +
+                           $"{fecha.ToString("dddd d 'de' MMMM", CulturaEspanol)}:\n" + string.Join("\n", lineas) +
+                           "\n\nPuedes ir a la sección \"Canchas disponibles\" para reservar el horario que prefieras.";
+                }
+            }
+
+            var tipoTexto = tipoSolicitado != null ? $" de {tipoSolicitado}" : "";
+            return $"Por ahora no veo espacios libres{tipoTexto} para los próximos días. Puedes revisar todo el " +
+                   "calendario en la sección \"Canchas disponibles\" o consultar directamente con la academia.";
+        }
+
+        private async Task<List<Reserva>> BuscarDisponiblesAsync(DateTime fecha, string? tipoSolicitado)
+        {
+            var query = _context.Reservas
+                .Include(r => r.Cancha)
+                .Where(r =>
+                    r.IdAlumno == null &&
+                    r.Estado == "Disponible" &&
+                    r.FechaReserva.Date == fecha.Date)
+                .AsQueryable();
+
             if (tipoSolicitado != null)
             {
                 query = query.Where(r => r.Cancha != null &&
                     EF.Functions.Like(r.Cancha.Nombre, $"%{tipoSolicitado}%"));
             }
 
-            var disponibles = await query
+            return await query
                 .OrderBy(r => r.HoraInicio)
                 .Take(8)
                 .ToListAsync();
-
-            if (!disponibles.Any())
-            {
-                var tipoTexto = tipoSolicitado != null ? $" de {tipoSolicitado}" : "";
-                return $"Por ahora no veo espacios libres{tipoTexto} para hoy. Puedes revisar todo el calendario " +
-                       "en la sección \"Canchas disponibles\" o consultar otro día.";
-            }
-
-            var lineas = disponibles.Select(r =>
-                $"• {r.Cancha!.Nombre}: {r.HoraInicio:hh\\:mm} - {r.HoraFin:hh\\:mm}");
-
-            return "Estas son las canchas libres para hoy:\n" + string.Join("\n", lineas) +
-                   "\n\nPuedes ir a la sección \"Canchas disponibles\" para reservar el horario que prefieras.";
         }
 
         // ---------------- ADM-06-003: log de consultas ----------------

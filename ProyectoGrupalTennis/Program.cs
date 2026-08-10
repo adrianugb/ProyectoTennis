@@ -241,6 +241,70 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// ── SEED DE CANCHAS Y DISPONIBILIDAD DE PRUEBA (USER-06-003) ─────────────────
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    if (!await context.Canchas.AnyAsync())
+    {
+        context.Canchas.AddRange(
+            new Cancha { Nombre = "Cancha de Tenis 1", Disponible = true },
+            new Cancha { Nombre = "Cancha de Tenis 2", Disponible = true },
+            new Cancha { Nombre = "Cancha de Pádel 1", Disponible = true },
+            new Cancha { Nombre = "Cancha de Pickleball 1", Disponible = true }
+        );
+
+        await context.SaveChangesAsync();
+    }
+
+    // Solo se crean reservas "Disponible" de prueba si todavía no existe ninguna reserva en el sistema
+    if (!await context.Reservas.AnyAsync())
+    {
+        var profesor = await userManager.FindByEmailAsync("profesor@tennis.com");
+
+        if (profesor != null)
+        {
+            var canchas = await context.Canchas.OrderBy(c => c.IdCancha).ToListAsync();
+
+            var horariosDePrueba = new (TimeSpan Inicio, TimeSpan Fin)[]
+            {
+                (new TimeSpan(9, 0, 0), new TimeSpan(10, 0, 0)),
+                (new TimeSpan(11, 0, 0), new TimeSpan(12, 0, 0)),
+                (new TimeSpan(16, 0, 0), new TimeSpan(17, 0, 0)),
+            };
+
+            var reservasDePrueba = new List<Reserva>();
+
+            // Hoy y los próximos 3 días, para poder probar la disponibilidad del asistente virtual
+            for (var offset = 0; offset <= 3; offset++)
+            {
+                var fecha = DateTime.Today.AddDays(offset);
+
+                foreach (var cancha in canchas)
+                {
+                    foreach (var horario in horariosDePrueba)
+                    {
+                        reservasDePrueba.Add(new Reserva
+                        {
+                            IdCancha = cancha.IdCancha,
+                            IdProfesor = profesor.Id,
+                            FechaReserva = fecha,
+                            HoraInicio = horario.Inicio,
+                            HoraFin = horario.Fin,
+                            Monto = 15000,
+                            Estado = "Disponible"
+                        });
+                    }
+                }
+            }
+
+            context.Reservas.AddRange(reservasDePrueba);
+            await context.SaveChangesAsync();
+        }
+    }
+}
 
 // ── PIPELINE ──────────────────────────────────────────────────────────────────
 
