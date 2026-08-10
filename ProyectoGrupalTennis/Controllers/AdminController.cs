@@ -233,6 +233,9 @@ namespace ProyectoGrupalTennis.Controllers
                     Concepto = p.TipoPago,
                     MetodoPago = p.MetodoPago,
                     Monto = p.Monto,
+                    Moneda = string.IsNullOrWhiteSpace(p.Moneda)
+                        ? "CRC"
+                        : p.Moneda.ToUpper(),
                     FechaPago = p.FechaPago,
                     Estado = p.Estado,
                     ComprobantePago = p.ComprobantePago,
@@ -355,7 +358,15 @@ namespace ProyectoGrupalTennis.Controllers
                     : "Sin alumno";
                 worksheet.Cell(row, 3).Value = pago.TipoPago;
                 worksheet.Cell(row, 4).Value = pago.MetodoPago;
-                worksheet.Cell(row, 5).Value = pago.Monto;
+                var moneda =
+                    string.IsNullOrWhiteSpace(pago.Moneda)
+                        ? "CRC"
+                        : pago.Moneda.ToUpper();
+
+                                worksheet.Cell(row, 5).Value =
+                                    moneda == "USD"
+                                        ? $"${pago.Monto:N2}"
+                                        : $"₡{pago.Monto:N0}";
                 worksheet.Cell(row, 6).Value = pago.FechaPago.ToString("dd/MM/yyyy");
                 worksheet.Cell(row, 7).Value = pago.Estado;
                 worksheet.Cell(row, 8).Value = pago.Factura != null
@@ -375,7 +386,6 @@ namespace ProyectoGrupalTennis.Controllers
             tableRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
             tableRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
 
-            worksheet.Column(5).Style.NumberFormat.Format = "\"₡\"#,##0";
 
             worksheet.Column(1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
             worksheet.Column(4).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
@@ -523,6 +533,7 @@ namespace ProyectoGrupalTennis.Controllers
                 IdAlumno = model.IdAlumno,
                 TipoPago = model.TipoPago,
                 Monto = model.Monto,
+                Moneda = "CRC",
                 MetodoPago = model.MetodoPago,
                 Estado = "Pagado",
                 FechaPago = DateTime.Now,
@@ -852,18 +863,22 @@ namespace ProyectoGrupalTennis.Controllers
 
                 _context.Facturas.Add(factura);
 
+                var montoFormateado =
+                    pago.Moneda?.ToUpper() == "USD"
+                        ? $"${pago.Monto:N2}"
+                        : $"₡{pago.Monto:N0}";
+
                 await NotificacionHelper.EnviarNotificacionAsync(
-          _context,
-          _emailService,
-          pago.IdAlumno,
-          categoria: "Pago",
-          tipo: "Pago confirmado",
-          titulo: "Pago confirmado",
-          mensaje:
-              "Tu pago fue confirmado correctamente. " +
-              "Ya puedes consultar tu clase en Mi Agenda y descargar " +
-              "tu comprobante desde el Historial de Pagos."
-      );
+                    _context,
+                    _emailService,
+                    pago.IdAlumno,
+                    categoria: "Pago",
+                    tipo: "Factura generada",
+                    titulo: "Factura disponible",
+                    mensaje:
+                        $"Tu factura {numeroFactura} por {montoFormateado} " +
+                        $"correspondiente a {pago.TipoPago} está disponible."
+                );
 
                 await _context.SaveChangesAsync();
                 await transaccion.CommitAsync();
@@ -903,6 +918,11 @@ namespace ProyectoGrupalTennis.Controllers
 
             pago.Estado = "Rechazado";
 
+            var montoFormateado =
+                pago.Moneda?.ToUpper() == "USD"
+                    ? $"${pago.Monto:N2}"
+                    : $"₡{pago.Monto:N0}";
+
             await NotificacionHelper.EnviarNotificacionAsync(
                 _context,
                 _emailService,
@@ -911,7 +931,8 @@ namespace ProyectoGrupalTennis.Controllers
                 tipo: "Pago rechazado",
                 titulo: "Comprobante de pago rechazado",
                 mensaje:
-                    $"El comprobante correspondiente al pago PAG-{pago.IdPago} fue rechazado. " +
+                    $"El comprobante correspondiente al pago PAG-{pago.IdPago} " +
+                    $"por {montoFormateado} fue rechazado. " +
                     "Revisa que el monto y los datos sean correctos y vuelve a adjuntar el comprobante."
             );
 
@@ -962,6 +983,11 @@ namespace ProyectoGrupalTennis.Controllers
 
             _context.Facturas.Add(factura);
 
+            var montoFormateado =
+                pago.Moneda?.ToUpper() == "USD"
+                    ? $"${pago.Monto:N2}"
+                    : $"₡{pago.Monto:N0}";
+
             await NotificacionHelper.EnviarNotificacionAsync(
                 _context,
                 _emailService,
@@ -969,8 +995,9 @@ namespace ProyectoGrupalTennis.Controllers
                 categoria: "Pago",
                 tipo: "Factura generada",
                 titulo: "Factura disponible",
-                mensaje: $"Tu factura {numeroFactura} por ₡{pago.Monto:N0} " +
-                         $"correspondiente a {pago.TipoPago} está disponible."
+                mensaje:
+                    $"Tu factura {numeroFactura} por {montoFormateado} " +
+                    $"correspondiente a {pago.TipoPago} está disponible."
             );
 
             await _context.SaveChangesAsync();
@@ -1025,6 +1052,11 @@ namespace ProyectoGrupalTennis.Controllers
 
                 pago.Estado = "Rechazado";
 
+                var montoFormateado =
+                pago.Moneda?.ToUpper() == "USD"
+                    ? $"${pago.Monto:N2}"
+                    : $"₡{pago.Monto:N0}";
+
                 await NotificacionHelper.EnviarNotificacionAsync(
                     _context,
                     _emailService,
@@ -1032,9 +1064,10 @@ namespace ProyectoGrupalTennis.Controllers
                     categoria: "Pago",
                     tipo: "Pago anulado",
                     titulo: "Pago anulado",
-                    mensaje: $"El pago PAG-{pago.IdPago} por ₡{pago.Monto:N0} " +
-                             $"correspondiente a {pago.TipoPago} fue anulado por la administración. " +
-                             "Contactá a la academia si tenés dudas."
+                    mensaje:
+                        $"El pago PAG-{pago.IdPago} por {montoFormateado} " +
+                        $"correspondiente a {pago.TipoPago} fue anulado por la administración. " +
+                        "Contactá a la academia si tenés dudas."
                 );
 
                 await _context.SaveChangesAsync();
@@ -1066,6 +1099,11 @@ namespace ProyectoGrupalTennis.Controllers
             }
 
             QuestPDF.Settings.License = LicenseType.Community;
+
+            var montoFormateado =
+                pago.Moneda?.ToUpper() == "USD"
+                    ? $"${pago.Monto:N2}"
+                    : $"₡{pago.Monto:N0}";
 
             var pdf = Document.Create(container =>
             {
@@ -1132,11 +1170,11 @@ namespace ProyectoGrupalTennis.Controllers
                             table.Cell().BorderBottom(0.5f).BorderColor("#eeeeee").Padding(5)
                                 .Text(pago.MetodoPago);
                             table.Cell().BorderBottom(0.5f).BorderColor("#eeeeee").Padding(5)
-                                .Text($"₡{pago.Monto:N0}");
+                                .Text(montoFormateado);
                         });
 
                         col.Item().PaddingTop(15).AlignRight()
-                            .Text($"TOTAL: ₡{pago.Monto:N0}").Bold().FontSize(14);
+                            .Text($"TOTAL: {montoFormateado}").Bold().FontSize(14);
 
                         if (!string.IsNullOrEmpty(pago.Observaciones))
                         {
@@ -1186,6 +1224,9 @@ namespace ProyectoGrupalTennis.Controllers
                     : "Sin alumno",
                 Concepto = f.Pago.TipoPago,
                 Monto = f.Pago.Monto,
+                Moneda = string.IsNullOrWhiteSpace(f.Pago.Moneda)
+                    ? "CRC"
+                    : f.Pago.Moneda.ToUpper(),
                 FechaFactura = f.FechaFactura
             }).ToList();
 

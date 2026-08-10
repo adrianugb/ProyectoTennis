@@ -76,5 +76,9 @@ namespace AcademiaTennisDAL.Entities
 
         [Column(TypeName = "decimal(10,2)")]
         public decimal DistanciaKm { get; set; }
+
+        [Required]
+        [StringLength(3)]
+        public string Moneda { get; set; } = "CRC";
     }
 }

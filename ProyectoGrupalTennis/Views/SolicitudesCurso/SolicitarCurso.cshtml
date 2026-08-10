@@ -80,6 +80,9 @@
 
                 <input asp-for="PrecioEstimado"
                        type="hidden" />
+                       
+                <input asp-for="Moneda"
+                       type="hidden" />
 
                 <div asp-validation-summary="ModelOnly"
                      class="alert alert-danger"
@@ -164,7 +167,14 @@
                                 </span>
 
                                 <strong class="fs-5">
-                                    $@Model.PrecioEstimado?.ToString("N2")
+                                    @if (Model.Moneda?.ToUpper() == "USD")
+                                    {
+                                        <span>$@Model.PrecioEstimado?.ToString("N2")</span>
+                                    }
+                                    else
+                                    {
+                                        <span>₡@Model.PrecioEstimado?.ToString("N0")</span>
+                                    }
                                 </strong>
 
                                 @if (Model.PrecioPorPersona)

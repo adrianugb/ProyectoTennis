@@ -528,7 +528,7 @@ namespace ProyectoGrupalTennis.Controllers
                                         Precio
                                     </td>
                                     <td style="padding:10px 0; border-bottom:1px solid #eeeeee;">
-                                       ${tarifa.Precio:N2}
+                                       {(tarifa.Moneda == "USD" ? "$" : "₡")}{tarifa.Precio:N2}
                                         {(tarifa.PrecioPorPersona
                                             ? " por persona"
                                             : tarifa.CantidadLecciones == 1
@@ -1519,13 +1519,21 @@ Notificación automática del sistema
             decimal montoBase =
                 solicitud.PrecioSolicitado.Value;
 
+            var moneda =
+                string.IsNullOrWhiteSpace(solicitud.MonedaSolicitada)
+                    ? "CRC"
+                    : solicitud.MonedaSolicitada.ToUpper();
+
             decimal montoTotal =
-                montoBase + costoDesplazamiento;
+                moneda == "CRC"
+                    ? montoBase + costoDesplazamiento
+                    : montoBase;
 
             var model = new ConfirmarPagoSolicitudViewModel
             {
                 IdSolicitudCurso =
                     solicitud.IdSolicitudCurso,
+                Moneda = moneda,
 
                 Concepto =
                     solicitud.NombreCurso,
@@ -1730,12 +1738,26 @@ Notificación automática del sistema
             decimal montoBase =
                 solicitud.PrecioSolicitado.Value;
 
+            var monedaPago =
+                string.IsNullOrWhiteSpace(solicitud.MonedaSolicitada)
+                    ? "CRC"
+                    : solicitud.MonedaSolicitada.ToUpper();
+
+            var simboloMoneda =
+                monedaPago == "USD"
+                    ? "$"
+                    : "₡";
+
             decimal montoTotal =
-                montoBase + costoDesplazamiento;
+                monedaPago == "CRC"
+                    ? montoBase + costoDesplazamiento
+                    : montoBase;
 
             var pago = new Pago
             {
                 IdAlumno = idAlumno,
+
+                Moneda = monedaPago,
 
                 MontoBase = montoBase,
 
@@ -1820,9 +1842,22 @@ Notificación automática del sistema
                     $"ERROR CORREO ACEPTACIÓN: {ex}");
             }
 
-            TempData["Success"] =
-                $"Se generó el pago pendiente por ₡{montoTotal:N0}. " +
-                "Adjunta el comprobante para completar el proceso.";
+            if (solicitud.EsADomicilio &&
+                monedaPago == "USD")
+            {
+                TempData["Success"] =
+                    $"Se generó el pago pendiente por " +
+                    $"${montoBase:N2} + " +
+                    $"₡{costoDesplazamiento:N0} de desplazamiento. " +
+                    "Adjunta el comprobante para completar el proceso.";
+            }
+            else
+            {
+                TempData["Success"] =
+                    $"Se generó el pago pendiente por " +
+                    $"{simboloMoneda}{montoTotal:N2}. " +
+                    "Adjunta el comprobante para completar el proceso.";
+            }
 
             return RedirectToAction(
                 "HistorialPagos",

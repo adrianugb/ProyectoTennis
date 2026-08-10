@@ -185,21 +185,49 @@
                                         </td>
                                         <td>@pago.MetodoPago</td>
                                         <td>
+                                            @{
+                                                var esUsd =
+                                                    string.Equals(
+                                                        pago.Moneda,
+                                                        "USD",
+                                                        StringComparison.OrdinalIgnoreCase);
+                                            }
+
                                             @if (pago.EsADomicilio)
                                             {
-                                                <div>
-                                                    <strong>
-                                                        ₡@pago.Monto.ToString("N0")
-                                                    </strong>
-                                                </div>
+                                                @if (esUsd)
+                                                {
+                                                    <div>
+                                                        <strong>
+                                                            $@pago.MontoBase.ToString("N2")
+                                                            + ₡@pago.CostoDesplazamiento.ToString("N0")
+                                                        </strong>
+                                                    </div>
 
-                                                <small class="text-muted d-block">
-                                                    Base: ₡@pago.MontoBase.ToString("N0")
-                                                </small>
+                                                    <small class="text-muted d-block">
+                                                        Base: $@pago.MontoBase.ToString("N2")
+                                                    </small>
 
-                                                <small class="text-muted d-block">
-                                                    Domicilio: ₡@pago.CostoDesplazamiento.ToString("N0")
-                                                </small>
+                                                    <small class="text-muted d-block">
+                                                        Domicilio: ₡@pago.CostoDesplazamiento.ToString("N0")
+                                                    </small>
+                                                }
+                                                else
+                                                {
+                                                    <div>
+                                                        <strong>
+                                                            ₡@pago.Monto.ToString("N0")
+                                                        </strong>
+                                                    </div>
+
+                                                    <small class="text-muted d-block">
+                                                        Base: ₡@pago.MontoBase.ToString("N0")
+                                                    </small>
+
+                                                    <small class="text-muted d-block">
+                                                        Domicilio: ₡@pago.CostoDesplazamiento.ToString("N0")
+                                                    </small>
+                                                }
 
                                                 <small class="text-muted d-block">
                                                     Distancia: @pago.DistanciaKm.ToString("N2") km
@@ -208,7 +236,14 @@
                                             else
                                             {
                                                 <strong>
-                                                    ₡@pago.Monto.ToString("N0")
+                                                    @if (esUsd)
+                                                    {
+                                                        <span>$@pago.Monto.ToString("N2")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>₡@pago.Monto.ToString("N0")</span>
+                                                    }
                                                 </strong>
                                             }
                                         </td>

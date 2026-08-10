@@ -388,6 +388,7 @@ namespace ProyectoGrupalTennis.Controllers
                 MontoBase = montoBase,
                 CostoDesplazamiento = costoDesplazamiento,
                 Monto = montoTotal,
+                Moneda = "CRC",
 
                 EsADomicilio = modelo.EsADomicilio,
                 IdUbicacionAlumno = idUbicacionAlumno,
@@ -1135,7 +1136,14 @@ namespace ProyectoGrupalTennis.Controllers
                         Detalle = detalle,
 
                         MetodoPago = p.MetodoPago,
+
                         Monto = p.Monto,
+
+                        Moneda =
+                            string.IsNullOrWhiteSpace(p.Moneda)
+                                ? "CRC"
+                                : p.Moneda,
+
                         FechaPago = p.FechaPago,
 
                         FechaFactura =
@@ -1316,6 +1324,17 @@ namespace ProyectoGrupalTennis.Controllers
                 "wwwroot",
                 "images",
                 "logo-mmp.png");
+
+            var monedaPago =
+                string.IsNullOrWhiteSpace(pago.Moneda)
+                    ? "CRC"
+                    : pago.Moneda.ToUpper();
+
+            var montoFormateado =
+                monedaPago == "USD"
+                    ? $"${pago.Monto:N2}"
+                    : $"₡{pago.Monto:N0}";
+
 
             var pdf = Document.Create(container =>
             {
@@ -1528,9 +1547,7 @@ namespace ProyectoGrupalTennis.Controllers
                                     $"{pago.Estado}");
 
                             col.Item()
-                                .Text(
-                                    $"Monto cancelado: " +
-                                    $"₡{pago.Monto:N0}")
+                                .Text($"Monto cancelado: {montoFormateado}")
                                 .FontSize(16)
                                 .Bold();
 

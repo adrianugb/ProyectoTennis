@@ -187,7 +187,14 @@
                                     <div class="catalogo-precio">
 
                                         <span class="catalogo-precio-valor">
-                                            $@tarifa.Precio.ToString("N2")
+                                            @if (tarifa.Moneda?.ToUpper() == "USD")
+                                            {
+                                                <span>$@tarifa.Precio.ToString("N2")</span>
+                                            }
+                                            else
+                                            {
+                                                <span>₡@tarifa.Precio.ToString("N0")</span>
+                                            }
                                         </span>
 
                                         <small>

@@ -9,6 +9,8 @@
 
         public decimal Monto { get; set; }
 
+        public string Moneda { get; set; } = "CRC";
+
         public bool EsADomicilio { get; set; }
 
         public string? DireccionDomicilio { get; set; }

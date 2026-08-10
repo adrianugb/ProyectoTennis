@@ -21,6 +21,8 @@
 
         public decimal Monto { get; set; }
 
+        public string Moneda { get; set; } = "CRC";
+
         public DateTime FechaPago { get; set; }
 
         public DateTime? FechaFactura { get; set; }

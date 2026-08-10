@@ -21,6 +21,7 @@
 
         public string Alumno { get; set; } = string.Empty;
 
+        public string Moneda { get; set; } = "CRC";
         public string Concepto { get; set; } = string.Empty;
 
         public string MetodoPago { get; set; } = string.Empty;
@@ -54,6 +55,7 @@
 
         public int IdPago { get; set; }
 
+        public string Moneda { get; set; } = "CRC";
         public string NumeroFactura { get; set; } = string.Empty;
 
         public string Alumno { get; set; } = string.Empty;

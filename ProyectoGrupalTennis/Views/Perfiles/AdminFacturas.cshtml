@@ -70,7 +70,16 @@
                                         <td><strong>@f.NumeroFactura</strong></td>
                                         <td>@f.Alumno</td>
                                         <td>@f.Concepto</td>
-                                        <td>₡@f.Monto.ToString("N0")</td>
+                                        <td>
+                                            @if (f.Moneda?.ToUpper() == "USD")
+                                            {
+                                                <span>$@f.Monto.ToString("N2")</span>
+                                            }
+                                            else
+                                            {
+                                                <span>₡@f.Monto.ToString("N0")</span>
+                                            }
+                                        </td>
                                         <td>@f.FechaFactura.ToString("dd/MM/yyyy")</td>
                                         <td>
                                             <a asp-controller="Admin"

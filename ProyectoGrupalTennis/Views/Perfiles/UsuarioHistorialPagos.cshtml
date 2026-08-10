@@ -127,7 +127,16 @@
                                         }
                                     </td>
                                     <td>@pago.MetodoPago</td>
-                                    <td>₡@pago.Monto.ToString("N0")</td>
+                                    <td>
+                                        @if (pago.Moneda?.ToUpper() == "USD")
+                                        {
+                                            <span>$@pago.Monto.ToString("N2")</span>
+                                        }
+                                        else
+                                        {
+                                            <span>₡@pago.Monto.ToString("N0")</span>
+                                        }
+                                    </td>
                                     <td>@pago.FechaPago.ToString("dd/MM/yyyy")</td>
 
                                     <td>@pago.Estado</td>

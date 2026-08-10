@@ -43,5 +43,6 @@ namespace AcademiaTennisDAL.Entities
         public bool Activa { get; set; } = true;
 
         public DateTime FechaActualizacion { get; set; } = DateTime.Now;
+
     }
 }

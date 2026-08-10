@@ -15,6 +15,8 @@ namespace ProyectoGrupalTennis.Models
         // No se confía en ellos para guardar el precio real.
         public string NombreCurso { get; set; } = string.Empty;
 
+        public string Moneda { get; set; } = "CRC";
+
         public string TipoClase { get; set; } = string.Empty;
 
         public string CondicionMatricula { get; set; } = string.Empty;
@@ -25,7 +27,6 @@ namespace ProyectoGrupalTennis.Models
 
         public decimal? PrecioEstimado { get; set; }
 
-        public string Moneda { get; set; } = string.Empty;
 
         [Required(
             ErrorMessage = "Debe seleccionar un nivel."
