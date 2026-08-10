@@ -25,7 +25,8 @@ namespace ProyectoGrupalTennis.Controllers
 
         public IActionResult Privacy() => View();
 
-        public IActionResult Retencion() => View();
+        // Módulo desactivado
+        //public IActionResult Retencion() => View();
 
         public IActionResult Campeonatos() =>
             View("~/Views/Campeonatos/campeonatos.cshtml");
@@ -237,8 +238,9 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Gamificacion
 
-        public IActionResult Gamificacion() =>
-            View("~/Views/Gamificacion/Index.cshtml");
+        // Módulo desactivado a pedido del cliente (USER-DESACTIVAR-01)
+        //public IActionResult Gamificacion() =>
+        //    View("~/Views/Gamificacion/Index.cshtml");
 
         #endregion
 

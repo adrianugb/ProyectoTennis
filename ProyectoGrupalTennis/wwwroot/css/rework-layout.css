@@ -402,6 +402,45 @@ button:focus-visible,
     .campana-notificaciones {
         justify-content: center;
     }
+
+    .usuario-navbar-actions {
+        flex-direction: column;
+        align-items: stretch;
+        white-space: normal;
+        gap: 10px;
+    }
+
+    .site-navbar .usuario-logueado {
+        justify-content: center;
+    }
+
+    .site-navbar .usuario-nombre {
+        max-width: 220px;
+    }
+
+    .logout-navbar {
+        width: 100%;
+    }
+
+        .logout-navbar .btn-logout-navbar {
+            width: 100%;
+            justify-content: center;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+}
+
+@media (max-width: 380px) {
+    .navbar-brand-text {
+        font-size: 15px;
+    }
+
+    .navbar-logo {
+        height: 36px;
+        width: 36px;
+    }
+}
 }
 
 /* ---------- Footer: pequeños ajustes responsive ---------- */
