@@ -451,23 +451,64 @@ namespace ProyectoGrupalTennis.Controllers
                 .ToListAsync();
         }
 
-        private List<Horario> MapearHorarios(List<HorarioInputViewModel> inputs)
+        private List<Horario> MapearHorarios(
+      List<HorarioInputViewModel> inputs)
         {
             var horarios = new List<Horario>();
+
             foreach (var h in inputs)
             {
-                if (string.IsNullOrWhiteSpace(h.Fecha)) continue;
-                if (string.IsNullOrWhiteSpace(h.HoraInicio)) continue;
-                if (string.IsNullOrWhiteSpace(h.HoraFin)) continue;
+                if (string.IsNullOrWhiteSpace(h.Fecha) ||
+                    string.IsNullOrWhiteSpace(h.HoraInicio) ||
+                    string.IsNullOrWhiteSpace(h.HoraFin))
+                {
+                    continue;
+                }
+
+                if (!DateTime.TryParseExact(
+                        h.Fecha,
+                        "yyyy-MM-dd",
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        System.Globalization.DateTimeStyles.None,
+                        out var fecha))
+                {
+                    throw new Exception(
+                        $"La fecha '{h.Fecha}' no tiene un formato válido.");
+                }
+
+                if (!TimeSpan.TryParse(
+                        h.HoraInicio,
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        out var horaInicio))
+                {
+                    throw new Exception(
+                        $"La hora de inicio '{h.HoraInicio}' no es válida.");
+                }
+
+                if (!TimeSpan.TryParse(
+                        h.HoraFin,
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        out var horaFin))
+                {
+                    throw new Exception(
+                        $"La hora final '{h.HoraFin}' no es válida.");
+                }
+
+                if (horaFin <= horaInicio)
+                {
+                    throw new Exception(
+                        "La hora final debe ser posterior a la hora de inicio.");
+                }
 
                 horarios.Add(new Horario
                 {
                     IdHorario = h.IdHorario,
-                    Fecha = DateTime.Parse(h.Fecha),
-                    HoraInicio = TimeSpan.Parse(h.HoraInicio),
-                    HoraFin = TimeSpan.Parse(h.HoraFin)
+                    Fecha = fecha,
+                    HoraInicio = horaInicio,
+                    HoraFin = horaFin
                 });
             }
+
             return horarios;
         }
     }

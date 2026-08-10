@@ -175,23 +175,43 @@ namespace ProyectoGrupalTennis.Services
             var tokenData = await _context.GoogleCalendarTokens
                 .FirstOrDefaultAsync(t => t.UserId == userId);
 
-            if (tokenData == null) return null;
+            if (tokenData == null)
+            {
+                return null;
+            }
+
+            var segundosRestantes =
+                (long)(tokenData.Expiry - DateTime.UtcNow).TotalSeconds;
 
             var token = new TokenResponse
             {
                 AccessToken = tokenData.AccessToken,
                 RefreshToken = tokenData.RefreshToken,
-                ExpiresInSeconds = (long)(tokenData.Expiry - DateTime.UtcNow).TotalSeconds
+
+                // Evita valores negativos que puedan provocar
+                // errores de DateTime dentro de la librería de Google.
+                ExpiresInSeconds =
+                    segundosRestantes > 0
+                        ? segundosRestantes
+                        : 0,
+
+                IssuedUtc = DateTime.UtcNow
             };
 
             var flow = CrearFlow();
-            var credential = new UserCredential(flow, userId, token);
 
-            return new CalendarService(new BaseClientService.Initializer
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = "Academia de Tennis"
-            });
+            var credential =
+                new UserCredential(
+                    flow,
+                    userId,
+                    token);
+
+            return new CalendarService(
+                new BaseClientService.Initializer
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "Academia de Tennis"
+                });
         }
 
 
