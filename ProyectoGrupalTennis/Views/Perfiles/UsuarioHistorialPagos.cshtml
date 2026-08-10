@@ -80,7 +80,9 @@
                             <th>Fecha de pago</th>
                             <th>Estado del pago</th>
                             <th>Factura</th>
-                            <th>Fecha factura</th>
+
+                            <th>Fecha comprobante</th>
+
                             <th>Acción</th>
                         </tr>
                     </thead>
@@ -99,7 +101,31 @@
                             @foreach (var pago in Model.Pagos)
                             {
                                 <tr>
-                                    <td>@pago.Concepto</td>
+                                    <td>
+                                        @if (!string.IsNullOrWhiteSpace(pago.Detalle))
+                                        {
+                                            <strong>
+                                                @pago.Detalle
+                                            </strong>
+
+                                            <div class="text-muted small">
+                                                @if (!string.IsNullOrWhiteSpace(pago.Referencia))
+                                                {
+                                                    <span>
+                                                        @pago.Referencia ·
+                                                    </span>
+                                                }
+
+                                                @pago.Concepto
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <strong>
+                                                @pago.Concepto
+                                            </strong>
+                                        }
+                                    </td>
                                     <td>@pago.MetodoPago</td>
                                     <td>₡@pago.Monto.ToString("N0")</td>
                                     <td>@pago.FechaPago.ToString("dd/MM/yyyy")</td>
@@ -168,7 +194,7 @@
                                             <a asp-action="DescargarComprobante"
                                                asp-route-idPago="@pago.IdPago"
                                                class="perfil-action-link">
-                                                Descargar factura
+                                                Descargar Comprobante
                                             </a>
                                         }
                                         else if (pago.Estado == "Pagado")

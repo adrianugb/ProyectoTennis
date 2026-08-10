@@ -28,5 +28,8 @@
         public string? NumeroFactura { get; set; }
 
         public string Estado { get; set; } = string.Empty;
+
+        public string? Referencia { get; set; }
+        public string? Detalle { get; set; }
     }
 }

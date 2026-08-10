@@ -853,21 +853,23 @@ namespace ProyectoGrupalTennis.Controllers
                 _context.Facturas.Add(factura);
 
                 await NotificacionHelper.EnviarNotificacionAsync(
-                    _context,
-                    _emailService,
-                    pago.IdAlumno,
-                    categoria: "Pago",
-                    tipo: "Factura generada",
-                    titulo: "Factura disponible",
-                    mensaje:
-                        $"Tu factura {numeroFactura} correspondiente al pago fue generada correctamente."
-                );
+          _context,
+          _emailService,
+          pago.IdAlumno,
+          categoria: "Pago",
+          tipo: "Pago confirmado",
+          titulo: "Pago confirmado",
+          mensaje:
+              "Tu pago fue confirmado correctamente. " +
+              "Ya puedes consultar tu clase en Mi Agenda y descargar " +
+              "tu comprobante desde el Historial de Pagos."
+      );
 
                 await _context.SaveChangesAsync();
                 await transaccion.CommitAsync();
 
                 TempData["MensajeExito"] =
-                    "Pago confirmado y factura generada correctamente.";
+                   "Pago confirmado y comprobante generado correctamente.";
             }
             catch
             {

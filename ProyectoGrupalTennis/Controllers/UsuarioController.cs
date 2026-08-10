@@ -1086,16 +1086,70 @@ namespace ProyectoGrupalTennis.Controllers
                 FiltroEstado = estado,
                 FiltroFactura = factura,
 
-                Pagos = pagos.Select(p => new UsuarioPagoItemViewModel
+                Pagos = pagos.Select(p =>
                 {
-                    IdPago = p.IdPago,
-                    Concepto = p.TipoPago,
-                    MetodoPago = p.MetodoPago,
-                    Monto = p.Monto,
-                    FechaPago = p.FechaPago,
-                    FechaFactura = p.Factura != null ? p.Factura.FechaFactura : null,
-                    NumeroFactura = p.Factura != null ? p.Factura.NumeroFactura : null,
-                    Estado = p.Estado
+                    string? referencia = null;
+                    string? detalle = null;
+
+                    if (!string.IsNullOrWhiteSpace(p.Observaciones))
+                    {
+                        var matchSol =
+                            System.Text.RegularExpressions.Regex.Match(
+                                p.Observaciones,
+                                @"SOL-\d+");
+
+                        if (matchSol.Success)
+                        {
+                            referencia = matchSol.Value;
+                        }
+
+                        var separador =
+                            p.Observaciones.IndexOf(" - ");
+
+                        if (separador >= 0)
+                        {
+                            detalle =
+                                p.Observaciones[(separador + 3)..];
+
+                            var puntoModalidad =
+                                detalle.IndexOf(". Modalidad");
+
+                            if (puntoModalidad >= 0)
+                            {
+                                detalle =
+                                    detalle[..puntoModalidad];
+                            }
+                        }
+                    }
+
+                    return new UsuarioPagoItemViewModel
+                    {
+                        IdPago = p.IdPago,
+
+                        Concepto =
+                            p.TipoPago == "Matricula"
+                                ? "Curso programado"
+                                : p.TipoPago,
+
+                        Referencia = referencia,
+                        Detalle = detalle,
+
+                        MetodoPago = p.MetodoPago,
+                        Monto = p.Monto,
+                        FechaPago = p.FechaPago,
+
+                        FechaFactura =
+                            p.Factura != null
+                                ? p.Factura.FechaFactura
+                                : null,
+
+                        NumeroFactura =
+                            p.Factura != null
+                                ? p.Factura.NumeroFactura
+                                : null,
+
+                        Estado = p.Estado
+                    };
                 }).ToList()
             };
 
@@ -1103,27 +1157,165 @@ namespace ProyectoGrupalTennis.Controllers
         }
 
 
-        // GET: /Usuario/DescargarComprobante/ USER-05-004 – Descargar comprobante de pago
+        // GET: /Usuario/DescargarComprobante/
+        // USER-05-004 – Descargar comprobante de pago
 
         [HttpGet]
         public async Task<IActionResult> DescargarComprobante(int idPago)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(
+                System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
             var pago = await _context.Pagos
                 .Include(p => p.Alumno)
                 .Include(p => p.Factura)
-                .FirstOrDefaultAsync(p => p.IdPago == idPago && p.IdAlumno == userId);
+                .FirstOrDefaultAsync(p =>
+                    p.IdPago == idPago &&
+                    p.IdAlumno == userId);
 
             if (pago == null)
             {
-                TempData["Error"] = "No se encontró el pago seleccionado.";
-                return RedirectToAction(nameof(HistorialPagos));
+                TempData["Error"] =
+                    "No se encontró el pago seleccionado.";
+
+                return RedirectToAction(
+                    nameof(HistorialPagos));
             }
 
-            var logoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "logo-mmp.png");
+            // =========================================================
+            // DATOS PARA SOLICITUDES DE CLASE
+            // =========================================================
+
+            string? referenciaSolicitud = null;
+            string? nombreServicio = null;
+            DateTime? fechaClase = null;
+            TimeSpan? horaInicioClase = null;
+            TimeSpan? horaFinClase = null;
+            string? profesorClase = null;
+            string? canchaClase = null;
+
+            // =========================================================
+            // DATOS PARA CURSOS PROGRAMADOS / MATRÍCULAS
+            // =========================================================
+
+            string? nombreCursoProgramado = null;
+            string? nivelCursoProgramado = null;
+            string? diaCursoProgramado = null;
+            string? horarioCursoProgramado = null;
+            string? profesorCursoProgramado = null;
+
+            // =========================================================
+            // SI EL PAGO VIENE DE UNA SOLICITUD DE CLASE
+            // =========================================================
+
+            if (pago.TipoPago == "Solicitud de clase" &&
+                !string.IsNullOrWhiteSpace(pago.Observaciones))
+            {
+                var match =
+                    System.Text.RegularExpressions.Regex.Match(
+                        pago.Observaciones,
+                        @"SOL-(\d+)");
+
+                if (match.Success &&
+                    int.TryParse(
+                        match.Groups[1].Value,
+                        out int idSolicitud))
+                {
+                    var solicitud = await _context.SolicitudesCurso
+                        .Include(s => s.ProfesorPropuesto)
+                        .Include(s => s.CanchaPropuesta)
+                        .FirstOrDefaultAsync(s =>
+                            s.IdSolicitudCurso == idSolicitud &&
+                            s.IdAlumno == userId);
+
+                    if (solicitud != null)
+                    {
+                        referenciaSolicitud =
+                            $"SOL-{solicitud.IdSolicitudCurso:D4}";
+
+                        nombreServicio =
+                            solicitud.NombreCurso;
+
+                        fechaClase =
+                            solicitud.FechaPropuesta;
+
+                        horaInicioClase =
+                            solicitud.HoraInicioPropuesta;
+
+                        horaFinClase =
+                            solicitud.HoraFinPropuesta;
+
+                        profesorClase =
+                            solicitud.ProfesorPropuesto != null
+                                ? $"{solicitud.ProfesorPropuesto.Nombre} " +
+                                  $"{solicitud.ProfesorPropuesto.Apellidos}"
+                                : null;
+
+                        canchaClase =
+                            solicitud.CanchaPropuesta?.Nombre;
+                    }
+                }
+            }
+
+            // =========================================================
+            // SI EL PAGO VIENE DE UNA MATRÍCULA / CURSO PROGRAMADO
+            // =========================================================
+
+            if (pago.TipoPago == "Matricula" &&
+                pago.IdCurso.HasValue)
+            {
+                var curso = await _context.Cursos
+                    .Include(c => c.Horarios)
+                    .Include(c => c.Profesor)
+                    .FirstOrDefaultAsync(c =>
+                        c.IdCurso == pago.IdCurso.Value);
+
+                if (curso != null)
+                {
+                    nombreCursoProgramado =
+                        curso.Nombre;
+
+                    nivelCursoProgramado =
+                        curso.Nivel;
+
+                    if (curso.Horarios != null &&
+                        curso.Horarios.Any())
+                    {
+                        diaCursoProgramado =
+                            string.Join(
+                                ", ",
+                                curso.Horarios.Select(h =>
+                                    h.DiaSemana));
+
+                        horarioCursoProgramado =
+                            string.Join(
+                                " | ",
+                                curso.Horarios.Select(h =>
+                                    $"{h.HoraInicio:hh\\:mm} - " +
+                                    $"{h.HoraFin:hh\\:mm}"));
+                    }
+
+                    profesorCursoProgramado =
+                        curso.Profesor != null
+                            ? $"{curso.Profesor.Nombre} " +
+                              $"{curso.Profesor.Apellidos}"
+                            : null;
+                }
+            }
+
+            // Texto visible del tipo de pago
+            var conceptoMostrado =
+                pago.TipoPago == "Matricula"
+                    ? "Curso programado"
+                    : pago.TipoPago;
+
+            var logoPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "images",
+                "logo-mmp.png");
 
             var pdf = Document.Create(container =>
             {
@@ -1132,75 +1324,285 @@ namespace ProyectoGrupalTennis.Controllers
                     page.Margin(45);
                     page.Size(PageSizes.A4);
 
+                    // =====================================================
+                    // ENCABEZADO
+                    // =====================================================
+
                     page.Header().Row(row =>
                     {
                         if (System.IO.File.Exists(logoPath))
                         {
-                            row.RelativeItem().Height(70).Image(logoPath).FitHeight();
+                            row.RelativeItem()
+                                .Height(70)
+                                .Image(logoPath)
+                                .FitHeight();
                         }
 
-                        row.RelativeItem().AlignRight().Column(col =>
-                        {
-                            col.Item().Text("COMPROBANTE DE PAGO").FontSize(20).Bold();
-                            col.Item().Text($"Pago No. PAG-{pago.IdPago}").FontSize(10);
-                            col.Item().Text($"Fecha de emisión: {DateTime.Now:dd/MM/yyyy}").FontSize(10);
-                        });
+                        row.RelativeItem()
+                            .AlignRight()
+                            .Column(col =>
+                            {
+                                col.Item()
+                                    .Text("COMPROBANTE DE PAGO")
+                                    .FontSize(20)
+                                    .Bold();
+
+                                col.Item()
+                                    .Text($"Pago No. PAG-{pago.IdPago}")
+                                    .FontSize(10);
+
+                                col.Item()
+                                    .Text(
+                                        $"Fecha de emisión: " +
+                                        $"{DateTime.Now:dd/MM/yyyy}")
+                                    .FontSize(10);
+                            });
                     });
 
-                    page.Content().PaddingTop(30).Column(col =>
-                    {
-                        col.Spacing(14);
+                    // =====================================================
+                    // CONTENIDO
+                    // =====================================================
 
-                        col.Item().Text("Datos del alumno").FontSize(14).Bold();
-                        col.Item().Text($"Alumno: {pago.Alumno.Nombre} {pago.Alumno.Apellido}");
-                        col.Item().Text($"Correo: {pago.Alumno.Email}");
-
-                        col.Item().LineHorizontal(1);
-
-                        col.Item().Text("Detalle del pago").FontSize(14).Bold();
-                        col.Item().Text($"Concepto: {pago.TipoPago}");
-                        col.Item().Text($"Método de pago: {pago.MetodoPago}");
-                        col.Item().Text($"Fecha de pago: {pago.FechaPago:dd/MM/yyyy}");
-                        col.Item().Text($"Estado del pago: {pago.Estado}");
-
-                        col.Item().Text($"Monto cancelado: ₡{pago.Monto:N0}")
-                            .FontSize(16)
-                            .Bold();
-
-                        col.Item().LineHorizontal(1);
-
-                        col.Item().Text("Datos de factura").FontSize(14).Bold();
-
-                        if (pago.Factura != null)
+                    page.Content()
+                        .PaddingTop(30)
+                        .Column(col =>
                         {
-                            col.Item().Text($"Número de factura: {pago.Factura.NumeroFactura}");
-                            col.Item().Text($"Fecha de factura: {pago.Factura.FechaFactura:dd/MM/yyyy}");
-                        }
-                        else
-                        {
-                            col.Item().Text("Factura: Pendiente de emisión");
-                        }
+                            col.Spacing(14);
 
-                        if (!string.IsNullOrWhiteSpace(pago.Observaciones))
-                        {
+                            // ---------------------------------------------
+                            // DATOS DEL ALUMNO
+                            // ---------------------------------------------
+
+                            col.Item()
+                                .Text("Datos del alumno")
+                                .FontSize(14)
+                                .Bold();
+
+                            col.Item()
+                                .Text(
+                                    $"Alumno: " +
+                                    $"{pago.Alumno.Nombre} " +
+                                    $"{pago.Alumno.Apellido}");
+
+                            col.Item()
+                                .Text(
+                                    $"Correo: {pago.Alumno.Email}");
+
                             col.Item().LineHorizontal(1);
-                            col.Item().Text("Observaciones").FontSize(14).Bold();
-                            col.Item().Text(pago.Observaciones);
-                        }
 
-                        col.Item().PaddingTop(25).Text(
-                            "Este documento corresponde a un comprobante de pago generado por el sistema. No sustituye la factura electrónica emitida mediante el sistema del Ministerio de Hacienda."
-                        ).FontSize(9).Italic();
-                    });
+                            // ---------------------------------------------
+                            // DETALLE DEL PAGO
+                            // ---------------------------------------------
+
+                            col.Item()
+                                .Text("Detalle del pago")
+                                .FontSize(14)
+                                .Bold();
+
+                            col.Item()
+                                .Text(
+                                    $"Concepto: {conceptoMostrado}");
+
+                            // =============================================
+                            // DATOS DE SOLICITUD DE CLASE
+                            // =============================================
+
+                            if (!string.IsNullOrWhiteSpace(
+                                referenciaSolicitud))
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Referencia: " +
+                                        $"{referenciaSolicitud}");
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(
+                                nombreServicio))
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Clase o paquete: " +
+                                        $"{nombreServicio}");
+                            }
+
+                            if (fechaClase.HasValue)
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Fecha de clase: " +
+                                        $"{fechaClase.Value:dd/MM/yyyy}");
+                            }
+
+                            if (horaInicioClase.HasValue &&
+                                horaFinClase.HasValue)
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Horario: " +
+                                        $"{horaInicioClase.Value:hh\\:mm} - " +
+                                        $"{horaFinClase.Value:hh\\:mm}");
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(
+                                profesorClase))
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Profesor: {profesorClase}");
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(
+                                canchaClase))
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Cancha: {canchaClase}");
+                            }
+
+                            // =============================================
+                            // DATOS DE CURSO PROGRAMADO / MATRÍCULA
+                            // =============================================
+
+                            if (!string.IsNullOrWhiteSpace(
+                                nombreCursoProgramado))
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Curso: " +
+                                        $"{nombreCursoProgramado}");
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(
+                                nivelCursoProgramado))
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Nivel: " +
+                                        $"{nivelCursoProgramado}");
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(
+                                diaCursoProgramado))
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Día: " +
+                                        $"{diaCursoProgramado}");
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(
+                                horarioCursoProgramado))
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Horario: " +
+                                        $"{horarioCursoProgramado}");
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(
+                                profesorCursoProgramado))
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Profesor: " +
+                                        $"{profesorCursoProgramado}");
+                            }
+
+                            // ---------------------------------------------
+                            // INFORMACIÓN FINANCIERA
+                            // ---------------------------------------------
+
+                            col.Item()
+                                .Text(
+                                    $"Método de pago: " +
+                                    $"{pago.MetodoPago}");
+
+                            col.Item()
+                                .Text(
+                                    $"Fecha de pago: " +
+                                    $"{pago.FechaPago:dd/MM/yyyy}");
+
+                            col.Item()
+                                .Text(
+                                    $"Estado del pago: " +
+                                    $"{pago.Estado}");
+
+                            col.Item()
+                                .Text(
+                                    $"Monto cancelado: " +
+                                    $"₡{pago.Monto:N0}")
+                                .FontSize(16)
+                                .Bold();
+
+                            col.Item().LineHorizontal(1);
+
+                            // ---------------------------------------------
+                            // COMPROBANTE INTERNO
+                            // ---------------------------------------------
+
+                            col.Item()
+                                .Text("Datos del comprobante")
+                                .FontSize(14)
+                                .Bold();
+
+                            if (pago.Factura != null)
+                            {
+                                col.Item()
+                                    .Text(
+                                        $"Número de comprobante: " +
+                                        $"{pago.Factura.NumeroFactura}");
+
+                                col.Item()
+                                    .Text(
+                                        $"Fecha del comprobante: " +
+                                        $"{pago.Factura.FechaFactura:dd/MM/yyyy}");
+                            }
+                            else
+                            {
+                                col.Item()
+                                    .Text(
+                                        "Comprobante: " +
+                                        "Pendiente de generación");
+                            }
+
+                            // ---------------------------------------------
+                            // OBSERVACIONES
+                            // ---------------------------------------------
+
+                            if (!string.IsNullOrWhiteSpace(
+                                pago.Observaciones))
+                            {
+                                col.Item().LineHorizontal(1);
+
+                                col.Item()
+                                    .Text("Observaciones")
+                                    .FontSize(14)
+                                    .Bold();
+
+                                col.Item()
+                                    .Text(pago.Observaciones);
+                            }
+
+                          
+                        });
+
+                    // =====================================================
+                    // PIE
+                    // =====================================================
 
                     page.Footer()
                         .AlignCenter()
-                        .Text("Academia de Tennis M.M.P. | Comprobante generado automáticamente")
+                        .Text(
+                            "Academia de Tennis M.M.P. | " +
+                            "Comprobante generado automáticamente")
                         .FontSize(9);
                 });
             }).GeneratePdf();
 
-            return File(pdf, "application/pdf", $"Comprobante_PAG-{pago.IdPago}.pdf");
+            return File(
+                pdf,
+                "application/pdf",
+                $"Comprobante_PAG-{pago.IdPago}.pdf");
         }
 
         //// GET: /Usuario/Notificaciones - USER-09-010, USER-09-008, USER-09-009
