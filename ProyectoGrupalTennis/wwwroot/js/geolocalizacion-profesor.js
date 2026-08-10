@@ -5,6 +5,22 @@
         return;
     }
 
+    const iconoMarcador = L.icon({
+        iconUrl:
+            "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon.png",
+
+        iconRetinaUrl:
+            "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+
+        shadowUrl:
+            "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png",
+
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
     const mapas =
         document.querySelectorAll(".mapa-profesor");
 
@@ -46,7 +62,9 @@
             }
         ).addTo(mapa);
 
-        L.marker([latitud, longitud])
+        L.marker([latitud, longitud], {
+            icon: iconoMarcador
+        })
             .addTo(mapa)
             .bindPopup(
                 `<strong>${escaparHtml(alumno)}</strong><br>` +
