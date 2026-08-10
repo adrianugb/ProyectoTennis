@@ -75,11 +75,15 @@
                         <input asp-for="IdUbicacion"
                                type="hidden" />
 
-                        <input asp-for="Latitud"
-                               type="hidden" />
+                        <input type="hidden"
+                               id="Latitud"
+                               name="LatitudTexto"
+                               value="@Model.Latitud.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
 
-                        <input asp-for="Longitud"
-                               type="hidden" />
+                        <input type="hidden"
+                               id="Longitud"
+                               name="LongitudTexto"
+                               value="@Model.Longitud.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
 
                         <div asp-validation-summary="ModelOnly"
                              class="alert alert-danger">

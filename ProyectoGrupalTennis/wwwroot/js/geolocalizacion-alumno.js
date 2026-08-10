@@ -198,6 +198,21 @@
     ) {
         return;
     }
+    const iconoMarcador = L.icon({
+        iconUrl:
+            "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon.png",
+
+        iconRetinaUrl:
+            "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+
+        shadowUrl:
+            "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png",
+
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
 
     function convertirNumero(valor) {
         if (!valor) {
@@ -247,15 +262,11 @@
         const longitudFormateada =
             Number(longitud).toFixed(7);
 
-        /*
-         * ASP.NET utiliza configuración regional en español,
-         * por eso enviamos los decimales con coma.
-         */
         latitudInput.value =
-            latitudFormateada.replace(".", ",");
+            latitudFormateada;
 
         longitudInput.value =
-            longitudFormateada.replace(".", ",");
+            longitudFormateada;
 
         textoLatitud.textContent =
             latitudFormateada;
@@ -274,7 +285,8 @@
             marcador = L.marker(
                 [latitud, longitud],
                 {
-                    draggable: true
+                    draggable: true,
+                    icon: iconoMarcador
                 }
             ).addTo(mapa);
 

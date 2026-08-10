@@ -86,46 +86,6 @@ namespace ProyectoGrupalTennis.Controllers
                     "La longitud seleccionada no es válida.");
             }
 
-            if (!ModelState.IsValid)
-            {
-                return View(zona);
-            }
-
-            bool nombreRepetido = await _context.ZonasCobertura
-                .AnyAsync(z => z.Nombre.ToLower() == zona.Nombre.ToLower());
-
-            if (nombreRepetido)
-            {
-                ModelState.AddModelError(
-                    nameof(zona.Nombre),
-                    "Ya existe una zona de cobertura con ese nombre.");
-
-                return View(zona);
-            }
-
-            if (zona.CostoAdicional < 0)
-            {
-                ModelState.AddModelError(
-                    nameof(zona.CostoAdicional),
-                    "El costo adicional no puede ser negativo.");
-            }
-
-            if (zona.RadioMaximoKm.HasValue &&
-                zona.RadioMaximoKm.Value <= 0)
-            {
-                ModelState.AddModelError(
-                    nameof(zona.RadioMaximoKm),
-                    "El radio máximo debe ser mayor que cero.");
-            }
-
-            if (zona.TarifaPorKm.HasValue &&
-                zona.TarifaPorKm.Value < 0)
-            {
-                ModelState.AddModelError(
-                    nameof(zona.TarifaPorKm),
-                    "La tarifa por kilómetro no puede ser negativa.");
-            }
-
             if (!zona.LatitudCentro.HasValue ||
                 !zona.LongitudCentro.HasValue)
             {
@@ -159,7 +119,50 @@ namespace ProyectoGrupalTennis.Controllers
 
             zona.Nombre = zona.Nombre.Trim();
 
+            
+            bool nombreRepetido =
+                await _context.ZonasCobertura
+                    .AnyAsync(z =>
+                        z.Nombre.ToLower() ==
+                        zona.Nombre.ToLower());
+
+            if (nombreRepetido)
+            {
+                ModelState.AddModelError(
+                    nameof(zona.Nombre),
+                    "Ya existe una zona de cobertura con ese nombre.");
+            }
+
+            if (zona.CostoAdicional < 0)
+            {
+                ModelState.AddModelError(
+                    nameof(zona.CostoAdicional),
+                    "El costo adicional no puede ser negativo.");
+            }
+
+            if (zona.RadioMaximoKm.HasValue &&
+                zona.RadioMaximoKm.Value <= 0)
+            {
+                ModelState.AddModelError(
+                    nameof(zona.RadioMaximoKm),
+                    "El radio máximo debe ser mayor que cero.");
+            }
+
+            if (zona.TarifaPorKm.HasValue &&
+                zona.TarifaPorKm.Value < 0)
+            {
+                ModelState.AddModelError(
+                    nameof(zona.TarifaPorKm),
+                    "La tarifa por kilómetro no puede ser negativa.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(zona);
+            }
+
             _context.ZonasCobertura.Add(zona);
+
             await _context.SaveChangesAsync();
 
             TempData["Success"] =
@@ -200,17 +203,21 @@ namespace ProyectoGrupalTennis.Controllers
             ModelState.Remove(nameof(zona.LatitudCentro));
             ModelState.Remove(nameof(zona.LongitudCentro));
 
+            const NumberStyles estilosCoordenada =
+                NumberStyles.Float |
+                NumberStyles.AllowLeadingSign;
+
             bool latitudValida =
                 decimal.TryParse(
                     LatitudCentroTexto,
-                    NumberStyles.Float,
+                    estilosCoordenada,
                     CultureInfo.InvariantCulture,
                     out decimal latitud);
 
             bool longitudValida =
                 decimal.TryParse(
                     LongitudCentroTexto,
-                    NumberStyles.Float,
+                    estilosCoordenada,
                     CultureInfo.InvariantCulture,
                     out decimal longitud);
 
@@ -413,7 +420,10 @@ namespace ProyectoGrupalTennis.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Usuario")]
-        public async Task<IActionResult> MiUbicacion(UbicacionAlumno modelo)
+        public async Task<IActionResult> MiUbicacion(
+            UbicacionAlumno modelo,
+            string? LatitudTexto,
+            string? LongitudTexto)
         {
             string? idAlumno = _userManager.GetUserId(User);
 
@@ -424,6 +434,43 @@ namespace ProyectoGrupalTennis.Controllers
 
             modelo.IdAlumno = idAlumno;
             modelo.EsPrincipal = true;
+
+            ModelState.Remove(nameof(modelo.Latitud));
+            ModelState.Remove(nameof(modelo.Longitud));
+
+            const NumberStyles estilosCoordenada =
+                NumberStyles.Float |
+                NumberStyles.AllowLeadingSign;
+
+            if (decimal.TryParse(
+                LatitudTexto,
+                estilosCoordenada,
+                CultureInfo.InvariantCulture,
+                out decimal latitud))
+            {
+                modelo.Latitud = latitud;
+            }
+            else
+            {
+                ModelState.AddModelError(
+                    nameof(modelo.Latitud),
+                    "La latitud seleccionada no es válida.");
+            }
+
+            if (decimal.TryParse(
+                LongitudTexto,
+                estilosCoordenada,
+                CultureInfo.InvariantCulture,
+                out decimal longitud))
+            {
+                modelo.Longitud = longitud;
+            }
+            else
+            {
+                ModelState.AddModelError(
+                    nameof(modelo.Longitud),
+                    "La longitud seleccionada no es válida.");
+            }
 
             // Evita errores de validación por propiedades que no vienen del formulario.
             ModelState.Remove(nameof(modelo.IdAlumno));
@@ -550,9 +597,36 @@ namespace ProyectoGrupalTennis.Controllers
         [HttpGet]
         [Authorize(Roles = "Usuario")]
         public async Task<IActionResult> ObtenerZona(
-            decimal latitud,
-            decimal longitud)
+    string? latitud,
+    string? longitud)
         {
+            const NumberStyles estilosCoordenada =
+                NumberStyles.Float |
+                NumberStyles.AllowLeadingSign;
+
+            bool latitudValida =
+                decimal.TryParse(
+                    latitud,
+                    estilosCoordenada,
+                    CultureInfo.InvariantCulture,
+                    out decimal latitudDecimal);
+
+            bool longitudValida =
+                decimal.TryParse(
+                    longitud,
+                    estilosCoordenada,
+                    CultureInfo.InvariantCulture,
+                    out decimal longitudDecimal);
+
+            if (!latitudValida || !longitudValida)
+            {
+                return Json(new
+                {
+                    encontrada = false,
+                    error = "Las coordenadas seleccionadas no son válidas."
+                });
+            }
+
             var zonas = await _context.ZonasCobertura
                 .Where(z =>
                     z.Activa &&
@@ -566,8 +640,8 @@ namespace ProyectoGrupalTennis.Controllers
             foreach (var zona in zonas)
             {
                 double distancia = CalcularDistanciaKm(
-                    (double)latitud,
-                    (double)longitud,
+                    (double)latitudDecimal,
+                    (double)longitudDecimal,
                     (double)zona.LatitudCentro!.Value,
                     (double)zona.LongitudCentro!.Value);
 
@@ -588,7 +662,8 @@ namespace ProyectoGrupalTennis.Controllers
 
             bool dentroRadio =
                 !zonaMasCercana.RadioMaximoKm.HasValue ||
-                menorDistancia <= (double)zonaMasCercana.RadioMaximoKm.Value;
+                menorDistancia <=
+                (double)zonaMasCercana.RadioMaximoKm.Value;
 
             decimal distanciaDecimal =
                 Convert.ToDecimal(menorDistancia);
@@ -607,25 +682,31 @@ namespace ProyectoGrupalTennis.Controllers
 
             costoDesplazamiento =
                 Math.Round(costoDesplazamiento, 2);
+
             return Json(new
             {
                 encontrada = true,
 
-                idZona = zonaMasCercana.IdZona,
+                idZona =
+                    zonaMasCercana.IdZona,
 
-                nombre = zonaMasCercana.Nombre,
+                nombre =
+                    zonaMasCercana.Nombre,
 
-                costo = zonaMasCercana.CostoAdicional,
+                costo =
+                    zonaMasCercana.CostoAdicional,
 
-                radio = zonaMasCercana.RadioMaximoKm,
+                radio =
+                    zonaMasCercana.RadioMaximoKm,
 
-                tarifaKm = zonaMasCercana.TarifaPorKm,
+                tarifaKm =
+                    zonaMasCercana.TarifaPorKm,
 
-                distancia = Math.Round(menorDistancia, 2),
+                distancia =
+                    Math.Round(menorDistancia, 2),
 
-                costoPorDistancia = Math.Round(
-                    costoPorDistancia,
-                    2),
+                costoPorDistancia =
+                    Math.Round(costoPorDistancia, 2),
 
                 costoDesplazamiento,
 
