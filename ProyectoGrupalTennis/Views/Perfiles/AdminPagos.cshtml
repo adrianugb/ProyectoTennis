@@ -13,25 +13,42 @@
 
             <div class="perfil-header">
                 <div>
+
+                
                     <h1 class="perfil-title">Gestión de Pagos</h1>
                     <p class="perfil-subtitle">
                         Consulte el historial general de pagos registrados en el sistema.
                     </p>
                 </div>
 
+
                 <div class="perfil-badge">
                     <i class="fa fa-money"></i> Pagos Administrativos
                 </div>
             </div>
 
+            
+            @if (TempData["MensajeExito"] != null)
+            {
+                <div class="alert alert-success mb-3">
+                    @TempData["MensajeExito"]
+                </div>
+            }
+
+            @if (TempData["MensajeError"] != null)
+            {
+                <div class="alert alert-danger mb-3">
+                    @TempData["MensajeError"]
+                </div>
+            }
+
             <div class="perfil-table-block">
                 <div class="perfil-table-header">
                     <h2 class="perfil-table-title">Historial general de pagos</h2>
 
-                    <div class="perfil-actions">
-                        <a asp-controller="Home" asp-action="AdminFacturacion" class="perfil-btn-outline">
-                            <i class="fa fa-arrow-left"></i> Regresar
-                        </a>
+                    <a asp-controller="Home" asp-action="PerfilAdmin" class="perfil-btn-outline">
+                        <i class="fa fa-arrow-left"></i> Regresar a Mi Perfil
+                    </a>
 
                         <a asp-action="RegistrarPagoManual"
                            class="perfil-btn">
@@ -71,7 +88,7 @@
                         </select>
 
                         <select name="factura" class="form-select">
-                            <option value="">Todas las facturas</option>
+                            <option value="">Todos los comprobantes</option>
                             <option value="Disponible" selected="@(Model.FiltroFactura == "Disponible")">Disponible</option>
                             <option value="Pendiente" selected="@(Model.FiltroFactura == "Pendiente")">Pendiente</option>
                             <option value="No disponible" selected="@(Model.FiltroFactura == "No disponible")">No disponible</option>
@@ -119,8 +136,8 @@
                                 <th>Monto</th>
                                 <th>Fecha de pago</th>
                                 <th>Estado del pago</th>
-                                <th>Factura</th>
-                                <th>Fecha factura</th>
+                                <th>Comprobante</th>
+                                <th>Fecha comprobante</th>
                                 <th>Comprobante</th>
                                 <th>Acción</th>
                             </tr>
@@ -161,7 +178,11 @@
 
                                             @referencia
                                         </td>
-                                        <td>@pago.Concepto</td>
+                                        <td>
+                                            @(pago.Concepto == "Matricula"
+                                                ? "Curso programado"
+                                                : pago.Concepto)
+                                        </td>
                                         <td>@pago.MetodoPago</td>
                                         <td>
                                             @if (pago.EsADomicilio)
@@ -234,7 +255,7 @@
                                                 <form asp-action="ConfirmarPago"
                                                       method="post"
                                                       class="d-inline"
-                                                      onsubmit="return confirm('¿Desea confirmar el pago y generar la factura?');">
+                                                      onsubmit="return confirm('¿Desea confirmar el pago y generar el comprobante?');">
 
                                                     @Html.AntiForgeryToken()
 
@@ -246,7 +267,7 @@
                                                             class="btn btn-success btn-sm">
 
                                                         <i class="fa fa-check-circle me-1"></i>
-                                                        Confirmar y facturar
+                                                        Confirmar pago
                                                     </button>
                                                 </form>
 
@@ -275,7 +296,7 @@
                                             {
                                                 <a asp-action="DescargarFactura" asp-route-idPago="@pago.IdPago"
                                                    class="btn btn-outline-primary btn-sm">
-                                                    <i class="fa fa-download"></i> Factura
+                                                    <i class="fa fa-download"></i> Comprobante
                                                 </a>
                                             }
 

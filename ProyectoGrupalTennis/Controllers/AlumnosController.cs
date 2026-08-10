@@ -41,21 +41,46 @@ namespace ProyectoGrupalTennis.Controllers
         // POST: /Alumnos/Agregar
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Agregar(string Nombre, string Apellido,
-            string Email, string Telefono, string Contrasena)
+        public async Task<IActionResult> Agregar(
+            string Nombre,
+            string Apellido,
+            string Email,
+            string Telefono,
+            string Contrasena)
         {
-            if (string.IsNullOrWhiteSpace(Nombre) || string.IsNullOrWhiteSpace(Apellido)
-                || string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Contrasena))
+            if (string.IsNullOrWhiteSpace(Nombre) ||
+                string.IsNullOrWhiteSpace(Apellido) ||
+                string.IsNullOrWhiteSpace(Email) ||
+                string.IsNullOrWhiteSpace(Contrasena))
             {
-                ViewBag.Error = "Todos los campos obligatorios deben completarse.";
+                ViewBag.Error =
+                    "Todos los campos obligatorios deben completarse.";
+
+                MantenerDatosAlumno(
+                    Nombre,
+                    Apellido,
+                    Email,
+                    Telefono);
+
                 return View("~/Views/Alumnos/Agregar.cshtml");
             }
 
             var correo = Email.Trim().ToLower();
-            var existente = await _userManager.FindByEmailAsync(correo);
+
+            var existente =
+                await _userManager.FindByEmailAsync(correo);
+
             if (existente != null)
             {
-                ViewBag.Error = "Ya existe un alumno con ese correo electrónico.";
+                ViewBag.Error =
+                    "Ya existe un alumno con ese correo electrónico.";
+
+                MantenerDatosAlumno(
+                    Nombre,
+                    Apellido,
+                    Email,
+                    Telefono);
+
                 return View("~/Views/Alumnos/Agregar.cshtml");
             }
 
@@ -70,16 +95,56 @@ namespace ProyectoGrupalTennis.Controllers
                 Bloqueado = false
             };
 
-            var resultado = await _userManager.CreateAsync(alumno, Contrasena);
+            var resultado =
+                await _userManager.CreateAsync(
+                    alumno,
+                    Contrasena);
+
             if (!resultado.Succeeded)
             {
-                ViewBag.Error = string.Join(" ", resultado.Errors.Select(e => e.Description));
+                ViewBag.Error =
+                    string.Join(
+                        " ",
+                        resultado.Errors.Select(e => e.Description));
+
+                MantenerDatosAlumno(
+                    Nombre,
+                    Apellido,
+                    Email,
+                    Telefono);
+
                 return View("~/Views/Alumnos/Agregar.cshtml");
             }
 
-            await _userManager.AddToRoleAsync(alumno, "Usuario");
+            var resultadoRol =
+                await _userManager.AddToRoleAsync(
+                    alumno,
+                    "Usuario");
+
+            if (!resultadoRol.Succeeded)
+            {
+                ViewBag.Error =
+                    "El alumno fue creado, pero no se pudo asignar el rol de usuario.";
+
+                return View("~/Views/Alumnos/Agregar.cshtml");
+            }
+
             return RedirectToAction(nameof(Index));
         }
+
+        private void MantenerDatosAlumno(
+            string Nombre,
+            string Apellido,
+            string Email,
+            string Telefono)
+        {
+            ViewBag.Nombre = Nombre;
+            ViewBag.Apellido = Apellido;
+            ViewBag.Email = Email;
+            ViewBag.Telefono = Telefono;
+        }
+
+
 
         // GET: /Alumnos/Editar/id
         public async Task<IActionResult> Editar(string id)

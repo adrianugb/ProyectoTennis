@@ -9,7 +9,16 @@
         <div class="perfil-container">
 
             <div class="perfil-header">
+
+            
                 <div>
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger mb-3">
+                            @ViewBag.Error
+                        </div>
+                    }
                     <h1 class="perfil-title">Agregar Alumno</h1>
                     <p class="perfil-subtitle">Completa el formulario para registrar un nuevo alumno.</p>
                 </div>
