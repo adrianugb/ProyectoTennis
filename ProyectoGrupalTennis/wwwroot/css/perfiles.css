@@ -1118,3 +1118,117 @@
         color: #666;
         margin: 0;
     }
+
+
+/* ================================
+   TARJETA DE PAGO SINPE
+================================ */
+
+.sinpe-card {
+    border: 1px solid #dcefe4;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+.sinpe-card-header {
+    background: linear-gradient(135deg, #198754, #20a464);
+    color: white;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+    .sinpe-card-header h5 {
+        font-weight: 700;
+    }
+
+    .sinpe-card-header small {
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+.sinpe-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+}
+
+.sinpe-card-body {
+    padding: 20px 22px;
+}
+
+.sinpe-info-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid #eeeeee;
+}
+
+    .sinpe-info-row:last-of-type {
+        border-bottom: none;
+    }
+
+.sinpe-info-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 10px;
+    background: #eaf7ef;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sinpe-info-row small {
+    display: block;
+    color: #777;
+    margin-bottom: 2px;
+}
+
+.sinpe-info-row strong {
+    display: block;
+    color: #333;
+    font-size: 15px;
+}
+
+.sinpe-monto {
+    color: #198754 !important;
+    font-size: 18px !important;
+}
+
+.sinpe-aviso {
+    margin-top: 18px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    background: #fff8e1;
+    color: #695719;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+}
+
+/* RESPONSIVE */
+@media (max-width: 576px) {
+
+    .sinpe-card-header {
+        padding: 16px;
+    }
+
+    .sinpe-card-body {
+        padding: 16px;
+    }
+
+    .sinpe-info-row strong {
+        font-size: 14px;
+        word-break: break-word;
+    }
+}

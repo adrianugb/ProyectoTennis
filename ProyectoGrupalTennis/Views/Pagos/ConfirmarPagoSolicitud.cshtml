@@ -295,7 +295,88 @@
                 </div>
 
             </div>
+            <!-- INFORMACIÓN PARA PAGO POR SINPE -->
+            <div class="sinpe-card mt-4">
 
+                <div class="sinpe-card-header">
+                    <div class="sinpe-icon">
+                        <i class="fa fa-mobile-alt"></i>
+                    </div>
+
+                    <div>
+                        <h5 class="mb-0">Pago por SINPE Móvil</h5>
+                        <small>Datos para realizar la transferencia</small>
+                    </div>
+                </div>
+
+                <div class="sinpe-card-body">
+
+                    <div class="sinpe-info-row">
+                        <div class="sinpe-info-icon">
+                            <i class="fa fa-user"></i>
+                        </div>
+
+                        <div>
+                            <small>Nombre del titular</small>
+                            <strong>Academia Tennis Costa Rica S.A.</strong>
+                        </div>
+                    </div>
+
+                    <div class="sinpe-info-row">
+                        <div class="sinpe-info-icon">
+                            <i class="fa fa-phone"></i>
+                        </div>
+
+                        <div>
+                            <small>Número SINPE Móvil</small>
+                            <strong>8888-1234</strong>
+                        </div>
+                    </div>
+
+                    <div class="sinpe-info-row">
+                        <div class="sinpe-info-icon">
+                            <i class="fa fa-university"></i>
+                        </div>
+
+                        <div>
+                            <small>Cuenta IBAN para depósito</small>
+                            <strong>CR05015202001026284066</strong>
+                        </div>
+                    </div>
+
+                    <div class="sinpe-info-row">
+                        <div class="sinpe-info-icon">
+                            <i class="fa fa-money-bill-wave"></i>
+                        </div>
+
+                        <div>
+                            <small>Monto a transferir</small>
+
+                            <strong class="sinpe-monto">
+                                @if (esUsd)
+                                {
+                                    <span>$@Model.MontoTotal.ToString("N2")</span>
+                                }
+                                else
+                                {
+                                    <span>₡@Model.MontoTotal.ToString("N0")</span>
+                                }
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="sinpe-aviso">
+                        <i class="fa fa-info-circle me-2"></i>
+                        <span>
+                            En el detalle de la transferencia indique su nombre
+                            o el número de solicitud
+                            <strong>#@Model.IdSolicitudCurso</strong>.
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
             <hr class="my-4" />
 
             <form asp-controller="SolicitudesCurso"
