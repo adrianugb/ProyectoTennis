@@ -11,6 +11,9 @@
 
         public string Moneda { get; set; } = "CRC";
 
+        public decimal TipoCambioUsd { get; set; }
+
+        public decimal CostoDesplazamientoUsd { get; set; }
         public bool EsADomicilio { get; set; }
 
         public string? DireccionDomicilio { get; set; }

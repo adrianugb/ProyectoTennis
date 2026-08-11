@@ -98,20 +98,43 @@
 
                             <div class="col-md-6">
                                 <div class="dato-zona">
-                                    <small>Costo adicional de la zona</small>
 
-                                    <strong>
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+
+                                        <small>
+                                            Costo adicional de la zona
+                                        </small>
+
                                         @if (Model.Zona != null)
                                         {
-                                            @($"₡{Model.Zona.CostoAdicional:N2}")
+                                            <button type="button"
+                                                    id="btnCambiarMoneda"
+                                                    class="btn btn-outline-secondary btn-sm">
+
+                                                <i class="fa fa-dollar-sign me-1"></i>
+                                                Ver en dólares
+
+                                            </button>
                                         }
-                                        else
-                                        {
-                                            <span class="text-muted">
-                                                No disponible
-                                            </span>
-                                        }
-                                    </strong>
+
+                                    </div>
+
+                                    @if (Model.Zona != null)
+                                    {
+                                        <strong id="costoZonaDetalle"
+                                                data-costo-crc="@Model.Zona.CostoAdicional.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                
+                                            ₡@Model.Zona.CostoAdicional.ToString("N2")
+
+                                        </strong>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            No disponible
+                                        </span>
+                                    }
+
                                 </div>
                             </div>
 

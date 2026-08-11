@@ -231,9 +231,26 @@
                             Costo de desplazamiento
                         </span>
 
-                        <strong>
-                            ₡@Model.CostoDesplazamiento.ToString("N0")
-                        </strong>
+                        <div class="text-end">
+
+                            @if (esUsd)
+                            {
+                                <strong>
+                                    $@Model.CostoDesplazamientoUsd.ToString("N2")
+                                </strong>
+
+                                <small class="text-muted d-block">
+                                    Equivale a ₡@Model.CostoDesplazamiento.ToString("N0")
+                                </small>
+                            }
+                            else
+                            {
+                                <strong>
+                                    ₡@Model.CostoDesplazamiento.ToString("N0")
+                                </strong>
+                            }
+
+                        </div>
 
                     </div>
 
@@ -255,21 +272,12 @@
                 <div class="d-flex justify-content-between align-items-center">
 
                     <span class="fw-bold">
-                        @(esUsd && Model.EsADomicilio
-                            ? "Monto pendiente"
-                            : "Total pendiente")
+                        Total pendiente
                     </span>
 
                     <strong class="fs-4">
 
-                        @if (esUsd && Model.EsADomicilio)
-                        {
-                            <span>
-                                $@Model.Monto.ToString("N2")
-                                + ₡@Model.CostoDesplazamiento.ToString("N0")
-                            </span>
-                        }
-                        else if (esUsd)
+                        @if (esUsd)
                         {
                             <span>
                                 $@Model.MontoTotal.ToString("N2")

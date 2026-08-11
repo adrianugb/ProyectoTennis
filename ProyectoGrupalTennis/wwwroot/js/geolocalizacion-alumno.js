@@ -64,6 +64,20 @@
     const costoTotalZona =
         document.getElementById("costoTotalZona");
 
+    const botonCambiarMoneda =
+        document.getElementById("btnCambiarMonedaZona");
+
+    const TIPO_CAMBIO_USD = 452.51;
+
+    let monedaZona = "CRC";
+
+    let valoresZona = {
+        costo: 0,
+        tarifaKm: 0,
+        costoPorDistancia: 0,
+        costoDesplazamiento: 0
+    };
+
     function formatearColon(valor) {
         const numero = Number(valor || 0);
 
@@ -75,6 +89,90 @@
                 minimumFractionDigits: 2
             }
         ).format(numero);
+    }
+
+    function formatearDolar(valor) {
+        const numero = Number(valor || 0);
+
+        return new Intl.NumberFormat(
+            "en-US",
+            {
+                style: "currency",
+                currency: "USD",
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        ).format(numero);
+    }
+
+    function convertirColonesADolares(valor) {
+        return Number(valor || 0) / TIPO_CAMBIO_USD;
+    }
+
+    function actualizarValoresMoneda() {
+
+        if (monedaZona === "USD") {
+
+            costoZona.textContent =
+                formatearDolar(
+                    convertirColonesADolares(
+                        valoresZona.costo
+                    )
+                );
+
+            tarifaZona.textContent =
+                formatearDolar(
+                    convertirColonesADolares(
+                        valoresZona.tarifaKm
+                    )
+                );
+
+            costoDistanciaZona.textContent =
+                formatearDolar(
+                    convertirColonesADolares(
+                        valoresZona.costoPorDistancia
+                    )
+                );
+
+            costoTotalZona.textContent =
+                formatearDolar(
+                    convertirColonesADolares(
+                        valoresZona.costoDesplazamiento
+                    )
+                );
+
+            if (botonCambiarMoneda) {
+                botonCambiarMoneda.innerHTML =
+                    '<i class="fa fa-money me-1"></i> Ver en colones';
+            }
+
+        } else {
+
+            costoZona.textContent =
+                formatearColon(
+                    valoresZona.costo
+                );
+
+            tarifaZona.textContent =
+                formatearColon(
+                    valoresZona.tarifaKm
+                );
+
+            costoDistanciaZona.textContent =
+                formatearColon(
+                    valoresZona.costoPorDistancia
+                );
+
+            costoTotalZona.textContent =
+                formatearColon(
+                    valoresZona.costoDesplazamiento
+                );
+
+            if (botonCambiarMoneda) {
+                botonCambiarMoneda.innerHTML =
+                    '<i class="fa fa-dollar-sign me-1"></i> Ver en dólares';
+            }
+        }
     }
 
     function limpiarZonaDetectada() {
@@ -144,17 +242,16 @@
                     ? `${Number(datos.radio).toFixed(2)} km`
                     : "Sin límite";
 
-            costoZona.textContent =
-                formatearColon(datos.costo);
+            valoresZona = {
+                costo: Number(datos.costo || 0),
+                tarifaKm: Number(datos.tarifaKm || 0),
+                costoPorDistancia:
+                    Number(datos.costoPorDistancia || 0),
+                costoDesplazamiento:
+                    Number(datos.costoDesplazamiento || 0)
+            };
 
-            tarifaZona.textContent =
-                formatearColon(datos.tarifaKm);
-                
-            costoDistanciaZona.textContent =
-                formatearColon(datos.costoPorDistancia);
-
-            costoTotalZona.textContent =
-                formatearColon(datos.costoDesplazamiento);
+            actualizarValoresMoneda();
 
             resultadoZona.classList.remove("d-none");
             zonaSinDetectar.classList.add("d-none");
@@ -431,6 +528,22 @@
             });
         }
     });
+
+    if (botonCambiarMoneda) {
+
+        botonCambiarMoneda.addEventListener(
+            "click",
+            function () {
+
+                monedaZona =
+                    monedaZona === "CRC"
+                        ? "USD"
+                        : "CRC";
+
+                actualizarValoresMoneda();
+            }
+        );
+    }
 
     window.setTimeout(function () {
         mapa.invalidateSize();

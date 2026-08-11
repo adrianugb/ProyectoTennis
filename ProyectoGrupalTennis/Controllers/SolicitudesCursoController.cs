@@ -1515,25 +1515,56 @@ Notificación automática del sistema
                     costoFijo + costoPorDistancia,
                     2);
             }
-
-            decimal montoBase =
-                solicitud.PrecioSolicitado.Value;
-
+            decimal tipoCambioUsd = 0m;
+            decimal costoDesplazamientoUsd = 0m;
             var moneda =
                 string.IsNullOrWhiteSpace(solicitud.MonedaSolicitada)
                     ? "CRC"
                     : solicitud.MonedaSolicitada.ToUpper();
+            if (moneda == "USD" &&
+                costoDesplazamiento > 0)
+            {
+                tipoCambioUsd = 452.51m;
 
-            decimal montoTotal =
-                moneda == "CRC"
-                    ? montoBase + costoDesplazamiento
-                    : montoBase;
+                costoDesplazamientoUsd =
+                    costoDesplazamiento / tipoCambioUsd;
+            }
+            decimal montoBase =
+    solicitud.PrecioSolicitado.Value;
+
+
+
+            if (moneda == "USD" &&
+                costoDesplazamiento > 0)
+            {
+                tipoCambioUsd = 452.51m;
+
+                costoDesplazamientoUsd =
+                    Math.Round(
+                        costoDesplazamiento / tipoCambioUsd,
+                        2);
+            }
+
+            decimal montoTotal;
+
+            if (moneda == "USD")
+            {
+                montoTotal =
+                    montoBase + costoDesplazamientoUsd;
+            }
+            else
+            {
+                montoTotal =
+                    montoBase + costoDesplazamiento;
+            }
 
             var model = new ConfirmarPagoSolicitudViewModel
             {
                 IdSolicitudCurso =
                     solicitud.IdSolicitudCurso,
-                Moneda = moneda,
+
+                Moneda =
+                    moneda,
 
                 Concepto =
                     solicitud.NombreCurso,
@@ -1590,15 +1621,20 @@ Notificación automática del sistema
                     costoPorDistancia,
 
                 CostoDesplazamiento =
-                    costoDesplazamiento
+                    costoDesplazamiento,
+
+                TipoCambioUsd =
+                    tipoCambioUsd,
+
+                CostoDesplazamientoUsd =
+                    costoDesplazamientoUsd
             };
 
             return View(
                 "~/Views/Pagos/ConfirmarPagoSolicitud.cshtml",
                 model);
         }
-
-        [HttpPost]
+            [HttpPost]
         [Authorize(Roles = "Usuario")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GenerarPagoSolicitud(int id)
@@ -1748,10 +1784,32 @@ Notificación automática del sistema
                     ? "$"
                     : "₡";
 
-            decimal montoTotal =
-                monedaPago == "CRC"
-                    ? montoBase + costoDesplazamiento
-                    : montoBase;
+            decimal tipoCambioUsd = 0m;
+            decimal costoDesplazamientoUsd = 0m;
+
+            if (monedaPago == "USD" &&
+                costoDesplazamiento > 0)
+            {
+                tipoCambioUsd = 452.51m;
+
+                costoDesplazamientoUsd =
+                    Math.Round(
+                        costoDesplazamiento / tipoCambioUsd,
+                        2);
+            }
+
+            decimal montoTotal;
+
+            if (monedaPago == "USD")
+            {
+                montoTotal =
+                    montoBase + costoDesplazamientoUsd;
+            }
+            else
+            {
+                montoTotal =
+                    montoBase + costoDesplazamiento;
+            }
 
             var pago = new Pago
             {
@@ -1842,20 +1900,21 @@ Notificación automática del sistema
                     $"ERROR CORREO ACEPTACIÓN: {ex}");
             }
 
-            if (solicitud.EsADomicilio &&
-                monedaPago == "USD")
+            if (monedaPago == "USD")
             {
                 TempData["Success"] =
                     $"Se generó el pago pendiente por " +
-                    $"${montoBase:N2} + " +
-                    $"₡{costoDesplazamiento:N0} de desplazamiento. " +
+                    $"${montoTotal:N2}. " +
+                    $"El costo de desplazamiento de " +
+                    $"₡{costoDesplazamiento:N0} fue convertido a " +
+                    $"${costoDesplazamientoUsd:N2}. " +
                     "Adjunta el comprobante para completar el proceso.";
             }
             else
             {
                 TempData["Success"] =
                     $"Se generó el pago pendiente por " +
-                    $"{simboloMoneda}{montoTotal:N2}. " +
+                    $"₡{montoTotal:N0}. " +
                     "Adjunta el comprobante para completar el proceso.";
             }
 
