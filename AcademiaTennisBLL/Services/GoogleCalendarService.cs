@@ -16,6 +16,10 @@ namespace ProyectoGrupalTennis.Services
         private readonly IConfiguration _config;
         private readonly AppDbContext _context;
 
+        // Zona horaria de Costa Rica — UTC-6 fijo (no cambia por horario de verano)
+        private static readonly TimeZoneInfo ZonaCR =
+            TimeZoneInfo.FindSystemTimeZoneById("America/Costa_Rica");
+
         public GoogleCalendarService(IConfiguration config, AppDbContext context)
         {
             _config = config;
@@ -28,9 +32,12 @@ namespace ProyectoGrupalTennis.Services
             var flow = CrearFlow();
             var uri = flow.CreateAuthorizationCodeRequest(
                 _config["GoogleCalendar:RedirectUri"]!);
-            uri.State = userId; // guardamos el userId para recuperarlo en el callback
+            uri.State = userId;
             uri.Scope = "https://www.googleapis.com/auth/calendar.events";
-            return uri.Build().ToString();
+
+            var url = uri.Build().ToString();
+            url += "&prompt=consent"; // fuerza que Google devuelva RefreshToken siempre
+            return url;
         }
 
         // Intercambia el código por un token y lo guarda en BD
@@ -86,6 +93,7 @@ namespace ProyectoGrupalTennis.Services
 
             var inicio = fecha.Date + horaInicio;
             var fin = fecha.Date + horaFin;
+            var offsetCR = ZonaCR.GetUtcOffset(inicio);
 
             var evento = new Event
             {
@@ -93,11 +101,13 @@ namespace ProyectoGrupalTennis.Services
                 Description = descripcion,
                 Start = new EventDateTime
                 {
-                    DateTimeDateTimeOffset = new DateTimeOffset(inicio, TimeZoneInfo.Local.GetUtcOffset(inicio))
+                    DateTimeDateTimeOffset = new DateTimeOffset(inicio, offsetCR),
+                    TimeZone = "America/Costa_Rica"
                 },
                 End = new EventDateTime
                 {
-                    DateTimeDateTimeOffset = new DateTimeOffset(fin, TimeZoneInfo.Local.GetUtcOffset(fin))
+                    DateTimeDateTimeOffset = new DateTimeOffset(fin, offsetCR),
+                    TimeZone = "America/Costa_Rica"
                 },
                 Reminders = new Event.RemindersData
                 {
@@ -105,14 +115,14 @@ namespace ProyectoGrupalTennis.Services
                     Overrides = new List<EventReminder>
                     {
                         new EventReminder { Method = "popup", Minutes = 60 },
-                        new EventReminder { Method = "email", Minutes = 1440 } // 24h antes
+                        new EventReminder { Method = "email", Minutes = 1440 }
                     }
                 }
             };
 
             var request = service.Events.Insert(evento, "primary");
             var resultado = await request.ExecuteAsync();
-            return resultado.Id; // ID del evento en Google Calendar
+            return resultado.Id;
         }
 
         // Actualiza un evento existente
@@ -130,6 +140,7 @@ namespace ProyectoGrupalTennis.Services
 
             var inicio = fecha.Date + horaInicio;
             var fin = fecha.Date + horaFin;
+            var offsetCR = ZonaCR.GetUtcOffset(inicio);
 
             var evento = new Event
             {
@@ -137,11 +148,13 @@ namespace ProyectoGrupalTennis.Services
                 Description = descripcion,
                 Start = new EventDateTime
                 {
-                    DateTimeDateTimeOffset = new DateTimeOffset(inicio, TimeZoneInfo.Local.GetUtcOffset(inicio))
+                    DateTimeDateTimeOffset = new DateTimeOffset(inicio, offsetCR),
+                    TimeZone = "America/Costa_Rica"
                 },
                 End = new EventDateTime
                 {
-                    DateTimeDateTimeOffset = new DateTimeOffset(fin, TimeZoneInfo.Local.GetUtcOffset(fin))
+                    DateTimeDateTimeOffset = new DateTimeOffset(fin, offsetCR),
+                    TimeZone = "America/Costa_Rica"
                 }
             };
 
@@ -175,56 +188,37 @@ namespace ProyectoGrupalTennis.Services
             var tokenData = await _context.GoogleCalendarTokens
                 .FirstOrDefaultAsync(t => t.UserId == userId);
 
-            if (tokenData == null)
-            {
-                return null;
-            }
+            if (tokenData == null) return null;
 
-            var segundosRestantes =
-                (long)(tokenData.Expiry - DateTime.UtcNow).TotalSeconds;
+            var segundosRestantes = (long)(tokenData.Expiry - DateTime.UtcNow).TotalSeconds;
 
             var token = new TokenResponse
             {
                 AccessToken = tokenData.AccessToken,
                 RefreshToken = tokenData.RefreshToken,
-
-                // Evita valores negativos que puedan provocar
-                // errores de DateTime dentro de la librería de Google.
-                ExpiresInSeconds =
-                    segundosRestantes > 0
-                        ? segundosRestantes
-                        : 0,
-
+                ExpiresInSeconds = segundosRestantes > 0 ? segundosRestantes : 0,
                 IssuedUtc = DateTime.UtcNow
             };
 
             var flow = CrearFlow();
+            var credential = new UserCredential(flow, userId, token);
 
-            var credential =
-                new UserCredential(
-                    flow,
-                    userId,
-                    token);
-
-            return new CalendarService(
-                new BaseClientService.Initializer
-                {
-                    HttpClientInitializer = credential,
-                    ApplicationName = "Academia de Tennis"
-                });
+            return new CalendarService(new BaseClientService.Initializer
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "Academia de Tennis"
+            });
         }
 
+        // ── Métodos para el controlador ──────────────────────
 
-
-        // ── Métodos adicionales para el controlador ──────────────────────────────────
-
-        // Estos van dentro de la clase GoogleCalendarService (agregálos al archivo principal)
         public async Task<GoogleCalendarToken?> ObtenerTokenAsync(string userId) =>
-        await _context.GoogleCalendarTokens.FirstOrDefaultAsync(t => t.UserId == userId);
+            await _context.GoogleCalendarTokens.FirstOrDefaultAsync(t => t.UserId == userId);
 
         public async Task EliminarTokenAsync(string userId)
         {
-            var token = await _context.GoogleCalendarTokens.FirstOrDefaultAsync(t => t.UserId == userId);
+            var token = await _context.GoogleCalendarTokens
+                .FirstOrDefaultAsync(t => t.UserId == userId);
             if (token != null)
             {
                 _context.GoogleCalendarTokens.Remove(token);

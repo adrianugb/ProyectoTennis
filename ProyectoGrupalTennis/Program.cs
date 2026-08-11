@@ -58,7 +58,15 @@ builder.Services.AddScoped<ProyectoGrupalTennis.Services.ChatbotService>(); // M
 //----------------------------------------------------------------------------
 //REGISTRAR SERVICIO DE CALENDAR
 builder.Services.AddScoped<GoogleCalendarService>();
-builder.Services.AddSession(); // para guardar returnUrl
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = ".AcademiaTennis.Session";
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 
 // HANGFIRE
 builder.Services.AddHangfire(config =>
@@ -318,9 +326,9 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-app.UseSession();
-
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthentication();
 

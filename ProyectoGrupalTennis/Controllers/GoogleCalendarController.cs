@@ -11,36 +11,66 @@ namespace ProyectoGrupalTennis.Controllers
     {
         private readonly GoogleCalendarService _calendarService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<GoogleCalendarController> _logger;
 
         public GoogleCalendarController(
             GoogleCalendarService calendarService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ILogger<GoogleCalendarController> logger)
         {
             _calendarService = calendarService;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // GET: /GoogleCalendar/Autorizar
-        // Redirige al usuario a la pantalla de autorización de Google
         public IActionResult Autorizar(string? returnUrl = null)
         {
             var userId = _userManager.GetUserId(User)!;
-            // Guardamos returnUrl en sesión para redirigir después del callback
-            HttpContext.Session.SetString("CalendarReturnUrl", returnUrl ?? "/");
+
+            // Guardamos returnUrl en TempData en vez de Session
+            // TempData es más confiable en Azure que Session
+            TempData["CalendarReturnUrl"] = returnUrl ?? "/Home/PerfilProfesor";
+
+            _logger.LogInformation("Iniciando autorización Google Calendar para userId: {UserId}", userId);
+
             var url = _calendarService.ObtenerUrlAutorizacion(userId);
             return Redirect(url);
         }
 
         // GET: /GoogleCalendar/Callback
-        // Google redirige aquí con el código de autorización
-        public async Task<IActionResult> Callback(string code, string state)
+        public async Task<IActionResult> Callback(string? code, string? state, string? error)
         {
-            // state contiene el userId que pusimos al generar la URL
-            await _calendarService.GuardarTokenAsync(state, code);
+            // Si Google devuelve error (ej: usuario canceló)
+            if (!string.IsNullOrEmpty(error))
+            {
+                _logger.LogWarning("Google Calendar OAuth error: {Error}", error);
+                TempData["MensajeError"] = $"No se pudo conectar Google Calendar: {error}";
+                return RedirectToAction("PerfilProfesor", "Home");
+            }
 
-            TempData["MensajeExito"] = "Google Calendar conectado correctamente.";
+            if (string.IsNullOrEmpty(code) || string.IsNullOrEmpty(state))
+            {
+                _logger.LogWarning("Callback recibido sin code o state");
+                TempData["MensajeError"] = "Error en la autorización de Google Calendar.";
+                return RedirectToAction("PerfilProfesor", "Home");
+            }
 
-            var returnUrl = HttpContext.Session.GetString("CalendarReturnUrl") ?? "/";
+            try
+            {
+                _logger.LogInformation("Guardando token para userId: {State}", state);
+                await _calendarService.GuardarTokenAsync(state, code);
+                _logger.LogInformation("Token guardado correctamente para userId: {State}", state);
+
+                TempData["MensajeExito"] = "Google Calendar conectado correctamente.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al guardar token de Google Calendar");
+                TempData["MensajeError"] = "Error al conectar Google Calendar. Intentá nuevamente.";
+            }
+
+            var returnUrl = TempData["CalendarReturnUrl"]?.ToString() ?? "/Home/PerfilProfesor";
             return Redirect(returnUrl);
         }
 
@@ -48,15 +78,19 @@ namespace ProyectoGrupalTennis.Controllers
         public async Task<IActionResult> Desconectar()
         {
             var userId = _userManager.GetUserId(User)!;
-            var token = await _calendarService.ObtenerTokenAsync(userId);
 
-            if (token != null)
+            try
             {
                 await _calendarService.EliminarTokenAsync(userId);
                 TempData["MensajeExito"] = "Google Calendar desconectado.";
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al desconectar Google Calendar");
+                TempData["MensajeError"] = "Error al desconectar Google Calendar.";
+            }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("PerfilProfesor", "Home");
         }
     }
 }
