@@ -35,24 +35,33 @@ namespace ProyectoGrupalTennis.Controllers
             return View();
         }
 
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registro(RegisterViewModel model)
         {
-            model.Email = model.Email.Trim().ToLower();
-            model.Nombre = model.Nombre.Trim();
-            model.Apellido = model.Apellido.Trim();
-            model.Telefono = model.Telefono.Trim();
+            // Evitar errores si algún campo llega como null.
+            model.Nombre = model.Nombre?.Trim() ?? string.Empty;
+            model.Apellido = model.Apellido?.Trim() ?? string.Empty;
+            model.Email = model.Email?.Trim().ToLowerInvariant() ?? string.Empty;
+            model.Telefono = model.Telefono?.Trim() ?? string.Empty;
 
+            // Validar todos los campos antes de continuar.
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var usuarioExistente = await _userManager.FindByEmailAsync(model.Email);
+            // Comprobar si el correo ya está registrado.
+            var usuarioExistente =
+                await _userManager.FindByEmailAsync(model.Email);
 
             if (usuarioExistente != null)
             {
-                ModelState.AddModelError("Email", "El correo ya está registrado.");
+                ModelState.AddModelError(
+                    nameof(model.Email),
+                    "El correo ya está registrado.");
+
                 return View(model);
             }
 
@@ -67,30 +76,38 @@ namespace ProyectoGrupalTennis.Controllers
                 Bloqueado = false
             };
 
-            var resultado = await _userManager.CreateAsync(usuario, model.Password);
+            var resultado =
+                await _userManager.CreateAsync(usuario, model.Password);
 
             if (resultado.Succeeded)
             {
-                var rolResultado = await _userManager.AddToRoleAsync(usuario, "Usuario");
+                var rolResultado =
+                    await _userManager.AddToRoleAsync(usuario, "Usuario");
 
                 if (!rolResultado.Succeeded)
                 {
                     await _userManager.DeleteAsync(usuario);
-                    ModelState.AddModelError("", "Error al asignar el rol. Intente nuevamente.");
+
+                    ModelState.AddModelError(
+                        string.Empty,
+                        "Error al asignar el rol. Intente nuevamente.");
+
                     return View(model);
                 }
 
                 await _signInManager.SignInAsync(usuario, isPersistent: false);
+
                 return RedirectToAction("Index", "Home");
             }
 
             foreach (var error in resultado.Errors)
             {
-                ModelState.AddModelError("", error.Description);
+                ModelState.AddModelError(string.Empty, error.Description);
             }
 
             return View(model);
         }
+
 
         #endregion
 
