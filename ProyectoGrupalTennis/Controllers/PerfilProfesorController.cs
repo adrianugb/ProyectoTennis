@@ -259,8 +259,12 @@ namespace ProyectoGrupalTennis.Controllers
             return RedirectToAction(nameof(MisCursos));
         }
 
+
         // GET: /PerfilProfesor/MisAlumnos
-        public async Task<IActionResult> MisAlumnos(string? buscar, string? curso)
+        public async Task<IActionResult> MisAlumnos(
+            string? buscar,
+            string? curso,
+            string? fecha)
         {
             var profesor = await ObtenerProfesorActual();
 
@@ -269,56 +273,99 @@ namespace ProyectoGrupalTennis.Controllers
                 Alumnos = new List<AlumnoProfesorListItemViewModel>(),
                 FiltroBuscar = buscar,
                 FiltroCurso = curso,
+                FiltroFecha = fecha,
                 CursosDisponibles = new List<string>()
             };
 
             if (profesor == null)
             {
-                TempData["Error"] = "Tu cuenta no tiene un perfil de profesor vinculado. Contactá al administrador.";
+                TempData["Error"] =
+                    "Tu cuenta no tiene un perfil de profesor vinculado. Contactá al administrador.";
+
                 return View("~/Views/Perfiles/ProfesorAlumnos.cshtml", viewModel);
             }
 
+            // Obtener todas las clases activas asignadas al profesor.
+            var cursosList = await _context.Cursos
+    .Where(c => c.IdProfesor == profesor.Id)
+    .OrderBy(c => c.Nombre)
+    .Select(c => c.Nombre)
+    .Distinct()
+    .ToListAsync();
+
+
+
+            // Obtener las matrículas activas de las clases del profesor.
             var matriculas = await _context.Matriculas
                 .Include(m => m.Alumno)
                 .Include(m => m.Curso)
                     .ThenInclude(c => c.Horarios)
-                .Where(m => m.Estado == "Activa" && m.Curso.IdProfesor == profesor.Id)
+                .Where(m =>
+                    m.Estado == "Activa" &&
+                    m.Curso != null &&
+                    m.Curso.IdProfesor == profesor.Id)
                 .ToListAsync();
 
-            var alumnos = matriculas.Select(m => new AlumnoProfesorListItemViewModel
-            {
-                Id = m.IdAlumno,
-                NombreCompleto = $"{m.Alumno.Nombre} {m.Alumno.Apellido}",
-                Correo = m.Alumno.Email ?? string.Empty,
-                Telefono = m.Alumno.PhoneNumber ?? "No registrado",
-                Clase = m.Curso.Nombre,
-                Activo = !m.Alumno.Bloqueado,
-                EstadoMatricula = m.Estado,
-                CursosMatriculados = m.Curso.Horarios != null && m.Curso.Horarios.Any()
-                    ? m.Curso.Horarios.Select(h =>
-                       $"{h.Fecha:dd/MM/yyyy} ({h.DiaSemana}) {h.HoraInicio.Hours:D2}:{h.HoraInicio.Minutes:D2} - {h.HoraFin.Hours:D2}:{h.HoraFin.Minutes:D2}").ToList()
-                    : new List<string> { "Sin horario asignado" }
-            }).ToList();
+            var alumnos = matriculas.Select(m =>
+                new AlumnoProfesorListItemViewModel
+                {
+                    Id = m.IdAlumno,
+                    NombreCompleto = $"{m.Alumno.Nombre} {m.Alumno.Apellido}",
+                    Correo = m.Alumno.Email ?? string.Empty,
+                    Telefono = m.Alumno.PhoneNumber ?? "No registrado",
+                    Clase = m.Curso.Nombre,
+                    Activo = !m.Alumno.Bloqueado,
+                    EstadoMatricula = m.Estado,
 
+                    CursosMatriculados = m.Curso.Horarios != null &&
+                                          m.Curso.Horarios.Any()
+                        ? m.Curso.Horarios.Select(h =>
+                            $"{h.Fecha:dd/MM/yyyy} ({h.DiaSemana}) " +
+                            $"{h.HoraInicio.Hours:D2}:{h.HoraInicio.Minutes:D2} - " +
+                            $"{h.HoraFin.Hours:D2}:{h.HoraFin.Minutes:D2}"
+                          ).ToList()
+                        : new List<string> { "Sin horario asignado" }
+                })
+                .ToList();
+
+            // Filtrar por nombre del alumno.
             if (!string.IsNullOrWhiteSpace(buscar))
+            {
                 alumnos = alumnos
-                    .Where(a => a.NombreCompleto.Contains(buscar, StringComparison.OrdinalIgnoreCase))
+                    .Where(a => a.NombreCompleto.Contains(
+                        buscar.Trim(),
+                        StringComparison.OrdinalIgnoreCase))
                     .ToList();
+            }
 
+            // Filtrar por clase.
             if (!string.IsNullOrWhiteSpace(curso))
-                alumnos = alumnos.Where(a => a.Clase == curso).ToList();
+            {
+                alumnos = alumnos
+                    .Where(a => a.Clase == curso)
+                    .ToList();
+            }
 
-            var cursosList = await _context.Cursos
-                .Where(c => c.Activo && c.IdProfesor == profesor.Id)
-                .OrderBy(c => c.Nombre)
-                .Select(c => c.Nombre)
-                .ToListAsync();
+            // Filtrar por fecha, si se proporcionó.
+            if (!string.IsNullOrWhiteSpace(fecha) &&
+                DateTime.TryParse(fecha, out var fechaFiltro))
+            {
+                alumnos = alumnos
+                    .Where(a => DateTime.TryParse(a.FechaClase, out var fechaClase)
+         && fechaClase.Date == fechaFiltro.Date)
+                    .ToList();
+            }
 
-            viewModel.Alumnos = alumnos.OrderBy(a => a.Clase).ThenBy(a => a.NombreCompleto).ToList();
+            viewModel.Alumnos = alumnos
+                .OrderBy(a => a.Clase)
+                .ThenBy(a => a.NombreCompleto)
+                .ToList();
+
             viewModel.CursosDisponibles = cursosList;
 
             return View("~/Views/Perfiles/ProfesorAlumnos.cshtml", viewModel);
         }
+
 
         // GET: /PerfilProfesor/Notificaciones
         public async Task<IActionResult> Notificaciones()
