@@ -17,8 +17,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
-        ServerVersion.AutoDetect(
-            builder.Configuration.GetConnectionString("DefaultConnection"))));
+        new MySqlServerVersion(new Version(8, 0, 0))));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -67,6 +66,7 @@ builder.Services.AddSession(options =>
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
+/*
 
 // HANGFIRE
 builder.Services.AddHangfire(config =>
@@ -80,6 +80,7 @@ builder.Services.AddHangfire(config =>
 });
 
 builder.Services.AddHangfireServer();
+*/
 var app = builder.Build();
 
 // ── CREAR ROLES AUTOMÁTICAMENTE ──────────────────────────────────────────────
@@ -333,7 +334,7 @@ app.UseSession();
 app.UseAuthentication();
 
 app.UseAuthorization();
-app.UseHangfireDashboard("/hangfire");
+/*app.UseHangfireDashboard("/hangfire");*/
 
 app.MapControllerRoute(
     name: "default",
