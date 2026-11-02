@@ -277,6 +277,48 @@ namespace AcademiaTennisDAL.Migrations
                     b.ToTable("CondicionesServicio");
                 });
 
+            modelBuilder.Entity("AcademiaTennisDAL.Entities.ConfiguracionAcademia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("CorreoSolicitudes")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<DateTime>("FechaActualizacion")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("SmtpEmail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<int>("SmtpPort")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SmtpSenderName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<string>("SmtpServer")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("WhatsappSolicitudes")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConfiguracionAcademia", (string)null);
+                });
+
             modelBuilder.Entity("AcademiaTennisDAL.Entities.ConfiguracionNotificacion", b =>
                 {
                     b.Property<int>("IdConfiguracion")

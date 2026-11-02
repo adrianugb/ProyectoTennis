@@ -93,19 +93,36 @@ namespace ProyectoGrupalTennis.Services
             }
 
             // USER-06-002 / ADM-06-002 / ADM-06-003: no se encontró respuesta -> se ofrece WhatsApp y se registra el fallo
-            await RegistrarConsultaAsync(mensaje, null, resuelto: false, idUsuario);
+            // Obtener configuración actualizada desde MySQL
+            var configuracionAcademia = await _context.ConfiguracionesAcademia
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == 1);
 
-            var numeroWhatsapp = _configuration["AcademiaSettings:WhatsappSolicitudes"];
+            // Usar el número de MySQL o el predeterminado si no existe
+            var numeroWhatsapp = configuracionAcademia?.WhatsappSolicitudes;
+
+            if (string.IsNullOrWhiteSpace(numeroWhatsapp))
+            {
+                numeroWhatsapp = _configuration["AcademiaSettings:WhatsappSolicitudes"];
+            }
+
+            // Limpiar el número para construir correctamente el enlace
+            var numeroWhatsappLimpio = new string(
+                (numeroWhatsapp ?? "")
+                    .Where(char.IsDigit)
+                    .ToArray());
 
             string? whatsappUrl = null;
 
-            if (!string.IsNullOrWhiteSpace(numeroWhatsapp))
+            if (!string.IsNullOrWhiteSpace(numeroWhatsappLimpio))
             {
                 var texto =
                     "Hola, estaba consultando con el asistente virtual y no encontré respuesta a lo siguiente: " +
                     $"\"{mensaje}\". ¿Me pueden ayudar?";
 
-                whatsappUrl = $"https://wa.me/{numeroWhatsapp}?text={Uri.EscapeDataString(texto)}";
+                whatsappUrl =
+                    $"https://wa.me/{numeroWhatsappLimpio}" +
+                    $"?text={Uri.EscapeDataString(texto)}";
             }
 
             return new ChatRespuestaViewModel

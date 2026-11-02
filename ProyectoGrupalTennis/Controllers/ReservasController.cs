@@ -158,6 +158,64 @@ namespace ProyectoGrupalTennis.Controllers
 
             return View(model);
         }
+
+        // Obtener detalles de una reserva del profesor
+        [HttpGet]
+        [Authorize(Roles = "Profesor")]
+        public async Task<IActionResult> DetalleMiReserva(int id)
+        {
+            var profesor = await _userManager.GetUserAsync(User);
+
+            if (profesor == null)
+            {
+                return Unauthorized();
+            }
+
+            var reserva = await _context.Reservas
+                .AsNoTracking()
+                .Include(r => r.Cancha)
+                .Include(r => r.Alumno)
+                .FirstOrDefaultAsync(r =>
+                    r.IdReserva == id &&
+                    r.IdProfesor == profesor.Id);
+
+            if (reserva == null)
+            {
+                return NotFound(new
+                {
+                    mensaje = "No se encontró la reserva."
+                });
+            }
+
+            var tieneAlumno = reserva.Alumno != null;
+
+            return Json(new
+            {
+                idReserva = reserva.IdReserva,
+
+                cancha = reserva.Cancha?.Nombre ?? "Sin cancha",
+
+                fecha = reserva.FechaReserva.ToString("dd/MM/yyyy"),
+
+                horario =
+                    $"{reserva.HoraInicio:hh\\:mm} - " +
+                    $"{reserva.HoraFin:hh\\:mm}",
+
+                estado = reserva.Estado,
+
+                tieneAlumno = tieneAlumno,
+
+                alumno = tieneAlumno
+                    ? new
+                    {
+                        nombre = $"{reserva.Alumno!.Nombre} {reserva.Alumno.Apellido}",
+                        correo = reserva.Alumno.Email ?? "No registrado",
+                        telefono = reserva.Alumno.PhoneNumber ?? "No registrado"
+                    }
+                    : null
+            });
+        }
+
         [Authorize(Roles = "Usuario")]
         public async Task<IActionResult> Disponibles()
         {

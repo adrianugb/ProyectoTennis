@@ -1,11 +1,48 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using AcademiaTennisDAL.Entities
+@using AcademiaTennisDAL.Context
+@using Microsoft.EntityFrameworkCore
+
 @inject UserManager<ApplicationUser> UserManager
+@inject AppDbContext DbContext
+@inject IConfiguration Configuration
 
 @{
     var usuario = User.Identity?.IsAuthenticated == true
         ? await UserManager.GetUserAsync(User)
         : null;
+
+    // Obtener configuración guardada por el administrador
+    var configuracionAcademia = await DbContext.ConfiguracionesAcademia
+        .AsNoTracking()
+        .FirstOrDefaultAsync(c => c.Id == 1);
+
+    var numeroWhatsapp = configuracionAcademia?.WhatsappSolicitudes;
+
+    if (string.IsNullOrWhiteSpace(numeroWhatsapp))
+    {
+        numeroWhatsapp = Configuration["AcademiaSettings:WhatsappSolicitudes"];
+    }
+
+    var numeroWhatsappLimpio = new string(
+        (numeroWhatsapp ?? "")
+            .Where(char.IsDigit)
+            .ToArray());
+
+    var whatsappUrl = string.IsNullOrWhiteSpace(numeroWhatsappLimpio)
+        ? "#"
+        : $"https://wa.me/{numeroWhatsappLimpio}";
+
+    var correoAcademia = configuracionAcademia?.CorreoSolicitudes;
+
+    if (string.IsNullOrWhiteSpace(correoAcademia))
+    {
+        correoAcademia = Configuration["AcademiaSettings:CorreoSolicitudes"];
+    }
+
+    var correoUrl = string.IsNullOrWhiteSpace(correoAcademia)
+        ? "#"
+        : $"mailto:{correoAcademia}";
 }
 
 <!DOCTYPE html>
@@ -69,7 +106,10 @@
                 <div class="topbar-info">
                     <a href="tel:+50622839369" class="topbar-item"><i class="fa fa-phone"></i> (506) 2283-9369</a>
                     <span class="topbar-item"><i class="fa fa-calendar-plus-o"></i> 6:00 AM - 10:00 PM</span>
-                    <a href="mailto:info@tennismmp.com" class="topbar-item"><i class="fa fa-envelope-o"></i> info@tennismmp.com</a>
+                    <a href="@correoUrl" class="topbar-item">
+    <i class="fa fa-envelope-o"></i>
+    @correoAcademia
+</a>
                 </div>
             </div>
         </div>
@@ -225,7 +265,13 @@
                         <div class="social-container">
                             <a href="https://www.facebook.com/tenismmp" class="social-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                             <a href="#" class="social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                            <a href="https://wa.me/50683764752" class="social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                            <a href="@whatsappUrl"
+   class="social-btn"
+   aria-label="WhatsApp"
+   target="_blank"
+   rel="noopener noreferrer">
+    <i class="fab fa-whatsapp"></i>
+</a>
                             <a href="https://x.com/mariomunozp" class="social-btn" aria-label="X"><i class="fab fa-x-twitter"></i></a>
                         </div>
                     </div>
@@ -239,14 +285,28 @@
                                 <div class="icon-circle"><i class="fa fa-phone"></i></div>
                                 (506) 2283-9369
                             </a>
-                            <a href="https://wa.me/50683764752" class="contact-item">
-                                <div class="icon-circle"><i class="fab fa-whatsapp"></i></div>
-                                (506) 8376-4752
-                            </a>
-                            <a href="mailto:info@tenismmp.com" class="contact-item">
-                                <div class="icon-circle"><i class="fa fa-envelope"></i></div>
-                                info@tenismmp.com
-                            </a>
+                            <a href="@whatsappUrl"
+   class="contact-item"
+   target="_blank"
+   rel="noopener noreferrer">
+
+    <div class="icon-circle">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+
+    @(string.IsNullOrWhiteSpace(numeroWhatsappLimpio)
+        ? "WhatsApp no disponible"
+        : $"+{numeroWhatsappLimpio}")
+</a>
+                            <a href="@correoUrl" class="contact-item">
+    <div class="icon-circle">
+        <i class="fa fa-envelope"></i>
+    </div>
+
+    @(string.IsNullOrWhiteSpace(correoAcademia)
+        ? "Correo no disponible"
+        : correoAcademia)
+</a>
                         </div>
                         <div class="hours-box">
                             <p>

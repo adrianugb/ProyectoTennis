@@ -8,6 +8,90 @@
       href="~/css/perfiles.css"
       asp-append-version="true" />
 
+<style>
+    .fila-reserva {
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .fila-reserva:hover,
+    .fila-reserva:focus {
+        background-color: #f0f8e0;
+        outline: 2px solid #a5c422;
+        outline-offset: -2px;
+    }
+
+    .estado-reserva {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .estado-disponible {
+        background: #e9f7e9;
+        color: #267a35;
+    }
+
+    .estado-reservada {
+        background: #e5f0ff;
+        color: #1b5db5;
+    }
+
+    .estado-otro {
+        background: #f2f2f2;
+        color: #555;
+    }
+
+    .detalle-reserva-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 12px 0;
+        border-bottom: 1px solid #eeeeee;
+    }
+
+    .detalle-reserva-item strong {
+        color: #333;
+    }
+
+    .detalle-reserva-item span {
+        color: #555;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .detalle-alumno {
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 12px;
+        background: #f7faf2;
+        border: 1px solid #dce8cb;
+    }
+
+    .detalle-alumno h5 {
+        margin-bottom: 15px;
+        font-weight: 700;
+        color: #527b18;
+    }
+
+    .sin-alumno {
+        text-align: center;
+        padding: 25px;
+        margin-top: 20px;
+        border-radius: 12px;
+        background: #f7f7f7;
+        color: #666;
+    }
+
+    .sin-alumno i {
+        font-size: 30px;
+        margin-bottom: 10px;
+        color: #999;
+    }
+</style>
+
 <section class="perfil-page compact">
     <div class="container">
 
@@ -18,8 +102,10 @@
                     <h1 class="perfil-title">
                         Mis Reservas
                     </h1>
+
                     <p class="perfil-subtitle">
                         Reservas de canchas realizadas por usted.
+                        Seleccione una fila para ver sus detalles.
                     </p>
                 </div>
             </div>
@@ -52,7 +138,13 @@
                         {
                             @foreach (var item in Model.Reservas)
                             {
-                                <tr>
+                                var tieneAlumno = item.Alumno != "Sin alumno";
+
+                                <tr class="fila-reserva"
+                                    data-id="@item.IdReserva"
+                                    tabindex="0"
+                                    role="button"
+                                    aria-label="Ver detalles de la reserva @item.IdReserva">
 
                                     <td>@item.Cancha</td>
 
@@ -62,9 +154,34 @@
 
                                     <td>@item.Horario</td>
 
-                                    <td>@item.Alumno</td>
+                                    <td>
+                                        @if (tieneAlumno)
+                                        {
+                                            <span>
+                                                <i class="fa fa-user-check"></i>
+                                                @item.Alumno
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Sin alumno
+                                            </span>
+                                        }
+                                    </td>
 
-                                    <td>@item.Estado</td>
+                                    <td>
+                                        <span class="estado-reserva
+                                            @(item.Estado == "Disponible"
+                                                ? "estado-disponible"
+                                                : item.Estado == "Reservada"
+                                                    ? "estado-reservada"
+                                                    : "estado-otro")">
+
+                                            @item.Estado
+
+                                        </span>
+                                    </td>
 
                                 </tr>
                             }
@@ -80,3 +197,220 @@
 
     </div>
 </section>
+
+<!-- MODAL DETALLES DE RESERVA -->
+
+<div class="modal fade"
+     id="modalDetalleReserva"
+     tabindex="-1"
+     aria-labelledby="tituloDetalleReserva"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="tituloDetalleReserva">
+
+                    <i class="fa fa-calendar-check"></i>
+                    Detalles de la reserva
+
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div id="contenidoDetalleReserva">
+
+                    <p class="text-center">
+                        Cargando información...
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    Cerrar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const modalElemento =
+            document.getElementById("modalDetalleReserva");
+
+        const modal =
+            new bootstrap.Modal(modalElemento);
+
+        const contenido =
+            document.getElementById("contenidoDetalleReserva");
+
+        const urlDetalle =
+            '@Url.Action("DetalleMiReserva", "Reservas")';
+
+        // Escapar texto recibido antes de insertarlo en HTML
+        function escaparHtml(valor) {
+            const elemento = document.createElement("div");
+            elemento.textContent = valor == null ? "" : String(valor);
+            return elemento.innerHTML;
+        }
+
+        function filaDetalle(titulo, valor) {
+            return `
+                <div class="detalle-reserva-item">
+                    <strong>${escaparHtml(titulo)}</strong>
+                    <span>${escaparHtml(valor)}</span>
+                </div>
+            `;
+        }
+
+        async function abrirDetalle(idReserva) {
+
+            contenido.innerHTML = `
+                <p class="text-center">
+                    Cargando información...
+                </p>
+            `;
+
+            modal.show();
+
+            try {
+
+                const respuesta = await fetch(
+                    `${urlDetalle}?id=${encodeURIComponent(idReserva)}`,
+                    {
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    }
+                );
+
+                if (!respuesta.ok) {
+                    throw new Error("No se pudo consultar la reserva.");
+                }
+
+                const reserva = await respuesta.json();
+
+                let html = `
+                    <h5 class="mb-3">
+                        Información de la reserva
+                    </h5>
+
+                    ${filaDetalle("Cancha", reserva.cancha)}
+                    ${filaDetalle("Fecha", reserva.fecha)}
+                    ${filaDetalle("Horario", reserva.horario)}
+                    ${filaDetalle("Estado", reserva.estado)}
+                `;
+
+                if (reserva.tieneAlumno && reserva.alumno) {
+
+                    html += `
+                        <div class="detalle-alumno">
+
+                            <h5>
+                                <i class="fa fa-user"></i>
+                                Datos del alumno
+                            </h5>
+
+                            ${filaDetalle(
+                                "Nombre completo",
+                                reserva.alumno.nombre
+                            )}
+
+                            ${filaDetalle(
+                                "Correo electrónico",
+                                reserva.alumno.correo
+                            )}
+
+                            ${filaDetalle(
+                                "Teléfono",
+                                reserva.alumno.telefono
+                            )}
+
+                        </div>
+                    `;
+
+                } else {
+
+                    html += `
+                        <div class="sin-alumno">
+
+                            <i class="fa fa-user-clock"></i>
+
+                            <h5>Sin alumno asignado</h5>
+
+                            <p>
+                                Esta reserva todavía no tiene
+                                un alumno registrado.
+                            </p>
+
+                        </div>
+                    `;
+                }
+
+                contenido.innerHTML = html;
+
+            } catch (error) {
+
+                contenido.innerHTML = `
+                    <div class="alert alert-danger">
+                        No fue posible cargar los detalles
+                        de la reserva.
+                    </div>
+                `;
+
+                console.error(error);
+            }
+        }
+
+        // Abrir modal al hacer clic en una fila
+        document.querySelectorAll(".fila-reserva")
+            .forEach(function (fila) {
+
+                fila.addEventListener("click", function () {
+                    abrirDetalle(this.dataset.id);
+                });
+
+                // Permitir abrir con Enter o Espacio
+                fila.addEventListener("keydown", function (evento) {
+
+                    if (evento.key === "Enter" ||
+                        evento.key === " ") {
+
+                        evento.preventDefault();
+                        abrirDetalle(this.dataset.id);
+                    }
+                });
+            });
+
+    });
+</script>
+
+}

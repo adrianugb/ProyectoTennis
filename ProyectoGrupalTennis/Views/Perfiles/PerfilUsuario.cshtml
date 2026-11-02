@@ -1,5 +1,39 @@
-﻿@{
+﻿@using AcademiaTennisDAL.Context
+@using Microsoft.EntityFrameworkCore
+
+@inject AppDbContext DbContext
+@inject IConfiguration Configuration
+
+@{
     ViewData["Title"] = "Perfil de Usuario";
+    var configAcademia = await DbContext.ConfiguracionesAcademia
+    .AsNoTracking()
+    .FirstOrDefaultAsync(c => c.Id == 1);
+
+var whatsappAcademia = configAcademia?.WhatsappSolicitudes;
+
+if (string.IsNullOrWhiteSpace(whatsappAcademia))
+{
+    whatsappAcademia = Configuration["AcademiaSettings:WhatsappSolicitudes"];
+}
+
+var whatsappLimpio = new string(
+    (whatsappAcademia ?? "").Where(char.IsDigit).ToArray());
+
+var enlaceWhatsapp = string.IsNullOrWhiteSpace(whatsappLimpio)
+    ? "#"
+    : $"https://wa.me/{whatsappLimpio}";
+
+var correoAcademia = configAcademia?.CorreoSolicitudes;
+
+if (string.IsNullOrWhiteSpace(correoAcademia))
+{
+    correoAcademia = Configuration["AcademiaSettings:CorreoSolicitudes"];
+}
+
+var enlaceCorreo = string.IsNullOrWhiteSpace(correoAcademia)
+    ? "#"
+    : $"mailto:{correoAcademia}";
 }
 
 <link rel="stylesheet" href="~/css/perfiles.css" asp-append-version="true" />
@@ -357,16 +391,16 @@
                         </p>
 
                         <div class="perfil-actions">
-                            <a href="https://wa.me/50683764752"
+                            <a href="@enlaceWhatsapp"
                                target="_blank"
-                               rel="noopener"
+                               rel="noopener noreferrer"
                                class="perfil-btn">
 
                                 <i class="fab fa-whatsapp"></i>
                                 WhatsApp
                             </a>
 
-                            <a href="mailto:info@tenismmp.com"
+                            <a href="@enlaceCorreo"
                                class="perfil-btn-outline">
 
                                 <i class="fa fa-envelope"></i>

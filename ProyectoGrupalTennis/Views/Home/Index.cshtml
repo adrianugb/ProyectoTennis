@@ -1,5 +1,40 @@
-﻿@{
+﻿@using AcademiaTennisDAL.Context
+@using Microsoft.EntityFrameworkCore
+
+@inject AppDbContext DbContext
+@inject IConfiguration Configuration
+
+@{
     ViewData["Title"] = "Inicio";
+
+    var configAcademia = await DbContext.ConfiguracionesAcademia
+    .AsNoTracking()
+    .FirstOrDefaultAsync(c => c.Id == 1);
+
+var whatsappAcademia = configAcademia?.WhatsappSolicitudes;
+
+if (string.IsNullOrWhiteSpace(whatsappAcademia))
+{
+    whatsappAcademia = Configuration["AcademiaSettings:WhatsappSolicitudes"];
+}
+
+var whatsappLimpio = new string(
+    (whatsappAcademia ?? "").Where(char.IsDigit).ToArray());
+
+var enlaceWhatsapp = string.IsNullOrWhiteSpace(whatsappLimpio)
+    ? "#"
+    : $"https://wa.me/{whatsappLimpio}";
+
+var correoAcademia = configAcademia?.CorreoSolicitudes;
+
+if (string.IsNullOrWhiteSpace(correoAcademia))
+{
+    correoAcademia = Configuration["AcademiaSettings:CorreoSolicitudes"];
+}
+
+var enlaceCorreo = string.IsNullOrWhiteSpace(correoAcademia)
+    ? "#"
+    : $"mailto:{correoAcademia}";
 }
 
 <!-- HERO / SLIDER -->
@@ -240,10 +275,14 @@
                 <div class="contact-divider"><span>o contactanos directamente</span></div>
 
                 <div class="contact-alt-buttons">
-                    <a href="mailto:info@academiatenis.com" class="btn-outline-tenis btn-sm-tenis">
+                    <a href="@enlaceCorreo" class="btn-outline-tenis btn-sm-tenis">
                         <i class="fa fa-envelope"></i> Correo
                     </a>
-                    <a href="https://wa.me/50683764752" target="_blank" rel="noopener" class="btn-whatsapp-tenis">
+
+                    <a href="@enlaceWhatsapp"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="btn-whatsapp-tenis">
                         <i class="fab fa-whatsapp"></i> WhatsApp
                     </a>
                 </div>

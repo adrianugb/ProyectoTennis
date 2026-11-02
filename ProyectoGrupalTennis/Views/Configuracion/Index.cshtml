@@ -1,0 +1,173 @@
+﻿@model ProyectoGrupalTennis.Models.ViewModels.ConfiguracionAcademiaViewModel
+
+@{
+    ViewData["Title"] = "Configuración de la Academia";
+}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            <div class="card shadow border-0 rounded-4">
+
+                <div class="card-header bg-dark text-white p-4 rounded-top-4">
+                    <h3 class="mb-0">
+                        <i class="bi bi-gear-fill"></i>
+                        Configuración de la Academia
+                    </h3>
+
+                    <p class="mb-0 mt-2 text-white-50">
+                        Administra los datos de contacto y correo electrónico.
+                    </p>
+                </div>
+
+                <div class="card-body p-4">
+
+                    @if (TempData["MensajeExito"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["MensajeExito"]
+                        </div>
+                    }
+
+                    <form asp-controller="Configuracion"
+                          asp-action="Guardar"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3"></div>
+
+                        <h5 class="text-success mb-3">
+                            📱 Configuración de WhatsApp
+                        </h5>
+
+                        <div class="mb-4">
+                            <label asp-for="WhatsappSolicitudes"
+                                   class="form-label fw-bold"></label>
+
+                            <input asp-for="WhatsappSolicitudes"
+                                   class="form-control"
+                                   placeholder="50688888888" />
+
+                            <span asp-validation-for="WhatsappSolicitudes"
+                                  class="text-danger"></span>
+
+                            <small class="text-muted">
+                                Incluye el código de país, sin espacios.
+                            </small>
+                        </div>
+
+                        <hr />
+
+                        <h5 class="text-success mb-3">
+                            📧 Correo de contacto
+                        </h5>
+
+                        <div class="mb-4">
+                            <label asp-for="CorreoSolicitudes"
+                                   class="form-label fw-bold"></label>
+
+                            <input asp-for="CorreoSolicitudes"
+                                   type="email"
+                                   class="form-control"
+                                   placeholder="contacto@academia.com" />
+
+                            <span asp-validation-for="CorreoSolicitudes"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <hr />
+
+                        <h5 class="text-success mb-3">
+                            ✉️ Configuración del correo SMTP
+                        </h5>
+
+                        <div class="alert alert-info">
+                            Estos datos identifican el correo utilizado
+                            para enviar notificaciones y recuperaciones
+                            de contraseña.
+                            La contraseña SMTP se administrará por separado.
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SmtpEmail"
+                                   class="form-label fw-bold"></label>
+
+                            <input asp-for="SmtpEmail"
+                                   type="email"
+                                   class="form-control" />
+
+                            <span asp-validation-for="SmtpEmail"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-8 mb-3">
+                                <label asp-for="SmtpServer"
+                                       class="form-label fw-bold"></label>
+
+                                <input asp-for="SmtpServer"
+                                       class="form-control" />
+
+                                <span asp-validation-for="SmtpServer"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="SmtpPort"
+                                       class="form-label fw-bold"></label>
+
+                                <input asp-for="SmtpPort"
+                                       type="number"
+                                       class="form-control" />
+
+                                <span asp-validation-for="SmtpPort"
+                                      class="text-danger"></span>
+                            </div>
+
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="SmtpSenderName"
+                                   class="form-label fw-bold"></label>
+
+                            <input asp-for="SmtpSenderName"
+                                   class="form-control" />
+
+                            <span asp-validation-for="SmtpSenderName"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+
+                            <a asp-controller="Admin"
+                               asp-action="Index"
+                               class="btn btn-outline-secondary">
+                                Volver
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-success px-4">
+                                💾 Guardar cambios
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

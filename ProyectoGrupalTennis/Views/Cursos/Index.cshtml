@@ -8,7 +8,43 @@
 <section class="perfil-page compact">
     <div class="container">
         <div class="perfil-container">
+            @if (TempData["MensajeError"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show"
+         role="alert">
 
+        <i class="fa fa-exclamation-triangle"></i>
+
+        <strong>¡Atención!</strong>
+
+        @TempData["MensajeError"]
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Cerrar">
+        </button>
+
+    </div>
+}
+
+@if (TempData["MensajeExito"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show"
+         role="alert">
+
+        <i class="fa fa-check-circle"></i>
+
+        @TempData["MensajeExito"]
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Cerrar">
+        </button>
+
+    </div>
+}
             <div class="perfil-header">
                 <div>
                     <h1 class="perfil-title">Gestión de Cursos</h1>
@@ -68,8 +104,13 @@
                         </thead>
                         <tbody>
                             @foreach (var c in Model)
-                            {
-                                <tr>
+                                {
+                                    var cursoVencido = c.Horarios != null
+                                        && c.Horarios.Any()
+                                        && c.Horarios.All(h =>
+                                            h.Fecha.Date.Add(h.HoraFin) <= DateTime.Now);
+
+                                    <tr>
                                     <td>CLA-@c.IdCurso.ToString("D3")</td>
                                     <td>@c.Nombre</td>
                                     <td>@c.Nivel</td>
@@ -88,7 +129,11 @@
                                         {
                                             @foreach (var h in c.Horarios)
                                             {
-                                                <small class="d-block">@h.DiaSemana @h.HoraInicio.ToString(@"hh\:mm")-@h.HoraFin.ToString(@"hh\:mm")</small>
+                                                <small class="d-block">
+    @h.Fecha.ToString("dd/MM/yyyy")
+    @h.HoraInicio.ToString(@"hh\:mm") -
+    @h.HoraFin.ToString(@"hh\:mm")
+</small>
                                             }
                                         }
                                         else
@@ -111,15 +156,28 @@
                                         <a asp-controller="Curso" asp-action="Editar"
                                            asp-route-id="@c.IdCurso" class="perfil-action-link">Editar</a>
                                         <span class="perfil-action-separator">|</span>
-                                        <form asp-controller="Curso" asp-action="CambiarEstado"
-                                              method="post" style="display:inline">
-                                            <input type="hidden" name="id" value="@c.IdCurso" />
-                                            <input type="hidden" name="activo" value="@(!c.Activo)" />
-                                            <button type="submit" class="perfil-action-link"
-                                                    style="background:none;border:none;padding:0;cursor:pointer;">
-                                                @(c.Activo ? "Desactivar" : "Activar")
-                                            </button>
-                                        </form>
+                                        <form asp-controller="Curso"
+      asp-action="CambiarEstado"
+      method="post"
+      style="display:inline;">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="id" value="@c.IdCurso" />
+
+    <input type="hidden"
+           name="activo"
+           value="@(c.Activo ? "false" : "true")" />
+
+    <button type="submit"
+            class="perfil-action-link"
+            style="background:none; border:none; padding:0; cursor:pointer;">
+
+        @(c.Activo ? "Desactivar" : "Activar")
+
+    </button>
+
+</form>
                                     </td>
                                 </tr>
                             }

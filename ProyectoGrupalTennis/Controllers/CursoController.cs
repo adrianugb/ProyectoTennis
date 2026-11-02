@@ -326,11 +326,50 @@ namespace ProyectoGrupalTennis.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador")]
-        public IActionResult CambiarEstado(
-            int id,
-            bool activo)
+        public async Task<IActionResult> CambiarEstado(int id, bool activo)
         {
-            _service.CambiarEstado(id, activo);
+            var curso = await _context.Cursos
+                .Include(c => c.Horarios)
+                .FirstOrDefaultAsync(c => c.IdCurso == id);
+
+            if (curso == null)
+            {
+                TempData["MensajeError"] =
+                    "No se encontró el curso seleccionado.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Validar la fecha solamente cuando se intenta activar
+            if (activo)
+            {
+                if (curso.Horarios == null || !curso.Horarios.Any())
+                {
+                    TempData["MensajeError"] =
+                        "No se puede activar el curso porque no tiene horarios. " +
+                        "Primero debe agregar un horario desde Editar.";
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+                DateTime ultimaFecha = curso.Horarios
+                    .Select(h => h.Fecha.Date.Add(h.HoraFin))
+                    .Max();
+
+                if (ultimaFecha <= DateTime.Now)
+                {
+                    TempData["MensajeError"] =
+                        $"No se puede activar el curso '{curso.Nombre}' porque " +
+                        "su fecha ya pasó. Primero debe actualizar los horarios desde Editar.";
+
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+
+            // Activar o desactivar el curso
+            curso.Activo = activo;
+
+            await _context.SaveChangesAsync();
 
             TempData["MensajeExito"] = activo
                 ? "El curso fue activado correctamente."

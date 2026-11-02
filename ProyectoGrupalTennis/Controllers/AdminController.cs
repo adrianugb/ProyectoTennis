@@ -129,28 +129,83 @@ namespace ProyectoGrupalTennis.Controllers
             return RedirectToAction("Index");
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CambiarRol(string id, string nuevoRol)
         {
             var usuario = await _userManager.FindByIdAsync(id);
 
             if (usuario == null)
             {
-                return NotFound();
+                TempData["MensajeError"] = "No se encontró el usuario.";
+                return RedirectToAction(nameof(Index));
             }
 
-            // proteger admin principal
+            // Proteger al administrador principal
             if (usuario.Email == "admin@tennis.com")
             {
-                return RedirectToAction("Index");
+                TempData["MensajeError"] =
+                    "No se puede modificar el rol del administrador principal.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Validar que el rol sea permitido
+            var rolesPermitidos = new[] { "Usuario", "Profesor", "Administrador" };
+
+            if (string.IsNullOrWhiteSpace(nuevoRol) ||
+                !rolesPermitidos.Contains(nuevoRol))
+            {
+                TempData["MensajeError"] = "El rol seleccionado no es válido.";
+                return RedirectToAction(nameof(Index));
             }
 
             var rolesActuales = await _userManager.GetRolesAsync(usuario);
 
-            await _userManager.RemoveFromRolesAsync(usuario, rolesActuales);
+            // Comprobar si ya tiene ese rol
+            if (rolesActuales.Count == 1 && rolesActuales.Contains(nuevoRol))
+            {
+                TempData["MensajeError"] =
+                    "El usuario ya tiene asignado ese rol.";
 
-            await _userManager.AddToRoleAsync(usuario, nuevoRol);
+                return RedirectToAction(nameof(Index));
+            }
 
-            return RedirectToAction("Index");
+            // Eliminar roles anteriores
+            var resultadoEliminar =
+                await _userManager.RemoveFromRolesAsync(usuario, rolesActuales);
+
+            if (!resultadoEliminar.Succeeded)
+            {
+                TempData["MensajeError"] =
+                    "No fue posible eliminar el rol anterior.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Asignar el nuevo rol
+            var resultadoAgregar =
+                await _userManager.AddToRoleAsync(usuario, nuevoRol);
+
+            if (!resultadoAgregar.Succeeded)
+            {
+                // Intentar restaurar los roles anteriores
+                if (rolesActuales.Any())
+                {
+                    await _userManager.AddToRolesAsync(usuario, rolesActuales);
+                }
+
+                TempData["MensajeError"] =
+                    "No fue posible asignar el nuevo rol.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Mostrar mensaje únicamente después del cambio exitoso
+            TempData["MensajeExito"] =
+                $"El rol de {usuario.Nombre} {usuario.Apellido} " +
+                $"se actualizó correctamente a {nuevoRol}.";
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: /Admin/AdminPagos

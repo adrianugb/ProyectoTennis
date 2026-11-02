@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Services;
 
@@ -215,24 +216,33 @@ namespace ProyectoGrupalTennis.Controllers
             return View();
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> RecuperarContrasena(RecuperarPasswordViewModel model)
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecuperarContrasena(
+    RecuperarPasswordViewModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
 
-            var email = model.Email.Trim().ToLower();
+            var email = model.Email.Trim().ToLowerInvariant();
             var usuario = await _userManager.FindByEmailAsync(email);
 
             if (usuario == null)
             {
-                ModelState.AddModelError("", "No existe ninguna cuenta registrada con ese correo.");
+                ModelState.AddModelError(
+                    "",
+                    "No existe ninguna cuenta registrada con ese correo.");
+
                 return View(model);
             }
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
+            var token = await _userManager
+                .GeneratePasswordResetTokenAsync(usuario);
+
+            var tokenCodificado = WebEncoders.Base64UrlEncode(
+                System.Text.Encoding.UTF8.GetBytes(token));
 
             var link = Url.Action(
                 "RestablecerPassword",
@@ -240,34 +250,55 @@ namespace ProyectoGrupalTennis.Controllers
                 new
                 {
                     email = usuario.Email,
-                    token = token
+                    token = tokenCodificado
                 },
                 Request.Scheme);
 
             var asunto = "Restablecer contraseña - Academia de Tennis";
 
             var mensaje = $@"
-    <h2>Restablecer contraseña</h2>
-    <p>Hola,</p>
-    <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta.</p>
-    <p>Haz clic en el siguiente enlace para crear una nueva contraseña:</p>
-    <p><a href='{link}'>Restablecer contraseña</a></p>
-    <p>Si no solicitaste este cambio, puedes ignorar este correo.</p>
-";
+        <h2>Restablecer contraseña</h2>
+        <p>Hola,</p>
+        <p>Recibimos una solicitud para restablecer tu contraseña.</p>
+        <p><a href='{link}'>Restablecer contraseña</a></p>
+        <p>Si no solicitaste este cambio, ignora este correo.</p>";
 
-            await _emailService.EnviarCorreoAsync(usuario.Email, asunto, mensaje);
+            try
+            {
+                await _emailService.EnviarCorreoAsync(
+                    usuario.Email!,
+                    asunto,
+                    mensaje);
 
-            ViewBag.Mensaje = "Se han enviado instrucciones para restablecer la contraseña a tu correo.";
+                ViewBag.Mensaje =
+                    "Se han enviado las instrucciones a tu correo.";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR AL ENVIAR CORREO:");
+                Console.WriteLine(ex.ToString());
+
+                ViewBag.Error = "No fue posible enviar el correo. Inténtalo nuevamente más tarde.";
+                return View(model);
+            }
 
             return View();
         }
 
+
         [HttpGet]
-        public IActionResult RestablecerPassword(string token, string email)
+        [AllowAnonymous]
+        public IActionResult RestablecerPassword(
+    string token,
+    string email)
         {
+            var tokenDecodificado =
+                System.Text.Encoding.UTF8.GetString(
+                    WebEncoders.Base64UrlDecode(token));
+
             var model = new RestablecerPasswordViewModel
             {
-                Token = token,
+                Token = tokenDecodificado,
                 Email = email
             };
 

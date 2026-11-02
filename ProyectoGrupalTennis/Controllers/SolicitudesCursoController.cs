@@ -328,8 +328,15 @@ namespace ProyectoGrupalTennis.Controllers
                 return NotFound();
             }
 
-            var numeroWhatsapp =
-        _configuration["AcademiaSettings:WhatsappSolicitudes"];
+            var configuracionAcademia = await _context.ConfiguracionesAcademia
+    .AsNoTracking()
+    .FirstOrDefaultAsync(c => c.Id == 1);
+
+            var correoDestino = configuracionAcademia?.CorreoSolicitudes
+    ?? _configuration["AcademiaSettings:CorreoSolicitudes"];
+
+            var numeroWhatsapp = configuracionAcademia?.WhatsappSolicitudes
+                ?? _configuration["AcademiaSettings:WhatsappSolicitudes"];
 
             var identificador =
                 $"SOL-{solicitud.IdSolicitudCurso:D4}";
@@ -352,10 +359,15 @@ namespace ProyectoGrupalTennis.Controllers
             mensajeWhatsapp +=
                 "\n\nGracias. Quedo atento(a) a la confirmación.";
 
+            var numeroWhatsappLimpio = new string(
+    (numeroWhatsapp ?? "")
+        .Where(char.IsDigit)
+        .ToArray());
+
             var whatsappUrl =
-                string.IsNullOrWhiteSpace(numeroWhatsapp)
+                string.IsNullOrWhiteSpace(numeroWhatsappLimpio)
                     ? null
-                    : $"https://wa.me/{numeroWhatsapp}" +
+                    : $"https://wa.me/{numeroWhatsappLimpio}" +
                       $"?text={Uri.EscapeDataString(mensajeWhatsapp)}";
 
             var model =
@@ -415,8 +427,12 @@ namespace ProyectoGrupalTennis.Controllers
         TarifaClase tarifa,
         string resumenDisponibilidad)
         {
-            var correoDestino =
-                _configuration["AcademiaSettings:CorreoSolicitudes"];
+            var configuracionAcademia = await _context.ConfiguracionesAcademia
+    .AsNoTracking()
+    .FirstOrDefaultAsync(c => c.Id == 1);
+
+            var correoDestino = configuracionAcademia?.CorreoSolicitudes
+                ?? _configuration["AcademiaSettings:CorreoSolicitudes"];
 
             if (string.IsNullOrWhiteSpace(correoDestino))
             {
@@ -645,9 +661,13 @@ namespace ProyectoGrupalTennis.Controllers
            SolicitudCurso solicitud)
         {
 
-   
-            var correoDestino =
-                _configuration["AcademiaSettings:CorreoSolicitudes"];
+
+            var configuracionAcademia = await _context.ConfiguracionesAcademia
+    .AsNoTracking()
+    .FirstOrDefaultAsync(c => c.Id == 1);
+
+            var correoDestino = configuracionAcademia?.CorreoSolicitudes
+                ?? _configuration["AcademiaSettings:CorreoSolicitudes"];
 
             if (string.IsNullOrWhiteSpace(correoDestino))
             {
@@ -825,8 +845,13 @@ Notificación automática del sistema
         private async Task EnviarCorreoAceptacionAsync(
     SolicitudCurso solicitud)
         {
-            var correoDestino =
-                _configuration["AcademiaSettings:CorreoSolicitudes"];
+            var configuracionAcademia = await _context.ConfiguracionesAcademia
+    .AsNoTracking()
+    .FirstOrDefaultAsync(c => c.Id == 1);
+
+            var correoDestino = configuracionAcademia?.CorreoSolicitudes
+    ?? _configuration["AcademiaSettings:CorreoSolicitudes"];
+
 
             if (string.IsNullOrWhiteSpace(correoDestino))
             {
@@ -1026,8 +1051,12 @@ Notificación automática del sistema
                     "El alumno no tiene un correo válido.");
             }
 
-            var correoAcademia =
-                _configuration["AcademiaSettings:CorreoSolicitudes"];
+            var configuracionAcademia = await _context.ConfiguracionesAcademia
+    .AsNoTracking()
+    .FirstOrDefaultAsync(c => c.Id == 1);
+
+            var correoAcademia = configuracionAcademia?.CorreoSolicitudes
+                ?? _configuration["AcademiaSettings:CorreoSolicitudes"];
 
             var asuntoAcademia =
                 $"Solicitud de reprogramación - SOL-{solicitud.IdSolicitudCurso:D4}";
@@ -1105,12 +1134,16 @@ Notificación automática del sistema
       asuntoAlumno,
       cuerpoAlumno);
         }
-        private string? ConstruirWhatsappRespuestaAlumno(
+        private async Task<string?> ConstruirWhatsappRespuestaAlumnoAsync(
     SolicitudCurso solicitud,
     bool aceptada)
         {
-            var telefonoAcademia =
-                _configuration["AcademiaSettings:WhatsappSolicitudes"];
+            var configuracionAcademia = await _context.ConfiguracionesAcademia
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == 1);
+
+            var telefonoAcademia = configuracionAcademia?.WhatsappSolicitudes
+                ?? _configuration["AcademiaSettings:WhatsappSolicitudes"];
 
             if (string.IsNullOrWhiteSpace(telefonoAcademia))
             {
@@ -2009,8 +2042,15 @@ Notificación automática del sistema
                 Console.WriteLine($"ERROR CORREO RECHAZO: {ex}");
             }
 
+            var configuracionAcademia = await _context.ConfiguracionesAcademia
+     .AsNoTracking()
+     .FirstOrDefaultAsync(c => c.Id == 1);
+
+            var numeroWhatsapp = configuracionAcademia?.WhatsappSolicitudes
+                ?? _configuration["AcademiaSettings:WhatsappSolicitudes"];
+
             var whatsappUrl =
-                ConstruirWhatsappRespuestaAlumno(
+                await ConstruirWhatsappRespuestaAlumnoAsync(
                     solicitud,
                     aceptada: false);
 

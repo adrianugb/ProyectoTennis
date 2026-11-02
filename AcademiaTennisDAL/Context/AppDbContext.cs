@@ -87,9 +87,40 @@ namespace AcademiaTennisDAL.Context
 
         public DbSet<TipoClase> TiposClase { get; set; }
 
+        // Configuración general de la academia
+        public DbSet<ConfiguracionAcademia> ConfiguracionesAcademia
+        { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<ConfiguracionAcademia>(entity =>
+            {
+                entity.ToTable("ConfiguracionAcademia");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.WhatsappSolicitudes)
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(e => e.CorreoSolicitudes)
+                    .HasMaxLength(256)
+                    .IsRequired();
+
+                entity.Property(e => e.SmtpEmail)
+                    .HasMaxLength(256)
+                    .IsRequired();
+
+                entity.Property(e => e.SmtpServer)
+                    .HasMaxLength(200)
+                    .IsRequired();
+
+                entity.Property(e => e.SmtpSenderName)
+                    .HasMaxLength(150)
+                    .IsRequired();
+            });
 
             // Fix: múltiples cascade paths en EncuestasSatisfaccion
             builder.Entity<EncuestaSatisfaccion>()
