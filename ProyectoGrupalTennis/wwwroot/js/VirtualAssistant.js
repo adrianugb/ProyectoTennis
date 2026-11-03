@@ -24,7 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
         panel.style.display = "none";
     });
 
-    sendBtn.addEventListener("click", enviarMensaje);
+    sendBtn.addEventListener("click", function () {
+        enviarMensaje();
+    });
 
     input.addEventListener("keydown", function (e) {
         if (e.key === "Enter") {
@@ -65,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function enviarMensaje(textoForzado) {
-        const texto = (textoForzado ?? input.value ?? "").trim();
+        const texto = (typeof textoForzado === "string" ? textoForzado : input.value || "").trim();
         if (!texto) return;
 
         agregarBurbuja(texto, "outgoing");

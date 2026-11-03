@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoGrupalTennis.Models;
 using ProyectoGrupalTennis.Services;
 
 namespace ProyectoGrupalTennis.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class OffersController : Controller
     {
         private readonly IOfferService _offerService;
@@ -66,6 +68,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         // Endpoint para que usuarios apliquen cupones desde la tienda (AJAX)
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult ApplyCoupon([FromForm] string code, [FromForm] decimal price)
         {
             var res = _offerService.ValidateCode(code ?? string.Empty, price);

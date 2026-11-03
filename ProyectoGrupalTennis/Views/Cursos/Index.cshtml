@@ -178,6 +178,26 @@
     </button>
 
 </form>
+
+<span class="perfil-action-separator">|</span>
+
+<form asp-controller="Curso"
+      asp-action="Eliminar"
+      method="post"
+      style="display:inline;"
+      onsubmit="return confirm('¿Eliminar el curso «@c.Nombre»? Esta acción no se puede deshacer.');">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="id" value="@c.IdCurso" />
+
+    <button type="submit"
+            class="perfil-action-link"
+            style="background:none; border:none; padding:0; cursor:pointer; color:#c0392b;">
+        Eliminar
+    </button>
+
+</form>
                                     </td>
                                 </tr>
                             }

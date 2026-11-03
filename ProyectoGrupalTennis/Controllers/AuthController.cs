@@ -50,6 +50,8 @@ namespace ProyectoGrupalTennis.Controllers
             // Validar todos los campos antes de continuar.
             if (!ModelState.IsValid)
             {
+                model.Password = string.Empty;
+                model.ConfirmPassword = string.Empty;
                 return View(model);
             }
 
@@ -238,8 +240,17 @@ namespace ProyectoGrupalTennis.Controllers
                 return View(model);
             }
 
-            var token = await _userManager
-                .GeneratePasswordResetTokenAsync(usuario);
+            string token;
+            try
+            {
+                token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR GENERANDO TOKEN: " + ex);
+                ViewBag.Error = "No fue posible generar el enlace. Inténtalo nuevamente.";
+                return View(model);
+            }
 
             var tokenCodificado = WebEncoders.Base64UrlEncode(
                 System.Text.Encoding.UTF8.GetBytes(token));
@@ -282,7 +293,7 @@ namespace ProyectoGrupalTennis.Controllers
                 return View(model);
             }
 
-            return View();
+            return View(new RecuperarPasswordViewModel());
         }
 
 
@@ -292,9 +303,23 @@ namespace ProyectoGrupalTennis.Controllers
     string token,
     string email)
         {
-            var tokenDecodificado =
-                System.Text.Encoding.UTF8.GetString(
+            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(email))
+            {
+                TempData["Mensaje"] = "El enlace de recuperación no es válido.";
+                return RedirectToAction("RecuperarContrasena");
+            }
+
+            string tokenDecodificado;
+            try
+            {
+                tokenDecodificado = System.Text.Encoding.UTF8.GetString(
                     WebEncoders.Base64UrlDecode(token));
+            }
+            catch (FormatException)
+            {
+                TempData["Mensaje"] = "El enlace de recuperación no es válido.";
+                return RedirectToAction("RecuperarContrasena");
+            }
 
             var model = new RestablecerPasswordViewModel
             {
@@ -306,6 +331,8 @@ namespace ProyectoGrupalTennis.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestablecerPassword(RestablecerPasswordViewModel model)
         {
             if (!ModelState.IsValid)

@@ -1,10 +1,12 @@
 using AcademiaTennisBLL.Services;
 using AcademiaTennisDAL.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ProyectoGrupalTennis.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class ProfesorController : Controller
     {
         private readonly IProfesorService _service;

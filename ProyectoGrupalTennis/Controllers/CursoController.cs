@@ -11,6 +11,7 @@ using ProyectoGrupalTennis.Services;
 
 namespace ProyectoGrupalTennis.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class CursoController : Controller
     {
         private readonly ICursoService _service;

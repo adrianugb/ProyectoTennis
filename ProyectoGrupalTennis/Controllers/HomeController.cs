@@ -178,28 +178,32 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Perfiles
 
+        [Authorize(Roles = "Administrador")]
         public IActionResult PerfilAdmin() =>
             View("~/Views/Perfiles/PerfilAdmin.cshtml");
 
+        [Authorize(Roles = "Administrador")]
         public IActionResult AdminCursos() =>
             RedirectToAction("Index", "Curso");
 
+        [Authorize(Roles = "Administrador")]
         public IActionResult AdminAlumnos() =>
             RedirectToAction("Index", "Alumnos");
 
+        [Authorize(Roles = "Administrador")]
         public IActionResult AdminProfesores() =>
             View("~/Views/Perfiles/AdminProfesores.cshtml");
 
+        [Authorize(Roles = "Administrador")]
         public IActionResult AdminFacturacion() =>
             View("~/Views/Perfiles/AdminFacturacion.cshtml");
 
-        [Authorize(Roles = "Administrador")]
-        public IActionResult AdminPagos() =>
-            RedirectToAction("AdminPagos", "Admin");
 
+        [Authorize(Roles = "Administrador")]
         public IActionResult AdminFacturas() =>
             View("~/Views/Perfiles/AdminFacturas.cshtml");
 
+        [Authorize(Roles = "Administrador")]
         public IActionResult AdminUsuario() =>
             View("~/Views/Perfiles/AdminUsuario.cshtml");
 
@@ -207,12 +211,15 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Perfil Usuario
 
+        [Authorize(Roles = "Usuario")]
         public IActionResult PerfilUsuario() =>
             View("~/Views/Perfiles/PerfilUsuario.cshtml");
 
+        [Authorize(Roles = "Usuario")]
         public IActionResult UsuarioPagos() =>
             RedirectToAction("HistorialPagos", "Usuario");
 
+        [Authorize(Roles = "Usuario")]
         public IActionResult UsuarioHistorialPagos() =>
             View("~/Views/Perfiles/UsuarioHistorialPagos.cshtml");
 
@@ -220,6 +227,7 @@ namespace ProyectoGrupalTennis.Controllers
 
         #region Perfil Profesor
 
+        [Authorize(Roles = "Profesor")]
         public async Task<IActionResult> PerfilProfesor()
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -228,9 +236,11 @@ namespace ProyectoGrupalTennis.Controllers
             return View("~/Views/Perfiles/PerfilProfesor.cshtml");
         }
 
+        [Authorize(Roles = "Profesor")]
         public IActionResult ProfesorAlumnos() =>
             View("~/Views/Perfiles/ProfesorAlumnos.cshtml");
 
+        [Authorize(Roles = "Profesor")]
         public IActionResult ProfesorCursos() =>
             RedirectToAction("MisCursos", "PerfilProfesor");
 

@@ -265,24 +265,41 @@ namespace ProyectoGrupalTennis.Services
 
         private async Task<List<Reserva>> BuscarDisponiblesAsync(DateTime fecha, string? tipoSolicitado)
         {
+            var inicioDia = fecha.Date;
+            var finDia = inicioDia.AddDays(1);
+
             var query = _context.Reservas
                 .Include(r => r.Cancha)
                 .Where(r =>
                     r.IdAlumno == null &&
                     r.Estado == "Disponible" &&
-                    r.FechaReserva.Date == fecha.Date)
-                .AsQueryable();
+                    r.FechaReserva >= inicioDia &&
+                    r.FechaReserva < finDia &&
+                    r.Cancha != null &&
+                    r.Cancha.Disponible &&
+                    !r.Cancha.EnMantenimiento);
 
-            if (tipoSolicitado != null)
+            // Si es hoy, excluir horarios que ya empezaron
+            if (inicioDia == DateTime.Today)
             {
-                query = query.Where(r => r.Cancha != null &&
-                    EF.Functions.Like(r.Cancha.Nombre, $"%{tipoSolicitado}%"));
+                var horaActual = DateTime.Now.TimeOfDay;
+                query = query.Where(r => r.HoraInicio > horaActual);
             }
 
-            return await query
+            var reservas = await query
                 .OrderBy(r => r.HoraInicio)
-                .Take(8)
+                .ThenBy(r => r.Cancha!.Nombre)
                 .ToListAsync();
+
+            // Filtro por tipo en memoria: ignora tildes y mayúsculas (Pádel == padel)
+            if (tipoSolicitado != null)
+            {
+                reservas = reservas
+                    .Where(r => QuitarAcentos(r.Cancha!.Nombre.ToLowerInvariant()).Contains(tipoSolicitado))
+                    .ToList();
+            }
+
+            return reservas.Take(8).ToList();
         }
 
         // ---------------- ADM-06-003: log de consultas ----------------
