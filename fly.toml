@@ -1,5 +1,10 @@
-app = 'proyectotennis'
-primary_region = 'iad'
+# fly.toml app configuration file generated for proyectotennis-p68knw on 2026-11-04T01:20:11Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'proyectotennis-p68knw'
+primary_region = 'ams'
 
 [build]
 
@@ -14,3 +19,4 @@ primary_region = 'iad'
   memory = '256mb'
   cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 256
